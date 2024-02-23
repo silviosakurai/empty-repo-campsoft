@@ -15,7 +15,7 @@ Isso é um WIP (Work In Progress), a descrição desse PR será realizada em bre
 - [ ] Produção
 
 ### Bancos de dados utilizados no desenvolvimento:
-<!--- Deixe somente as opções apropriadas e apague as outras -->
+<!--- Marque em qual ambiente foi utilizado o desenvolvimento. Deixe somente as opções apropriadas e apague as outras -->
 - [ ] Local
 - [ ] Sandbox
 - [ ] Dev
