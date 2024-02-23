@@ -10,12 +10,12 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "dev:partner": "turbo run dev --filter=partner_api",
-    "build:partner": "turbo run build --filter=partner_api",
-    "lint:partner": "turbo run lint --filter=partner_api",
-    "dev:public": "turbo run dev --filter=public_api",
-    "build:public": "turbo run build --filter=public_api",
-    "lint:public": "turbo run lint --filter=public_api"
+    "dev:partner": "turbo run dev --filter=partner",
+    "build:partner": "turbo run build --filter=partner",
+    "lint:partner": "turbo run lint --filter=partner",
+    "dev:public": "turbo run dev --filter=public",
+    "build:public": "turbo run build --filter=public",
+    "lint:public": "turbo run lint --filter=public"
   },
   "keywords": [],
   "author": "",
