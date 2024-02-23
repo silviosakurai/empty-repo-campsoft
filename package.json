@@ -9,10 +9,10 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "dev:partner": "turbo run dev --filter=partner",
-    "build:partner": "turbo run build --filter=partner",
-    "dev:public": "turbo run dev --filter=public",
-    "build:public": "turbo run build --filter=public"
+    "dev:partner": "turbo run dev --filter=partner_api",
+    "build:partner": "turbo run build --filter=partner_api",
+    "dev:public": "turbo run dev --filter=public_api",
+    "build:public": "turbo run build --filter=public_api"
   },
   "keywords": [],
   "author": "",
