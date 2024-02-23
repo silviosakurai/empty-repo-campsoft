@@ -1,7 +1,7 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 
 const server = fastify({
-  logger: true
+  logger: true,
 });
 
 server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
