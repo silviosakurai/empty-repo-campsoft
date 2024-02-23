@@ -64,26 +64,26 @@ pnpm run build
 
 Para desenvolvimento e build de projetos específicos (`partner` ou `public`):
 
-    3.1. **Iniciar o projeto partner em modo de desenvolvimento:**
+3.1. **Iniciar o projeto partner em modo de desenvolvimento:**
 
-    ```sh
-    pnpm run dev:partner
-    ```
+```sh
+pnpm run dev:partner
+```
 
-    3.2. **Construir o projeto partner:**
+3.2. **Construir o projeto partner:**
 
-    ```sh
-    pnpm run build:partner
-    ```
+```sh
+pnpm run build:partner
+```
 
-    3.3. **Iniciar o projeto public em modo de desenvolvimento:**
+3.3. **Iniciar o projeto public em modo de desenvolvimento:**
 
-    ```sh
-    pnpm run dev:public
-    ```
+```sh
+pnpm run dev:public
+```
 
-    3.4. **Construir o projeto public:**
+3.4. **Construir o projeto public:**
 
-    ```sh
-    pnpm run build:public
-    ```
+```sh
+pnpm run build:public
+```
