@@ -1,0 +1,23 @@
+{
+  "name": "node-maniadeapp-backend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": "20.11.1"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "dev:partner": "turbo run dev --filter=partner",
+    "build:partner": "turbo run build --filter=partner",
+    "dev:public": "turbo run dev --filter=public",
+    "build:public": "turbo run build --filter=public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "turbo": "^1.12.4"
+  }
+}

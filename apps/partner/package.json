@@ -1,0 +1,21 @@
+{
+  "name": "partner",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "20.11.1"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "fastify": "^4.26.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.20",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
