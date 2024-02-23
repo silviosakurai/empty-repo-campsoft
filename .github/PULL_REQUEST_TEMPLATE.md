@@ -6,7 +6,6 @@ Isso é um WIP (Work In Progress), a descrição desse PR será realizada em bre
 <!-- Insira o link do card no Bitrix24 relacionado a esse PR. -->
 [NUMERO](https://grupochl.bitrix24.com.br/workgroups/group/128/tasks/task/view/NUMERO)
 
-
 ### Testes
 <!-- Marque em qual ambiente foi realizado o teste. Deixe somente as opções apropriadas e apague as outras -->
 - [ ] Local
