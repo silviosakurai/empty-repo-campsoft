@@ -1,26 +1,23 @@
 {
   "name": "node-maniadeapp-backend",
+  "private": true,
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "engines": {
     "node": "20.11.1"
   },
   "scripts": {
-    "dev": "nodemon",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "dev:partner": "turbo run dev --filter=partner",
+    "build:partner": "turbo run build --filter=partner",
+    "dev:public": "turbo run dev --filter=public",
+    "build:public": "turbo run build --filter=public"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "fastify": "^4.26.1"
-  },
   "devDependencies": {
-    "@types/node": "^20.11.20",
-    "nodemon": "^3.1.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "turbo": "^1.12.4"
   }
 }
