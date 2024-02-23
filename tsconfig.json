@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "preserve",
+    "declaration": true,
+    "outDir": "./dist",
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["core/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
