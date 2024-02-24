@@ -11,8 +11,9 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@core/*": ["../../packages/core/src/*"]
+      "@partner_api/*": ["../../apps/partner_api/src/*"],
+      "@public_api/*": ["../../apps/public_api/src/*"],
+      "@core/*": ["src/*"]
     }
   },
   "include": ["src/**/*"],
