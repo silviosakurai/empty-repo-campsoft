@@ -15,12 +15,14 @@
     "lint:partner": "turbo run lint --filter=partner",
     "dev:public": "turbo run dev --filter=public",
     "build:public": "turbo run build --filter=public",
-    "lint:public": "turbo run lint --filter=public"
+    "lint:public": "turbo run lint --filter=public",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "turbo": "^1.12.4"
+    "turbo": "^1.12.4",
+    "husky": "^9.0.11"
   }
 }

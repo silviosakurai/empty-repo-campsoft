@@ -1,1 +1,2 @@
 turbo run lint --filter=partner
+turbo run lint --filter=public
