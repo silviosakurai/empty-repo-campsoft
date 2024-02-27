@@ -1,1 +1,1 @@
-pnpx eslint .
+turbo run lint --filter=partner
