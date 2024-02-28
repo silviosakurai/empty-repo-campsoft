@@ -1,4 +1,4 @@
-import fastify, { FastifyReply, FastifyRequest } from 'fastify'
+import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 
 const server = fastify({
   logger: true,

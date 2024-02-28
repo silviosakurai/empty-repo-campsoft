@@ -13,6 +13,10 @@
     "dev": {
       "outputs": [],
       "cache": false
+    },
+    "sonar": {
+      "outputs": [],
+      "cache": false
     }
   }
 }
