@@ -1,12 +1,13 @@
-import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import fastify from 'fastify';
+import dbConnector from '@core/database';
+import routes from './routes';
 
 const server = fastify({
   logger: true,
 });
 
-server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-  return { hello: 'world' };
-});
+server.register(dbConnector);
+server.register(routes);
 
 const start = async () => {
   try {

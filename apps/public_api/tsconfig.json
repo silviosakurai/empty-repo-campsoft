@@ -9,12 +9,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@core/*": ["../../packages/core/src/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../packages/core/src/common/types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

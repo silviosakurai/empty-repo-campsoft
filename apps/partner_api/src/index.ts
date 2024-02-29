@@ -1,8 +1,11 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import dbConnector from '@core/database';
 
 const server = fastify({
   logger: true,
 });
+
+server.register(dbConnector);
 
 server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
   return { hello: 'world' };

@@ -12,7 +12,11 @@
     "sonar": "sonar-scanner -X"
   },
   "dependencies": {
-    "fastify": "^4.26.1"
+    "fastify": "^4.26.1",
+    "fastify-plugin": "^4.5.1",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.29.4",
+    "mysql2": "^3.9.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.20",
