@@ -1,8 +1,11 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import dbConnector from '@core/config/database';
 
 const server = fastify({
   logger: true,
 });
+
+server.register(dbConnector);
 
 server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
   return { hello: 'world' };
@@ -10,7 +13,7 @@ server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
 
 const start = async () => {
   try {
-    await server.listen({ port: 3000 });
+    await server.listen({ port: 3000, host: '0.0.0.0' });
   } catch (err) {
     server.log.error(err);
     process.exit(1);

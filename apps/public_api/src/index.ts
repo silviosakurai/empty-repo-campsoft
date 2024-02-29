@@ -1,18 +1,18 @@
-import fastify, { FastifyReply, FastifyRequest } from 'fastify';
-import { userReaderSchema } from '../../../packages/core/src/validations/user/user.validation';
+import 'reflect-metadata';
+import fastify from 'fastify';
+import dbConnector from '@core/config/database';
+import routes from '@/routes';
 
 const server = fastify({
   logger: true,
 });
 
-server.get('/', { schema: userReaderSchema }, helloWorld);
-async function helloWorld() {
-  return { hello: 'world' };
-}
+server.register(dbConnector);
+server.register(routes);
 
 const start = async () => {
   try {
-    await server.listen({ port: 3001 });
+    await server.listen({ port: 3001, host: '0.0.0.0' });
   } catch (err) {
     server.log.error(err);
     process.exit(1);
