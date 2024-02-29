@@ -4,4 +4,5 @@ export const Environments = {
   SMS_API_CENTRAL_CUSTOM_ID: process.env.SMS_API_CENTRAL_CUSTOM_ID,
   SMS_API_PRODUTO_ID: process.env.SMS_API_PRODUTO_ID,
   SMS_API_BASE_URL: process.env.SMS_API_BASE_URL,
+  SMS_API_AUTH_URL: process.env.SMS_API_AUTH_URL,
 };
