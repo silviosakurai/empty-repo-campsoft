@@ -1,12 +1,13 @@
 import fp from "fastify-plugin";
 import mysql, { Pool } from "mysql2/promise";
-import { environment } from "@core/environments";
-import { FastifyInstance } from "fastify";
+import { environment } from "@core/config/environments";
 import DatabaseConnectionError from "@core/common/exceptions/DatabaseConnectionError";
 import { drizzle } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
+import { container } from "tsyringe";
+import { MySql2Database } from "drizzle-orm/mysql2";
 
-async function dbConnector(fastify: FastifyInstance) {
+async function dbConnector() {
   const pool: Pool = mysql.createPool({
     host: environment.dbHost,
     port: environment.dbPort,
@@ -24,10 +25,8 @@ async function dbConnector(fastify: FastifyInstance) {
     throw new DatabaseConnectionError("Could not connect to the database");
   }
 
-  fastify.decorate("db", connection);
-
-  fastify.addHook("onClose", async () => {
-    await pool.end();
+  container.register<MySql2Database<typeof schema>>("Database", {
+    useValue: connection,
   });
 }
 

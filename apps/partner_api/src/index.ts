@@ -1,5 +1,5 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
-import dbConnector from '@core/database';
+import dbConnector from '@core/config/database';
 
 const server = fastify({
   logger: true,

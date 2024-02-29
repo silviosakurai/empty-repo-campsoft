@@ -8,20 +8,20 @@ dotenv.config({
 
 class Environment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
-  private readonly DBHOST: string | undefined;
-  private readonly DBPORT: number | undefined;
-  private readonly DBUSER: string | undefined;
-  private readonly DBPASSWORD: string | undefined;
-  private readonly DBDATABASE: string | undefined;
+  private readonly DB_HOST: string | undefined;
+  private readonly DB_PORT: number | undefined;
+  private readonly DB_USER: string | undefined;
+  private readonly DB_PASSWORD: string | undefined;
+  private readonly DB_DATABASE: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
       .APP_ENVIRONMENT as unknown as AppEnvironment;
-    this.DBHOST = process.env.DBHOST;
-    this.DBPORT = Number(process.env.DBPORT);
-    this.DBUSER = process.env.DBUSER;
-    this.DBPASSWORD = process.env.DBPASSWORD;
-    this.DBDATABASE = process.env.DBDATABASE;
+    this.DB_HOST = process.env.DB_HOST;
+    this.DB_PORT = Number(process.env.DB_PORT);
+    this.DB_USER = process.env.DB_USER;
+    this.DB_PASSWORD = process.env.DB_PASSWORD;
+    this.DB_DATABASE = process.env.DB_DATABASE;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -41,43 +41,43 @@ class Environment {
   }
 
   public get dbHost(): string {
-    if (!this.DBHOST) {
-      throw new InvalidConfigurationError("DBHOST is not defined.");
+    if (!this.DB_HOST) {
+      throw new InvalidConfigurationError("DB_HOST is not defined.");
     }
 
-    return this.DBHOST;
+    return this.DB_HOST;
   }
 
   public get dbPort(): number {
-    if (!this.DBPORT) {
-      throw new InvalidConfigurationError("DBPORT is not defined.");
+    if (!this.DB_PORT) {
+      throw new InvalidConfigurationError("DB_PORT is not defined.");
     }
 
-    return this.DBPORT;
+    return this.DB_PORT;
   }
 
   public get dbUser(): string {
-    if (!this.DBUSER) {
-      throw new InvalidConfigurationError("DBUSER is not defined.");
+    if (!this.DB_USER) {
+      throw new InvalidConfigurationError("DB_USER is not defined.");
     }
 
-    return this.DBUSER;
+    return this.DB_USER;
   }
 
   public get dbPassword(): string {
-    if (!this.DBPASSWORD) {
-      throw new InvalidConfigurationError("DBPASSWORD is not defined.");
+    if (!this.DB_PASSWORD) {
+      throw new InvalidConfigurationError("DB_PASSWORD is not defined.");
     }
 
-    return this.DBPASSWORD;
+    return this.DB_PASSWORD;
   }
 
   public get dbDatabase(): string {
-    if (!this.DBDATABASE) {
-      throw new InvalidConfigurationError("DBDATABASE is not defined.");
+    if (!this.DB_DATABASE) {
+      throw new InvalidConfigurationError("DB_DATABASE is not defined.");
     }
 
-    return this.DBDATABASE;
+    return this.DB_DATABASE;
   }
 }
 
