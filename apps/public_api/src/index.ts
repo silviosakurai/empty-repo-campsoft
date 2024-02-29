@@ -1,12 +1,14 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import { userReaderSchema } from '../../../packages/core/src/validations/user/user.validation';
 
 const server = fastify({
   logger: true,
 });
 
-server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+server.get('/', { schema: userReaderSchema }, helloWorld);
+async function helloWorld() {
   return { hello: 'world' };
-});
+}
 
 const start = async () => {
   try {
