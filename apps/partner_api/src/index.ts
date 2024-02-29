@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import dbConnector from '@core/config/database';
 
