@@ -11,7 +11,7 @@ export class ClientService {
 
   findClientByCPF = async (cpf: string) => {
     try {
-      return await this.clientRepository.selectOneClient(cpf);
+      return await this.clientRepository.findClientByCPF(cpf);
     } catch (error) {
       throw error;
     }

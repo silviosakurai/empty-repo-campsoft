@@ -7,12 +7,12 @@ dotenv.config({
 });
 
 class Environment {
-  public readonly APP_ENVIRONMENT: AppEnvironment | undefined;
-  public readonly DBHOST: string | undefined;
-  public readonly DBPORT: number | undefined;
-  public readonly DBUSER: string | undefined;
-  public readonly DBPASSWORD: string | undefined;
-  public readonly DBDATABASE: string | undefined;
+  private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
+  private readonly DBHOST: string | undefined;
+  private readonly DBPORT: number | undefined;
+  private readonly DBUSER: string | undefined;
+  private readonly DBPASSWORD: string | undefined;
+  private readonly DBDATABASE: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env

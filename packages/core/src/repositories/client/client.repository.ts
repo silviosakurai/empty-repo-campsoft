@@ -10,7 +10,7 @@ export default class ClientRepository {
     this.db = mySql2Database;
   }
 
-  selectOneClient = async (cpf: string) => {
+  findClientByCPF = async (cpf: string) => {
     const result = await this.db
       .select({
         nome: client.nome,
