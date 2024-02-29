@@ -14,7 +14,7 @@ class ClientController {
     this.clientService = new ClientService(client);
   }
 
-  public findClientByCPFHandler = async (
+  public findClientByCPF = async (
     request: FastifyRequest,
     reply: FastifyReply
   ): Promise<void> => {

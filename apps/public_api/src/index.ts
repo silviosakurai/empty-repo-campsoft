@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import dbConnector from '@core/database';
-import routes from './routes';
+import routes from '@/routes';
 
 const server = fastify({
   logger: true,
