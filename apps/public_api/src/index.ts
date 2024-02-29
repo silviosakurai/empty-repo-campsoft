@@ -1,5 +1,6 @@
+import 'reflect-metadata';
 import fastify from 'fastify';
-import dbConnector from '@core/database';
+import dbConnector from '@core/config/database';
 import routes from '@/routes';
 
 const server = fastify({

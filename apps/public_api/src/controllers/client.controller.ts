@@ -1,17 +1,17 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ClientService } from '@core/services/client.service';
-import { MySql2Database } from 'drizzle-orm/mysql2';
-import * as schema from '@core/models';
+import { injectable } from 'tsyringe';
 
 interface query {
   cpf: string;
 }
 
+@injectable()
 class ClientController {
   private clientService: ClientService;
 
-  constructor(client: MySql2Database<typeof schema>) {
-    this.clientService = new ClientService(client);
+  constructor(clientService: ClientService) {
+    this.clientService = clientService;
   }
 
   public findClientByCPF = async (
@@ -23,7 +23,7 @@ class ClientController {
 
       const client = await this.clientService.findClientByCPF(cpf);
 
-      return reply.send({ result: client[0] });
+      return reply.send({ result: client });
     } catch (error) {
       request.log.error(error);
       return reply.status(500).send({ error: 'Erro ao buscar cliente.' });
