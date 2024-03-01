@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "@core/*": ["packages/core/src/*"]
+      "@core/*": ["packages/core/*"]
     }
   },
   "exclude": ["node_modules"]

@@ -1,13 +1,11 @@
-import dotenv from "dotenv";
-import { AppEnvironment } from "@core/common/enums/AppEnvironment";
+import * as dotenv from "dotenv";
 import InvalidConfigurationError from "@core/common/exceptions/InvalidConfigurationError";
 
 dotenv.config({
   path: "../../.env",
 });
 
-class Environment {
-  private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
+export class DatabaseEnvironment {
   private readonly DB_HOST: string | undefined;
   private readonly DB_PORT: number | undefined;
   private readonly DB_USER: string | undefined;
@@ -15,29 +13,11 @@ class Environment {
   private readonly DB_DATABASE: string | undefined;
 
   constructor() {
-    this.APP_ENVIRONMENT = process.env
-      .APP_ENVIRONMENT as unknown as AppEnvironment;
     this.DB_HOST = process.env.DB_HOST;
     this.DB_PORT = Number(process.env.DB_PORT);
     this.DB_USER = process.env.DB_USER;
     this.DB_PASSWORD = process.env.DB_PASSWORD;
     this.DB_DATABASE = process.env.DB_DATABASE;
-  }
-
-  public get appEnvironment(): AppEnvironment {
-    if (!this.APP_ENVIRONMENT) {
-      throw new InvalidConfigurationError("APP_ENVIRONMENT is not defined.");
-    }
-
-    if (
-      this.APP_ENVIRONMENT !== AppEnvironment.DEV &&
-      this.APP_ENVIRONMENT !== AppEnvironment.HMG &&
-      this.APP_ENVIRONMENT !== AppEnvironment.PROD
-    ) {
-      throw new InvalidConfigurationError("APP_ENVIRONMENT is not valid.");
-    }
-
-    return this.APP_ENVIRONMENT;
   }
 
   public get dbHost(): string {
@@ -80,5 +60,3 @@ class Environment {
     return this.DB_DATABASE;
   }
 }
-
-export const environment = new Environment();
