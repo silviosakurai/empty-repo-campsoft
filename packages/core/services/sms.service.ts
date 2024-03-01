@@ -1,4 +1,4 @@
-import { Environments } from "../config/Environments";
+import { generalEnvironment } from "@core/config/environments";
 import {
   ISmsSentMessageResponse,
   ISmsService,
@@ -23,10 +23,10 @@ export class SmsService implements ISmsService {
 
     try {
       const { data } = await axios.post<ISmsSentMessageResponse>(
-        `${Environments.SMS_API_BASE_URL}/api/campanha/simples`,
+        `${generalEnvironment.smsApiBaseUrl}/api/campanha/simples`,
         {
-          produtoId: Environments.SMS_API_PRODUTO_ID,
-          centroCustoId: Environments.SMS_API_CENTRAL_CUSTOM_ID,
+          produtoId: generalEnvironment.smsApiProdutoId,
+          centroCustoId: generalEnvironment.smsApiCentralCustomId,
           telefones: input.phone,
           nome: input.name,
           mensagemCampanha: input.message,
@@ -51,10 +51,10 @@ export class SmsService implements ISmsService {
   private async connection() {
     try {
       const response = await axios.post<ISmsServiceGatewayResponse>(
-        `${Environments.SMS_API_AUTH_URL}/login"`,
+        `${generalEnvironment.smsApiAuthUrl}/login"`,
         {
-          email: Environments.SMS_API_EMAIL,
-          password: Environments.SMS_API_PASSWORD,
+          email: generalEnvironment.smsApiEmail,
+          password: generalEnvironment.smsApiPassword,
         },
         {
           headers: {
