@@ -11,9 +11,6 @@ export class DatabaseEnvironment {
   private readonly DB_USER: string | undefined;
   private readonly DB_PASSWORD: string | undefined;
   private readonly DB_DATABASE: string | undefined;
-  private readonly WHATSAPP_API_SID: string | undefined;
-  private readonly WHATSAPP_API_SECRET: string | undefined;
-  private readonly WHATSAPP_API_TOKEN: string | undefined;
 
   constructor() {
     this.DB_HOST = process.env.DB_HOST;
@@ -21,10 +18,6 @@ export class DatabaseEnvironment {
     this.DB_USER = process.env.DB_USER;
     this.DB_PASSWORD = process.env.DB_PASSWORD;
     this.DB_DATABASE = process.env.DB_DATABASE;
-
-    this.WHATSAPP_API_SID = process.env.WHATSAPP_API_SID;
-    this.WHATSAPP_API_SECRET = process.env.WHATSAPP_API_SECRET;
-    this.WHATSAPP_API_TOKEN = process.env.WHATSAPP_API_TOKEN;
   }
 
   public get dbHost(): string {
@@ -65,31 +58,5 @@ export class DatabaseEnvironment {
     }
 
     return this.DB_DATABASE;
-  }
-
-  public get whatsappApiSid(): string {
-    if (!this.WHATSAPP_API_SID) {
-      throw new InvalidConfigurationError("WHATSAPP_API_SID is not defined.");
-    }
-
-    return this.WHATSAPP_API_SID;
-  }
-
-  public get whatsappApiSecret(): string {
-    if (!this.WHATSAPP_API_SECRET) {
-      throw new InvalidConfigurationError(
-        "WHATSAPP_API_SECRET is not defined."
-      );
-    }
-
-    return this.WHATSAPP_API_SECRET;
-  }
-
-  public get whatsappApiToken(): string {
-    if (!this.WHATSAPP_API_TOKEN) {
-      throw new InvalidConfigurationError("WHATSAPP_API_TOKEN is not defined.");
-    }
-
-    return this.WHATSAPP_API_TOKEN;
   }
 }

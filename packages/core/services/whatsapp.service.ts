@@ -1,4 +1,4 @@
-import { environment } from "@core/config/environments";
+import { generalEnvironment } from "@core/config/environments";
 import {
   IWhatsappService,
   IWhatsappServiceInput,
@@ -21,8 +21,8 @@ export class WhatsappService implements IWhatsappService {
   }
 
   private async connection() {
-    const accountSid = environment.whatsappApiSid;
-    const authToken = environment.whatsappApiToken;
+    const accountSid = generalEnvironment.whatsappApiSid;
+    const authToken = generalEnvironment.whatsappApiToken;
     const { Twilio } = await import("twilio");
 
     const client = new Twilio(accountSid, authToken);
