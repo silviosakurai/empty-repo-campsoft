@@ -1,0 +1,32 @@
+import {
+  mysqlTable,
+  int,
+  timestamp,
+  varchar,
+  mysqlEnum,
+  date,
+} from "drizzle-orm/mysql-core";
+
+export const clienteView = mysqlTable("cliente_view", {
+  id_cliente: varchar("id_cliente", { length: 36 }),
+  status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
+  id_cliente_tipo: int("id_cliente_tipo").notNull().default(1),
+  id_facebook: int("id_facebook"),
+  nome: varchar("nome", { length: 50 }),
+  sobrenome: varchar("sobrenome", { length: 50 }),
+  data_nascimento: date("data_nascimento"),
+  foto: varchar("foto", { length: 70 }),
+  email: varchar("email", { length: 100 }),
+  telefone: varchar("telefone", { length: 11 }).notNull(),
+  cpf: varchar("cpf", { length: 11 }),
+  senha: varchar("senha", { length: 65 }),
+  senha_campsoft: varchar("senha_campsoft", { length: 100 }),
+  sexo: mysqlEnum("sexo", ["M", "F"]),
+  sms_validacao: varchar("sms_validacao", { length: 6 }),
+  cliente_hash: varchar("cliente_hash", { length: 32 }),
+  cliente_zoop: varchar("cliente_zoop", { length: 32 }),
+  sandbox: mysqlEnum("sandbox", ["Y", "N"]).default("N"),
+  obs: varchar("obs", { length: 50 }),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
