@@ -1,4 +1,4 @@
-export interface ResponseService<T = any> {
+export interface ResponseService<T = unknown> {
   status: boolean;
   message?: string;
   httpStatusCode?: number
