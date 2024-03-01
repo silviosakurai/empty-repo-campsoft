@@ -7,4 +7,5 @@ export type IWhatsappService = {
 export type IWhatsappServiceInput = {
   message: string;
   target_phone: string;
+  sender_phone: string;
 };
