@@ -1,5 +1,5 @@
 import * as schema from "@core/models";
-import { cliente } from "@core/models/cliente/cliente.model";
+import { client } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq } from "drizzle-orm";
 import type { IClientByCPF } from "@core/interfaces/repositories/client/IClientByCPF.interface";
@@ -18,13 +18,13 @@ export class ClientRepository {
   findClientByCPF = async (cpf: string): Promise<IClientByCPF | null> => {
     const result = await this.db
       .select({
-        nome: cliente.nome,
-        cpf: cliente.cpf,
-        email: cliente.email,
-        telefone: cliente.telefone,
+        nome: client.nome,
+        cpf: client.cpf,
+        email: client.email,
+        telefone: client.telefone,
       })
-      .from(cliente)
-      .where(eq(cliente.cpf, cpf))
+      .from(client)
+      .where(eq(client.cpf, cpf))
       .execute();
 
     return result.length > 0 ? result[0] : null;
