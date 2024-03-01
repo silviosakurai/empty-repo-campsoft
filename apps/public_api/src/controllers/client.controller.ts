@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ClientService } from '@core/services/client.service';
 import { injectable } from 'tsyringe';
 
-interface query {
+interface IQuery {
   cpf: string;
 }
 
@@ -19,7 +19,7 @@ class ClientController {
     reply: FastifyReply
   ): Promise<void> => {
     try {
-      const cpf = (request.query as query).cpf;
+      const cpf = (request.query as IQuery).cpf;
 
       const client = await this.clientService.findClientByCPF(cpf);
 
