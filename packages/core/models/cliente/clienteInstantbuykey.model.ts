@@ -3,11 +3,12 @@ import {
   int,
   datetime,
   varchar,
+  varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const clienteInstantbuykey = mysqlTable("cliente_instantbuykey", {
-  id_cliente_instantbuykey: int("id_cliente_instantbuykey").notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
+  id_cliente_instantbuykey: varbinary("id_cliente_instantbuykey", { length: 16 }).notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
   id_cliente: int("id_cliente"),
   pag_cc_instantbuykey: varchar("pag_cc_instantbuykey", { length: 32 }).notNull(),
   pag_cc_id: varchar("pag_cc_id", { length: 32 }).notNull(),

@@ -1,19 +1,18 @@
 import {
   mysqlTable,
-  varbinary,
   int,
   datetime,
+  varchar,
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const acesso = mysqlTable("acesso", {
-  id_acesso: varbinary("id_acesso", { length: 16 }).notNull().default("uuid_to_bin(uuid())").primaryKey(),
-  id_cliente: varbinary("id_cliente", { length: 16 }),
-  id_api_acesso: int("id_api_acesso"),
-  id_empresa: int("id_empresa"),
-  id_acesso_tipo: int("id_acesso_tipo"),
+export const fiContasSplitRegra = mysqlTable("fi_contas_split_regra", {
+  id_fi_contas_split_regra: int("id_fi_contas_split_regra").notNull().primaryKey(),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
+  regra_nome: varchar("regra_nome", { length: 35 }),
+  regra_tipo: mysqlEnum("regra_tipo", ["assinatura", "venda"]).default("venda"),
+  obs: varchar("obs", { length: 200 }),
   created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
   updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });

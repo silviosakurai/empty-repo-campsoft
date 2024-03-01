@@ -5,11 +5,12 @@ import {
   varchar,
   mysqlEnum,
   double,
+  varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const cupomCarrinhoCodigo = mysqlTable("cupom_carrinho_codigo", {
-  id_cupom_carrinho_codigo: int("id_cupom_carrinho_codigo").notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
+  id_cupom_carrinho_codigo: varbinary("id_cupom_carrinho_codigo", { length: 16 }).notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
   id_cupom_carrinho: int("id_cupom_carrinho"),
   cupom_carrinho_codigo: varchar("cupom_carrinho_codigo", { length: 10 }).notNull(),
   qnt_uso_max: int("qnt_uso_max", { unsigned: true }).default(1),

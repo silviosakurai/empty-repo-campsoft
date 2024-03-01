@@ -4,12 +4,12 @@ import {
   timestamp,
   varchar,
   mysqlEnum,
-  date,
+  varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const clienteEndereco = mysqlTable("cliente_endereco", {
-  id_cliente_endereco: int("id_cliente_endereco").notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
+  id_cliente_endereco: varbinary("id_cliente_endereco", { length: 16 }).notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
   id_cliente: int("id_cliente"),
   tipo: mysqlEnum("tipo", ["Cobranca", "Envio"]).notNull().default("Cobranca"),
   primario: mysqlEnum("primario", ["Y", "N"]).notNull().default("N"),

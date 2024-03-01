@@ -4,11 +4,12 @@ import {
   timestamp,
   varchar,
   mysqlEnum,
+  varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const cupomResgatarCodigo = mysqlTable("cupom_resgatar_codigo", {
-  id_cupom_resgatar_codigo: int("id_cupom_resgatar_codigo").notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
+  id_cupom_resgatar_codigo: varbinary("id_cupom_resgatar_codigo", { length: 16 }).notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
   id_cupom_resgatar: int("id_cupom_resgatar").notNull(),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
   cupom_resgatar_codigo: varchar("cupom_resgatar_codigo", { length: 12 }).notNull(),

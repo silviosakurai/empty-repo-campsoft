@@ -4,11 +4,12 @@ import {
   varchar,
   mysqlEnum,
   timestamp,
+  varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const clienteEmail = mysqlTable("cliente_email", {
-  token: varchar("token", { length: 16 }).notNull().primaryKey().default(sql`uuid_to_bin(uuid())`),
+  token: varbinary("token", { length: 16 }).notNull().primaryKey().default(sql`uuid_to_bin(uuid())`),
   id_cliente: varchar("id_cliente", { length: 16 }),
   email: varchar("email", { length: 200 }),
   enviado_email: mysqlEnum("enviado_email", ["Y", "N"]).default("N"),
