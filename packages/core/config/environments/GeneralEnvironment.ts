@@ -8,10 +8,14 @@ dotenv.config({
 
 export class GeneralEnvironment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
+  private readonly JWT_SECRET: string | undefined;
+  private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
       .APP_ENVIRONMENT as unknown as AppEnvironment;
+    this.JWT_SECRET = process.env.JWT_SECRET;
+    this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -28,5 +32,23 @@ export class GeneralEnvironment {
     }
 
     return this.APP_ENVIRONMENT;
+  }
+
+  public get jwtSecret(): string {
+    if (!this.JWT_SECRET) {
+      throw new InvalidConfigurationError("JWT_SECRET is not defined.");
+    }
+
+    return this.JWT_SECRET;
+  }
+
+  public get jwtSecretExpiresIn(): string {
+    if (!this.JWT_SECRET_EXPIRES_IN) {
+      throw new InvalidConfigurationError(
+        "JWT_SECRET_EXPIRES_IN is not defined."
+      );
+    }
+
+    return this.JWT_SECRET_EXPIRES_IN;
   }
 }
