@@ -1,6 +1,6 @@
 export interface ResponseService<T = unknown> {
-  status: boolean;
+  status?: boolean;
   message?: string;
-  httpStatusCode?: number
+  httpStatusCode?: number;
   data?: T;
 }

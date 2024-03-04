@@ -1,5 +1,5 @@
 import * as schema from "@core/models";
-import { client } from "@core/models/client/client.model";
+import { client } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq } from "drizzle-orm";
 import type { IClientByCPF } from "@core/interfaces/repositories/client/IClientByCPF.interface";
