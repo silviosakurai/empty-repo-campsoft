@@ -10,7 +10,7 @@ async function authenticate(
   const { authorization } = request.headers;
   const { t } = request;
 
-  if (authorization) {
+  if (!authorization) {
     sendResponse(reply, {
       message: t("not_authorized"),
       httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
