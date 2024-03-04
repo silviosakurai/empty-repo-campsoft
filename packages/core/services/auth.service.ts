@@ -16,12 +16,4 @@ export class AuthService {
       throw error;
     }
   };
-
-  findClientByCPF = async (cpf: string) => {
-    try {
-      return await this.clientRepository.findClientByCPF(cpf);
-    } catch (error) {
-      throw error;
-    }
-  };
 }

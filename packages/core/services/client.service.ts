@@ -8,12 +8,4 @@ export class ClientService {
   constructor(clientRepository: ClientRepository) {
     this.clientRepository = clientRepository;
   }
-
-  findClientByCPF = async (cpf: string) => {
-    try {
-      return await this.clientRepository.findClientByCPF(cpf);
-    } catch (error) {
-      throw error;
-    }
-  };
 }
