@@ -1,19 +1,17 @@
 import {
   mysqlTable,
   int,
+  timestamp,
   varchar,
   mysqlEnum,
   date,
-  timestamp,
-  bigint,
-  binary,
 } from "drizzle-orm/mysql-core";
 
-export const client = mysqlTable("cliente", {
-  id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
+export const clientView = mysqlTable("cliente_view", {
+  id_cliente: varchar("id_cliente", { length: 36 }),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
   id_cliente_tipo: int("id_cliente_tipo").notNull().default(1),
-  id_facebook: bigint("id_facebook", { mode: "bigint", unsigned: true }),
+  id_facebook: int("id_facebook"),
   nome: varchar("nome", { length: 50 }),
   sobrenome: varchar("sobrenome", { length: 50 }),
   data_nascimento: date("data_nascimento"),
