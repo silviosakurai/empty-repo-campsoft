@@ -1,5 +1,5 @@
 import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
-import { PhoneNumberValidator } from "@core/common/functions/phone-number-validator";
+import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
 import { whatsappEnvironment } from "@core/config/environments";
 import {
   IWhatsappService,
