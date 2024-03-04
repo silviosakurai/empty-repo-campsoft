@@ -63,19 +63,4 @@ export class ClientRepository {
 
     return result.length > 0 ? (result[0] as unknown as LoginResponse) : null;
   };
-
-  findClientByCPF = async (cpf: string): Promise<IClientByCPF | null> => {
-    const result = await this.db
-      .select({
-        nome: client.nome,
-        cpf: client.cpf,
-        email: client.email,
-        telefone: client.telefone,
-      })
-      .from(client)
-      .where(eq(client.cpf, cpf))
-      .execute();
-
-    return result.length > 0 ? result[0] : null;
-  };
 }
