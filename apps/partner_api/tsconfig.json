@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types", "../../packages/core/common/types"],
     "paths": {
       "@/*": ["src/*"],
       "@core/*": ["../../packages/core/*"]
