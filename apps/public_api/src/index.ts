@@ -5,8 +5,7 @@ import routes from '@/routes';
 import auth from '@fastify/auth';
 import authMiddleware from '@core/middlewares/auth.middleware';
 import i18nextPlugin from '@core/plugins/i18next';
-import { cacheRedisConnection } from '@core/config/cache';
-import FastifyRedis from '@fastify/redis';
+import cacheRedisConnector from '@core/config/cache';
 
 const server = fastify({
   logger: true,
@@ -17,9 +16,7 @@ server.register(auth);
 server.register(authMiddleware);
 server.register(routes);
 server.register(i18nextPlugin);
-server.register(FastifyRedis, {
-  ...cacheRedisConnection(),
-});
+server.register(cacheRedisConnector);
 
 const start = async () => {
   try {
