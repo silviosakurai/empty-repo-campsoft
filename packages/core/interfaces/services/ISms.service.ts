@@ -1,14 +1,14 @@
-export type ISmsService = {
+export interface ISmsService {
   send: (input: ISmsServiceSendInput) => void;
-};
+}
 
-export type ISmsServiceSendInput = {
+export interface ISmsServiceSendInput {
   phone: string;
   name: string;
   message: string;
-};
+}
 
-export type ISmsServiceGatewayResponse = {
+export interface ISmsServiceGatewayResponse {
   access_token: string;
   token_type: string;
   expires_in: number;
@@ -22,9 +22,9 @@ export type ISmsServiceGatewayResponse = {
   clientes: { id: number; name: string; ativo: boolean; revendaId: number }[];
   senha_temporaria: boolean;
   doisFatores: boolean;
-};
+}
 
-export type ISmsSentMessageResponse = {
+export interface ISmsSentMessageResponse {
   id: number;
   nome: string;
   centroCusto: { id: number; nome: string; codigo: number };
@@ -42,4 +42,4 @@ export type ISmsSentMessageResponse = {
       smsClienteId: null;
     },
   ];
-};
+}
