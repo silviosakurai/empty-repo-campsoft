@@ -53,6 +53,7 @@
     "i18next-http-middleware": "^3.5.0",
     "mysql2": "^3.9.2",
     "reflect-metadata": "^0.2.1",
-    "tsyringe": "^4.8.0"
+    "tsyringe": "^4.8.0",
+    "twilio": "^4.23.0"
   }
 }
