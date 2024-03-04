@@ -1,8 +1,9 @@
+import { Gender, Status } from "@core/common/enums/models/client";
 import Schema from "fluent-json-schema";
 
 const userCreatorSchema = {
   body: Schema.object()
-    .prop("status", Schema.string().required())
+    .prop("status", Schema.enum(Object.values(Status)).required())
     .prop("first_name", Schema.string().required())
     .prop("last_name", Schema.string().required())
     .prop("birthday", Schema.string().format("date").required())
@@ -10,9 +11,8 @@ const userCreatorSchema = {
     .prop("phone", Schema.string().minLength(11).maxLength(12).required())
     .prop("cpf", Schema.string().minLength(11).maxLength(11).required())
     .prop("password", Schema.string().minLength(6).required())
-    .prop("gender", Schema.string().required())
-    .prop("obs", Schema.string())
-    .prop("tfa_token", Schema.string().required()),
+    .prop("gender", Schema.enum(Object.values(Gender)).required())
+    .prop("obs", Schema.string()),
 };
 
 const userReaderSchema = {
