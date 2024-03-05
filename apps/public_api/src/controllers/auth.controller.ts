@@ -18,21 +18,26 @@ class AuthController {
       Body: LoginRequest;
     }>,
     reply: FastifyReply
-  ): Promise<void> => {
+  ) => {
     const { login, password } = request.body;
     const { t } = request;
 
-    const responseAuth = await this.loginAuthUseCase.execute({
-      login,
-      password,
-    });
-
     try {
+      const responseAuth = await this.loginAuthUseCase.execute({
+        login,
+        password,
+      });
+
       if (responseAuth) {
+        const token = await reply.jwtSign({ id: responseAuth.client_id });
+
         return sendResponse(reply, {
           message: t('login_success'),
           httpStatusCode: HTTPStatusCode.OK,
-          data: responseAuth,
+          data: {
+            result: responseAuth,
+            token,
+          },
         });
       }
 

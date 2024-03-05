@@ -1,4 +1,8 @@
-import { Gender, Sandbox, Status } from "@core/common/enums/models/client";
+import {
+  ClientGender,
+  ClientSandbox,
+  ClientStatus,
+} from "@core/common/enums/models/client";
 import {
   mysqlTable,
   int,
@@ -12,9 +16,9 @@ import {
 
 export const client = mysqlTable("cliente", {
   id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
-  status: mysqlEnum("status", [Status.ACTIVE, Status.INACTIVE])
+  status: mysqlEnum("status", [ClientStatus.ACTIVE, ClientStatus.INACTIVE])
     .notNull()
-    .default(Status.ACTIVE),
+    .default(ClientStatus.ACTIVE),
   id_cliente_tipo: int("id_cliente_tipo").notNull().default(1),
   id_facebook: bigint("id_facebook", { mode: "bigint", unsigned: true }),
   nome: varchar("nome", { length: 50 }),
@@ -26,11 +30,13 @@ export const client = mysqlTable("cliente", {
   cpf: varchar("cpf", { length: 11 }),
   senha: varchar("senha", { length: 65 }),
   senha_campsoft: varchar("senha_campsoft", { length: 100 }),
-  sexo: mysqlEnum("sexo", [Gender.MALE, Gender.FEMALE]),
+  sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
   sms_validacao: varchar("sms_validacao", { length: 6 }),
   cliente_hash: varchar("cliente_hash", { length: 32 }),
   cliente_zoop: varchar("cliente_zoop", { length: 32 }),
-  sandbox: mysqlEnum("sandbox", [Sandbox.YES, Sandbox.NO]).default(Sandbox.NO),
+  sandbox: mysqlEnum("sandbox", [ClientSandbox.YES, ClientSandbox.NO]).default(
+    ClientSandbox.NO
+  ),
   obs: varchar("obs", { length: 50 }),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),

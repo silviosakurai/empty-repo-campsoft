@@ -1,17 +1,17 @@
-import { ClientRepository } from "@core/repositories/client/client.repository";
+import { AuthRepository } from "@core/repositories/client/auth.repository";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class AuthService {
-  private clientRepository: ClientRepository;
+  private authRepository: AuthRepository;
 
-  constructor(clientRepository: ClientRepository) {
-    this.clientRepository = clientRepository;
+  constructor(clientRepository: AuthRepository) {
+    this.authRepository = clientRepository;
   }
 
   authenticate = async (login: string, password: string) => {
     try {
-      return await this.clientRepository.authenticate(login, password);
+      return await this.authRepository.authenticate(login, password);
     } catch (error) {
       throw error;
     }

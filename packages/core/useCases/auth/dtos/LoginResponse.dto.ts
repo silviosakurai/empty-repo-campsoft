@@ -1,15 +1,15 @@
 import { Gender, Status } from "@core/common/enums/models/client";
 
 export interface LoginResponse {
-  id_cliente: Buffer;
+  client_id: Buffer;
   status: Status;
-  id_cliente_tipo: number;
-  id_facebook?: bigint;
-  nome?: string;
-  sobrenome?: string;
-  data_nascimento?: Date;
+  client_id_type: number;
+  facebook_id?: bigint;
+  name?: string;
+  surname?: string;
+  birth_date?: Date;
   email?: string;
-  telefone: string;
+  phone: string;
   cpf?: string;
-  sexo?: Gender;
+  gender?: Gender;
 }

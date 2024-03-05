@@ -1,6 +1,5 @@
 import { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
-import { FastifyReply } from "fastify";
 
 declare module "fastify" {
   export interface FastifyInstance {

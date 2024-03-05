@@ -22,4 +22,11 @@ const userReaderSchema = {
     .prop("text_search", Schema.string()),
 };
 
-export { userCreatorSchema, userReaderSchema };
+const userViewSchema = {
+  params: Schema.object().prop(
+    "userId",
+    Schema.string().format("uuid").required()
+  ),
+};
+
+export { userCreatorSchema, userReaderSchema, userViewSchema };

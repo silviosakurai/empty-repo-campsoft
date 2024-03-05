@@ -1,7 +1,7 @@
 import { AuthService } from "@core/services/auth.service";
 import { injectable } from "tsyringe";
 import { LoginRequest } from "@core/useCases/auth/dtos/LoginRequest.dto";
-import { LoginResponse } from "./dtos/LoginResponse.dto";
+import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 
 @injectable()
 export class LoginAuthUseCase {

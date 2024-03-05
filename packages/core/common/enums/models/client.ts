@@ -1,14 +1,14 @@
-export enum Status {
+export enum ClientStatus {
   ACTIVE = "ativo",
   INACTIVE = "inativo",
 }
 
-export enum Gender {
+export enum ClientGender {
   MALE = "M",
   FEMALE = "F",
 }
 
-export enum Sandbox {
+export enum ClientSandbox {
   YES = "Y",
   NO = "N",
 }

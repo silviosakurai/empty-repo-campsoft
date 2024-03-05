@@ -1,17 +1,9 @@
 import * as schema from "@core/models";
-import {
-  client,
-  clientType,
-  clientAddress,
-  clientCompany,
-  apiAccess,
-} from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { eq, or, and, sql } from "drizzle-orm";
-import type { IClientByCPF } from "@core/interfaces/repositories/client/IClientByCPF.interface";
 import { inject, injectable } from "tsyringe";
-import { Status } from "@core/common/enums/models/client";
-import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
+import { client } from "@core/models";
+import { eq, sql } from "drizzle-orm";
+import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 
 @injectable()
 export class ClientRepository {
@@ -23,44 +15,27 @@ export class ClientRepository {
     this.db = mySql2Database;
   }
 
-  authenticate = async (
-    login: string,
-    password: string
-  ): Promise<LoginResponse | null> => {
+  async viewClient(userId: string): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
-        id_cliente: sql`BIN_TO_UUID(${client.id_cliente}) AS id_cliente`,
         status: client.status,
-        id_cliente_tipo: client.id_cliente_tipo,
-        nome: client.nome,
-        sobrenome: client.sobrenome,
-        data_nascimento: client.data_nascimento,
+        first_name: client.nome,
+        last_name: client.sobrenome,
+        birthday: client.data_nascimento,
         email: client.email,
-        telefone: client.telefone,
+        phone: client.telefone,
         cpf: client.cpf,
-        sexo: client.sexo,
+        gender: client.sexo,
+        obs: client.obs,
       })
       .from(client)
-      .innerJoin(
-        clientType,
-        eq(clientType.id_cliente_tipo, client.id_cliente_tipo)
-      )
-      .leftJoin(clientAddress, eq(clientAddress.id_cliente, client.id_cliente))
-      .leftJoin(clientCompany, eq(clientCompany.id_cliente, client.id_cliente))
-      .leftJoin(apiAccess, eq(apiAccess.id_empresa, clientCompany.id_empresa))
-      .where(
-        and(
-          eq(client.status, Status.ACTIVE),
-          or(
-            eq(client.email, login),
-            eq(client.cpf, login),
-            eq(client.telefone, login)
-          ),
-          sql`SUBSTRING_INDEX(${client.senha}, ':', 1) = MD5(CONCAT(SUBSTRING_INDEX(${client.senha}, ':', -1), ${password}))`
-        )
-      )
+      .where(eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`))
       .execute();
 
-    return result.length > 0 ? (result[0] as unknown as LoginResponse) : null;
-  };
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as ViewClientResponse;
+  }
 }
