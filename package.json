@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@fastify/auth": "^4.6.1",
+    "@fastify/jwt": "^8.0.0",
     "@fastify/caching": "^8.3.0",
     "@fastify/redis": "^6.1.1",
     "axios": "^1.6.7",

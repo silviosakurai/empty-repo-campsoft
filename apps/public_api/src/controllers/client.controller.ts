@@ -1,32 +1,41 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ClientService } from '@core/services/client.service';
 import { injectable } from 'tsyringe';
-
-interface IQuery {
-  cpf: string;
-}
+import { ViewClientUseCase } from '@core/useCases/client/ViewClient.useCase';
+import type { ViewClientRequest } from '@core/useCases/client/dtos/ViewClientRequest.dto';
+import { sendResponse } from '@core/common/functions/sendResponse';
+import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 
 @injectable()
 class ClientController {
-  private clientService: ClientService;
+  private viewClientUseCase: ViewClientUseCase;
 
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
+  constructor(viewClientUseCase: ViewClientUseCase) {
+    this.viewClientUseCase = viewClientUseCase;
   }
 
-  public findClientByCPF = async (
-    request: FastifyRequest,
-    reply: FastifyReply
-  ): Promise<void> => {
+  public viewClient = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { t } = request;
+    const { userId } = request.params as ViewClientRequest;
+
     try {
-      const cpf = (request.query as IQuery).cpf;
+      const responseAuth = await this.viewClientUseCase.execute({ userId });
 
-      const client = await this.clientService.findClientByCPF(cpf);
+      if (!responseAuth) {
+        return sendResponse(reply, {
+          message: t('client_not_found'),
+          httpStatusCode: HTTPStatusCode.NOT_FOUND,
+        });
+      }
 
-      return reply.send({ result: client });
+      return sendResponse(reply, {
+        data: responseAuth,
+        httpStatusCode: HTTPStatusCode.OK,
+      });
     } catch (error) {
-      request.log.error(error);
-      return reply.status(500).send({ error: 'Erro ao buscar cliente.' });
+      return sendResponse(reply, {
+        message: t('internal_server_error'),
+        httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+      });
     }
   };
 }

@@ -1,12 +1,14 @@
 import ClientController from '@/controllers/client.controller';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
+import { userViewSchema } from '@core/validations/user/user.validation';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
-  server.get('/client', {
+  server.get('/users/:userId', {
+    schema: userViewSchema,
     preHandler: server.authenticate,
-    handler: clientController.findClientByCPF,
+    handler: clientController.viewClient,
   });
 }
