@@ -14,13 +14,16 @@ class ClientController {
   }
 
   public viewClient = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { t } = request;
+    const { t, apiAccess } = request;
     const { userId } = request.params as ViewClientRequest;
 
     try {
-      const responseAuth = await this.viewClientUseCase.execute({ userId });
+      const response = await this.viewClientUseCase.execute({
+        apiAccess,
+        userId,
+      });
 
-      if (!responseAuth) {
+      if (!response) {
         return sendResponse(reply, {
           message: t('client_not_found'),
           httpStatusCode: HTTPStatusCode.NOT_FOUND,
@@ -28,7 +31,7 @@ class ClientController {
       }
 
       return sendResponse(reply, {
-        data: responseAuth,
+        data: response,
         httpStatusCode: HTTPStatusCode.OK,
       });
     } catch (error) {

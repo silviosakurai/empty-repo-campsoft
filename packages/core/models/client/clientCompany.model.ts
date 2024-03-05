@@ -4,11 +4,12 @@ import {
   datetime,
   varchar,
   mysqlEnum,
+  binary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const clientCompany = mysqlTable("cliente_empresa", {
-  id_cliente: int("id_cliente").notNull().primaryKey(),
+  id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
   id_empresa: int("id_empresa").notNull(),
   id_cliente_tipo: int("id_cliente_tipo"),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),

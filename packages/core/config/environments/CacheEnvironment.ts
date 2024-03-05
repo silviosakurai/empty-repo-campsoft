@@ -7,13 +7,11 @@ dotenv.config({
 
 export class CacheEnvironment {
   private readonly DB_CACHE_HOST: string | undefined;
-  private readonly DB_CACHE_DOMAIN: string | undefined;
   private readonly DB_CACHE_PORT: number | undefined;
   private readonly DB_CACHE_PASSWORD: string | undefined;
 
   constructor() {
     this.DB_CACHE_HOST = process.env.DB_CACHE_HOST;
-    this.DB_CACHE_DOMAIN = process.env.DB_CACHE_DOMAIN;
     this.DB_CACHE_PORT = Number(process.env.DB_CACHE_PORT);
     this.DB_CACHE_PASSWORD = process.env.DB_CACHE_PASSWORD;
   }
@@ -24,14 +22,6 @@ export class CacheEnvironment {
     }
 
     return this.DB_CACHE_HOST;
-  }
-
-  public get cacheDomain(): string {
-    if (!this.DB_CACHE_DOMAIN) {
-      throw new InvalidConfigurationError("DB_CACHE_DOMAIN is not defined.");
-    }
-
-    return this.DB_CACHE_DOMAIN;
   }
 
   public get cachePort(): number {

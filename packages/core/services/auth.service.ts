@@ -5,8 +5,8 @@ import { injectable } from "tsyringe";
 export class AuthService {
   private authRepository: AuthRepository;
 
-  constructor(clientRepository: AuthRepository) {
-    this.authRepository = clientRepository;
+  constructor(authRepository: AuthRepository) {
+    this.authRepository = authRepository;
   }
 
   authenticate = async (login: string, password: string) => {
