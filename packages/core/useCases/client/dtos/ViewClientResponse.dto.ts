@@ -1,13 +1,13 @@
-import { Gender, Status } from "@core/common/enums/models/client";
+import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 
 export interface ViewClientResponse {
-  status: Status;
+  status: ClientStatus;
   first_name?: string;
   last_name?: string;
   birthday?: Date;
   email?: string;
   phone: string;
   cpf?: string;
-  gender?: Gender;
+  gender?: ClientGender;
   obs?: string;
 }
