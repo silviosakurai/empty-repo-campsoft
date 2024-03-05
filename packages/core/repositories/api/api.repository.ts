@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { apiAccess, company, clientCompany, client } from "@core/models";
+import { apiAccess, company, clientCompany } from "@core/models";
 import { and, eq, or, sql } from "drizzle-orm";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ApiStatus } from "@core/common/enums/models/api";
