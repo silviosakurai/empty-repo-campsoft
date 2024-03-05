@@ -18,7 +18,7 @@ class AuthController {
       Body: LoginRequest;
     }>,
     reply: FastifyReply
-  ): Promise<void> => {
+  ) => {
     const { login, password } = request.body;
     const { t } = request;
 
@@ -35,7 +35,7 @@ class AuthController {
           message: t('login_success'),
           httpStatusCode: HTTPStatusCode.OK,
           data: {
-            user: responseAuth,
+            result: responseAuth,
             token,
           },
         });

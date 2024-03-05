@@ -10,12 +10,23 @@ async function authenticate(
   const { authorization } = request.headers;
   const { t } = request;
 
-  if (!authorization) {
-    sendResponse(reply, {
-      message: t("not_authorized"),
-      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
-    });
+  if (authorization) {
+    try {
+      await request.jwtVerify();
+
+      return;
+    } catch (error) {
+      return sendResponse(reply, {
+        message: t("not_authorized"),
+        httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      });
+    }
   }
+
+  return sendResponse(reply, {
+    message: t("not_authorized"),
+    httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+  });
 }
 
 export default fp(async (fastify) => {

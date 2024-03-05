@@ -61,6 +61,10 @@ export class AuthRepository {
       )
       .execute();
 
-    return result.length > 0 ? (result[0] as unknown as LoginResponse) : null;
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as LoginResponse;
   };
 }
