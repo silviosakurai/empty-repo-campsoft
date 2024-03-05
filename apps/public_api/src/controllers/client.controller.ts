@@ -49,12 +49,12 @@ class ClientController {
     }
   };
 
-  async create(
+  public create = async (
     request: FastifyRequest<{ Body: CreateClientRequestDto }>,
     reply: FastifyReply
-  ) {
+  ) => {
     const { t, apiAccess } = request;
-    console.log(this.clientUseCase);
+
     try {
       const response = await this.clientUseCase.execute(request.body);
 
@@ -69,7 +69,7 @@ class ClientController {
         httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
       });
     }
-  }
+  };
 }
 
 export default ClientController;

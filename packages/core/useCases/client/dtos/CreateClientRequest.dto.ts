@@ -1,7 +1,7 @@
-import { ClientGender } from "@core/common/enums/models/client";
+import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 
 export interface CreateClientRequestDto {
-  status: string;
+  status: ClientStatus;
   first_name: string;
   last_name: string;
   birthday: string;

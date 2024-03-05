@@ -10,17 +10,26 @@ export class CreateClientUseCase {
     this.clientService = clientService;
   }
 
-  async execute(input: CreateClientRequestDto) {
-    console.log("chegou aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-    return this.confirmIfUserExists({
+  async execute(input: CreateClientRequestDto): Promise<string | null> {
+    const response = await this.confirmIfRegisteredPreviously({
       cpf: input.cpf,
       email: input.email,
       phone: input.phone,
     });
+
+    if (response) {
+      return null;
+    }
+
+    return "id...";
   }
 
-  private async confirmIfUserExists(input: IUserExistsFunction) {
-    return await this.clientService.readClientByCpfEmailPhone(input);
+  private async confirmIfRegisteredPreviously(input: IUserExistsFunction) {
+    const response = await this.clientService.readClientByCpfEmailPhone(input);
+
+    if (response) return false;
+
+    return true;
   }
 }
 

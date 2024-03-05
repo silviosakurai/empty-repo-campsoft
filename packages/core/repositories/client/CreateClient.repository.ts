@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { eq, or, and, sql } from "drizzle-orm";
 import { client } from "@core/models";
+import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
 
 @injectable()
 export class ReadClientByCpfEmailPhoneRepository {
@@ -15,21 +15,20 @@ export class ReadClientByCpfEmailPhoneRepository {
   }
 
   async find(
-    input: FindClientByCpfEmailPhoneInput
+    input: CreateClientRequestDto
   ): Promise<{ id_cliente: string }[] | null> {
-    const result = await this.db
-      .select({
-        id_cliente: sql`BIN_TO_UUID(${client.id_cliente}) AS id_cliente`,
-      })
-      .from(client)
-      .where(
-        or(
-          eq(client.cpf, input.cpf),
-          eq(client.email, input.email),
-          eq(client.telefone, input.phone)
-        )
-      )
-      .execute();
+    const result = await this.db.insert(client).values({
+      telefone: input.phone,
+      cpf: input.cpf,
+      data_nascimento: input.birthday,
+      email: input.email,
+      nome: input.first_name,
+      sobrenome: input.last_name,
+      sexo: input.gender,
+      obs: input.obs,
+      status: input.status,
+      senha: input.password,
+    });
 
     if (!result.length) {
       return null;
@@ -37,10 +36,4 @@ export class ReadClientByCpfEmailPhoneRepository {
 
     return result as unknown as { id_cliente: string }[];
   }
-}
-
-export interface FindClientByCpfEmailPhoneInput {
-  cpf: string;
-  email: string;
-  phone: string;
 }

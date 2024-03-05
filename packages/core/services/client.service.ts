@@ -27,11 +27,18 @@ export class ClientService {
     }
   };
 
-  async readClientByCpfEmailPhone(input: FindClientByCpfEmailPhoneInput) {
+  readClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     try {
       return await this.clientByCpfEmailPhoneRepository.find(input);
     } catch (error) {
       throw error;
     }
-  }
+  };
+
+  create = async () => {
+    try {
+    } catch (error) {
+      throw error;
+    }
+  };
 }
