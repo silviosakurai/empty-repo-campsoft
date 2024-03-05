@@ -7,10 +7,7 @@ declare module "fastify" {
   export interface FastifyInstance {
     db: MySql2Database<typeof schema>;
     redis: FastifyRedis;
-    authenticate: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
+    authenticate: (request: FastifyRequest, reply: FastifyReply) => void;
   }
 
   export interface FastifyRequest {
