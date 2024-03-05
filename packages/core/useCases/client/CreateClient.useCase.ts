@@ -1,5 +1,6 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
+import { CreateClientRequestDto } from "./dtos/CreateClientRequest.dto";
 
 @injectable()
 export class CreateClientUseCase {
@@ -9,11 +10,22 @@ export class CreateClientUseCase {
     this.clientService = clientService;
   }
 
-  private confirmIfUserExists(input: IUserExistsFunction) {}
+  async execute(input: CreateClientRequestDto) {
+    console.log("chegou aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+    return this.confirmIfUserExists({
+      cpf: input.cpf,
+      email: input.email,
+      phone: input.phone,
+    });
+  }
+
+  private async confirmIfUserExists(input: IUserExistsFunction) {
+    return await this.clientService.readClientByCpfEmailPhone(input);
+  }
 }
 
 interface IUserExistsFunction {
   email: string;
   cpf: string;
-  phoneNumber: string;
+  phone: string;
 }

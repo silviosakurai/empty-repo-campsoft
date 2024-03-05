@@ -1,4 +1,4 @@
-import { UserGenderEnum } from "@core/common/enums/UserGender";
+import { ClientGender } from "@core/common/enums/models/client";
 
 export interface CreateClientRequestDto {
   status: string;
@@ -9,6 +9,6 @@ export interface CreateClientRequestDto {
   phone: string;
   cpf: string;
   password: string;
-  gender: UserGenderEnum;
+  gender: ClientGender;
   obs: string;
 }

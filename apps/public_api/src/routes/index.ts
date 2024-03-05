@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import authRoutes from '@/routes/auth.route';
-import { userRoutes } from './user.route';
+import userRoutes from './user.route';
 import clientRoutes from '@/routes/client.route';
 
 export default async function (server: FastifyInstance) {
