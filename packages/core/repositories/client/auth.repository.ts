@@ -9,7 +9,7 @@ import {
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq, or, and, sql } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
-import { Status } from "@core/common/enums/models/client";
+import { ClientStatus } from "@core/common/enums/models/client";
 import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 
 @injectable()
@@ -50,7 +50,7 @@ export class AuthRepository {
       .leftJoin(apiAccess, eq(apiAccess.id_empresa, clientCompany.id_empresa))
       .where(
         and(
-          eq(client.status, Status.ACTIVE),
+          eq(client.status, ClientStatus.ACTIVE),
           or(
             eq(client.email, login),
             eq(client.cpf, login),
