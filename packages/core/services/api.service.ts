@@ -9,9 +9,17 @@ export class ApiService {
     this.apiRepository = apiRepository;
   }
 
-  viewApi = async (keyApi: string) => {
+  findApiByKey = async (keyApi: string) => {
     try {
-      return await this.apiRepository.viewApi(keyApi);
+      return await this.apiRepository.findApiByKey(keyApi);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  findApiByJwt = async (clientId: string) => {
+    try {
+      return await this.apiRepository.findApiByJwt(clientId);
     } catch (error) {
       throw error;
     }

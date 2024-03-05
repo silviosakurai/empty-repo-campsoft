@@ -2,26 +2,26 @@ import {
   FindClientByCpfEmailPhoneInput,
   ReadClientByCpfEmailPhoneRepository,
 } from "@core/repositories/client/ReadClientByCPFEmailPhone.repository";
-import { ClientRepository } from "@core/repositories/client/client.repository";
-import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
+import { ViewClientRepository } from "@core/repositories/client/view.repository";
+import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class ClientService {
-  private clientRepository: ClientRepository;
   private clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository;
+  private viewClientRepository: ViewClientRepository;
 
   constructor(
-    clientRepository: ClientRepository,
-    clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository
+    clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository,
+    viewClientRepository: ViewClientRepository
   ) {
-    this.clientRepository = clientRepository;
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
+    this.viewClientRepository = viewClientRepository;
   }
 
-  viewClient = async (userId: string) => {
+  viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
     try {
-      return await this.clientRepository.viewClient(userId);
+      return await this.viewClientRepository.view(apiAccess, userId);
     } catch (error) {
       throw error;
     }

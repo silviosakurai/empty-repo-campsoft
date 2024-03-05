@@ -1,12 +1,13 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { client } from "@core/models";
-import { eq, sql } from "drizzle-orm";
+import { client, clientCompany } from "@core/models";
+import { eq, sql, and } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
+import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 
 @injectable()
-export class ClientRepository {
+export class ViewClientRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(
@@ -15,7 +16,10 @@ export class ClientRepository {
     this.db = mySql2Database;
   }
 
-  async viewClient(userId: string): Promise<ViewClientResponse | null> {
+  async view(
+    apiAccess: ViewApiResponse,
+    userId: string
+  ): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
         status: client.status,
@@ -29,7 +33,13 @@ export class ClientRepository {
         obs: client.obs,
       })
       .from(client)
-      .where(eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`))
+      .innerJoin(clientCompany, eq(clientCompany.id_cliente, client.id_cliente))
+      .where(
+        and(
+          eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`),
+          eq(clientCompany.id_empresa, apiAccess.company_id)
+        )
+      )
       .execute();
 
     if (!result.length) {

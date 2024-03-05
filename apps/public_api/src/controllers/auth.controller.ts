@@ -4,6 +4,7 @@ import { injectable } from 'tsyringe';
 import { LoginRequest } from '@core/useCases/auth/dtos/LoginRequest.dto';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
+import { ViewApiJwtRequest } from '@core/useCases/api/dtos/ViewApiJwtRequest.dto';
 
 @injectable()
 class AuthController {
@@ -29,7 +30,11 @@ class AuthController {
       });
 
       if (responseAuth) {
-        const token = await reply.jwtSign({ id: responseAuth.client_id });
+        const payload = {
+          clientId: responseAuth.client_id,
+        } as ViewApiJwtRequest;
+
+        const token = await reply.jwtSign(payload);
 
         return sendResponse(reply, {
           message: t('login_success'),
