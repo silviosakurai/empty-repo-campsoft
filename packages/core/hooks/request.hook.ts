@@ -10,6 +10,6 @@ export const requestHook = (request: FastifyRequest, reply: FastifyReply, done: 
     body: request.body
   };
 
-  logger.info({ type: 'REQUEST', request: allParams});
+  logger.info({ type: 'REQUEST', request: allParams}, request.id);
   done()
 };

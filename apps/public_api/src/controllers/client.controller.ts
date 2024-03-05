@@ -1,5 +1,5 @@
+import { ClientService, LoggerService } from '@core/services';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ClientService } from '@core/services/client.service';
 import { injectable } from 'tsyringe';
 
 interface IQuery {
@@ -9,6 +9,7 @@ interface IQuery {
 @injectable()
 class ClientController {
   private clientService: ClientService;
+  private logger: LoggerService = new LoggerService();
 
   constructor(clientService: ClientService) {
     this.clientService = clientService;
@@ -20,6 +21,8 @@ class ClientController {
   ): Promise<void> => {
     try {
       const cpf = (request.query as IQuery).cpf;
+
+      this.logger.info({ cpf }, request.id);
 
       const client = await this.clientService.findClientByCPF(cpf);
 

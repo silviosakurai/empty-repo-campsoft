@@ -8,6 +8,6 @@ export const responseHook = (request: FastifyRequest, reply: FastifyReply, paylo
     body: payload,
   };
 
-  logger.info({ type: 'RESPONSE', response: responseBody});
+  logger.info({ type: 'RESPONSE', response: responseBody}, request.id);
   done()
 };
