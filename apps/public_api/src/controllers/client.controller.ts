@@ -4,12 +4,19 @@ import { ViewClientUseCase } from '@core/useCases/client/ViewClient.useCase';
 import type { ViewClientRequest } from '@core/useCases/client/dtos/ViewClientRequest.dto';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
+import { CreateClientUseCase } from '@core/useCases/client/CreateClient.useCase';
+import { CreateClientRequestDto } from '@core/useCases/client/dtos/CreateClientRequest.dto';
 
 @injectable()
 class ClientController {
   private viewClientUseCase: ViewClientUseCase;
+  private clientUseCase: CreateClientUseCase;
 
-  constructor(viewClientUseCase: ViewClientUseCase) {
+  constructor(
+    viewClientUseCase: ViewClientUseCase,
+    clientUseCase: CreateClientUseCase
+  ) {
+    this.clientUseCase = clientUseCase;
     this.viewClientUseCase = viewClientUseCase;
   }
 
@@ -41,6 +48,28 @@ class ClientController {
       });
     }
   };
+
+  async create(
+    request: FastifyRequest<{ Body: CreateClientRequestDto }>,
+    reply: FastifyReply
+  ) {
+    const { t, apiAccess } = request;
+    console.log(this.clientUseCase);
+    try {
+      const response = await this.clientUseCase.execute(request.body);
+
+      return sendResponse(reply, {
+        data: response,
+        httpStatusCode: HTTPStatusCode.CREATED,
+      });
+    } catch (error) {
+      console.log(error);
+      return sendResponse(reply, {
+        message: t('internal_server_error'),
+        httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 }
 
 export default ClientController;

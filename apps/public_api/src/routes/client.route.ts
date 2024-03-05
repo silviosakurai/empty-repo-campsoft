@@ -1,7 +1,10 @@
 import ClientController from '@/controllers/client.controller';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
-import { userViewSchema } from '@core/validations/user/user.validation';
+import {
+  userCreatorSchema,
+  userViewSchema,
+} from '@core/validations/user/user.validation';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
@@ -10,5 +13,10 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: userViewSchema,
     preHandler: server.authenticate,
     handler: clientController.viewClient,
+  });
+
+  server.post('/user', {
+    schema: userCreatorSchema,
+    handler: clientController.create,
   });
 }
