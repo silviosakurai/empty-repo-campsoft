@@ -42,11 +42,12 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.525.0",
     "@fastify/auth": "^4.6.1",
-    "@types/uuid": "^9.0.8",
-    "@fastify/jwt": "^8.0.0",
     "@fastify/caching": "^8.3.0",
+    "@fastify/jwt": "^8.0.0",
     "@fastify/redis": "^6.1.1",
+    "@types/uuid": "^9.0.8",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.29.4",

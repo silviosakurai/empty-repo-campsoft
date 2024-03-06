@@ -5,7 +5,7 @@ import routes from '@/routes';
 import auth from '@fastify/auth';
 import authMiddleware from '@core/middlewares/auth/auth.middleware';
 import i18nextPlugin from '@core/plugins/i18next';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@core/services';
 import { requestHook, responseHook } from '@core/hooks';
 import jwtPlugin from '@core/plugins/jwt';
 import cacheRedisConnector from '@core/config/cache';
