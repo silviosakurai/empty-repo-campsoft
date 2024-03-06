@@ -8,14 +8,14 @@ dotenv.config({
 
 export class GeneralEnvironment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
-  private readonly API_CAMPSOFT: string | undefined;
-  private readonly API_KEY_CAMPSOFT: string | undefined;
+  private readonly JWT_SECRET: string | undefined;
+  private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
       .APP_ENVIRONMENT as unknown as AppEnvironment;
-    this.API_CAMPSOFT = process.env.API_CAMPSOFT;
-    this.API_KEY_CAMPSOFT = process.env.API_KEY_CAMPSOFT;
+    this.JWT_SECRET = process.env.JWT_SECRET;
+    this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -34,17 +34,21 @@ export class GeneralEnvironment {
     return this.APP_ENVIRONMENT;
   }
 
-  public get apiCampsoft() : string {
-    if( this.API_CAMPSOFT === undefined || this.API_CAMPSOFT === null){
-      throw new InvalidConfigurationError("API_CAMPSOFT is not valid.");
+  public get jwtSecret(): string {
+    if (!this.JWT_SECRET) {
+      throw new InvalidConfigurationError("JWT_SECRET is not defined.");
     }
-    return this.API_CAMPSOFT;
+
+    return this.JWT_SECRET;
   }
 
-  public get apiKeyCampsoft() : string {
-    if( this.API_KEY_CAMPSOFT === undefined || this.API_KEY_CAMPSOFT === null){
-      throw new InvalidConfigurationError("API_KEY_CAMPSOFT is not valid.");
+  public get jwtSecretExpiresIn(): string {
+    if (!this.JWT_SECRET_EXPIRES_IN) {
+      throw new InvalidConfigurationError(
+        "JWT_SECRET_EXPIRES_IN is not defined."
+      );
     }
-            return this.API_KEY_CAMPSOFT;
+
+    return this.JWT_SECRET_EXPIRES_IN;
   }
 }

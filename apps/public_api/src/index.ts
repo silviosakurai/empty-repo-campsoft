@@ -5,6 +5,8 @@ import routes from '@/routes';
 import auth from '@fastify/auth';
 import authMiddleware from '@core/middlewares/auth.middleware';
 import i18nextPlugin from '@core/plugins/i18next';
+import jwtPlugin from '@core/plugins/jwt';
+import cacheRedisConnector from '@core/config/cache';
 
 const server = fastify({
   logger: true,
@@ -13,8 +15,10 @@ const server = fastify({
 server.register(dbConnector);
 server.register(auth);
 server.register(authMiddleware);
-server.register(routes);
 server.register(i18nextPlugin);
+server.register(jwtPlugin);
+server.register(cacheRedisConnector);
+server.register(routes);
 
 const start = async () => {
   try {

@@ -1,9 +1,9 @@
 import * as schema from "@core/models";
-import { client } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { eq } from "drizzle-orm";
-import type { IClientByCPF } from "@core/interfaces/repositories/client/IClientByCPF.interface";
 import { inject, injectable } from "tsyringe";
+import { client } from "@core/models";
+import { eq, sql } from "drizzle-orm";
+import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 
 @injectable()
 export class ClientRepository {
@@ -15,18 +15,27 @@ export class ClientRepository {
     this.db = mySql2Database;
   }
 
-  findClientByCPF = async (cpf: string): Promise<IClientByCPF | null> => {
+  async viewClient(userId: string): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
-        nome: client.nome,
-        cpf: client.cpf,
+        status: client.status,
+        first_name: client.nome,
+        last_name: client.sobrenome,
+        birthday: client.data_nascimento,
         email: client.email,
-        telefone: client.telefone,
+        phone: client.telefone,
+        cpf: client.cpf,
+        gender: client.sexo,
+        obs: client.obs,
       })
       .from(client)
-      .where(eq(client.cpf, cpf))
+      .where(eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`))
       .execute();
 
-    return result.length > 0 ? result[0] : null;
-  };
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as ViewClientResponse;
+  }
 }
