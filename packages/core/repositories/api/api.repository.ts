@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { apiAccess, company, clientCompany } from "@core/models";
+import { apiAccess, company, access } from "@core/models";
 import { and, eq, or, sql } from "drizzle-orm";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ApiStatus } from "@core/common/enums/models/api";
@@ -58,15 +58,12 @@ export class ApiRepository {
       })
       .from(apiAccess)
       .innerJoin(company, eq(company.id_api_acesso, apiAccess.id_api_acesso))
-      .innerJoin(
-        clientCompany,
-        eq(clientCompany.id_empresa, company.id_empresa)
-      )
+      .innerJoin(access, eq(access.id_empresa, company.id_empresa))
       .where(
         and(
           eq(apiAccess.api_status, ApiStatus.ACTIVE),
           eq(company.status, CompanyStatus.ACTIVE),
-          eq(clientCompany.id_cliente, sql`UUID_TO_BIN(${clientId})`)
+          eq(access.id_cliente, sql`UUID_TO_BIN(${clientId})`)
         )
       )
       .execute();

@@ -1,4 +1,4 @@
-import AuthController from '@/controllers/auth.controller';
+import AuthController from '@/controllers/auth';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import { loginSchema } from '@core/validations/auth/auth.validation';
