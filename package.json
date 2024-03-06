@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@fastify/auth": "^4.6.1",
+    "@types/uuid": "^9.0.8",
     "@fastify/jwt": "^8.0.0",
     "@fastify/caching": "^8.3.0",
     "@fastify/redis": "^6.1.1",
@@ -59,6 +60,7 @@
     "mysql2": "^3.9.2",
     "reflect-metadata": "^0.2.1",
     "tsyringe": "^4.8.0",
-    "twilio": "^4.23.0"
+    "twilio": "^4.23.0",
+    "uuid": "^9.0.1"
   }
 }
