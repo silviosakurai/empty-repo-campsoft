@@ -41,9 +41,12 @@ export class CreateClientRepository {
       return null;
     }
 
-    const id = await this.findClientByCPF.find(input.cpf);
-    result[0].insertId;
+    const clientFounded = await this.findClientByCPF.find(input.cpf);
 
-    return { user_id: result[0].insertId.toString() } as { user_id: string };
+    if (!clientFounded) {
+      return null;
+    }
+
+    return { user_id: clientFounded.id_cliente } as { user_id: string };
   }
 }

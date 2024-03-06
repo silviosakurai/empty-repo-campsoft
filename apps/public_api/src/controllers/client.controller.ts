@@ -54,29 +54,29 @@ class ClientController {
     reply: FastifyReply
   ) => {
     const { t, apiAccess } = request;
-    console.log(apiAccess);
-    // try {
-    //   const response = await this.clientUseCase.execute(request.body);
 
-    //   if (!response) {
-    //     return sendResponse(reply, {
-    //       data: response,
-    //       message: t('previously_registered_user'),
-    //       httpStatusCode: HTTPStatusCode.CONFLICT,
-    //     });
-    //   }
+    try {
+      const response = await this.clientUseCase.execute(request.body);
 
-    //   return sendResponse(reply, {
-    //     data: response,
-    //     httpStatusCode: HTTPStatusCode.CREATED,
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    //   return sendResponse(reply, {
-    //     message: t('internal_server_error'),
-    //     httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
-    //   });
-    // }
+      if (!response) {
+        return sendResponse(reply, {
+          data: response,
+          message: t('previously_registered_user'),
+          httpStatusCode: HTTPStatusCode.CONFLICT,
+        });
+      }
+
+      return sendResponse(reply, {
+        data: response,
+        httpStatusCode: HTTPStatusCode.CREATED,
+      });
+    } catch (error) {
+      console.log(error);
+      return sendResponse(reply, {
+        message: t('internal_server_error'),
+        httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+      });
+    }
   };
 }
 
