@@ -3,7 +3,7 @@ export * from "./clientAccess.model";
 export * from "./clientAccessType.model";
 export * from "./clientAddress.model";
 export * from "./clientCards.model";
-export * from "./clientCompany.model";
+export * from "./clientCompanyData.model";
 export * from "./clientEmail.model";
 export * from "./clientEmailNewsletter.model";
 export * from "./clientEmailType.model";

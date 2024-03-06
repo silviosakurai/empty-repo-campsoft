@@ -8,10 +8,9 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const clientCompany = mysqlTable("cliente_empresa", {
+export const clientCompanyData = mysqlTable("cliente_empresa_dados", {
   id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
   id_empresa: int("id_empresa").notNull(),
-  id_cliente_tipo: int("id_cliente_tipo"),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
   cpf: varchar("cpf", { length: 11 }),
   telefone: varchar("telefone", { length: 11 }),

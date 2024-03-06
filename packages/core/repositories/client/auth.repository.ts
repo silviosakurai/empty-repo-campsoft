@@ -1,11 +1,5 @@
 import * as schema from "@core/models";
-import {
-  client,
-  clientType,
-  clientAddress,
-  clientCompany,
-  apiAccess,
-} from "@core/models";
+import { client, clientType } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq, or, and, sql } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
@@ -45,9 +39,6 @@ export class AuthRepository {
         clientType,
         eq(clientType.id_cliente_tipo, client.id_cliente_tipo)
       )
-      .leftJoin(clientAddress, eq(clientAddress.id_cliente, client.id_cliente))
-      .leftJoin(clientCompany, eq(clientCompany.id_cliente, client.id_cliente))
-      .leftJoin(apiAccess, eq(apiAccess.id_empresa, clientCompany.id_empresa))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
