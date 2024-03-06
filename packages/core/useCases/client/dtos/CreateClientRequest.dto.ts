@@ -4,7 +4,7 @@ export interface CreateClientRequestDto {
   status: ClientStatus;
   first_name: string;
   last_name: string;
-  birthday: string;
+  birthday: Date;
   email: string;
   phone: string;
   cpf: string;
