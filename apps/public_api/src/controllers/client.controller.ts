@@ -56,7 +56,10 @@ class ClientController {
     const { t, apiAccess } = request;
 
     try {
-      const response = await this.clientUseCase.execute(request.body);
+      const response = await this.clientUseCase.execute(
+        apiAccess.company_id,
+        request.body
+      );
 
       if (!response) {
         return sendResponse(reply, {

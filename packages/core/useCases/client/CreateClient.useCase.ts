@@ -11,6 +11,7 @@ export class CreateClientUseCase {
   }
 
   async execute(
+    companyId: number,
     input: CreateClientRequestDto
   ): Promise<{ user_id: string } | null> {
     const response = await this.confirmIfRegisteredPreviously({
@@ -24,6 +25,15 @@ export class CreateClientUseCase {
     }
 
     const userCreated = await this.clientService.create(input);
+
+    if (!userCreated) {
+      return null;
+    }
+
+    await this.clientService.connectClientAndCompany({
+      clientId: userCreated.user_id,
+      companyId,
+    });
 
     return userCreated;
   }

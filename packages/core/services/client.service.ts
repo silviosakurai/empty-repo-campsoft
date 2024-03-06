@@ -1,4 +1,6 @@
+import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
 import { CreateClientRepository } from "@core/repositories/client/CreateClient.repository";
+import { CreateClientAccessRepository } from "@core/repositories/client/CreateClientAccess.repository";
 import {
   FindClientByCpfEmailPhoneInput,
   ReadClientByCpfEmailPhoneRepository,
@@ -13,15 +15,18 @@ export class ClientService {
   private clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository;
   private viewClientRepository: ViewClientRepository;
   private createClientRepository: CreateClientRepository;
+  private createClientAccessRepository: CreateClientAccessRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository,
     viewClientRepository: ViewClientRepository,
-    createClientRepository: CreateClientRepository
+    createClientRepository: CreateClientRepository,
+    createClientAccessRepository: CreateClientAccessRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.viewClientRepository = viewClientRepository;
     this.createClientRepository = createClientRepository;
+    this.createClientAccessRepository = createClientAccessRepository;
   }
 
   viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
@@ -42,9 +47,17 @@ export class ClientService {
 
   create = async (input: CreateClientRequestDto) => {
     try {
-      return this.createClientRepository.create(input);
+      return await this.createClientRepository.create(input);
     } catch (error) {
       throw error;
     }
   };
+
+  connectClientAndCompany(input: IClientConnectClientAndCompany) {
+    try {
+      return this.createClientAccessRepository.create(input);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
