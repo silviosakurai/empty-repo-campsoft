@@ -3,7 +3,7 @@ import { generateRandomString } from "@core/common/functions/generateRandomStrin
 
 export const encodePassword = (
   password: string,
-  saltLength: number
+  saltLength: number = 15
 ): string | null => {
   let encodedPassword: string | null = null;
   if (password.length > 0) {
