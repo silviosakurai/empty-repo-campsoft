@@ -16,6 +16,4 @@ export const apiAccess = mysqlTable("api_acesso", {
   id_fi_zoop_split_regra: int("id_fi_zoop_split_regra"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
-  id_empresa: int("id_empresa"),
-  id_api_acesso_permissao: int("id_api_acesso_permissao"),
 });

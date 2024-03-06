@@ -1,4 +1,4 @@
-import AuthController from '@/controllers/auth.controller';
+import AuthController from '@/controllers/auth';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import { loginSchema } from '@core/validations/auth/auth.validation';
@@ -8,6 +8,7 @@ export default async function authRoutes(server: FastifyInstance) {
 
   server.post('/authentication/login', {
     schema: loginSchema,
+    preHandler: server.authenticate,
     handler: authController.login,
   });
 }

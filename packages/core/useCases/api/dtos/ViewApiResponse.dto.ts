@@ -1,8 +1,9 @@
 import { ApiStatus } from "@core/common/enums/models/api";
 
 export interface ViewApiResponse {
-  api_access: string;
+  api_key: string;
+  api_access_id: number;
   name: string;
   status: ApiStatus;
-  company: string;
+  company_id: number;
 }
