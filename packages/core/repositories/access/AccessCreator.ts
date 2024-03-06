@@ -5,7 +5,7 @@ import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClien
 import { sql } from "drizzle-orm";
 
 @injectable()
-export class CreateClientAccessRepository {
+export class AccessCreator {
   private db: MySql2Database<typeof schema>;
 
   constructor(
@@ -15,16 +15,7 @@ export class CreateClientAccessRepository {
   }
 
   async create(input: IClientConnectClientAndCompany): Promise<boolean> {
-    const result = await this.db
-      .insert(schema.clientCompanyData)
-      .values({
-        id_cliente: sql`UUID_TO_BIN(${input.clientId})`,
-        id_empresa: input.companyId,
-        cpf: input.cpf,
-        telefone: input.phoneNumber,
-        status: input.status,
-      })
-      .execute();
+    const result = await this.db.insert(schema.access).values({}).execute();
 
     if (!result.length) {
       return false;
