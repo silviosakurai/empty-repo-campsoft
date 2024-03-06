@@ -3,12 +3,13 @@ import { sendResponse } from "@core/common/functions/sendResponse";
 import { ViewApiKeyUseCase } from "@core/useCases/api/ViewApiKey.useCase";
 import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto";
 import { FastifyReply, FastifyRequest } from "fastify";
+import fp from "fastify-plugin";
 import { container } from "tsyringe";
 
-export const apiByKey = async (
+async function authenticateKeyApi(
   request: FastifyRequest,
   reply: FastifyReply
-) => {
+): Promise<void> {
   const { t } = request;
   const { redis } = request.server;
   const { keyapi } = request.headers;
@@ -54,4 +55,12 @@ export const apiByKey = async (
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
     });
   }
-};
+}
+
+export default fp(async (fastify) => {
+  fastify.decorate(
+    "authenticateKeyApi",
+    async (request: FastifyRequest, reply: FastifyReply) =>
+      authenticateKeyApi(request, reply)
+  );
+});

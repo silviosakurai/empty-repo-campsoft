@@ -25,6 +25,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20.11.20",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.1.0",
@@ -43,11 +44,12 @@
   },
   "dependencies": {
     "@fastify/auth": "^4.6.1",
-    "@types/uuid": "^9.0.8",
-    "@fastify/jwt": "^8.0.0",
     "@fastify/caching": "^8.3.0",
+    "@fastify/jwt": "^8.0.0",
     "@fastify/redis": "^6.1.1",
+    "@types/uuid": "^9.0.8",
     "axios": "^1.6.7",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.29.4",
     "fastify": "^4.26.1",
