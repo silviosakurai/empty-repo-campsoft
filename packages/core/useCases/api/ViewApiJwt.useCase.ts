@@ -13,7 +13,17 @@ export class ViewApiJwtUseCase {
 
   async execute({
     clientId,
-  }: ViewApiJwtRequest): Promise<ViewApiResponse | null> {
-    return this.apiService.findApiByJwt(clientId);
+    apiAccess,
+    routePath,
+    routeMethod,
+    routeModule,
+  }: ViewApiJwtRequest): Promise<boolean> {
+    return this.apiService.findApiByJwt(
+      clientId,
+      apiAccess,
+      routePath,
+      routeMethod,
+      routeModule
+    );
   }
 }

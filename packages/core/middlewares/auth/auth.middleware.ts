@@ -12,18 +12,25 @@ async function authenticate(
   const { authorization, keyapi } = request.headers;
   const { t } = request;
 
-  if (authorization) {
-    return await apiByJwt(request, reply);
+  if (!keyapi) {
+    return sendResponse(reply, {
+      message: t("not_authorized"),
+      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+    });
   }
 
-  if (keyapi) {
-    return await apiByKey(request, reply);
+  await apiByKey(request, reply);
+
+  if (!authorization) {
+    return sendResponse(reply, {
+      message: t("not_authorized"),
+      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+    });
   }
 
-  return sendResponse(reply, {
-    message: t("not_authorized"),
-    httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
-  });
+  await apiByJwt(request, reply);
+
+  return;
 }
 
 export default fp(async (fastify) => {

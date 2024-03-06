@@ -8,6 +8,7 @@ export default async function authRoutes(server: FastifyInstance) {
 
   server.post('/authentication/login', {
     schema: loginSchema,
+    preHandler: server.authenticate,
     handler: authController.login,
   });
 }

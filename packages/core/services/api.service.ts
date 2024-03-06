@@ -1,4 +1,6 @@
+import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 import { ApiRepository } from "@core/repositories/api/api.repository";
+import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 
 @injectable()
@@ -9,17 +11,39 @@ export class ApiService {
     this.apiRepository = apiRepository;
   }
 
-  findApiByKey = async (keyApi: string) => {
+  findApiByKey = async (
+    keyApi: string,
+    routePath: string,
+    routeMethod: RouteMethod,
+    routeModule: RouteModule
+  ) => {
     try {
-      return await this.apiRepository.findApiByKey(keyApi);
+      return await this.apiRepository.findApiByKey(
+        keyApi,
+        routePath,
+        routeMethod,
+        routeModule
+      );
     } catch (error) {
       throw error;
     }
   };
 
-  findApiByJwt = async (clientId: string) => {
+  findApiByJwt = async (
+    clientId: string,
+    apiAccess: ViewApiResponse,
+    routePath: string,
+    routeMethod: RouteMethod,
+    routeModule: RouteModule
+  ) => {
     try {
-      return await this.apiRepository.findApiByJwt(clientId);
+      return await this.apiRepository.findApiByJwt(
+        clientId,
+        apiAccess,
+        routePath,
+        routeMethod,
+        routeModule
+      );
     } catch (error) {
       throw error;
     }

@@ -14,10 +14,11 @@ export const loginAuth = async (
 ) => {
   const loginAuthUseCase = container.resolve(LoginAuthUseCase);
   const { login, password } = request.body;
-  const { t } = request;
+  const { t, apiAccess } = request;
 
   try {
     const responseAuth = await loginAuthUseCase.execute({
+      apiAccess,
       login,
       password,
     });
