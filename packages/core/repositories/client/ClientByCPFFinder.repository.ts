@@ -5,7 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { client } from "@core/models";
 
 @injectable()
-export class FindClientByCPFRepository {
+export class ClientByCPFFinderRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(

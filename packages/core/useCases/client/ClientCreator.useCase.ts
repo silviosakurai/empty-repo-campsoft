@@ -3,14 +3,14 @@ import { injectable } from "tsyringe";
 import { CreateClientRequestDto } from "./dtos/CreateClientRequest.dto";
 
 @injectable()
-export class CreateClientUseCase {
+export class ClientCreatorUseCase {
   private clientService: ClientService;
 
   constructor(clientService: ClientService) {
     this.clientService = clientService;
   }
 
-  async execute(
+  async create(
     companyId: number,
     input: CreateClientRequestDto
   ): Promise<{ user_id: string } | null> {

@@ -5,7 +5,7 @@ import { eq, or, and, sql } from "drizzle-orm";
 import { client } from "@core/models";
 
 @injectable()
-export class ReadClientByCpfEmailPhoneRepository {
+export class ClientByCpfEmailPhoneReaderRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(

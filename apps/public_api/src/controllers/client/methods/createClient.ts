@@ -1,6 +1,6 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { CreateClientUseCase } from '@core/useCases/client/CreateClient.useCase';
+import { ClientCreatorUseCase } from '@core/useCases/client/ClientCreator.useCase';
 import { CreateClientRequestDto } from '@core/useCases/client/dtos/CreateClientRequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
@@ -9,11 +9,11 @@ export const createClient = async (
   request: FastifyRequest<{ Body: CreateClientRequestDto }>,
   reply: FastifyReply
 ) => {
-  const clientUseCase = container.resolve(CreateClientUseCase);
+  const clientUseCase = container.resolve(ClientCreatorUseCase);
   const { t, apiAccess } = request;
 
   try {
-    const response = await clientUseCase.execute(
+    const response = await clientUseCase.create(
       apiAccess.company_id,
       request.body
     );

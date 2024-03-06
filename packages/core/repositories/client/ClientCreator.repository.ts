@@ -3,16 +3,16 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { client } from "@core/models";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
-import { FindClientByCPFRepository } from "./FindClientByCPF.repository";
+import { ClientByCPFFinderRepository } from "./ClientByCPFFinder.repository";
 
 @injectable()
-export class CreateClientRepository {
+export class ClientCreatorRepository {
   private db: MySql2Database<typeof schema>;
-  private findClientByCPF: FindClientByCPFRepository;
+  private findClientByCPF: ClientByCPFFinderRepository;
 
   constructor(
     @inject("Database") mySql2Database: MySql2Database<typeof schema>,
-    findClientByCPF: FindClientByCPFRepository
+    findClientByCPF: ClientByCPFFinderRepository
   ) {
     this.db = mySql2Database;
     this.findClientByCPF = findClientByCPF;

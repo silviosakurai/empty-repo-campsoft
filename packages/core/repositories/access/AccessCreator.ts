@@ -3,6 +3,7 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
 import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
 import { sql } from "drizzle-orm";
+import { IAccessCreate } from "@core/interfaces/repositories/IAccess.repository";
 
 @injectable()
 export class AccessCreator {
@@ -14,8 +15,14 @@ export class AccessCreator {
     this.db = mySql2Database;
   }
 
-  async create(input: IClientConnectClientAndCompany): Promise<boolean> {
-    const result = await this.db.insert(schema.access).values({}).execute();
+  async create(input: IAccessCreate): Promise<boolean> {
+    const result = await this.db
+      .insert(schema.access)
+      .values({
+        id_cliente: sql`UUID_TO_BIN(${input.clientId})`,
+        id_acesso_tipo: input.accessTypeId,
+      })
+      .execute();
 
     if (!result.length) {
       return false;

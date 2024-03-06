@@ -5,7 +5,7 @@ import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClien
 import { sql } from "drizzle-orm";
 
 @injectable()
-export class CreateClientAccessRepository {
+export class ClientAccessCreatorRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(
