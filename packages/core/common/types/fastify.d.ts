@@ -8,7 +8,8 @@ declare module "fastify" {
   export interface FastifyInstance {
     db: MySql2Database<typeof schema>;
     redis: FastifyRedis;
-    authenticate: (request: FastifyRequest, reply: FastifyReply) => void;
+    authenticateKeyApi: (request: FastifyRequest, reply: FastifyReply) => void;
+    authenticateJwt: (request: FastifyRequest, reply: FastifyReply) => void;
   }
 
   export interface FastifyRequest {
