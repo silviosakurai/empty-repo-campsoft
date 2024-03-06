@@ -1,14 +1,15 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { sendResponse } from "@core/common/functions/sendResponse";
-import { ViewApiJwtUseCase } from "@core/useCases/api/ViewApiJwt.useCase";
-import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto";
 import { FastifyReply, FastifyRequest } from "fastify";
+import fp from "fastify-plugin";
+import { ViewApiJwtUseCase } from "@core/useCases/api/ViewApiJwt.useCase";
 import { container } from "tsyringe";
+import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto";
 
-export const apiByJwt = async (
+async function authenticateJwt(
   request: FastifyRequest,
   reply: FastifyReply
-) => {
+): Promise<void> {
   const { t, apiAccess } = request;
   const { redis } = request.server;
 
@@ -58,4 +59,12 @@ export const apiByJwt = async (
       httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
     });
   }
-};
+}
+
+export default fp(async (fastify) => {
+  fastify.decorate(
+    "authenticateJwt",
+    async (request: FastifyRequest, reply: FastifyReply) =>
+      authenticateJwt(request, reply)
+  );
+});

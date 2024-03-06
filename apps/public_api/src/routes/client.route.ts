@@ -8,7 +8,7 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.get('/users/:userId', {
     schema: userViewSchema,
-    preHandler: server.authenticate,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
   });
 }
