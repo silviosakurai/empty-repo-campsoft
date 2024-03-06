@@ -13,7 +13,15 @@ export class ViewApiKeyUseCase {
 
   async execute({
     keyApi,
+    routePath,
+    routeMethod,
+    routeModule,
   }: ViewApiKeyRequest): Promise<ViewApiResponse | null> {
-    return this.apiService.findApiByKey(keyApi);
+    return this.apiService.findApiByKey(
+      keyApi,
+      routePath,
+      routeMethod,
+      routeModule
+    );
   }
 }

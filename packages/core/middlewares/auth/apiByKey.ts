@@ -13,6 +13,10 @@ export const apiByKey = async (
   const { redis } = request.server;
   const { keyapi } = request.headers;
 
+  const routePath = request.routeOptions.url || request.raw.url;
+  const routeMethod = request.routeOptions.method;
+  const routeModule = request.module;
+
   try {
     const viewApiKeyUseCase = container.resolve(ViewApiKeyUseCase);
 
@@ -27,6 +31,9 @@ export const apiByKey = async (
 
     const responseAuth = await viewApiKeyUseCase.execute({
       keyApi: keyapi,
+      routePath,
+      routeMethod,
+      routeModule,
     } as ViewApiKeyRequest);
 
     if (!responseAuth) {

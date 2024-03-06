@@ -9,12 +9,16 @@ export const apiByJwt = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, apiAccess } = request;
   const { redis } = request.server;
+
+  const routePath = request.routeOptions.url || request.raw.url;
+  const routeMethod = request.routeOptions.method;
+  const routeModule = request.module;
 
   try {
     const viewApiJwtUseCase = container.resolve(ViewApiJwtUseCase);
-    const decoded = (await request.jwtVerify()) as ViewApiJwtRequest;
+    const decoded = (await request.jwtVerify()) as { clientId: string };
 
     if (!decoded) {
       return sendResponse(reply, {
@@ -27,12 +31,16 @@ export const apiByJwt = async (
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
-      request.apiAccess = JSON.parse(cacheAuth);
-
       return;
     }
 
-    const responseAuth = await viewApiJwtUseCase.execute(decoded);
+    const responseAuth = await viewApiJwtUseCase.execute({
+      clientId: decoded.clientId,
+      apiAccess,
+      routePath,
+      routeMethod,
+      routeModule,
+    } as ViewApiJwtRequest);
 
     if (!responseAuth) {
       return sendResponse(reply, {
@@ -43,7 +51,6 @@ export const apiByJwt = async (
 
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
-    request.apiAccess = responseAuth;
     return;
   } catch (error) {
     return sendResponse(reply, {

@@ -1,4 +1,4 @@
-import ClientController from '@/controllers/client.controller';
+import ClientController from '@/controllers/client';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
@@ -12,7 +12,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   server.get('/users/:userId', {
     schema: userViewSchema,
     preHandler: server.authenticate,
-    handler: clientController.viewClient,
+    handler: clientController.view,
   });
 
   server.post('/user', {
