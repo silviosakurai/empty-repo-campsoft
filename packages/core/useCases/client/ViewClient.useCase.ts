@@ -12,8 +12,9 @@ export class ViewClientUseCase {
   }
 
   async execute({
+    apiAccess,
     userId,
   }: ViewClientRequest): Promise<ViewClientResponse | null> {
-    return this.clientService.viewClient(userId);
+    return this.clientService.viewClient(apiAccess, userId);
   }
 }

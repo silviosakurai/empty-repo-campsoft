@@ -1,17 +1,18 @@
-import { ClientRepository } from "@core/repositories/client/client.repository";
+import { ViewClientRepository } from "@core/repositories/client/view.repository";
+import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class ClientService {
-  private clientRepository: ClientRepository;
+  private viewClientRepository: ViewClientRepository;
 
-  constructor(clientRepository: ClientRepository) {
-    this.clientRepository = clientRepository;
+  constructor(viewClientRepository: ViewClientRepository) {
+    this.viewClientRepository = viewClientRepository;
   }
 
-  viewClient = async (userId: string) => {
+  viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
     try {
-      return await this.clientRepository.viewClient(userId);
+      return await this.viewClientRepository.view(apiAccess, userId);
     } catch (error) {
       throw error;
     }
