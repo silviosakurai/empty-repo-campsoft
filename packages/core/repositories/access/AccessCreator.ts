@@ -1,7 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
-import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
 import { sql } from "drizzle-orm";
 import { IAccessCreate } from "@core/interfaces/repositories/IAccess.repository";
 
@@ -21,6 +20,9 @@ export class AccessCreator {
       .values({
         id_cliente: sql`UUID_TO_BIN(${input.clientId})`,
         id_acesso_tipo: input.accessTypeId,
+        id_empresa: input.companyId,
+        status: input.status,
+        id_api_acesso: input.apiAccessId,
       })
       .execute();
 

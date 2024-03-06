@@ -17,7 +17,7 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.post('/user', {
     schema: userCreatorSchema,
-    preHandler: server.authenticate,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.create,
   });
 }

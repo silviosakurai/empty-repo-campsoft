@@ -1,10 +1,10 @@
 import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
-import { CreateClientRepository } from "@core/repositories/client/CreateClient.repository";
-import { CreateClientAccessRepository } from "@core/repositories/client/CreateClientAccess.repository";
+import { ClientCreatorRepository } from "@core/repositories/client/ClientCreator.repository";
+import { ClientAccessCreatorRepository } from "@core/repositories/client/ClientAccessCreator.repository";
 import {
   FindClientByCpfEmailPhoneInput,
-  ReadClientByCpfEmailPhoneRepository,
-} from "@core/repositories/client/ReadClientByCPFEmailPhone.repository";
+  ClientByCpfEmailPhoneReaderRepository,
+} from "@core/repositories/client/ClientByCPFEmailPhoneReader.repository";
 import { ViewClientRepository } from "@core/repositories/client/view.repository";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
@@ -12,21 +12,21 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ClientService {
-  private clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository;
+  private clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository;
   private viewClientRepository: ViewClientRepository;
-  private createClientRepository: CreateClientRepository;
-  private createClientAccessRepository: CreateClientAccessRepository;
+  private clientCreatorRepository: ClientCreatorRepository;
+  private clientAccessCreatorRepository: ClientAccessCreatorRepository;
 
   constructor(
-    clientByCpfEmailPhoneRepository: ReadClientByCpfEmailPhoneRepository,
+    clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     viewClientRepository: ViewClientRepository,
-    createClientRepository: CreateClientRepository,
-    createClientAccessRepository: CreateClientAccessRepository
+    clientCreatorRepository: ClientCreatorRepository,
+    clientAccessCreatorRepository: ClientAccessCreatorRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.viewClientRepository = viewClientRepository;
-    this.createClientRepository = createClientRepository;
-    this.createClientAccessRepository = createClientAccessRepository;
+    this.clientCreatorRepository = clientCreatorRepository;
+    this.clientAccessCreatorRepository = clientAccessCreatorRepository;
   }
 
   viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
@@ -47,7 +47,7 @@ export class ClientService {
 
   create = async (input: CreateClientRequestDto) => {
     try {
-      return await this.createClientRepository.create(input);
+      return await this.clientCreatorRepository.create(input);
     } catch (error) {
       throw error;
     }
@@ -55,7 +55,7 @@ export class ClientService {
 
   connectClientAndCompany(input: IClientConnectClientAndCompany) {
     try {
-      return this.createClientAccessRepository.create(input);
+      return this.clientAccessCreatorRepository.create(input);
     } catch (error) {
       throw error;
     }

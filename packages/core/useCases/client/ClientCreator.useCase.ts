@@ -1,13 +1,17 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
 import { CreateClientRequestDto } from "./dtos/CreateClientRequest.dto";
+import { AccessService } from "@core/services/access.service";
+import { AccessType } from "@core/common/enums/models/access";
 
 @injectable()
 export class ClientCreatorUseCase {
   private clientService: ClientService;
+  private accessService: AccessService;
 
-  constructor(clientService: ClientService) {
+  constructor(clientService: ClientService, accessService: AccessService) {
     this.clientService = clientService;
+    this.accessService = accessService;
   }
 
   async create(
@@ -33,6 +37,12 @@ export class ClientCreatorUseCase {
     await this.clientService.connectClientAndCompany({
       clientId: userCreated.user_id,
       companyId,
+    });
+
+    await this.accessService.create({
+      clientId: userCreated.user_id,
+      companyId,
+      accessTypeId: AccessType.GENERAL,
     });
 
     return userCreated;
