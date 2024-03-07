@@ -15,7 +15,10 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const client = mysqlTable("cliente", {
-  id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
+  id_cliente: binary("id_cliente", { length: 16 })
+    .default("uuid_to_bin(uuid())")
+    .notNull()
+    .primaryKey(),
   status: mysqlEnum("status", [ClientStatus.ACTIVE, ClientStatus.INACTIVE])
     .notNull()
     .default(ClientStatus.ACTIVE),
@@ -33,7 +36,8 @@ export const client = mysqlTable("cliente", {
   sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
   sms_validacao: varchar("sms_validacao", { length: 6 }),
   cliente_hash: varchar("cliente_hash", { length: 32 }),
-  cliente_zoop: varchar("cliente_zoop", { length: 32 }),
+  cliente_zoop_producao: varchar("cliente_zoop_producao", { length: 32 }),
+  cliente_zoop_sandbox: varchar("cliente_zoop_sandbox", { length: 32 }),
   sandbox: mysqlEnum("sandbox", [ClientSandbox.YES, ClientSandbox.NO]).default(
     ClientSandbox.NO
   ),
