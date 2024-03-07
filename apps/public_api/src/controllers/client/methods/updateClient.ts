@@ -9,7 +9,7 @@ export const updateClient = async (
   request: FastifyRequest<{
     Body: UpdateClientRequestDto;
     Params: {
-      id: string;
+      userId: string;
     };
   }>,
   reply: FastifyReply
@@ -19,7 +19,7 @@ export const updateClient = async (
 
   try {
     const response = await clientUseCase.update(
-      request.params.id,
+      request.params.userId,
       request.body,
       apiAccess
     );

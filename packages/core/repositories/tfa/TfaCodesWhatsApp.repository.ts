@@ -6,10 +6,10 @@ import { and, desc, eq, gte, or, sql } from "drizzle-orm";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
-import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa/ITemplateWhatsapp";
+import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
 
 @injectable()
-export class TfaCodesRepository {
+export class TfaCodesWhatsAppRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(

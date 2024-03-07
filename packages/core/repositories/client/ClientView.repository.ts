@@ -7,7 +7,7 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 
 @injectable()
-export class ViewClientRepository {
+export class ClientViewRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(
