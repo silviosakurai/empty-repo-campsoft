@@ -4,5 +4,7 @@
   "login_invalid": "Invalid login!",
   "login_success": "Login success!",
   "internal_server_error": "Internal server error!",
-  "client_not_found": "Client not found!"
+  "client_not_found": "Client not found!",
+  "previously_registered_user": "Previously registered user!",
+  "user_updated_successfully": "User updated successfully!"
 }
