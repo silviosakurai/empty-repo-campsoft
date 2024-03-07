@@ -29,4 +29,19 @@ const userViewSchema = {
   ),
 };
 
-export { userCreatorSchema, userReaderSchema, userViewSchema };
+const userUpdaterSchema = {
+  body: Schema.object()
+    .prop("status", Schema.enum(Object.values(ClientStatus)).required())
+    .prop("first_name", Schema.string().required())
+    .prop("last_name", Schema.string().required())
+    .prop("birthday", Schema.string().format("date").required())
+    .prop("gender", Schema.enum(Object.values(ClientGender)).required())
+    .prop("obs", Schema.string()),
+};
+
+export {
+  userCreatorSchema,
+  userReaderSchema,
+  userViewSchema,
+  userUpdaterSchema,
+};

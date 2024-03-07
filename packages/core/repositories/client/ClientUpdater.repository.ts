@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientRequest.dto";
 
 @injectable()
@@ -25,11 +25,13 @@ export class ClientUpdaterRepository {
         obs: input.obs,
         status: input.status,
       })
-      .where(eq(schema.client.id_cliente, clientId))
+      .where(eq(schema.client.id_cliente, sql`UUID_TO_BIN(${clientId})`))
       .execute();
 
-    if (!result.length) {
+    if (!result[0].affectedRows) {
       return null;
     }
+
+    return true;
   }
 }
