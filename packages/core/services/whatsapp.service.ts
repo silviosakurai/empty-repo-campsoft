@@ -1,5 +1,5 @@
 import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
-import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
+import { phoneNumberValidate } from "@core/common/functions/phoneNumberValidate";
 import { whatsappEnvironment } from "@core/config/environments";
 import {
   IWhatsappService,
@@ -8,8 +8,6 @@ import {
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
 export class WhatsappService implements IWhatsappService {
-  constructor(private readonly phoneNumberValidator: PhoneNumberValidator) {}
-
   async send(input: IWhatsappServiceInput) {
     const client = await this.connection();
 
@@ -34,14 +32,12 @@ export class WhatsappService implements IWhatsappService {
     sender_phone,
     target_phone,
   }: IWhatsappServiceInput): null | InvalidPhoneNumberError {
-    const targetPhoneValidated =
-      this.phoneNumberValidator.validate(target_phone);
+    const targetPhoneValidated = phoneNumberValidate(target_phone);
     if (targetPhoneValidated) {
       return new InvalidPhoneNumberError("Target Phone is not valid.");
     }
 
-    const senderPhoneValidated =
-      this.phoneNumberValidator.validate(sender_phone);
+    const senderPhoneValidated = phoneNumberValidate(sender_phone);
     if (senderPhoneValidated) {
       return new InvalidPhoneNumberError("Sender Phone is not valid.");
     }
