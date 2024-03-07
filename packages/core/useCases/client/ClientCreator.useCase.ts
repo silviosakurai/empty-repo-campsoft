@@ -3,7 +3,8 @@ import { injectable } from "tsyringe";
 import { CreateClientRequestDto } from "./dtos/CreateClientRequest.dto";
 import { AccessService } from "@core/services/access.service";
 import { AccessType } from "@core/common/enums/models/access";
-import { generateRandomString } from "@core/common/functions/generateRandomString";
+import { encodePassword } from "@core/common/functions/encodePassword";
+import { InternalServerError } from "@core/common/exceptions/InternalServerError";
 
 @injectable()
 export class ClientCreatorUseCase {
@@ -29,7 +30,11 @@ export class ClientCreatorUseCase {
       return null;
     }
 
-    const passwordHashed = generateRandomString(input.password.length);
+    const passwordHashed = encodePassword(input.password);
+
+    if (!passwordHashed) {
+      throw new InternalServerError("Internal Server Error.");
+    }
 
     const userCreated = await this.clientService.create({
       ...input,
