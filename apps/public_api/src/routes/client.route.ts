@@ -5,6 +5,7 @@ import {
   userCreatorSchema,
   userUpdaterSchema,
   userViewSchema,
+  userPhoneUpdaterSchema,
 } from '@core/validations/user/user.validation';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -25,6 +26,12 @@ export default async function clientRoutes(server: FastifyInstance) {
   server.put('/users/:id', {
     schema: userUpdaterSchema,
     handler: clientController.update,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+  });
+
+  server.patch('/users/:id/phone', {
+    schema: userPhoneUpdaterSchema,
+    handler: clientController.updatePhone,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
   });
 }

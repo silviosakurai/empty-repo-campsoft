@@ -39,9 +39,15 @@ const userUpdaterSchema = {
     .prop("obs", Schema.string()),
 };
 
+const userPhoneUpdaterSchema = {
+  body: Schema.object()
+    .prop("phone", Schema.string().required())
+};
+
 export {
   userCreatorSchema,
   userReaderSchema,
   userViewSchema,
   userUpdaterSchema,
+  userPhoneUpdaterSchema,
 };

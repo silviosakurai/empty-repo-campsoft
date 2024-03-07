@@ -11,6 +11,8 @@ import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientR
 import { injectable } from "tsyringe";
 import { ClientUpdaterRepository } from "@core/repositories/client/ClientUpdater.repository";
 import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientRequest.dto";
+import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
+import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 
 @injectable()
 export class ClientService {
@@ -19,19 +21,22 @@ export class ClientService {
   private clientCreatorRepository: ClientCreatorRepository;
   private clientAccessCreatorRepository: ClientAccessCreatorRepository;
   private clientUpdaterRepository: ClientUpdaterRepository;
+  private clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     viewClientRepository: ViewClientRepository,
     clientCreatorRepository: ClientCreatorRepository,
     clientAccessCreatorRepository: ClientAccessCreatorRepository,
-    clientUpdaterRepository: ClientUpdaterRepository
+    clientUpdaterRepository: ClientUpdaterRepository,
+    clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.viewClientRepository = viewClientRepository;
     this.clientCreatorRepository = clientCreatorRepository;
     this.clientAccessCreatorRepository = clientAccessCreatorRepository;
     this.clientUpdaterRepository = clientUpdaterRepository;
+    this.clientPhoneUpdaterRepository = clientPhoneUpdaterRepository;
   }
 
   viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
@@ -58,7 +63,7 @@ export class ClientService {
     }
   };
 
-  connectClientAndCompany(input: IClientConnectClientAndCompany) {
+  connectClientAndCompany = (input: IClientConnectClientAndCompany) => {
     try {
       return this.clientAccessCreatorRepository.create(input);
     } catch (error) {
@@ -69,6 +74,14 @@ export class ClientService {
   update = async (clientId: string, input: UpdateClientRequestDto) => {
     try {
       return await this.clientUpdaterRepository.update(clientId, input);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updatePhone = async (clientId: string, input: UpdatePhoneClientRequestDto) => {
+    try {
+      return await this.clientPhoneUpdaterRepository.update(clientId, input);
     } catch (error) {
       throw error;
     }
