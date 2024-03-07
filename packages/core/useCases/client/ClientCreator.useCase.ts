@@ -3,6 +3,7 @@ import { injectable } from "tsyringe";
 import { CreateClientRequestDto } from "./dtos/CreateClientRequest.dto";
 import { AccessService } from "@core/services/access.service";
 import { AccessType } from "@core/common/enums/models/access";
+import { generateRandomString } from "@core/common/functions/generateRandomString";
 
 @injectable()
 export class ClientCreatorUseCase {
@@ -28,7 +29,12 @@ export class ClientCreatorUseCase {
       return null;
     }
 
-    const userCreated = await this.clientService.create(input);
+    const passwordHashed = generateRandomString(input.password.length);
+
+    const userCreated = await this.clientService.create({
+      ...input,
+      password: passwordHashed,
+    });
 
     if (!userCreated) {
       return null;
