@@ -1,20 +1,21 @@
-import { TFAType } from "@core/common/enums/TFAType";
 import { IWhatsappServiceInput } from "@core/interfaces/services/IWhatsapp.service";
-import { SmsEmailCodesRepository } from "@core/repositories/tfa/smsEmailCodes.repository";
+import { TfaCodesRepository } from "@core/repositories/tfa/tfaCodes.repository";
 import { WhatsappService } from "@core/services/whatsapp.service";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
+import { generateTokenTfa } from "@core/common/functions/generateTokenTfa";
+import { TFAType } from "@core/common/enums/models/tfa";
 
 @injectable()
 export class TfaService {
-  private smsEmailCodesRepository: SmsEmailCodesRepository;
+  private tfaCodesRepository: TfaCodesRepository;
   private whatsappService: WhatsappService;
 
   constructor(
-    smsEmailCodesRepository: SmsEmailCodesRepository,
+    tfaCodesRepository: TfaCodesRepository,
     whatsappService: WhatsappService
   ) {
-    this.smsEmailCodesRepository = smsEmailCodesRepository;
+    this.tfaCodesRepository = tfaCodesRepository;
     this.whatsappService = whatsappService;
   }
 
@@ -24,26 +25,31 @@ export class TfaService {
     login: string
   ): Promise<boolean> => {
     try {
-      const code = await this.generateCode();
+      const code = await this.generateAndVerifyToken();
 
       const payload = {
         target_phone: login,
-        message: `Your code is ${code}`,
+        message: `Seu código de verificação é *${code}*. Para sua segurança, não o compartilhe.`,
       } as IWhatsappServiceInput;
 
       await this.whatsappService.send(payload);
 
-      return await this.smsEmailCodesRepository.insertCodeUser(
-        type,
-        login,
-        code
-      );
+      return await this.tfaCodesRepository.insertCodeUser(type, login, code);
     } catch (error) {
       throw error;
     }
   };
 
-  private generateCode = async (): Promise<string> => {
-    return await this.smsEmailCodesRepository.generateAndVerifyToken();
-  };
+  private async generateAndVerifyToken(): Promise<string> {
+    let token;
+    let isUnique = false;
+
+    do {
+      token = generateTokenTfa();
+
+      isUnique = await this.tfaCodesRepository.isTokenUniqueAndValid(token);
+    } while (!isUnique);
+
+    return token;
+  }
 }

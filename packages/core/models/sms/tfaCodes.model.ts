@@ -1,4 +1,3 @@
-import { TFAType } from "@core/common/enums/TFAType";
 import {
   mysqlTable,
   int,
@@ -7,8 +6,9 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
+import { TFAStatus, TFAType } from "@core/common/enums/models/tfa";
 
-export const smsEmailCodes = mysqlTable("sms_email_codes", {
+export const tfaCodes = mysqlTable("tfa_codes", {
   id_code_enviado: int("id_code_enviado")
     .notNull()
     .primaryKey()
@@ -17,6 +17,7 @@ export const smsEmailCodes = mysqlTable("sms_email_codes", {
   tipo: mysqlEnum("tipo", [TFAType.SMS, TFAType.EMAIL, TFAType.WHATSAPP]),
   destino: varchar("destino", { length: 100 }),
   codigo: varchar("codigo", { length: 10 }).notNull(),
+  status: mysqlEnum("status", [TFAStatus.ACTIVE, TFAStatus.INACTIVE]),
   created_at: datetime("created_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

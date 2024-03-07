@@ -1,0 +1,10 @@
+export enum TemplateModulo {
+  CADASTRO = 1,
+  VOUCHER = 2,
+  COMPRA_APROVADA = 3,
+  COMPRA_PENDENTE = 4,
+  CODIGO_TFA = 5,
+  RENOVACAO = 6,
+  ASSINATURA_CANCELADA = 7,
+  LINK_PAGAMENTO = 8,
+}

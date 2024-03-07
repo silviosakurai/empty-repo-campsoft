@@ -1,5 +1,5 @@
+import { TFAType } from "@core/common/enums/models/tfa";
 import Schema from "fluent-json-schema";
-import { TFAType } from "@core/common/enums/TFAType";
 
 const sendCode = {
   body: Schema.object()
