@@ -6,7 +6,7 @@ import { ViewApiJwtRequest } from '@core/useCases/api/dtos/ViewApiJwtRequest.dto
 import { LoginAuthUseCase } from '@core/useCases/auth/LoginAuth.useCase';
 import { container } from 'tsyringe';
 
-export const loginAuth = async (
+export const login = async (
   request: FastifyRequest<{
     Body: LoginRequest;
   }>,

@@ -1,9 +1,9 @@
 import { injectable } from 'tsyringe';
-import { sendWhatsApp } from '@/controllers/tfa/methods/sendWhatsApp';
+import { sendCode } from '@/controllers/tfa/methods/sendCode';
 
 @injectable()
 class TfaController {
-  public sendWhatsApp = sendWhatsApp;
+  public sendCode = sendCode;
 }
 
 export default TfaController;

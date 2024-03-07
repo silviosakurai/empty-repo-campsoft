@@ -1,9 +1,12 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { tfaCodes } from "@core/models";
-import { and, eq, gte } from "drizzle-orm";
+import { tfaCodes, templateWhatsApp, templateModule } from "@core/models";
+import { and, desc, eq, gte, or, sql } from "drizzle-orm";
 import { TFAType } from "@core/common/enums/models/tfa";
+import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { TemplateModulo } from "@core/common/enums/TemplateMessage";
+import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa/ITemplateWhatsapp";
 
 @injectable()
 export class TfaCodesRepository {
@@ -49,17 +52,44 @@ export class TfaCodesRepository {
     return existingTokens.length === 0;
   }
 
-  /* async getTemplateWhatsapp(): Promise<string> {
+  async getTemplateWhatsapp(
+    apiAccess: ViewApiResponse
+  ): Promise<ITemplateWhatsapp> {
     const result = await this.db
       .select({
-        templante: smsEmailCodes.templante,
+        template: templateWhatsApp.template,
       })
-      .from(smsTemplates)
-      .where(eq(smsEmailCodes.tipo, TFAType.WHATSAPP))
+      .from(templateWhatsApp)
+      .innerJoin(
+        templateModule,
+        eq(
+          templateModule.id_template_modulo,
+          templateWhatsApp.id_template_modulo
+        )
+      )
+      .where(
+        or(
+          and(
+            eq(templateWhatsApp.id_empresa, apiAccess.company_id),
+            eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
+          ),
+          and(
+            eq(
+              templateWhatsApp.id_empresa,
+              sql`${templateWhatsApp.id_empresa} IS NULL`
+            ),
+            eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
+          )
+        )
+      )
+      .orderBy(desc(templateWhatsApp.id_empresa))
+      .limit(1)
       .execute();
 
-    return result[0].template;
-  } */
-}
+    if (!result.length) {
+      throw new Error("Template not found");
+    }
 
-//
+    return result[0] as unknown as ITemplateWhatsapp;
+  }
+}

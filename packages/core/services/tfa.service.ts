@@ -26,10 +26,11 @@ export class TfaService {
   ): Promise<boolean> => {
     try {
       const code = await this.generateAndVerifyToken();
+      const message = await this.getTemplateWhatsapp(apiAccess, code);
 
       const payload = {
         target_phone: login,
-        message: `Seu código de verificação é *${code}*. Para sua segurança, não o compartilhe.`,
+        message: message,
       } as IWhatsappServiceInput;
 
       await this.whatsappService.send(payload);
@@ -51,5 +52,15 @@ export class TfaService {
     } while (!isUnique);
 
     return token;
+  }
+
+  private async getTemplateWhatsapp(
+    apiAccess: ViewApiResponse,
+    code: string
+  ): Promise<string> {
+    const template =
+      await this.tfaCodesRepository.getTemplateWhatsapp(apiAccess);
+
+    return template.template.replace("{{code}}", code);
   }
 }
