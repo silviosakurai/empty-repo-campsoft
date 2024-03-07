@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { tfaCodes, smsTemplates } from "@core/models";
+import { tfaCodes } from "@core/models";
 import { and, eq, gte } from "drizzle-orm";
 import { TFAType } from "@core/common/enums/models/tfa";
 
@@ -61,3 +61,5 @@ export class TfaCodesRepository {
     return result[0].template;
   } */
 }
+
+//

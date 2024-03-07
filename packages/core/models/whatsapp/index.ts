@@ -1,1 +1,1 @@
-export * from "./whatsappTemplantes.model";
+export * from "./whatsAppHistory.model";

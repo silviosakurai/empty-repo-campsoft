@@ -4,7 +4,7 @@ export enum TFAType {
   WHATSAPP = "whatsapp",
 }
 
-export enum TFAStatus {
-  ACTIVE = "ativo",
-  INACTIVE = "inativo",
+export enum TFAValidated {
+  YES = "Y",
+  NO = "N",
 }
