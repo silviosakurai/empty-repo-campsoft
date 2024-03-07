@@ -9,6 +9,8 @@ import { ViewClientRepository } from "@core/repositories/client/view.repository"
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
 import { injectable } from "tsyringe";
+import { ClientUpdaterRepository } from "@core/repositories/client/ClientUpdater.repository";
+import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientRequest.dto";
 
 @injectable()
 export class ClientService {
@@ -16,17 +18,20 @@ export class ClientService {
   private viewClientRepository: ViewClientRepository;
   private clientCreatorRepository: ClientCreatorRepository;
   private clientAccessCreatorRepository: ClientAccessCreatorRepository;
+  private clientUpdaterRepository: ClientUpdaterRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     viewClientRepository: ViewClientRepository,
     clientCreatorRepository: ClientCreatorRepository,
-    clientAccessCreatorRepository: ClientAccessCreatorRepository
+    clientAccessCreatorRepository: ClientAccessCreatorRepository,
+    clientUpdaterRepository: ClientUpdaterRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.viewClientRepository = viewClientRepository;
     this.clientCreatorRepository = clientCreatorRepository;
     this.clientAccessCreatorRepository = clientAccessCreatorRepository;
+    this.clientUpdaterRepository = clientUpdaterRepository;
   }
 
   viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
@@ -60,4 +65,12 @@ export class ClientService {
       throw error;
     }
   }
+
+  update = async (clientId: string, input: UpdateClientRequestDto) => {
+    try {
+      return await this.clientUpdaterRepository.update(clientId, input);
+    } catch (error) {
+      throw error;
+    }
+  };
 }
