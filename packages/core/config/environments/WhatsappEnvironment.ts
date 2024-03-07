@@ -8,10 +8,12 @@ dotenv.config({
 export class WhatsappEnvironment {
   private readonly WHATSAPP_API_SID: string | undefined;
   private readonly WHATSAPP_API_TOKEN: string | undefined;
+  private readonly WHATSAPP_API_NUMBER: string | undefined;
 
   constructor() {
     this.WHATSAPP_API_SID = process.env.WHATSAPP_API_SID;
     this.WHATSAPP_API_TOKEN = process.env.WHATSAPP_API_TOKEN;
+    this.WHATSAPP_API_NUMBER = process.env.WHATSAPP_API_NUMBER;
   }
 
   public get whatsappApiSid(): string {
@@ -28,5 +30,15 @@ export class WhatsappEnvironment {
     }
 
     return this.WHATSAPP_API_TOKEN;
+  }
+
+  public get whatsappApiNumber(): string {
+    if (!this.WHATSAPP_API_NUMBER) {
+      throw new InvalidConfigurationError(
+        "WHATSAPP_API_NUMBER is not defined."
+      );
+    }
+
+    return this.WHATSAPP_API_NUMBER;
   }
 }

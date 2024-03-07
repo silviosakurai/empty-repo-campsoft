@@ -4,5 +4,6 @@
   "login_invalid": "Invalid login!",
   "login_success": "Login success!",
   "internal_server_error": "Internal server error!",
-  "client_not_found": "Client not found!"
+  "client_not_found": "Client not found!",
+  "error_send_code_whatsapp": "Error send code whatsapp!"
 }
