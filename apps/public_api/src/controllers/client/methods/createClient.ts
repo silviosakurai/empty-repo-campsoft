@@ -10,9 +10,18 @@ export const createClient = async (
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientCreatorUseCase);
-  const { t, apiAccess } = request;
+  const { t, apiAccess, tfaInfo } = request;
 
   try {
+    const validateType = clientUseCase.validateTypeTfa(tfaInfo, request.body);
+
+    if (!validateType) {
+      return sendResponse(reply, {
+        message: t('phone_not_match_token'),
+        httpStatusCode: HTTPStatusCode.FORBIDDEN,
+      });
+    }
+
     const response = await clientUseCase.create(
       apiAccess.company_id,
       request.body

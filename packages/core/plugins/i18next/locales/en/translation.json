@@ -8,5 +8,6 @@
   "error_send_code_verification": "Error send code verification!",
   "previously_registered_user": "Previously registered user!",
   "user_updated_successfully": "User updated successfully!",
-  "error_validate_code_verification": "Error validate code verification!"
+  "error_validate_code_verification": "Error validate code verification!",
+  "phone_not_match_token": "Phone not match token!"
 }
