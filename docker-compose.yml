@@ -1,0 +1,42 @@
+version: "3"
+services:
+  sonarqube:
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    depends_on:
+      - db
+    networks:
+      - sonarnet
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonar
+    networks:
+      - sonarnet
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+  redis:
+    container_name: backend-cache-redis
+    image: redis:7.2.4
+    command: redis-server --requirepass dY5MRW2^!jxHX
+    ports:
+      - 6379:6379
+    networks:
+      - sonarnet
+
+networks:
+  sonarnet:
+
+volumes:
+  postgresql:
+  postgresql_data:
