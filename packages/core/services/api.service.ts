@@ -1,5 +1,5 @@
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
-import { ApiRepository } from "@core/repositories/api/api.repository";
+import { ApiRepository } from "@core/repositories/api/Api.repository";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 
