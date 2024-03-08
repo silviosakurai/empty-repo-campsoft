@@ -9,7 +9,7 @@ export const updatePhoneClient = async (
   request: FastifyRequest<{
     Body: UpdatePhoneClientRequestDto;
     Params: {
-      id: string;
+      userId: string;
     };
   }>,
   reply: FastifyReply
@@ -19,7 +19,7 @@ export const updatePhoneClient = async (
 
   try {
     const response = await clientUseCase.update(
-      request.params.id,
+      request.params.userId,
       request.body,
       apiAccess
     );
