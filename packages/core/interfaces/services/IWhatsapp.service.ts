@@ -7,5 +7,5 @@ export interface IWhatsappService {
 export interface IWhatsappServiceInput {
   message: string;
   target_phone: string;
-  sender_phone: string;
+  sender_phone?: string | null;
 }

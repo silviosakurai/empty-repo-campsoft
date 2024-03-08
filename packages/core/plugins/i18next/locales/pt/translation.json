@@ -5,6 +5,7 @@
   "login_success": "Login com sucesso",
   "internal_server_error": "Erro interno do servidor",
   "client_not_found": "Cliente não encontrado",
+  "error_send_code_verification": "Erro ao enviar o código de verificação",
   "previously_registered_user": "Usuário já cadastrado anteriormente.",
   "user_updated_successfully": "Usuário atualizado com sucesso."
 }

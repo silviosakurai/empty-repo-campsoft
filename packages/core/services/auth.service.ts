@@ -1,4 +1,4 @@
-import { AuthRepository } from "@core/repositories/client/auth.repository";
+import { AuthRepository } from "@core/repositories/client/Auth.repository";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 

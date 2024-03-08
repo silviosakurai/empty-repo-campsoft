@@ -1,8 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { eq, or, and, sql } from "drizzle-orm";
+import { eq, or, sql } from "drizzle-orm";
 import { client } from "@core/models";
+import { FindClientByCpfEmailPhoneInput } from "@core/interfaces/repositories/client";
 
 @injectable()
 export class ClientByCpfEmailPhoneReaderRepository {
@@ -37,10 +38,4 @@ export class ClientByCpfEmailPhoneReaderRepository {
 
     return result as unknown as { id_cliente: string }[];
   }
-}
-
-export interface FindClientByCpfEmailPhoneInput {
-  cpf: string;
-  email: string;
-  phone: string;
 }

@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
 import { sql } from "drizzle-orm";
-import { IAccessCreate } from "@core/interfaces/repositories/IAccess.repository";
+import { IAccessCreate } from "@core/interfaces/repositories/access";
 
 @injectable()
 export class AccessCreator {
