@@ -32,6 +32,10 @@ export default async function clientRoutes(server: FastifyInstance) {
   server.patch('/users/:userId/phone', {
     schema: userPhoneUpdaterSchema,
     handler: clientController.updatePhone,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    preHandler: [
+      server.authenticateKeyApi,
+      server.authenticateJwt,
+      server.authenticateTfa,
+    ],
   });
 }

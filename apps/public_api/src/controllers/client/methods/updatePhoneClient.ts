@@ -26,13 +26,13 @@ export const updatePhoneClient = async (
 
     if (!response) {
       return sendResponse(reply, {
-        message: 'client_not_found',
+        message: t('client_not_found'),
         httpStatusCode: HTTPStatusCode.BAD_REQUEST,
       });
     }
 
     return sendResponse(reply, {
-      message: 'user_phone_updated_successfully',
+      message: t('user_phone_updated_successfully'),
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {

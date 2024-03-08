@@ -9,5 +9,6 @@
   "previously_registered_user": "Usuário já cadastrado anteriormente.",
   "user_updated_successfully": "Usuário atualizado com sucesso.",
   "error_validate_code_verification": "Erro ao validar o código de verificação",
-  "phone_not_match_token": "Celular, SMS ou WhatsAPP não corresponde ao token"
+  "phone_not_match_token": "Celular, SMS ou WhatsAPP não corresponde ao token",
+  "user_phone_updated_successfully": "Telefone do usuário atualizado com sucesso"
 }
