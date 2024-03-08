@@ -18,7 +18,7 @@ export class ViewApiJwtUseCase {
     routeMethod,
     routeModule,
   }: ViewApiJwtRequest): Promise<boolean> {
-    return this.apiService.findApiByJwt(
+    return await this.apiService.findApiByJwt(
       clientId,
       apiAccess,
       routePath,

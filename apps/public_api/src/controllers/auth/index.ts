@@ -1,9 +1,9 @@
 import { injectable } from 'tsyringe';
-import { loginAuth } from '@/controllers/auth/methods/login';
+import { login } from '@/controllers/auth/methods/login';
 
 @injectable()
 class AuthController {
-  public login = loginAuth;
+  public login = login;
 }
 
 export default AuthController;

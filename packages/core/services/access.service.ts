@@ -1,4 +1,4 @@
-import { IAccessCreate } from "@core/interfaces/repositories/IAccess.repository";
+import { IAccessCreate } from "@core/interfaces/repositories/access";
 import { AccessCreator } from "@core/repositories/access/AccessCreator";
 import { injectable } from "tsyringe";
 

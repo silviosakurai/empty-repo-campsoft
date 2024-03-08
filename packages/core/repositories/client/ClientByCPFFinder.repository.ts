@@ -30,9 +30,3 @@ export class ClientByCPFFinderRepository {
     return result[0] as { id_cliente: string };
   }
 }
-
-export interface FindClientByCpfEmailPhoneInput {
-  cpf: string;
-  email: string;
-  phone: string;
-}

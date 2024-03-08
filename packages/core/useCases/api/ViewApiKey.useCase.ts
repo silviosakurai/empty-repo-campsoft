@@ -17,7 +17,7 @@ export class ViewApiKeyUseCase {
     routeMethod,
     routeModule,
   }: ViewApiKeyRequest): Promise<ViewApiResponse | null> {
-    return this.apiService.findApiByKey(
+    return await this.apiService.findApiByKey(
       keyApi,
       routePath,
       routeMethod,

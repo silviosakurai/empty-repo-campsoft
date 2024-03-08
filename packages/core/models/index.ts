@@ -21,6 +21,8 @@ export * from "./route";
 export * from "./signature";
 export * from "./sms";
 export * from "./supplier";
+export * from "./template";
+export * from "./tfa";
 export * from "./url";
 export * from "./vonex";
 export * from "./whatsapp";
