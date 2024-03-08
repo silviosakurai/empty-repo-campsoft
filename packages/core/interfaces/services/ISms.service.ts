@@ -4,7 +4,7 @@ export interface ISmsService {
 
 export interface ISmsServiceSendInput {
   phone: string;
-  name: string;
+  name?: string;
   message: string;
 }
 
