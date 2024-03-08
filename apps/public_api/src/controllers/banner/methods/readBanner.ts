@@ -7,28 +7,23 @@ import { BannerReaderRequestDto } from '@core/useCases/banner/dtos/BannerReaderR
 
 export const readBanner = async (
   request: FastifyRequest<{
-    Body: BannerReaderRequestDto;
+    Querystring: BannerReaderRequestDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t, apiAccess } = request;
+  const { t } = request;
   const bannerUseCase = container.resolve(BannerReaderUseCase);
 
   try {
-    const response = await bannerUseCase.read(request.body);
-
-    // if (!response) {
-    //   return sendResponse(reply, {
-    //     message: t('client_not_found'),
-    //     httpStatusCode: HTTPStatusCode.NOT_FOUND,
-    //   });
-    // }
+    const response = await bannerUseCase.read(request.query);
 
     return sendResponse(reply, {
-      // data: response,
+      data: response,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    console.log(error);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

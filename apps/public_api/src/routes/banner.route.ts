@@ -9,5 +9,6 @@ export default async function bannerRoutes(server: FastifyInstance) {
   server.get('/banners', {
     schema: bannerReaderSchema,
     handler: bannerController.read,
+    preHandler: [server.authenticateKeyApi],
   });
 }
