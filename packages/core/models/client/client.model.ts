@@ -42,6 +42,6 @@ export const client = mysqlTable("cliente", {
     ClientSandbox.NO
   ),
   obs: varchar("obs", { length: 50 }),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

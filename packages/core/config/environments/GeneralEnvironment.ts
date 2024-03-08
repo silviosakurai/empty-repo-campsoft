@@ -10,12 +10,16 @@ export class GeneralEnvironment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
   private readonly JWT_SECRET: string | undefined;
   private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
+  private readonly TFA_SECRET: string | undefined;
+  private readonly TFA_SECRET_EXPIRES_IN: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
       .APP_ENVIRONMENT as unknown as AppEnvironment;
     this.JWT_SECRET = process.env.JWT_SECRET;
     this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
+    this.TFA_SECRET = process.env.TFA_SECRET;
+    this.TFA_SECRET_EXPIRES_IN = process.env.TFA_SECRET_EXPIRES_IN;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -50,5 +54,23 @@ export class GeneralEnvironment {
     }
 
     return this.JWT_SECRET_EXPIRES_IN;
+  }
+
+  public get tfaSecret(): string {
+    if (!this.TFA_SECRET) {
+      throw new InvalidConfigurationError("TFA_SECRET is not defined.");
+    }
+
+    return this.TFA_SECRET;
+  }
+
+  public get tfaSecretExpiresIn(): string {
+    if (!this.TFA_SECRET_EXPIRES_IN) {
+      throw new InvalidConfigurationError(
+        "TFA_SECRET_EXPIRES_IN is not defined."
+      );
+    }
+
+    return this.TFA_SECRET_EXPIRES_IN;
   }
 }

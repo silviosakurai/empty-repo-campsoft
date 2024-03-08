@@ -27,6 +27,6 @@ export const clientView = mysqlTable("cliente_view", {
   cliente_zoop: varchar("cliente_zoop", { length: 32 }),
   sandbox: mysqlEnum("sandbox", ["Y", "N"]).default("N"),
   obs: varchar("obs", { length: 50 }),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

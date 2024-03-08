@@ -17,10 +17,10 @@ export const menuItem = mysqlTable("menu_item", {
   link: varchar("link", { length: 150 }),
   icon: varchar("icon", { length: 150 }),
   id_acesso_tipo: int("id_acesso_tipo"),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

@@ -10,6 +10,14 @@ async function jwtPlugin(fastify: FastifyInstance) {
       expiresIn: generalEnvironment.jwtSecretExpiresIn,
     },
   });
+
+  fastify.decorate("decodeToken", async (token: string) => {
+    if (!token) {
+      return null;
+    }
+
+    return fastify.jwt.decode(token);
+  });
 }
 
-export default fp(jwtPlugin);
+export default fp(jwtPlugin, { name: "jwt-plugin" });

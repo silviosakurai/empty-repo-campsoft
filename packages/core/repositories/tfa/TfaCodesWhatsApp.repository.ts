@@ -12,6 +12,7 @@ import { TFAType } from "@core/common/enums/models/tfa";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
+import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
 
 @injectable()
 export class TfaCodesWhatsAppRepository {
@@ -45,7 +46,7 @@ export class TfaCodesWhatsAppRepository {
   }
 
   async isTokenUniqueAndValid(token: string): Promise<boolean> {
-    const validUntil = new Date(new Date().getTime() + 15 * 60000);
+    const validUntil = adjustCurrentTimeByMinutes();
 
     const existingTokens = await this.db
       .select({
@@ -108,7 +109,7 @@ export class TfaCodesWhatsAppRepository {
     sender: string,
     recipient: string,
     whatsappToken: string,
-    sendDate: Date,
+    sendDate: string,
     clientId: string | null = null
   ): Promise<boolean> {
     const result = await this.db

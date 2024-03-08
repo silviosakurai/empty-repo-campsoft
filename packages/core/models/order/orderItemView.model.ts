@@ -21,6 +21,10 @@ export const orderItemView = mysqlTable("pedido_item_view", {
   valor_cupom: double("valor_cupom").default(0),
   percentual_cupom: double("percentual_cupom").default(0),
   valor_total: double("valor_total").notNull().default(0),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

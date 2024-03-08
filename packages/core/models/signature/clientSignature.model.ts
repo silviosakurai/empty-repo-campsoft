@@ -24,6 +24,10 @@ export const clientSignature = mysqlTable("assinatura_cliente", {
   data_proxima_cobranca: date("data_proxima_cobranca"),
   data_ultimo_pagamento: date("data_ultimo_pagamento"),
   data_cancelamento: date("data_cancelamento"),
-  created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updated_at: datetime("updated_at", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
 });

@@ -36,7 +36,6 @@ export const updateClient = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.log(error);
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

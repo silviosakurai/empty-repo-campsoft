@@ -16,7 +16,9 @@ export const fiEnter = mysqlTable("fi_entrada", {
   fi_entrada_atrelado: int("fi_entrada_atrelado"),
   id_fi_conta_bancaria: int("id_fi_conta_bancaria"),
   id_fi_centro_custo: int("id_fi_centro_custo").notNull(),
-  id_fi_conta_contabil_depara_tipo: int("id_fi_conta_contabil_depara_tipo").notNull(),
+  id_fi_conta_contabil_depara_tipo: int(
+    "id_fi_conta_contabil_depara_tipo"
+  ).notNull(),
   id_empresa: int("id_empresa"),
   id_fornecedor: int("id_fornecedor"),
   id_cliente: varchar("id_cliente", { length: 16 }),
@@ -25,9 +27,11 @@ export const fiEnter = mysqlTable("fi_entrada", {
   doc: varchar("doc", { length: 45 }),
   valor: double("valor").notNull(),
   valor_total: double("valor_total").notNull(),
-  data: datetime("data").notNull().default(sql`CURRENT_TIMESTAMP`),
-  data_de_competencia: datetime("data_de_competencia"),
-  data_vencimento: datetime("data_vencimento"),
+  data: datetime("data", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  data_de_competencia: datetime("data_de_competencia", { mode: "string" }),
+  data_vencimento: datetime("data_vencimento", { mode: "string" }),
   link_nf_pdf: varchar("link_nf_pdf", { length: 150 }),
   link_nf_xml: varchar("link_nf_xml", { length: 150 }),
   link_nf_comprovante: varchar("link_nf_comprovante", { length: 150 }),

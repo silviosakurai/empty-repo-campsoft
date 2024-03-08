@@ -20,6 +20,10 @@ export const access = mysqlTable("acesso", {
   status: mysqlEnum("status", [AccessStatus.ACTIVE, AccessStatus.INACTIVE])
     .notNull()
     .default(AccessStatus.ACTIVE),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

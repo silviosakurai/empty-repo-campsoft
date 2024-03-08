@@ -7,4 +7,10 @@ const sendCode = {
     .prop("login", Schema.string().required()),
 };
 
-export { sendCode };
+const validateCode = {
+  body: Schema.object()
+    .prop("login", Schema.string().required())
+    .prop("code", Schema.string().required()),
+};
+
+export { sendCode, validateCode };

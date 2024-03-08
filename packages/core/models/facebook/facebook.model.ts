@@ -7,7 +7,9 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const facebook = mysqlTable("facebook", {
-  id_facebook: bigint("id_facebook", { mode: "number", unsigned: true }).notNull().primaryKey(),
+  id_facebook: bigint("id_facebook", { mode: "number", unsigned: true })
+    .notNull()
+    .primaryKey(),
   name: varchar("name", { length: 150 }),
   first_name: varchar("first_name", { length: 50 }),
   last_name: varchar("last_name", { length: 50 }),
@@ -21,10 +23,17 @@ export const facebook = mysqlTable("facebook", {
   photourl: varchar("photourl", { length: 500 }),
   access_token_site: varchar("access_token_site", { length: 255 }),
   access_token_app: varchar("access_token_app", { length: 255 }),
-  access_token_site_expiracao: timestamp("access_token_site_expiracao"),
-  access_token_app_expiracao: timestamp("access_token_app_expiracao"),
-  facebook_login_site_valido: mysqlEnum("facebook_login_site_valido", ["Y", "N"]),
+  access_token_site_expiracao: timestamp("access_token_site_expiracao", {
+    mode: "string",
+  }),
+  access_token_app_expiracao: timestamp("access_token_app_expiracao", {
+    mode: "string",
+  }),
+  facebook_login_site_valido: mysqlEnum("facebook_login_site_valido", [
+    "Y",
+    "N",
+  ]),
   facebook_login_app_valido: mysqlEnum("facebook_login_app_valido", ["Y", "N"]),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

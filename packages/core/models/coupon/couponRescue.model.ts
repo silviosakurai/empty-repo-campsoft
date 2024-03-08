@@ -13,9 +13,15 @@ export const couponRescue = mysqlTable("cupom_resgatar", {
   status: mysqlEnum("status", ["ativo", "inativo"]).default("ativo"),
   cupom_resgatar: varchar("cupom_resgatar", { length: 30 }).notNull(),
   id_empresa: int("id_empresa"),
-  validade: datetime("validade").default(sql`CURRENT_TIMESTAMP`),
+  validade: datetime("validade", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
   obs: varchar("obs", { length: 200 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
   deleted: mysqlEnum("deleted", ["Y", "N"]).notNull().default("N"),
 });
