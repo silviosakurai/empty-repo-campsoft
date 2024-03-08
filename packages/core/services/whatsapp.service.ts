@@ -12,13 +12,12 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 export class WhatsappService implements IWhatsappService {
   constructor(private readonly phoneNumberValidator: PhoneNumberValidator) {}
 
-  async send(input: IWhatsappServiceInput) {
+  async send(input: IWhatsappServiceInput): Promise<MessageInstance> {
     const client = await this.connection();
-    const phonesValidated = this.phonesValidate(input);
-
-    if (phonesValidated) return phonesValidated;
 
     try {
+      this.phonesValidate(input);
+
       const sendPhone = this.sendPhone(input.sender_phone);
       const targetPhone = this.phoneNumberIncludesCountryCode(
         input.target_phone

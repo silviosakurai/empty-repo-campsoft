@@ -1,7 +1,12 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { tfaCodes, templateWhatsApp, templateModule } from "@core/models";
+import {
+  tfaCodes,
+  templateWhatsApp,
+  templateModule,
+  whatsAppHistory,
+} from "@core/models";
 import { and, desc, eq, gte, or, sql } from "drizzle-orm";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
@@ -32,7 +37,11 @@ export class TfaCodesWhatsAppRepository {
       })
       .execute();
 
-    return result.length > 0;
+    if (!result) {
+      throw new Error("Error inserting code");
+    }
+
+    return true;
   }
 
   async isTokenUniqueAndValid(token: string): Promise<boolean> {
@@ -58,6 +67,7 @@ export class TfaCodesWhatsAppRepository {
     const result = await this.db
       .select({
         template: templateWhatsApp.template,
+        templateId: templateWhatsApp.id_template_whatsapp,
       })
       .from(templateWhatsApp)
       .innerJoin(
@@ -91,5 +101,32 @@ export class TfaCodesWhatsAppRepository {
     }
 
     return result[0] as unknown as ITemplateWhatsapp;
+  }
+
+  async insertWhatsAppHistory(
+    templateId: number,
+    sender: string,
+    recipient: string,
+    whatsappToken: string,
+    sendDate: Date,
+    clientId: string | null = null
+  ): Promise<boolean> {
+    const result = await this.db
+      .insert(whatsAppHistory)
+      .values({
+        id_template: templateId,
+        id_cliente: clientId,
+        remetente: sender,
+        destinatario: recipient,
+        whatsapp_token_externo: whatsappToken,
+        data_envio: sendDate,
+      })
+      .execute();
+
+    if (!result) {
+      throw new Error("Error inserting whatsapp history");
+    }
+
+    return true;
   }
 }
