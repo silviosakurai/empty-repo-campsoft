@@ -8,7 +8,6 @@ import {
   whatsAppHistory,
 } from "@core/models";
 import { and, desc, eq, gte, or, sql } from "drizzle-orm";
-import { TFAType } from "@core/common/enums/models/tfa";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
@@ -22,27 +21,6 @@ export class TfaCodesWhatsAppRepository {
     @inject("Database") mySql2Database: MySql2Database<typeof schema>
   ) {
     this.db = mySql2Database;
-  }
-
-  async insertCodeUser(
-    type: TFAType,
-    login: string,
-    code: string
-  ): Promise<boolean> {
-    const result = await this.db
-      .insert(tfaCodes)
-      .values({
-        tipo: type,
-        destino: login,
-        codigo: code,
-      })
-      .execute();
-
-    if (!result) {
-      throw new Error("Error inserting code");
-    }
-
-    return true;
   }
 
   async isTokenUniqueAndValid(token: string): Promise<boolean> {

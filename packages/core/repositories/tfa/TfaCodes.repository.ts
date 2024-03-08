@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { tfaCodes } from "@core/models";
 import { and, eq, gte, sql } from "drizzle-orm";
 import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";
-import { TFAValidated } from "@core/common/enums/models/tfa";
+import { TFAType, TFAValidated } from "@core/common/enums/models/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
 
 @injectable()
@@ -59,5 +59,26 @@ export class TfaCodesRepository {
       .execute();
 
     return update ? true : false;
+  }
+
+  async insertCodeUser(
+    type: TFAType,
+    login: string,
+    code: string
+  ): Promise<boolean> {
+    const result = await this.db
+      .insert(tfaCodes)
+      .values({
+        tipo: type,
+        destino: login,
+        codigo: code,
+      })
+      .execute();
+
+    if (!result) {
+      throw new Error("Error inserting code");
+    }
+
+    return true;
   }
 }

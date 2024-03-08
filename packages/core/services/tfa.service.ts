@@ -63,11 +63,7 @@ export class TfaService {
     login: string,
     code: string
   ): Promise<boolean> {
-    return await this.tfaCodesWhatsAppRepository.insertCodeUser(
-      type,
-      login,
-      code
-    );
+    return await this.tfaCodesRepository.insertCodeUser(type, login, code);
   }
 
   async insertWhatsAppHistory(
