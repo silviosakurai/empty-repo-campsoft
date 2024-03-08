@@ -1,12 +1,19 @@
 import 'reflect-metadata';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import dbConnector from '@core/config/database';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@core/services';
 import cacheRedisConnector from '@core/config/cache';
+import { requestHook, responseHook } from '@core/hooks';
+import { v4 } from 'uuid';
 
 const logger = new LoggerService();
 
-const server = fastify();
+const server = fastify({
+  genReqId: () => v4(),
+});
+
+server.addHook('preValidation', requestHook);
+server.addHook('onSend', responseHook);
 
 server.register(dbConnector);
 server.register(cacheRedisConnector);

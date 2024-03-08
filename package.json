@@ -43,6 +43,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.525.0",
     "@fastify/auth": "^4.6.1",
     "@fastify/caching": "^8.3.0",
     "@fastify/jwt": "^8.0.0",

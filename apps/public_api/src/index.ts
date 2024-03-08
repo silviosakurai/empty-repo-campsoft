@@ -6,7 +6,7 @@ import auth from '@fastify/auth';
 import authenticateJwt from '@core/middlewares/auth/jwt.middleware';
 import authenticateKeyApi from '@core/middlewares/auth/keyapi.middleware';
 import i18nextPlugin from '@core/plugins/i18next';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@core/services';
 import { requestHook, responseHook } from '@core/hooks';
 import jwtPlugin from '@core/plugins/jwt';
 import cacheRedisConnector from '@core/config/cache';
