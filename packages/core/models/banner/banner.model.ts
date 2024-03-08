@@ -14,6 +14,10 @@ export const banner = mysqlTable("banner", {
   id_empresa: int("id_empresa"),
   id_banner_tipo: int("id_banner_tipo"),
   banner: varchar("banner", { length: 50 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

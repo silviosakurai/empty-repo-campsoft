@@ -24,6 +24,10 @@ export const plan = mysqlTable("plano", {
   meta_keyword: varchar("meta_keyword", { length: 100 }),
   meta_description: varchar("meta_description", { length: 100 }),
   obs: varchar("obs", { length: 100 }),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

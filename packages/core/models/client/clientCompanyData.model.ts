@@ -21,6 +21,10 @@ export const clientCompanyData = mysqlTable("cliente_empresa_dados", {
   cpf: varchar("cpf", { length: 11 }),
   telefone: varchar("telefone", { length: 11 }),
   email: varchar("email", { length: 100 }).notNull().default("ativo"),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

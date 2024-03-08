@@ -1,6 +1,6 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
-import { SendWhatsAppTFARequest } from "@core/useCases/tfa/dtos/SendWhatsAppTFARequest.dto";
+import { SendCodeTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 
 @injectable()
 export class SendWhatsAppTFA {
@@ -14,7 +14,7 @@ export class SendWhatsAppTFA {
     apiAccess,
     type,
     login,
-  }: SendWhatsAppTFARequest): Promise<boolean> {
+  }: SendCodeTFARequest): Promise<boolean> {
     return await this.tfaService.sendWhatsApp(apiAccess, type, login);
   }
 }

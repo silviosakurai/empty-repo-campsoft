@@ -41,6 +41,6 @@ export const supplier = mysqlTable("fornecedor", {
   cofins: double("cofins"),
   iss_retem: mysqlEnum("iss_retem", ["0", "1"]),
   area: mysqlEnum("area", ["M", "T", "P", "F", "RH", "RY", "J", "A"]),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

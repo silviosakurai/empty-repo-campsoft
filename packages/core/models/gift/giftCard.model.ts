@@ -15,6 +15,10 @@ export const giftCard = mysqlTable("presente_cartao", {
   colors: varchar("colors", { length: 50 }),
   positions_preview: varchar("positions_preview", { length: 255 }),
   positions_email: varchar("positions_email", { length: 255 }),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

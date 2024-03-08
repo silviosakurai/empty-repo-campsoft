@@ -13,6 +13,10 @@ export const marketplace = mysqlTable("marketplace", {
   valor: double("valor").notNull().default(0),
   id_parceiros: int("id_parceiros", { unsigned: true }),
   obs: varchar("obs", { length: 50 }),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

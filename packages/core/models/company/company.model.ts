@@ -21,6 +21,6 @@ export const company = mysqlTable("empresa", {
   telefone: bigint("telefone", { mode: "number", unsigned: true }),
   cnpj: int("cnpj", { unsigned: true }),
   obs: varchar("obs", { length: 150 }),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

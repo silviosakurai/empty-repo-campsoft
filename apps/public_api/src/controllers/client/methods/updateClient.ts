@@ -26,17 +26,16 @@ export const updateClient = async (
 
     if (!response) {
       return sendResponse(reply, {
-        message: 'client_not_found',
+        message: t('client_not_found'),
         httpStatusCode: HTTPStatusCode.BAD_REQUEST,
       });
     }
 
     return sendResponse(reply, {
-      message: 'user_updated_successfully',
+      message: t('user_updated_successfully'),
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.log(error);
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

@@ -18,10 +18,10 @@ export const smsHistory = mysqlTable("sms_historico", {
   destinatario: varchar("destinatario", { length: 100 }).notNull(),
   sms_token_externo: varchar("sms_token_externo", { length: 60 }),
   data_envio: datetime("data_envio"),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

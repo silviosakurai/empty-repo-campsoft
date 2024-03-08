@@ -1,33 +1,41 @@
 import { IWhatsappServiceInput } from "@core/interfaces/services/IWhatsapp.service";
 import { TfaCodesWhatsAppRepository } from "@core/repositories/tfa/TfaCodesWhatsApp.repository";
+import { TfaCodesRepository } from "@core/repositories/tfa/TfaCodes.repository";
 import { WhatsappService } from "@core/services/whatsapp.service";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 import { generateTokenTfa } from "@core/common/functions/generateTokenTfa";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { TemplateMessageParams } from "@core/common/enums/TemplateMessageParams";
-import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
+import {
+  ITemplateWhatsapp,
+  IValidateCodeTFA,
+} from "@core/interfaces/repositories/tfa";
 import { extractPhoneNumber } from "@core/common/functions/extractPhoneNumber";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
+import { formatDateToString } from "@core/common/functions/formatDateToString";
 
 @injectable()
 export class TfaService {
+  private tfaCodesRepository: TfaCodesRepository;
   private tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository;
   private whatsappService: WhatsappService;
 
   constructor(
+    tfaCodesRepository: TfaCodesRepository,
     tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
     whatsappService: WhatsappService
   ) {
+    this.tfaCodesRepository = tfaCodesRepository;
     this.tfaCodesWhatsAppRepository = tfaCodesWhatsAppRepository;
     this.whatsappService = whatsappService;
   }
 
-  sendWhatsApp = async (
+  async sendWhatsApp(
     apiAccess: ViewApiResponse,
     type: TFAType,
     login: string
-  ): Promise<boolean> => {
+  ): Promise<boolean> {
     try {
       const code = await this.generateAndVerifyToken();
       const { template, templateId } = await this.getTemplateWhatsapp(
@@ -51,7 +59,7 @@ export class TfaService {
     } catch (error) {
       throw error;
     }
-  };
+  }
 
   private async generateAndVerifyToken(): Promise<string> {
     let token;
@@ -89,7 +97,7 @@ export class TfaService {
     const sender = extractPhoneNumber(sendWA.from);
     const recipient = extractPhoneNumber(sendWA.to);
     const whatsappToken = sendWA.sid;
-    const sendDate = new Date(sendWA.dateCreated);
+    const sendDate = formatDateToString(sendWA.dateCreated);
 
     return await this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
       templateId,
@@ -98,5 +106,12 @@ export class TfaService {
       whatsappToken,
       sendDate
     );
+  }
+
+  async validateCode(
+    login: string,
+    code: string
+  ): Promise<IValidateCodeTFA | null> {
+    return await this.tfaCodesRepository.validateCode(login, code);
   }
 }

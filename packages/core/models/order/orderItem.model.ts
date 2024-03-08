@@ -9,7 +9,10 @@ import {
 import { sql } from "drizzle-orm";
 
 export const orderItem = mysqlTable("pedido_item", {
-  id_pedido_item: varbinary("id_pedido_item", { length: 16 }).notNull().primaryKey().default(sql`uuid_to_bin(uuid())`),
+  id_pedido_item: varbinary("id_pedido_item", { length: 16 })
+    .notNull()
+    .primaryKey()
+    .default(sql`uuid_to_bin(uuid())`),
   id_pedido: varbinary("id_pedido", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
   id_plano: int("id_plano"),
@@ -23,6 +26,10 @@ export const orderItem = mysqlTable("pedido_item", {
   valor_cupom: double("valor_cupom").notNull().default(0),
   percentual_cupom: double("percentual_cupom").notNull().default(0),
   valor_total: double("valor_total").notNull().default(0),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

@@ -8,6 +8,7 @@ import {
   accessRouteType,
   route,
   client,
+  tfaCodes,
 } from "@core/models";
 import { and, eq, or, sql } from "drizzle-orm";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
@@ -15,6 +16,7 @@ import { ApiStatus } from "@core/common/enums/models/api";
 import { CompanyStatus } from "@core/common/enums/models/company";
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 import { ClientStatus } from "@core/common/enums/models/client";
+import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 
 @injectable()
 export class ApiRepository {
@@ -104,5 +106,22 @@ export class ApiRepository {
       .execute();
 
     return result.length > 0;
+  }
+
+  async findApiByTfa(token: string): Promise<ViewApiTfaResponse | null> {
+    const result = await this.db
+      .select({
+        type: tfaCodes.tipo,
+        destiny: tfaCodes.destino,
+      })
+      .from(tfaCodes)
+      .where(eq(tfaCodes.token, sql`UUID_TO_BIN(${token})`))
+      .execute();
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as ViewApiTfaResponse;
   }
 }

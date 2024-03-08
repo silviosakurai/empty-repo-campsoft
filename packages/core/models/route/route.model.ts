@@ -20,6 +20,10 @@ export const route = mysqlTable("rota", {
   ]),
   module: mysqlEnum("module", [RouteModule.PARTNER, RouteModule.PUBLIC]),
   obs: varchar("obs", { length: 255 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

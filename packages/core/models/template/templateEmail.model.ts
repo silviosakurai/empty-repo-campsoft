@@ -22,10 +22,10 @@ export const templateEmail = mysqlTable("template_email", {
   assunto: varchar("assunto", { length: 255 }).notNull().default("Email Geral"),
   email_txt: varchar("email_txt", { length: 1000 }),
   email_html: varchar("email_html", { length: 1000 }),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

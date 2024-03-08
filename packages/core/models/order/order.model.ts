@@ -5,12 +5,15 @@ import {
   varchar,
   mysqlEnum,
   double,
-  varbinary
+  varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const order = mysqlTable("pedido", {
-  id_pedido: varbinary("id_pedido", { length: 16 }).notNull().primaryKey().default(sql`uuid_to_bin(uuid())`),
+  id_pedido: varbinary("id_pedido", { length: 16 })
+    .notNull()
+    .primaryKey()
+    .default(sql`uuid_to_bin(uuid())`),
   id_empresa: int("id_empresa").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
   id_fi_contas_split_regra: int("id_fi_contas_split_regra"),
@@ -21,9 +24,9 @@ export const order = mysqlTable("pedido", {
   id_pedido_presenteador: int("id_pedido_presenteador"),
   recorrencia: mysqlEnum("recorrencia", ["0", "1"]).default("0"),
   recorrencia_periodo: int("recorrencia_periodo").notNull().default(1),
-  valor_preco: double("valor_preco").notNull().default(0.00),
-  valor_desconto: double("valor_desconto").notNull().default(0.00),
-  valor_total: double("valor_total").notNull().default(0.00),
+  valor_preco: double("valor_preco").notNull().default(0.0),
+  valor_desconto: double("valor_desconto").notNull().default(0.0),
+  valor_total: double("valor_total").notNull().default(0.0),
   taxa_meio_pagamento: double("taxa_meio_pagamento").notNull(),
   pedido_parcelas_valor: double("pedido_parcelas_valor"),
   pedido_parcelas_vezes: int("pedido_parcelas_vezes"),
@@ -40,6 +43,10 @@ export const order = mysqlTable("pedido", {
   sandbox: mysqlEnum("sandbox", ["Y", "N"]).default("N"),
   remote_ip: varchar("remote_ip", { length: 16 }),
   obs: varchar("obs", { length: 50 }),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

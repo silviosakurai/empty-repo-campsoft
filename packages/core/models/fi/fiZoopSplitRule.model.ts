@@ -16,6 +16,6 @@ export const fiZoopSplitRule = mysqlTable("fi_zoop_split_regra", {
   teste_tipo: mysqlEnum("teste_tipo", ["day", "month", "week", "year"]),
   teste_periodo: int("teste_periodo"),
   obs: varchar("obs", { length: 200 }),
-  created_at: datetime("created_at").default(sql`now()`),
-  updated_at: datetime("updated_at").default(sql`now()`),
+  created_at: datetime("created_at", { mode: "string" }).default(sql`now()`),
+  updated_at: datetime("updated_at", { mode: "string" }).default(sql`now()`),
 });

@@ -8,9 +8,16 @@ import {
 import { sql } from "drizzle-orm";
 
 export const clientInstantbuykey = mysqlTable("cliente_instantbuykey", {
-  id_cliente_instantbuykey: varbinary("id_cliente_instantbuykey", { length: 16 }).notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
+  id_cliente_instantbuykey: varbinary("id_cliente_instantbuykey", {
+    length: 16,
+  })
+    .notNull()
+    .default(sql`uuid_to_bin(uuid())`)
+    .primaryKey(),
   id_cliente: int("id_cliente"),
-  pag_cc_instantbuykey: varchar("pag_cc_instantbuykey", { length: 32 }).notNull(),
+  pag_cc_instantbuykey: varchar("pag_cc_instantbuykey", {
+    length: 32,
+  }).notNull(),
   pag_cc_id: varchar("pag_cc_id", { length: 32 }).notNull(),
   cartao_nome: varchar("cartao_nome", { length: 64 }),
   cartao_documento: varchar("cartao_documento", { length: 20 }),
@@ -27,6 +34,10 @@ export const clientInstantbuykey = mysqlTable("cliente_instantbuykey", {
   cidade: varchar("cidade", { length: 64 }),
   estado: varchar("estado", { length: 2 }),
   pais: varchar("pais", { length: 2 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

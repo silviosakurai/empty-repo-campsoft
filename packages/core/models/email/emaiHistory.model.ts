@@ -21,7 +21,7 @@ export const emaiHistory = mysqlTable("email_historico", {
   remetente_email: varchar("remetente_email", { length: 100 }).notNull(),
   destinatario_email: varchar("destinatario_email", { length: 100 }).notNull(),
   email_token_externo: varchar("email_token_externo", { length: 60 }),
-  data_envio: datetime("data_envio"),
+  data_envio: datetime("data_envio", { mode: "string" }),
   bounced: mysqlEnum("bounced", [
     EmailBounced.NO_ERROR,
     EmailBounced.TEMPORARY_ERROR,
@@ -32,10 +32,10 @@ export const emaiHistory = mysqlTable("email_historico", {
     EmailComplaint.NO,
     EmailComplaint.YES,
   ]).default(EmailComplaint.NO),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

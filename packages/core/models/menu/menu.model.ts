@@ -1,9 +1,4 @@
-import {
-  mysqlTable,
-  int,
-  datetime,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, int, datetime, varchar } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const menu = mysqlTable("menu", {
@@ -12,6 +7,10 @@ export const menu = mysqlTable("menu", {
   id_menu_item: int("id_menu_item"),
   menu: varchar("menu", { length: 50 }),
   obs: varchar("obs", { length: 150 }),
-  created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updated_at: datetime("updated_at", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
 });
