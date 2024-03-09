@@ -3,7 +3,8 @@ import * as schema from "@core/models";
 import { banner, bannerItem } from "@core/models/banner";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { IBannerReaderInput } from "@core/interfaces/repositories/banner";
-import { and, count, eq, sql } from "drizzle-orm";
+import { and, between, count, eq, gte, like, lte, sql } from "drizzle-orm";
+import { BannerStatus } from "@core/common/enums/models/banner";
 
 @injectable()
 export class BannerReaderRepository {
@@ -39,13 +40,17 @@ export class BannerReaderRepository {
       .from(banner)
       .where(
         and(
-          eq(banner.local, input.location),
-          eq(banner.id_banner_tipo, input.type)
+          like(banner.local, `%${input.location}%`),
+          eq(banner.id_banner_tipo, input.type),
+          eq(banner.status, BannerStatus.ACTIVE),
+          lte(bannerItem.banner_data_in, new Date()),
+          gte(bannerItem.banner_data_fim, new Date())
         )
       )
       .innerJoin(bannerItem, eq(bannerItem.id_banner, banner.id_banner))
       .limit(input.per_page)
-      .offset(input.current_page * input.per_page);
+      .offset(input.current_page * input.per_page)
+      .execute();
 
     return result;
   }
