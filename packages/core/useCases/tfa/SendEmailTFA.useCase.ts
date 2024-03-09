@@ -9,7 +9,7 @@ import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 import { IEmailSendService } from "@core/interfaces/services/IEmail.service";
 
 @injectable()
-export class SendEmailTFA {
+export class SendEmailTFAUserCase {
   private tfaService: TfaService;
   private emailService: EmailService;
 

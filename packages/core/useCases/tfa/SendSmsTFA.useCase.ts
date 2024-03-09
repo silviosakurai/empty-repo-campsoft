@@ -9,7 +9,7 @@ import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 
 @injectable()
-export class SendSmsTFA {
+export class SendSmsTFAUserCase {
   private tfaService: TfaService;
   private smsService: SmsService;
 

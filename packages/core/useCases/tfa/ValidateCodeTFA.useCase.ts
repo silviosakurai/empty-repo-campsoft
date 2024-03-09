@@ -4,7 +4,7 @@ import { ValidateCodeTFARequest } from "@core/useCases/tfa/dtos/ValidateCodeTFAR
 import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";
 
 @injectable()
-export class ValidateCodeTFA {
+export class ValidateCodeTFAUserCase {
   private tfaService: TfaService;
 
   constructor(tfaService: TfaService) {

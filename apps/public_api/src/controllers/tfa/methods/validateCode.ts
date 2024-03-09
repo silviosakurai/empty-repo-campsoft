@@ -2,7 +2,7 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { ValidateCodeTFARequest } from '@core/useCases/tfa/dtos/ValidateCodeTFARequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ValidateCodeTFA } from '@core/useCases/tfa/ValidateCodeTFA.useCase';
+import { ValidateCodeTFAUserCase } from '@core/useCases/tfa/ValidateCodeTFA.useCase';
 import { container } from 'tsyringe';
 import { ValidateCodeTFAResponse } from '@core/useCases/tfa/dtos/ValidateCodeTFAResponse.dto';
 
@@ -10,7 +10,7 @@ export const validateCode = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const validateCodeTFA = container.resolve(ValidateCodeTFA);
+  const validateCodeTFA = container.resolve(ValidateCodeTFAUserCase);
   const { t } = request;
   const { login, code } = request.body as ValidateCodeTFARequest;
 
