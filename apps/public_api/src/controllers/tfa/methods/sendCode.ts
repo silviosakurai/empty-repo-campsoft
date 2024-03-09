@@ -16,18 +16,20 @@ const handleTfaType = async (
 ): Promise<boolean> => {
   let service;
 
-  switch (type) {
-    case TFAType.WHATSAPP:
-      service = container.resolve(SendWhatsAppTFA);
-      break;
-    case TFAType.SMS:
-      service = container.resolve(SendSmsTFA);
-      break;
-    case TFAType.EMAIL:
-      service = container.resolve(SendEmailTFA);
-      break;
-    default:
-      return false;
+  if (type === TFAType.WHATSAPP) {
+    service = container.resolve(SendWhatsAppTFA);
+  }
+
+  if (type === TFAType.SMS) {
+    service = container.resolve(SendSmsTFA);
+  }
+
+  if (type === TFAType.EMAIL) {
+    service = container.resolve(SendEmailTFA);
+  }
+
+  if (!service) {
+    return false;
   }
 
   return service.execute({ apiAccess, type, login } as SendCodeTFARequest);
