@@ -2,20 +2,20 @@ import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
-import { ITemplateSMS } from "@core/interfaces/repositories/tfa";
-import { SmsService } from "@core/services/sms.service";
-import { ISmsServiceSendInput } from "@core/interfaces/services/ISms.service";
+import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
+import { EmailService } from "@core/services/email.service";
 import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
+import { IEmailSendService } from "@core/interfaces/services/IEmail.service";
 
 @injectable()
-export class SendSmsTFA {
+export class SendEmailTFA {
   private tfaService: TfaService;
-  private smsService: SmsService;
+  private emailService: EmailService;
 
-  constructor(tfaService: TfaService, smsService: SmsService) {
+  constructor(tfaService: TfaService, emailService: EmailService) {
     this.tfaService = tfaService;
-    this.smsService = smsService;
+    this.emailService = emailService;
   }
 
   async execute({
@@ -25,20 +25,25 @@ export class SendSmsTFA {
   }: SendCodeTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
-      const { template, templateId } = await this.getTemplateSMS(
-        apiAccess,
-        code
-      );
+      const { template, templateId, subject, sender } =
+        await this.getTemplateEmail(apiAccess, code);
 
       const payload = {
-        phone: login,
-        message: template,
-      } as ISmsServiceSendInput;
+        html: template,
+        subject: subject,
+        to: login,
+        from: sender,
+      } as IEmailSendService;
 
-      const sendSms = await this.smsService.send(payload);
+      const sendEmail = await this.emailService.send(payload);
 
-      if (sendSms) {
-        await this.tfaService.insertSmsHistory(templateId, sendSms);
+      if (sendEmail) {
+        await this.tfaService.insertEmailHistory(
+          templateId,
+          login,
+          sender,
+          sendEmail
+        );
       }
 
       await this.tfaService.insertCodeUser(type, login, code);
@@ -49,11 +54,11 @@ export class SendSmsTFA {
     }
   }
 
-  async getTemplateSMS(
+  async getTemplateEmail(
     apiAccess: ViewApiResponse,
     code: string
-  ): Promise<ITemplateSMS> {
-    const template = await this.tfaService.getTemplateSms(apiAccess);
+  ): Promise<ITemplateEmail> {
+    const template = await this.tfaService.getTemplateEmail(apiAccess);
 
     template.template = replaceTemplate(template.template, {
       code,

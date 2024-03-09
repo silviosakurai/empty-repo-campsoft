@@ -4,8 +4,34 @@ import { SendCodeTFARequest } from '@core/useCases/tfa/dtos/SendCodeTFARequest.d
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { SendWhatsAppTFA } from '@core/useCases/tfa/SendWhatsAppTFA.useCase';
 import { SendSmsTFA } from '@core/useCases/tfa/SendSmsTFA.useCase';
+import { SendEmailTFA } from '@core/useCases/tfa/SendEmailTFA.useCase';
 import { container } from 'tsyringe';
 import { TFAType } from '@core/common/enums/models/tfa';
+import { ViewApiResponse } from '@core/useCases/api/dtos/ViewApiResponse.dto';
+
+const handleTfaType = async (
+  type: TFAType,
+  apiAccess: ViewApiResponse,
+  login: string
+): Promise<boolean> => {
+  let service;
+
+  switch (type) {
+    case TFAType.WHATSAPP:
+      service = container.resolve(SendWhatsAppTFA);
+      break;
+    case TFAType.SMS:
+      service = container.resolve(SendSmsTFA);
+      break;
+    case TFAType.EMAIL:
+      service = container.resolve(SendEmailTFA);
+      break;
+    default:
+      return false;
+  }
+
+  return service.execute({ apiAccess, type, login } as SendCodeTFARequest);
+};
 
 export const sendCode = async (
   request: FastifyRequest,
@@ -15,27 +41,7 @@ export const sendCode = async (
   const { type, login } = request.body as SendCodeTFARequest;
 
   try {
-    let response = false;
-
-    if (type === TFAType.WHATSAPP) {
-      const sendWhatsAppTFA = container.resolve(SendWhatsAppTFA);
-
-      response = await sendWhatsAppTFA.execute({
-        apiAccess,
-        type,
-        login,
-      } as SendCodeTFARequest);
-    }
-
-    if (type === TFAType.SMS) {
-      const sendSmsTFA = container.resolve(SendSmsTFA);
-
-      response = await sendSmsTFA.execute({
-        apiAccess,
-        type,
-        login,
-      } as SendCodeTFARequest);
-    }
+    const response = await handleTfaType(type, apiAccess, login);
 
     if (!response) {
       return sendResponse(reply, {

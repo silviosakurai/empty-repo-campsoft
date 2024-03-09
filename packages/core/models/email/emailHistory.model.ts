@@ -10,14 +10,13 @@ import {
 import { sql } from "drizzle-orm";
 import { EmailBounced, EmailComplaint } from "@core/common/enums/models/email";
 
-export const emaiHistory = mysqlTable("email_historico", {
+export const emailHistory = mysqlTable("email_historico", {
   id_email_historico: int("id_email_historico")
     .notNull()
     .primaryKey()
     .autoincrement(),
   id_template_email: int("id_template_email").notNull(),
   id_cliente: varbinary("id_cliente", { length: 16 }),
-  remetente_nome: varchar("remetente_nome", { length: 100 }).notNull(),
   remetente_email: varchar("remetente_email", { length: 100 }).notNull(),
   destinatario_email: varchar("destinatario_email", { length: 100 }).notNull(),
   email_token_externo: varchar("email_token_externo", { length: 60 }),

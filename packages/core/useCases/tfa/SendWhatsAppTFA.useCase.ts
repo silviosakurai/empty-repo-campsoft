@@ -3,9 +3,10 @@ import { injectable } from "tsyringe";
 import { SendCodeTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
-import { TemplateMessageParams } from "@core/common/enums/TemplateMessageParams";
 import { IWhatsappServiceInput } from "@core/interfaces/services/IWhatsapp.service";
 import { WhatsappService } from "@core/services/whatsapp.service";
+import { replaceTemplate } from "@core/common/functions/replaceTemplate";
+import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 
 @injectable()
 export class SendWhatsAppTFA {
@@ -54,10 +55,9 @@ export class SendWhatsAppTFA {
   ): Promise<ITemplateWhatsapp> {
     const template = await this.tfaService.getTemplateWhatsapp(apiAccess);
 
-    template.template = template.template.replace(
-      TemplateMessageParams.CODE,
-      code
-    );
+    template.template = replaceTemplate(template.template, {
+      code,
+    } as IReplaceTemplate);
 
     return template;
   }
