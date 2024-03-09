@@ -40,8 +40,11 @@ const userUpdaterSchema = {
 };
 
 const userPhoneUpdaterSchema = {
-  body: Schema.object()
-    .prop("phone", Schema.string().required())
+  body: Schema.object().prop("phone", Schema.string().required()),
+};
+
+const userPasswordRecoveryMethods = {
+  params: Schema.object().prop("login", Schema.string().required()),
 };
 
 export {
@@ -50,4 +53,5 @@ export {
   userViewSchema,
   userUpdaterSchema,
   userPhoneUpdaterSchema,
+  userPasswordRecoveryMethods,
 };

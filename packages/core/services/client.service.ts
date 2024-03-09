@@ -2,6 +2,7 @@ import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClien
 import { ClientCreatorRepository } from "@core/repositories/client/ClientCreator.repository";
 import { ClientAccessCreatorRepository } from "@core/repositories/client/ClientAccessCreator.repository";
 import { ClientByCpfEmailPhoneReaderRepository } from "@core/repositories/client/ClientByCPFEmailPhoneReader.repository";
+import { ClientPasswordRecoveryMethodsRepository } from "@core/repositories/client/ClientPasswordRecoveryMethods.repository";
 import { ClientViewRepository } from "@core/repositories/client/ClientView.repository";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
@@ -20,6 +21,7 @@ export class ClientService {
   private clientAccessCreatorRepository: ClientAccessCreatorRepository;
   private clientUpdaterRepository: ClientUpdaterRepository;
   private clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository;
+  private clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
@@ -28,6 +30,7 @@ export class ClientService {
     clientAccessCreatorRepository: ClientAccessCreatorRepository,
     clientUpdaterRepository: ClientUpdaterRepository,
     clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
+    clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.clientViewRepository = clientViewRepository;
@@ -35,6 +38,8 @@ export class ClientService {
     this.clientAccessCreatorRepository = clientAccessCreatorRepository;
     this.clientUpdaterRepository = clientUpdaterRepository;
     this.clientPhoneUpdaterRepository = clientPhoneUpdaterRepository;
+    this.clientPasswordRecoveryMethodsRepository =
+      clientPasswordRecoveryMethodsRepository;
   }
 
   viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
@@ -61,13 +66,13 @@ export class ClientService {
     }
   };
 
-  connectClientAndCompany= async (input: IClientConnectClientAndCompany) => {
+  connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
     try {
       return await this.clientAccessCreatorRepository.create(input);
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
     try {
@@ -77,9 +82,26 @@ export class ClientService {
     }
   };
 
-  updatePhone = async (clientId: string, input: UpdatePhoneClientRequestDto) => {
+  updatePhone = async (
+    clientId: string,
+    input: UpdatePhoneClientRequestDto
+  ) => {
     try {
       return await this.clientPhoneUpdaterRepository.update(clientId, input);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  passwordRecoveryMethods = async (
+    apiAccess: ViewApiResponse,
+    login: string
+  ) => {
+    try {
+      return await this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
+        apiAccess,
+        login
+      );
     } catch (error) {
       throw error;
     }

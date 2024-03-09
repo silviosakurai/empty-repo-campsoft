@@ -52,15 +52,19 @@ export class ApiRepository {
       .innerJoin(route, eq(route.id_rota, accessRouteType.id_rota))
       .where(
         and(
-          or(
-            eq(apiAccess.api_chave, keyApi),
-            eq(apiAccess.api_chave_sandbox, keyApi)
+          and(
+            or(
+              eq(apiAccess.api_chave, keyApi),
+              eq(apiAccess.api_chave_sandbox, keyApi)
+            )
           ),
-          eq(apiAccess.api_status, ApiStatus.ACTIVE),
-          eq(company.status, CompanyStatus.ACTIVE),
-          eq(route.rota, routePath),
-          eq(route.metodo, routeMethod),
-          eq(route.module, routeModule)
+          and(
+            eq(apiAccess.api_status, ApiStatus.ACTIVE),
+            eq(company.status, CompanyStatus.ACTIVE),
+            eq(route.rota, routePath),
+            eq(route.metodo, routeMethod),
+            eq(route.module, routeModule)
+          )
         )
       )
       .execute();
