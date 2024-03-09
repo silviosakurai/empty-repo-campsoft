@@ -1,6 +1,5 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { ViewClientRequest } from '@core/useCases/client/dtos/ViewClientRequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ClientPasswordRecoveryMethodsUseCase } from '@core/useCases/client/ClientPasswordRecoveryMethods.useCase';
 import { container } from 'tsyringe';
