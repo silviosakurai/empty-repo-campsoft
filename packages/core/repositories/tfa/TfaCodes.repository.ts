@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { tfaCodes } from "@core/models";
-import { and, eq, gte, or, sql } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";
 import { TFAType, TFAValidated } from "@core/common/enums/models/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
@@ -20,33 +20,12 @@ export class TfaCodesRepository {
 
   async validateCode(
     login: string,
-    code: string
+    code: string,
+    isUuidValid: boolean
   ): Promise<IValidateCodeTFA | null> {
-    const validUntil = adjustCurrentTimeByMinutes();
-
-    const codeValid = await this.db
-      .select({
-        id: tfaCodes.id_code_enviado,
-        token: sql`BIN_TO_UUID(${tfaCodes.token})`,
-        created_at: tfaCodes.created_at,
-      })
-      .from(tfaCodes)
-      .where(
-        and(
-          and(
-            or(
-              eq(tfaCodes.destino, login),
-              eq(tfaCodes.id_cliente, sql`UUID_TO_BIN(${login})`)
-            )
-          ),
-          and(
-            eq(tfaCodes.codigo, code),
-            eq(tfaCodes.validado, TFAValidated.NO),
-            gte(tfaCodes.created_at, validUntil)
-          )
-        )
-      )
-      .execute();
+    const codeValid = isUuidValid
+      ? await this.validateCodeByClientId(login, code)
+      : await this.validateCodeByCode(login, code);
 
     if (codeValid.length === 0) {
       return null;
@@ -57,6 +36,48 @@ export class TfaCodesRepository {
     await this.updateCodeAsUsed(result.id);
 
     return result;
+  }
+
+  async validateCodeByCode(login: string, code: string) {
+    const validUntil = adjustCurrentTimeByMinutes();
+
+    return await this.db
+      .select({
+        id: tfaCodes.id_code_enviado,
+        token: sql`BIN_TO_UUID(${tfaCodes.token})`,
+        created_at: tfaCodes.created_at,
+      })
+      .from(tfaCodes)
+      .where(
+        and(
+          eq(tfaCodes.codigo, code),
+          eq(tfaCodes.destino, login),
+          eq(tfaCodes.validado, TFAValidated.NO),
+          gte(tfaCodes.created_at, validUntil)
+        )
+      )
+      .execute();
+  }
+
+  async validateCodeByClientId(clientId: string, code: string) {
+    const validUntil = adjustCurrentTimeByMinutes();
+
+    return await this.db
+      .select({
+        id: tfaCodes.id_code_enviado,
+        token: sql`BIN_TO_UUID(${tfaCodes.token})`,
+        created_at: tfaCodes.created_at,
+      })
+      .from(tfaCodes)
+      .where(
+        and(
+          eq(tfaCodes.codigo, code),
+          eq(tfaCodes.id_cliente, sql`UUID_TO_BIN(${clientId})`),
+          eq(tfaCodes.validado, TFAValidated.NO),
+          gte(tfaCodes.created_at, validUntil)
+        )
+      )
+      .execute();
   }
 
   async updateCodeAsUsed(id: number): Promise<boolean> {

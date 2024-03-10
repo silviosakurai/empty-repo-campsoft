@@ -137,8 +137,9 @@ export class TfaService {
 
   async validateCode(
     login: string,
-    code: string
+    code: string,
+    isUuidValid: boolean
   ): Promise<IValidateCodeTFA | null> {
-    return await this.tfaCodesRepository.validateCode(login, code);
+    return await this.tfaCodesRepository.validateCode(login, code, isUuidValid);
   }
 }

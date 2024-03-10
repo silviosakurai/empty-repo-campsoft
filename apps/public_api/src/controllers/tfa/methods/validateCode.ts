@@ -14,12 +14,12 @@ export const validateCode = async (
   const { t } = request;
   const { login, code } = request.body as ValidateCodeTFARequest;
 
-  try {
-    const response = await validateCodeTFA.execute({
-      login,
-      code,
-    } as ValidateCodeTFARequest);
+  const response = await validateCodeTFA.execute({
+    login,
+    code,
+  } as ValidateCodeTFARequest);
 
+  try {
     if (!response) {
       return sendResponse(reply, {
         message: t('error_validate_code_verification'),
