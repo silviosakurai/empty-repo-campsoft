@@ -7,7 +7,6 @@ import { container } from "tsyringe";
 import { ViewApiTfaRequest } from "@core/useCases/api/dtos/ViewApiTfaRequest.dto";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { TFunction } from "i18next";
 
 async function authenticateTfa(
   request: FastifyRequest,
