@@ -1,6 +1,7 @@
 import { ApiService } from "@core/services/api.service";
 import { injectable } from "tsyringe";
 import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class ViewApiJwtUseCase {
@@ -16,7 +17,7 @@ export class ViewApiJwtUseCase {
     routePath,
     routeMethod,
     routeModule,
-  }: ViewApiJwtRequest): Promise<boolean> {
+  }: ViewApiJwtRequest): Promise<ITokenJwtData | null> {
     return await this.apiService.findApiByJwt(
       clientId,
       tokenKeyData,

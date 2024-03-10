@@ -1,9 +1,9 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
-import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 import { UpdatePasswordClientRequestDto } from "@core/useCases/client/dtos/UpdatePasswordClientRequest.dto";
 import { encodePassword } from "@core/common/functions/encodePassword";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 
 @injectable()
 export class ClientPasswordUpdaterUseCase {
@@ -14,13 +14,13 @@ export class ClientPasswordUpdaterUseCase {
   }
 
   async update(
-    tfaInfo: ViewApiTfaResponse,
+    tokenTfaData: ITokenTfaData,
     tokenKeyData: ITokenKeyData,
     input: UpdatePasswordClientRequestDto
   ): Promise<boolean | null> {
     const userFounded = await this.clientService.viewClient(
       tokenKeyData,
-      tfaInfo.clientId
+      tokenTfaData.clientId
     );
 
     if (!userFounded) {
@@ -34,7 +34,7 @@ export class ClientPasswordUpdaterUseCase {
     }
 
     const userUpdated = await this.clientService.updatePassword(
-      tfaInfo,
+      tokenTfaData,
       passwordHashed
     );
 

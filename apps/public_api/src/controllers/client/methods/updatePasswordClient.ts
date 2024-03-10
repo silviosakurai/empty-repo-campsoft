@@ -17,11 +17,11 @@ export const updatePasswordClient = async (
   const clientPasswordUpdaterUseCase = container.resolve(
     ClientPasswordUpdaterUseCase
   );
-  const { t, tokenKeyData, tfaInfo } = request;
+  const { t, tokenKeyData, tokenTfaData } = request;
 
   try {
     const response = await clientPasswordUpdaterUseCase.update(
-      tfaInfo,
+      tokenTfaData,
       tokenKeyData,
       request.body
     );

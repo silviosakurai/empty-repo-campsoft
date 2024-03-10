@@ -32,6 +32,8 @@ async function authenticateJwt(
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
+      request.tokenJwtData = JSON.parse(cacheAuth);
+
       return;
     }
 
@@ -51,6 +53,8 @@ async function authenticateJwt(
     }
 
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
+
+    request.tokenJwtData = responseAuth;
 
     return;
   } catch (error) {

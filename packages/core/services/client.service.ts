@@ -12,8 +12,8 @@ import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePh
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import { FindClientByCpfEmailPhoneInput } from "@core/interfaces/repositories/client";
 import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
-import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 
 @injectable()
 export class ClientService {
@@ -98,10 +98,10 @@ export class ClientService {
     }
   };
 
-  updatePassword = async (tfaInfo: ViewApiTfaResponse, newPass: string) => {
+  updatePassword = async (tokenTfaData: ITokenTfaData, newPass: string) => {
     try {
       return await this.clientPasswordUpdaterRepository.update(
-        tfaInfo,
+        tokenTfaData,
         newPass
       );
     } catch (error) {

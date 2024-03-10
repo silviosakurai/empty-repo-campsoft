@@ -15,8 +15,9 @@ import { ApiStatus } from "@core/common/enums/models/api";
 import { CompanyStatus } from "@core/common/enums/models/company";
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 import { ClientStatus } from "@core/common/enums/models/client";
-import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class ApiRepository {
@@ -82,13 +83,10 @@ export class ApiRepository {
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
-  ): Promise<boolean> {
+  ): Promise<ITokenJwtData | null> {
     const result = await this.db
       .select({
-        client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
-        client_type_id: client.id_cliente_tipo,
-        name: client.nome,
-        status: client.status,
+        clientId: sql`BIN_TO_UUID(${client.id_cliente})`,
       })
       .from(client)
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))
@@ -109,10 +107,14 @@ export class ApiRepository {
       )
       .execute();
 
-    return result.length > 0;
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as ITokenJwtData;
   }
 
-  async findApiByTfa(token: string): Promise<ViewApiTfaResponse | null> {
+  async findApiByTfa(token: string): Promise<ITokenTfaData | null> {
     const result = await this.db
       .select({
         clientId: sql`BIN_TO_UUID(${tfaCodes.id_cliente})`,
@@ -127,6 +129,6 @@ export class ApiRepository {
       return null;
     }
 
-    return result[0] as unknown as ViewApiTfaResponse;
+    return result[0] as unknown as ITokenTfaData;
   }
 }

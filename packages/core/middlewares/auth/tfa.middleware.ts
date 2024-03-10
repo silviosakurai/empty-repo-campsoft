@@ -37,7 +37,7 @@ async function authenticateTfa(
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
-      request.tfaInfo = JSON.parse(cacheAuth);
+      request.tokenTfaData = JSON.parse(cacheAuth);
 
       return;
     }
@@ -57,7 +57,7 @@ async function authenticateTfa(
 
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
-    request.tfaInfo = responseAuth;
+    request.tokenTfaData = responseAuth;
 
     return;
   } catch (error) {

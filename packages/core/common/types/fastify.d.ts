@@ -2,8 +2,9 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
 import { FastifyRedis } from "@fastify/redis";
 import { RouteModule } from "@core/common/enums/models/route";
-import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -17,7 +18,8 @@ declare module "fastify" {
 
   export interface FastifyRequest {
     tokenKeyData: ITokenKeyData;
-    tfaInfo: ViewApiTfaResponse;
+    tokenJwtData: ITokenJwtData;
+    tokenTfaData: ITokenTfaData;
     module: RouteModule;
   }
 }
