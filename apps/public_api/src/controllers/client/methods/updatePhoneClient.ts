@@ -8,18 +8,15 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 export const updatePhoneClient = async (
   request: FastifyRequest<{
     Body: UpdatePhoneClientRequestDto;
-    Params: {
-      userId: string;
-    };
   }>,
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientPhoneUpdaterUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
     const response = await clientUseCase.update(
-      request.params.userId,
+      tokenJwtData.clientId,
       request.body,
       tokenKeyData
     );

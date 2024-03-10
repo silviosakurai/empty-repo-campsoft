@@ -7,6 +7,7 @@ import { encodePassword } from "@core/common/functions/encodePassword";
 import { InternalServerError } from "@core/common/exceptions/InternalServerError";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 
 @injectable()
 export class ClientCreatorUseCase {
@@ -50,6 +51,9 @@ export class ClientCreatorUseCase {
     await this.clientService.connectClientAndCompany({
       clientId: userCreated.user_id,
       companyId,
+      cpf: input.cpf,
+      phoneNumber: input.phone,
+      status: ClientCompanyStatus.ACTIVE,
     });
 
     await this.accessService.create({

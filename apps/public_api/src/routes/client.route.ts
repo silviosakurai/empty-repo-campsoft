@@ -4,7 +4,6 @@ import { container } from 'tsyringe';
 import {
   userCreatorSchema,
   userUpdaterSchema,
-  userViewSchema,
   userPhoneUpdaterSchema,
   userPasswordRecoveryMethods,
   userPasswordUpdaterSchema,
@@ -13,8 +12,7 @@ import {
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
-  server.get('/users/:userId', {
-    schema: userViewSchema,
+  server.get('/user', {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
   });
@@ -25,13 +23,13 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.create,
   });
 
-  server.put('/users/:userId', {
+  server.put('/user', {
     schema: userUpdaterSchema,
     handler: clientController.update,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
   });
 
-  server.patch('/users/:userId/phone', {
+  server.patch('/user/phone', {
     schema: userPhoneUpdaterSchema,
     handler: clientController.updatePhone,
     preHandler: [
@@ -41,13 +39,13 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
   });
 
-  server.get('/users/recovery-password/:login', {
+  server.get('/user/recovery-password/:login', {
     schema: userPasswordRecoveryMethods,
     handler: clientController.passwordRecoveryMethods,
     preHandler: [server.authenticateKeyApi],
   });
 
-  server.patch('/users/recovery-password', {
+  server.patch('/user/recovery-password', {
     schema: userPasswordUpdaterSchema,
     handler: clientController.updatePassword,
     preHandler: [server.authenticateKeyApi, server.authenticateTfa],

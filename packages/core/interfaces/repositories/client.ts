@@ -4,6 +4,11 @@ export interface FindClientByCpfEmailPhoneInput {
   phone: string;
 }
 
+export interface FindClientByEmailPhoneInput {
+  email: string;
+  phone: string;
+}
+
 export interface IPasswordRecoveryMethods {
   clientId: string;
   name: string;

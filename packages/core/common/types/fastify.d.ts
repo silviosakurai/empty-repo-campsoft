@@ -14,6 +14,7 @@ declare module "fastify" {
     authenticateJwt: (request: FastifyRequest, reply: FastifyReply) => void;
     authenticateTfa: (request: FastifyRequest, reply: FastifyReply) => void;
     decodeToken: (token: string) => Promise<null | string | object>;
+    verifyToken: (token: string) => Promise<null | string | object>;
   }
 
   export interface FastifyRequest {

@@ -10,7 +10,7 @@ async function authenticateTfa(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const { redis } = request.server;
   const { tokentfa } = request.headers as { tokentfa: string };
 
@@ -22,7 +22,7 @@ async function authenticateTfa(
   }
 
   try {
-    const decoded = (await request.server.decodeToken(tokentfa)) as {
+    const decoded = (await request.server.verifyToken(tokentfa)) as {
       token: string;
     };
 
@@ -49,6 +49,18 @@ async function authenticateTfa(
     } as ViewApiTfaRequest);
 
     if (!responseAuth) {
+      return sendResponse(reply, {
+        message: t("not_authorized"),
+        httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      });
+    }
+
+    if (
+      responseAuth.clientId &&
+      tokenJwtData &&
+      tokenJwtData.clientId &&
+      responseAuth.clientId !== tokenJwtData.clientId
+    ) {
       return sendResponse(reply, {
         message: t("not_authorized"),
         httpStatusCode: HTTPStatusCode.UNAUTHORIZED,

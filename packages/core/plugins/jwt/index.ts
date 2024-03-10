@@ -18,6 +18,14 @@ async function jwtPlugin(fastify: FastifyInstance) {
 
     return fastify.jwt.decode(token);
   });
+
+  fastify.decorate("verifyToken", async (token: string) => {
+    if (!token) {
+      return null;
+    }
+
+    return fastify.jwt.verify(token);
+  });
 }
 
 export default fp(jwtPlugin, { name: "jwt-plugin" });

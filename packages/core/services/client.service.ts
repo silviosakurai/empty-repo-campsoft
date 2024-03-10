@@ -10,10 +10,14 @@ import { ClientUpdaterRepository } from "@core/repositories/client/ClientUpdater
 import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientRequest.dto";
 import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
-import { FindClientByCpfEmailPhoneInput } from "@core/interfaces/repositories/client";
+import {
+  FindClientByCpfEmailPhoneInput,
+  FindClientByEmailPhoneInput,
+} from "@core/interfaces/repositories/client";
 import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientByEmailPhone.repository";
 
 @injectable()
 export class ClientService {
@@ -25,6 +29,7 @@ export class ClientService {
   private clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository;
   private clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository;
   private clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository;
+  private clientByEmailPhoneRepository: ClientByEmailPhoneRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
@@ -34,7 +39,8 @@ export class ClientService {
     clientUpdaterRepository: ClientUpdaterRepository,
     clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
     clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
-    clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository
+    clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
+    clientByEmailPhoneRepository: ClientByEmailPhoneRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.clientViewRepository = clientViewRepository;
@@ -45,6 +51,7 @@ export class ClientService {
     this.clientPasswordRecoveryMethodsRepository =
       clientPasswordRecoveryMethodsRepository;
     this.clientPasswordUpdaterRepository = clientPasswordUpdaterRepository;
+    this.clientByEmailPhoneRepository = clientByEmailPhoneRepository;
   }
 
   viewClient = async (tokenKeyData: ITokenKeyData, userId: string) => {
@@ -58,6 +65,14 @@ export class ClientService {
   readClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     try {
       return await this.clientByCpfEmailPhoneRepository.find(input);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  findClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
+    try {
+      return await this.clientByEmailPhoneRepository.find(input);
     } catch (error) {
       throw error;
     }

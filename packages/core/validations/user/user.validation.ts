@@ -22,13 +22,6 @@ const userReaderSchema = {
     .prop("text_search", Schema.string()),
 };
 
-const userViewSchema = {
-  params: Schema.object().prop(
-    "userId",
-    Schema.string().format("uuid").required()
-  ),
-};
-
 const userUpdaterSchema = {
   body: Schema.object()
     .prop("status", Schema.enum(Object.values(ClientStatus)).required())
@@ -54,7 +47,6 @@ const userPasswordUpdaterSchema = {
 export {
   userCreatorSchema,
   userReaderSchema,
-  userViewSchema,
   userUpdaterSchema,
   userPhoneUpdaterSchema,
   userPasswordRecoveryMethods,
