@@ -10,7 +10,7 @@ async function authenticateJwt(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> {
-  const { t, apiAccess } = request;
+  const { t, tokenKeyData } = request;
   const { redis } = request.server;
 
   const routePath = request.routeOptions.url || request.raw.url;
@@ -37,7 +37,7 @@ async function authenticateJwt(
 
     const responseAuth = await viewApiJwtUseCase.execute({
       clientId: decoded.clientId,
-      apiAccess,
+      tokenKeyData,
       routePath,
       routeMethod,
       routeModule,

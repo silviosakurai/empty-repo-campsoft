@@ -5,7 +5,7 @@ import { eq, or, and, sql } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
 import { ClientStatus } from "@core/common/enums/models/client";
 import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class AuthRepository {
@@ -18,7 +18,7 @@ export class AuthRepository {
   }
 
   authenticate = async (
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     login: string,
     password: string
   ): Promise<LoginResponse | null> => {
@@ -45,7 +45,7 @@ export class AuthRepository {
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, apiAccess.company_id),
+          eq(access.id_empresa, tokenKeyData.company_id),
           or(
             eq(client.email, login),
             eq(client.cpf, login),

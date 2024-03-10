@@ -15,13 +15,13 @@ export const updatePhoneClient = async (
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientPhoneUpdaterUseCase);
-  const { t, apiAccess } = request;
+  const { t, tokenKeyData } = request;
 
   try {
     const response = await clientUseCase.update(
       request.params.userId,
       request.body,
-      apiAccess
+      tokenKeyData
     );
 
     if (!response) {

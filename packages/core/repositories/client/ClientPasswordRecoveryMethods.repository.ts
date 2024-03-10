@@ -3,8 +3,8 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { client, access } from "@core/models";
 import { eq, sql, and, or } from "drizzle-orm";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { IPasswordRecoveryMethods } from "@core/interfaces/repositories/client";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientPasswordRecoveryMethodsRepository {
@@ -17,7 +17,7 @@ export class ClientPasswordRecoveryMethodsRepository {
   }
 
   async passwordRecoveryMethods(
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     login: string
   ): Promise<IPasswordRecoveryMethods | null> {
     const result = await this.db
@@ -32,7 +32,7 @@ export class ClientPasswordRecoveryMethodsRepository {
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
-          and(eq(access.id_empresa, apiAccess.company_id)),
+          and(eq(access.id_empresa, tokenKeyData.company_id)),
           or(
             eq(client.cpf, login),
             eq(client.email, login),

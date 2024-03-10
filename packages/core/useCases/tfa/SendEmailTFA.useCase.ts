@@ -1,12 +1,12 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
 import { EmailService } from "@core/services/email.service";
 import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 import { IEmailSendService } from "@core/interfaces/services/IEmail.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class SendEmailTFAUserCase {
@@ -19,14 +19,14 @@ export class SendEmailTFAUserCase {
   }
 
   async execute({
-    apiAccess,
+    tokenKeyData,
     type,
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
       const { template, templateId, subject, sender } =
-        await this.getTemplateEmail(apiAccess, code);
+        await this.getTemplateEmail(tokenKeyData, code);
 
       const payload = {
         html: template,
@@ -55,10 +55,10 @@ export class SendEmailTFAUserCase {
   }
 
   async getTemplateEmail(
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     code: string
   ): Promise<ITemplateEmail> {
-    const template = await this.tfaService.getTemplateEmail(apiAccess);
+    const template = await this.tfaService.getTemplateEmail(tokenKeyData);
 
     template.template = replaceTemplate(template.template, {
       code,

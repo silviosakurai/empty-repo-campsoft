@@ -1,7 +1,7 @@
 import { ApiService } from "@core/services/api.service";
 import { injectable } from "tsyringe";
 import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ViewApiKeyUseCase {
@@ -16,7 +16,7 @@ export class ViewApiKeyUseCase {
     routePath,
     routeMethod,
     routeModule,
-  }: ViewApiKeyRequest): Promise<ViewApiResponse | null> {
+  }: ViewApiKeyRequest): Promise<ITokenKeyData | null> {
     return await this.apiService.findApiByKey(
       keyApi,
       routePath,

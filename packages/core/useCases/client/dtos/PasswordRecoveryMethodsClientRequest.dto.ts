@@ -1,6 +1,6 @@
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 export interface PasswordRecoveryMethodsClientRequest {
-  apiAccess: ViewApiResponse;
+  tokenKeyData: ITokenKeyData;
   login: string;
 }

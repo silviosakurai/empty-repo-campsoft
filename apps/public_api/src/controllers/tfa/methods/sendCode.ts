@@ -11,15 +11,15 @@ import { SendEmailTFAUserCase } from '@core/useCases/tfa/SendEmailTFA.useCase';
 import { SendUserIdTFAUserCase } from '@core/useCases/tfa/SendUserIdTFA.useCase';
 import { container } from 'tsyringe';
 import { TFAType } from '@core/common/enums/models/tfa';
-import { ViewApiResponse } from '@core/useCases/api/dtos/ViewApiResponse.dto';
 import { isUuid } from '@core/common/functions/isUuid';
 import { TFunction } from 'i18next';
 import { TFAVerificationError } from '@core/common/exceptions/TFAVerificationError';
 import { LoginUserTFA } from '@core/interfaces/services/IClient.service';
+import { ITokenKeyData } from '@core/common/interfaces/ITokenKeyData';
 
 const handleTfaType = async (
   type: TFAType,
-  apiAccess: ViewApiResponse,
+  tokenKeyData: ITokenKeyData,
   loginUserTFA: LoginUserTFA
 ): Promise<boolean> => {
   let service;
@@ -41,7 +41,7 @@ const handleTfaType = async (
   }
 
   return service.execute({
-    apiAccess,
+    tokenKeyData,
     type,
     loginUserTFA,
   } as SendCodeLoginTFARequest);
@@ -50,7 +50,7 @@ const handleTfaType = async (
 const loginUserId = async (
   t: TFunction<'translation', undefined>,
   type: TFAType,
-  apiAccess: ViewApiResponse,
+  tokenKeyData: ITokenKeyData,
   login: string
 ): Promise<LoginUserTFA> => {
   const isUuidValid = isUuid(login);
@@ -61,7 +61,7 @@ const loginUserId = async (
     const userIdTFA = await sendUserIdTFAUserCase.execute({
       login,
       type,
-      apiAccess,
+      tokenKeyData,
     } as SendCodeTFARequest);
 
     if (!userIdTFA) {
@@ -84,15 +84,15 @@ export const sendCode = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { t, apiAccess } = request;
+  const { t, tokenKeyData } = request;
   const { type, login } = request.body as {
     type: TFAType;
     login: string;
   };
 
   try {
-    const loginUserTFA = await loginUserId(t, type, apiAccess, login);
-    const response = await handleTfaType(type, apiAccess, loginUserTFA);
+    const loginUserTFA = await loginUserId(t, type, tokenKeyData, login);
+    const response = await handleTfaType(type, tokenKeyData, loginUserTFA);
 
     if (!response) {
       return sendResponse(reply, {

@@ -8,11 +8,11 @@ import {
   whatsAppHistory,
 } from "@core/models";
 import { and, desc, eq, gte, or, sql } from "drizzle-orm";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
 import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaCodesWhatsAppRepository {
@@ -42,7 +42,7 @@ export class TfaCodesWhatsAppRepository {
   }
 
   async getTemplateWhatsapp(
-    apiAccess: ViewApiResponse
+    tokenKeyData: ITokenKeyData
   ): Promise<ITemplateWhatsapp> {
     const result = await this.db
       .select({
@@ -60,7 +60,7 @@ export class TfaCodesWhatsAppRepository {
       .where(
         or(
           and(
-            eq(templateWhatsApp.id_empresa, apiAccess.company_id),
+            eq(templateWhatsApp.id_empresa, tokenKeyData.company_id),
             eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
           ),
           and(

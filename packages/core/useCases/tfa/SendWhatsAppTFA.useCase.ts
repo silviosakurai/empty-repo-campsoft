@@ -1,12 +1,12 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
 import { IWhatsappServiceInput } from "@core/interfaces/services/IWhatsapp.service";
 import { WhatsappService } from "@core/services/whatsapp.service";
 import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class SendWhatsAppTFAUserCase {
@@ -19,14 +19,14 @@ export class SendWhatsAppTFAUserCase {
   }
 
   async execute({
-    apiAccess,
+    tokenKeyData,
     type,
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
       const { template, templateId } = await this.getTemplateWhatsapp(
-        apiAccess,
+        tokenKeyData,
         code
       );
 
@@ -54,10 +54,10 @@ export class SendWhatsAppTFAUserCase {
   }
 
   async getTemplateWhatsapp(
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     code: string
   ): Promise<ITemplateWhatsapp> {
-    const template = await this.tfaService.getTemplateWhatsapp(apiAccess);
+    const template = await this.tfaService.getTemplateWhatsapp(tokenKeyData);
 
     template.template = replaceTemplate(template.template, {
       code,

@@ -12,14 +12,14 @@ export class ViewApiJwtUseCase {
 
   async execute({
     clientId,
-    apiAccess,
+    tokenKeyData,
     routePath,
     routeMethod,
     routeModule,
   }: ViewApiJwtRequest): Promise<boolean> {
     return await this.apiService.findApiByJwt(
       clientId,
-      apiAccess,
+      tokenKeyData,
       routePath,
       routeMethod,
       routeModule

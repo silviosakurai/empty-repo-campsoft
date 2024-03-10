@@ -13,11 +13,11 @@ export class ClientPasswordRecoveryMethodsUseCase {
   }
 
   async execute({
-    apiAccess,
+    tokenKeyData,
     login,
   }: PasswordRecoveryMethodsClientRequest): Promise<PasswordRecoveryMethodsClientResponse | null> {
     const recoveryMethods = await this.clientService.passwordRecoveryMethods(
-      apiAccess,
+      tokenKeyData,
       login
     );
 

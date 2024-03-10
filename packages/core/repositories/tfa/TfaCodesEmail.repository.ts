@@ -3,13 +3,10 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { templateEmail, templateModule, emailHistory } from "@core/models";
 import { and, desc, eq, or, sql } from "drizzle-orm";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
-import {
-  ITemplateEmail,
-  ITemplateSMS,
-} from "@core/interfaces/repositories/tfa";
+import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
 import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaCodesEmail {
@@ -21,7 +18,7 @@ export class TfaCodesEmail {
     this.db = mySql2Database;
   }
 
-  async getTemplateEmail(apiAccess: ViewApiResponse): Promise<ITemplateEmail> {
+  async getTemplateEmail(tokenKeyData: ITokenKeyData): Promise<ITemplateEmail> {
     const result = await this.db
       .select({
         templateId: templateEmail.id_template_email,
@@ -39,7 +36,7 @@ export class TfaCodesEmail {
       .where(
         or(
           and(
-            eq(templateEmail.id_empresa, apiAccess.company_id),
+            eq(templateEmail.id_empresa, tokenKeyData.company_id),
             eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
           ),
           and(

@@ -25,7 +25,7 @@ async function authenticateKeyApi(
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
-      request.apiAccess = JSON.parse(cacheAuth);
+      request.tokenKeyData = JSON.parse(cacheAuth);
 
       return;
     }
@@ -46,7 +46,7 @@ async function authenticateKeyApi(
 
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
-    request.apiAccess = responseAuth;
+    request.tokenKeyData = responseAuth;
 
     return;
   } catch (error) {

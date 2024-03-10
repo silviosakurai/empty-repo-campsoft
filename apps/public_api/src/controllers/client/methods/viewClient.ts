@@ -10,12 +10,12 @@ export const viewClient = async (
   reply: FastifyReply
 ) => {
   const viewClientUseCase = container.resolve(ViewClientUseCase);
-  const { t, apiAccess } = request;
+  const { t, tokenKeyData } = request;
   const { userId } = request.params as ViewClientRequest;
 
   try {
     const response = await viewClientUseCase.execute({
-      apiAccess,
+      tokenKeyData,
       userId,
     });
 

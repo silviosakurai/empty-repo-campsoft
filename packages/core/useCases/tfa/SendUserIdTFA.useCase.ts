@@ -8,12 +8,15 @@ export class SendUserIdTFAUserCase {
   constructor(private clientService: ClientService) {}
 
   async execute({
-    apiAccess,
+    tokenKeyData,
     type,
     login,
   }: SendCodeTFARequest): Promise<SendCodeTFARequest | null> {
     try {
-      const viewClient = await this.clientService.viewClient(apiAccess, login);
+      const viewClient = await this.clientService.viewClient(
+        tokenKeyData,
+        login
+      );
 
       if (!viewClient) {
         return null;
@@ -26,7 +29,7 @@ export class SendUserIdTFAUserCase {
       }
 
       return {
-        apiAccess,
+        tokenKeyData,
         type,
         login: loginUserId,
       } as SendCodeTFARequest;

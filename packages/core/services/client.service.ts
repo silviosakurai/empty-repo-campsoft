@@ -4,7 +4,6 @@ import { ClientAccessCreatorRepository } from "@core/repositories/client/ClientA
 import { ClientByCpfEmailPhoneReaderRepository } from "@core/repositories/client/ClientByCPFEmailPhoneReader.repository";
 import { ClientPasswordRecoveryMethodsRepository } from "@core/repositories/client/ClientPasswordRecoveryMethods.repository";
 import { ClientViewRepository } from "@core/repositories/client/ClientView.repository";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
 import { injectable } from "tsyringe";
 import { ClientUpdaterRepository } from "@core/repositories/client/ClientUpdater.repository";
@@ -14,6 +13,7 @@ import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPh
 import { FindClientByCpfEmailPhoneInput } from "@core/interfaces/repositories/client";
 import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
 import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientService {
@@ -47,9 +47,9 @@ export class ClientService {
     this.clientPasswordUpdaterRepository = clientPasswordUpdaterRepository;
   }
 
-  viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
+  viewClient = async (tokenKeyData: ITokenKeyData, userId: string) => {
     try {
-      return await this.clientViewRepository.view(apiAccess, userId);
+      return await this.clientViewRepository.view(tokenKeyData, userId);
     } catch (error) {
       throw error;
     }
@@ -110,12 +110,12 @@ export class ClientService {
   };
 
   passwordRecoveryMethods = async (
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     login: string
   ) => {
     try {
       return await this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
-        apiAccess,
+        tokenKeyData,
         login
       );
     } catch (error) {

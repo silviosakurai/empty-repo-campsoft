@@ -2,7 +2,6 @@ import { TfaCodesWhatsAppRepository } from "@core/repositories/tfa/TfaCodesWhats
 import { TfaCodesSms } from "@core/repositories/tfa/TfaCodesSms.repository";
 import { TfaCodesEmail } from "@core/repositories/tfa/TfaCodesEmail.repository";
 import { TfaCodesRepository } from "@core/repositories/tfa/TfaCodes.repository";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 import { generateTokenTfa } from "@core/common/functions/generateTokenTfa";
 import { TFAType } from "@core/common/enums/models/tfa";
@@ -19,6 +18,7 @@ import { ISmsSentMessageResponse } from "@core/interfaces/services/ISms.service"
 import { currentTime } from "@core/common/functions/currentTime";
 import { SendEmailCommandOutput } from "@aws-sdk/client-ses";
 import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaService {
@@ -54,21 +54,23 @@ export class TfaService {
   }
 
   public async getTemplateWhatsapp(
-    apiAccess: ViewApiResponse
+    tokenKeyData: ITokenKeyData
   ): Promise<ITemplateWhatsapp> {
-    return await this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(apiAccess);
+    return await this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(
+      tokenKeyData
+    );
   }
 
   public async getTemplateSms(
-    apiAccess: ViewApiResponse
+    tokenKeyData: ITokenKeyData
   ): Promise<ITemplateSMS> {
-    return await this.tfaCodesSms.getTemplateSms(apiAccess);
+    return await this.tfaCodesSms.getTemplateSms(tokenKeyData);
   }
 
   public async getTemplateEmail(
-    apiAccess: ViewApiResponse
+    tokenKeyData: ITokenKeyData
   ): Promise<ITemplateEmail> {
-    return await this.tfaCodesEmail.getTemplateEmail(apiAccess);
+    return await this.tfaCodesEmail.getTemplateEmail(tokenKeyData);
   }
 
   public async insertCodeUser(

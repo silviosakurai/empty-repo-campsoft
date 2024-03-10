@@ -11,12 +11,12 @@ import {
   tfaCodes,
 } from "@core/models";
 import { and, eq, or, sql } from "drizzle-orm";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ApiStatus } from "@core/common/enums/models/api";
 import { CompanyStatus } from "@core/common/enums/models/company";
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 import { ClientStatus } from "@core/common/enums/models/client";
 import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ApiRepository {
@@ -33,7 +33,7 @@ export class ApiRepository {
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
-  ): Promise<ViewApiResponse | null> {
+  ): Promise<ITokenKeyData | null> {
     const result = await this.db
       .select({
         api_key: apiAccess.api_chave,
@@ -73,12 +73,12 @@ export class ApiRepository {
       return null;
     }
 
-    return result[0] as unknown as ViewApiResponse;
+    return result[0] as unknown as ITokenKeyData;
   }
 
   async findApiByJwt(
     clientId: string,
-    apiAccessKey: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
@@ -101,7 +101,7 @@ export class ApiRepository {
         and(
           eq(client.status, ClientStatus.ACTIVE),
           eq(client.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(access.id_empresa, apiAccessKey.company_id),
+          eq(access.id_empresa, tokenKeyData.company_id),
           eq(route.rota, routePath),
           eq(route.metodo, routeMethod),
           eq(route.module, routeModule)
