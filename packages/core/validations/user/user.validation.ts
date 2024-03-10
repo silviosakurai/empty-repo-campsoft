@@ -47,6 +47,10 @@ const userPasswordRecoveryMethods = {
   params: Schema.object().prop("login", Schema.string().required()),
 };
 
+const userPasswordUpdaterSchema = {
+  body: Schema.object().prop("new_password", Schema.string().required()),
+};
+
 export {
   userCreatorSchema,
   userReaderSchema,
@@ -54,4 +58,5 @@ export {
   userUpdaterSchema,
   userPhoneUpdaterSchema,
   userPasswordRecoveryMethods,
+  userPasswordUpdaterSchema,
 };

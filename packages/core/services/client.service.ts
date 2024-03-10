@@ -12,6 +12,8 @@ import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientR
 import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import { FindClientByCpfEmailPhoneInput } from "@core/interfaces/repositories/client";
+import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
+import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 
 @injectable()
 export class ClientService {
@@ -22,6 +24,7 @@ export class ClientService {
   private clientUpdaterRepository: ClientUpdaterRepository;
   private clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository;
   private clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository;
+  private clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
@@ -30,7 +33,8 @@ export class ClientService {
     clientAccessCreatorRepository: ClientAccessCreatorRepository,
     clientUpdaterRepository: ClientUpdaterRepository,
     clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
-    clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository
+    clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
+    clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.clientViewRepository = clientViewRepository;
@@ -40,6 +44,7 @@ export class ClientService {
     this.clientPhoneUpdaterRepository = clientPhoneUpdaterRepository;
     this.clientPasswordRecoveryMethodsRepository =
       clientPasswordRecoveryMethodsRepository;
+    this.clientPasswordUpdaterRepository = clientPasswordUpdaterRepository;
   }
 
   viewClient = async (apiAccess: ViewApiResponse, userId: string) => {
@@ -88,6 +93,17 @@ export class ClientService {
   ) => {
     try {
       return await this.clientPhoneUpdaterRepository.update(clientId, input);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updatePassword = async (tfaInfo: ViewApiTfaResponse, newPass: string) => {
+    try {
+      return await this.clientPasswordUpdaterRepository.update(
+        tfaInfo,
+        newPass
+      );
     } catch (error) {
       throw error;
     }

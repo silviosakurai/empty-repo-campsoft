@@ -18,6 +18,7 @@ import { formatDateToString } from "@core/common/functions/formatDateToString";
 import { ISmsSentMessageResponse } from "@core/interfaces/services/ISms.service";
 import { currentTime } from "@core/common/functions/currentTime";
 import { SendEmailCommandOutput } from "@aws-sdk/client-ses";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class TfaService {
@@ -72,25 +73,29 @@ export class TfaService {
 
   public async insertCodeUser(
     type: TFAType,
-    login: string,
+    loginUserTFA: LoginUserTFA,
     code: string
   ): Promise<boolean> {
-    return await this.tfaCodesRepository.insertCodeUser(type, login, code);
+    return await this.tfaCodesRepository.insertCodeUser(
+      type,
+      loginUserTFA,
+      code
+    );
   }
 
   async insertWhatsAppHistory(
     templateId: number,
+    loginUserTFA: LoginUserTFA,
     sendWA: MessageInstance
   ): Promise<boolean> {
     const sender = extractPhoneNumber(sendWA.from);
-    const recipient = extractPhoneNumber(sendWA.to);
     const whatsappToken = sendWA.sid;
     const sendDate = formatDateToString(sendWA.dateCreated);
 
     return await this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
       templateId,
+      loginUserTFA,
       sender,
-      recipient,
       whatsappToken,
       sendDate
     );
@@ -98,15 +103,15 @@ export class TfaService {
 
   async insertSmsHistory(
     templateId: number,
+    loginUserTFA: LoginUserTFA,
     sendSms: ISmsSentMessageResponse
   ): Promise<boolean> {
-    const recipient = sendSms.smsEnvios[0].numero;
     const smsToken = sendSms.smsEnvios[0].smsId;
     const sendDate = currentTime();
 
     return await this.tfaCodesSms.insertSmsHistory(
       templateId,
-      recipient,
+      loginUserTFA,
       smsToken,
       sendDate
     );
@@ -114,7 +119,7 @@ export class TfaService {
 
   async insertEmailHistory(
     templateId: number,
-    recipient: string,
+    loginUserTFA: LoginUserTFA,
     sender: string | null,
     sendEmail: SendEmailCommandOutput
   ): Promise<boolean> {
@@ -123,7 +128,7 @@ export class TfaService {
 
     return await this.tfaCodesEmail.insertEmailHistory(
       templateId,
-      recipient,
+      loginUserTFA,
       sender,
       emailToken,
       sendDate

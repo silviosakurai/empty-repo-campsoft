@@ -85,7 +85,7 @@ export class ApiRepository {
   ): Promise<boolean> {
     const result = await this.db
       .select({
-        client_id: client.id_cliente,
+        client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         client_type_id: client.id_cliente_tipo,
         name: client.nome,
         status: client.status,
@@ -115,6 +115,7 @@ export class ApiRepository {
   async findApiByTfa(token: string): Promise<ViewApiTfaResponse | null> {
     const result = await this.db
       .select({
+        clientId: sql`BIN_TO_UUID(${tfaCodes.id_cliente})`,
         type: tfaCodes.tipo,
         destiny: tfaCodes.destino,
       })

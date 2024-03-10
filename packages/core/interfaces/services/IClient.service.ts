@@ -7,3 +7,8 @@ export interface IClientConnectClientAndCompany {
   phoneNumber?: string;
   status?: ClientCompanyStatus;
 }
+
+export interface LoginUserTFA {
+  clientId: string | null;
+  login: string;
+}

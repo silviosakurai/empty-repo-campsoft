@@ -6,6 +6,7 @@ import { and, desc, eq, or, sql } from "drizzle-orm";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateSMS } from "@core/interfaces/repositories/tfa";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class TfaCodesSms {
@@ -53,17 +54,16 @@ export class TfaCodesSms {
 
   async insertSmsHistory(
     templateId: number,
-    recipient: string,
+    loginUserTFA: LoginUserTFA,
     smsToken: string,
-    sendDate: string,
-    clientId: string | null = null
+    sendDate: string
   ): Promise<boolean> {
     const result = await this.db
       .insert(smsHistory)
       .values({
         id_template: templateId,
-        id_cliente: clientId,
-        destinatario: recipient,
+        id_cliente: loginUserTFA.clientId ?? null,
+        destinatario: loginUserTFA.login,
         sms_token_externo: smsToken,
         data_envio: sendDate,
       })

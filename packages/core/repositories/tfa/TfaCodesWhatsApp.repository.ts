@@ -12,6 +12,7 @@ import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class TfaCodesWhatsAppRepository {
@@ -84,19 +85,18 @@ export class TfaCodesWhatsAppRepository {
 
   async insertWhatsAppHistory(
     templateId: number,
+    loginUserTFA: LoginUserTFA,
     sender: string,
-    recipient: string,
     whatsappToken: string,
-    sendDate: string,
-    clientId: string | null = null
+    sendDate: string
   ): Promise<boolean> {
     const result = await this.db
       .insert(whatsAppHistory)
       .values({
         id_template: templateId,
-        id_cliente: clientId,
+        id_cliente: loginUserTFA.clientId ?? null,
         remetente: sender,
-        destinatario: recipient,
+        destinatario: loginUserTFA.login,
         whatsapp_token_externo: whatsappToken,
         data_envio: sendDate,
       })

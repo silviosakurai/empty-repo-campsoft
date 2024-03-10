@@ -1,6 +1,6 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
-import { SendCodeTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
+import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ITemplateSMS } from "@core/interfaces/repositories/tfa";
 import { SmsService } from "@core/services/sms.service";
@@ -21,8 +21,8 @@ export class SendSmsTFAUserCase {
   async execute({
     apiAccess,
     type,
-    login,
-  }: SendCodeTFARequest): Promise<boolean> {
+    loginUserTFA,
+  }: SendCodeLoginTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
       const { template, templateId } = await this.getTemplateSMS(
@@ -31,17 +31,21 @@ export class SendSmsTFAUserCase {
       );
 
       const payload = {
-        phone: login,
+        phone: loginUserTFA.login,
         message: template,
       } as ISmsServiceSendInput;
 
       const sendSms = await this.smsService.send(payload);
 
       if (sendSms) {
-        await this.tfaService.insertSmsHistory(templateId, sendSms);
+        await this.tfaService.insertSmsHistory(
+          templateId,
+          loginUserTFA,
+          sendSms
+        );
       }
 
-      await this.tfaService.insertCodeUser(type, login, code);
+      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
 
       return true;
     } catch (error) {

@@ -9,6 +9,7 @@ import {
   ITemplateEmail,
   ITemplateSMS,
 } from "@core/interfaces/repositories/tfa";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class TfaCodesEmail {
@@ -63,19 +64,18 @@ export class TfaCodesEmail {
 
   async insertEmailHistory(
     templateId: number,
-    recipient: string,
+    loginUserTFA: LoginUserTFA,
     sender: string | null,
     emailToken: string,
-    sendDate: string,
-    clientId: string | null = null
+    sendDate: string
   ): Promise<boolean> {
     const result = await this.db
       .insert(emailHistory)
       .values({
         id_template_email: templateId,
-        id_cliente: clientId,
+        id_cliente: loginUserTFA.clientId ?? null,
         remetente_email: sender ?? "",
-        destinatario_email: recipient,
+        destinatario_email: loginUserTFA.login,
         email_token_externo: emailToken,
         data_envio: sendDate,
       })

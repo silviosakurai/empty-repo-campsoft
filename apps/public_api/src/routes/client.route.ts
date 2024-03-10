@@ -7,6 +7,7 @@ import {
   userViewSchema,
   userPhoneUpdaterSchema,
   userPasswordRecoveryMethods,
+  userPasswordUpdaterSchema,
 } from '@core/validations/user/user.validation';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -44,5 +45,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: userPasswordRecoveryMethods,
     handler: clientController.passwordRecoveryMethods,
     preHandler: [server.authenticateKeyApi],
+  });
+
+  server.patch('/users/recovery-password', {
+    schema: userPasswordUpdaterSchema,
+    handler: clientController.updatePassword,
+    preHandler: [server.authenticateKeyApi, server.authenticateTfa],
   });
 }

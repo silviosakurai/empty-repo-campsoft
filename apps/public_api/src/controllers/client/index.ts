@@ -4,6 +4,7 @@ import { createClient } from './methods/createClient';
 import { updateClient } from './methods/updateClient';
 import { updatePhoneClient } from './methods/updatePhoneClient';
 import { passwordRecoveryMethodsClient } from './methods/passwordRecoveryMethodsClient';
+import { updatePasswordClient } from './methods/updatePasswordClient';
 
 @injectable()
 class ClientController {
@@ -12,6 +13,7 @@ class ClientController {
   public update = updateClient;
   public updatePhone = updatePhoneClient;
   public passwordRecoveryMethods = passwordRecoveryMethodsClient;
+  public updatePassword = updatePasswordClient;
 }
 
 export default ClientController;

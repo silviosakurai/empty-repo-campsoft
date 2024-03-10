@@ -1,6 +1,9 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { SendCodeTFARequest } from '@core/useCases/tfa/dtos/SendCodeTFARequest.dto';
+import {
+  SendCodeLoginTFARequest,
+  SendCodeTFARequest,
+} from '@core/useCases/tfa/dtos/SendCodeTFARequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { SendWhatsAppTFAUserCase } from '@core/useCases/tfa/SendWhatsAppTFA.useCase';
 import { SendSmsTFAUserCase } from '@core/useCases/tfa/SendSmsTFA.useCase';
@@ -12,11 +15,12 @@ import { ViewApiResponse } from '@core/useCases/api/dtos/ViewApiResponse.dto';
 import { isUuid } from '@core/common/functions/isUuid';
 import { TFunction } from 'i18next';
 import { TFAVerificationError } from '@core/common/exceptions/TFAVerificationError';
+import { LoginUserTFA } from '@core/interfaces/services/IClient.service';
 
 const handleTfaType = async (
   type: TFAType,
   apiAccess: ViewApiResponse,
-  login: string
+  loginUserTFA: LoginUserTFA
 ): Promise<boolean> => {
   let service;
 
@@ -36,7 +40,11 @@ const handleTfaType = async (
     return false;
   }
 
-  return service.execute({ apiAccess, type, login } as SendCodeTFARequest);
+  return service.execute({
+    apiAccess,
+    type,
+    loginUserTFA,
+  } as SendCodeLoginTFARequest);
 };
 
 const loginUserId = async (
@@ -44,7 +52,7 @@ const loginUserId = async (
   type: TFAType,
   apiAccess: ViewApiResponse,
   login: string
-): Promise<string> => {
+): Promise<LoginUserTFA> => {
   const isUuidValid = isUuid(login);
 
   if (isUuidValid) {
@@ -60,10 +68,16 @@ const loginUserId = async (
       throw new TFAVerificationError(t('error_send_code_verification'));
     }
 
-    return userIdTFA.login;
+    return {
+      clientId: login,
+      login: userIdTFA.login,
+    };
   }
 
-  return login;
+  return {
+    clientId: null,
+    login,
+  };
 };
 
 export const sendCode = async (
@@ -71,11 +85,14 @@ export const sendCode = async (
   reply: FastifyReply
 ) => {
   const { t, apiAccess } = request;
-  const { type, login } = request.body as SendCodeTFARequest;
+  const { type, login } = request.body as {
+    type: TFAType;
+    login: string;
+  };
 
   try {
-    const userLogin = await loginUserId(t, type, apiAccess, login);
-    const response = await handleTfaType(type, apiAccess, userLogin);
+    const loginUserTFA = await loginUserId(t, type, apiAccess, login);
+    const response = await handleTfaType(type, apiAccess, loginUserTFA);
 
     if (!response) {
       return sendResponse(reply, {

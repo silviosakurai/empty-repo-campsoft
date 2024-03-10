@@ -1,6 +1,6 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
-import { SendCodeTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
+import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
 import { EmailService } from "@core/services/email.service";
@@ -21,8 +21,8 @@ export class SendEmailTFAUserCase {
   async execute({
     apiAccess,
     type,
-    login,
-  }: SendCodeTFARequest): Promise<boolean> {
+    loginUserTFA,
+  }: SendCodeLoginTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
       const { template, templateId, subject, sender } =
@@ -31,7 +31,7 @@ export class SendEmailTFAUserCase {
       const payload = {
         html: template,
         subject: subject,
-        to: login,
+        to: loginUserTFA.login,
         from: sender,
       } as IEmailSendService;
 
@@ -40,13 +40,13 @@ export class SendEmailTFAUserCase {
       if (sendEmail) {
         await this.tfaService.insertEmailHistory(
           templateId,
-          login,
+          loginUserTFA,
           sender,
           sendEmail
         );
       }
 
-      await this.tfaService.insertCodeUser(type, login, code);
+      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
 
       return true;
     } catch (error) {

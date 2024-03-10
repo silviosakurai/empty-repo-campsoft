@@ -6,6 +6,7 @@ import { and, eq, gte, sql } from "drizzle-orm";
 import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";
 import { TFAType, TFAValidated } from "@core/common/enums/models/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class TfaCodesRepository {
@@ -63,14 +64,15 @@ export class TfaCodesRepository {
 
   async insertCodeUser(
     type: TFAType,
-    login: string,
+    loginUserTFA: LoginUserTFA,
     code: string
   ): Promise<boolean> {
     const result = await this.db
       .insert(tfaCodes)
       .values({
         tipo: type,
-        destino: login,
+        id_cliente: sql`UUID_TO_BIN(${loginUserTFA.clientId})`,
+        destino: loginUserTFA.login,
         codigo: code,
       })
       .execute();
