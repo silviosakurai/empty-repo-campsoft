@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { tfaCodes } from "@core/models";
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, eq, gte, or, sql } from "drizzle-orm";
 import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";
 import { TFAType, TFAValidated } from "@core/common/enums/models/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
@@ -33,10 +33,17 @@ export class TfaCodesRepository {
       .from(tfaCodes)
       .where(
         and(
-          eq(tfaCodes.codigo, code),
-          eq(tfaCodes.destino, login),
-          eq(tfaCodes.validado, TFAValidated.NO),
-          gte(tfaCodes.created_at, validUntil)
+          and(
+            or(
+              eq(tfaCodes.destino, login),
+              eq(tfaCodes.id_cliente, sql`UUID_TO_BIN(${login})`)
+            )
+          ),
+          and(
+            eq(tfaCodes.codigo, code),
+            eq(tfaCodes.validado, TFAValidated.NO),
+            gte(tfaCodes.created_at, validUntil)
+          )
         )
       )
       .execute();
