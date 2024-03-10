@@ -21,6 +21,10 @@ export const bannerItem = mysqlTable("banner_item", {
   url_img_mobile: varchar("url_img_mobile", { length: 255 }),
   link: varchar("link", { length: 150 }),
   html: varchar("html", { length: 4000 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

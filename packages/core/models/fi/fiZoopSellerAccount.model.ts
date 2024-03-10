@@ -8,7 +8,11 @@ import {
 import { sql } from "drizzle-orm";
 
 export const fiZoopSellerAccount = mysqlTable("fi_zoop_vendedor_conta", {
-  id_fi_zoop_vendedor_conta: varchar("id_fi_zoop_vendedor_conta", { length: 32 }).notNull().primaryKey(),
+  id_fi_zoop_vendedor_conta: varchar("id_fi_zoop_vendedor_conta", {
+    length: 32,
+  })
+    .notNull()
+    .primaryKey(),
   id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 }),
   id_fi_contas: int("id_fi_contas"),
   sandbox: mysqlEnum("sandbox", ["Y", "N"]).notNull().default("Y"),
@@ -19,6 +23,6 @@ export const fiZoopSellerAccount = mysqlTable("fi_zoop_vendedor_conta", {
   taxpayer_id: varchar("taxpayer_id", { length: 50 }),
   ein: varchar("ein", { length: 50 }),
   type: varchar("type", { length: 50 }),
-  created_at: datetime("created_at").default(sql`now()`),
-  updated_at: datetime("updated_at").default(sql`now()`),
+  created_at: datetime("created_at", { mode: "string" }).default(sql`now()`),
+  updated_at: datetime("updated_at", { mode: "string" }).default(sql`now()`),
 });

@@ -7,10 +7,10 @@ export const templateModule = mysqlTable("template_modulo", {
     .primaryKey()
     .autoincrement(),
   modulo: varchar("modulo", { length: 255 }).notNull(),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

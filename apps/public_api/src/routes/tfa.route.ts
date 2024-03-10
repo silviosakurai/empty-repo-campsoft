@@ -1,7 +1,7 @@
 import TfaController from '@/controllers/tfa';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
-import { sendCode } from '@core/validations/tfa/tfa.validation';
+import { sendCode, validateCode } from '@core/validations/tfa/tfa.validation';
 
 export default async function authRoutes(server: FastifyInstance) {
   const tfaController = container.resolve(TfaController);
@@ -10,5 +10,11 @@ export default async function authRoutes(server: FastifyInstance) {
     schema: sendCode,
     preHandler: server.authenticateKeyApi,
     handler: tfaController.sendCode,
+  });
+
+  server.post('/tfa/validate-code', {
+    schema: validateCode,
+    preHandler: server.authenticateKeyApi,
+    handler: tfaController.validateCode,
   });
 }

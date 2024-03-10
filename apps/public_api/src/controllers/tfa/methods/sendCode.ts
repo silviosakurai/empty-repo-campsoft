@@ -1,6 +1,6 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { SendWhatsAppTFARequest } from '@core/useCases/tfa/dtos/SendWhatsAppTFARequest.dto';
+import { SendCodeTFARequest } from '@core/useCases/tfa/dtos/SendCodeTFARequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { SendWhatsAppTFA } from '@core/useCases/tfa/SendWhatsAppTFA.useCase';
 import { container } from 'tsyringe';
@@ -12,7 +12,7 @@ export const sendCode = async (
 ) => {
   const sendWhatsAppTFA = container.resolve(SendWhatsAppTFA);
   const { t, apiAccess } = request;
-  const { type, login } = request.body as SendWhatsAppTFARequest;
+  const { type, login } = request.body as SendCodeTFARequest;
 
   try {
     let response = false;
@@ -22,7 +22,7 @@ export const sendCode = async (
         apiAccess,
         type,
         login,
-      } as SendWhatsAppTFARequest);
+      } as SendCodeTFARequest);
     }
 
     if (!response) {

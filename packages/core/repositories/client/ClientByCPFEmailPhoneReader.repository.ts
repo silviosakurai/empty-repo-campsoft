@@ -20,7 +20,7 @@ export class ClientByCpfEmailPhoneReaderRepository {
   ): Promise<{ id_cliente: string }[] | null> {
     const result = await this.db
       .select({
-        id_cliente: sql`BIN_TO_UUID(${client.id_cliente}) AS id_cliente`,
+        id_cliente: sql`BIN_TO_UUID(${client.id_cliente})`,
       })
       .from(client)
       .where(

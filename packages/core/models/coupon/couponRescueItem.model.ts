@@ -15,8 +15,10 @@ export const couponRescueItem = mysqlTable("cupom_resgatar_item", {
   tempo_tipo: mysqlEnum("tempo_tipo", ["day", "month"]),
   tempo: int("tempo"),
   validade_ate: date("validade_ate"),
-  resgate_obrigatorio: mysqlEnum("resgate_obrigatorio", ["Y", "N"]).notNull().default("N"),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  resgate_obrigatorio: mysqlEnum("resgate_obrigatorio", ["Y", "N"])
+    .notNull()
+    .default("N"),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
   deleted: mysqlEnum("deleted", ["Y", "N"]).notNull().default("N"),
 });

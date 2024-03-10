@@ -15,6 +15,10 @@ export const planoPrice = mysqlTable("plano_preco", {
   desconto_valor: double("desconto_valor"),
   preco_desconto: double("preco_desconto"),
   obs: varchar("obs", { length: 200 }),
-  created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updated_at: datetime("updated_at", { mode: "string" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
 });

@@ -48,4 +48,12 @@ export class ApiService {
       throw error;
     }
   };
+
+  findApiByTfa = async (token: string) => {
+    try {
+      return await this.apiRepository.findApiByTfa(token);
+    } catch (error) {
+      throw error;
+    }
+  };
 }

@@ -22,10 +22,10 @@ export const tfaCodes = mysqlTable("tfa_codes", {
   validado: mysqlEnum("validado", [TFAValidated.YES, TFAValidated.NO]).default(
     TFAValidated.NO
   ),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

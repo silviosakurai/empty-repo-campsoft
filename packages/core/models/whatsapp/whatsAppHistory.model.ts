@@ -22,7 +22,7 @@ export const whatsAppHistory = mysqlTable("whatsapp_historico", {
   remetente: varchar("remetente", { length: 100 }).notNull(),
   destinatario: varchar("destinatario", { length: 100 }).notNull(),
   whatsapp_token_externo: varchar("whatsapp_token_externo", { length: 60 }),
-  data_envio: datetime("data_envio"),
+  data_envio: datetime("data_envio", { mode: "string" }),
   entregue: mysqlEnum("entregue", [
     WhatsAppDelivered.NO,
     WhatsAppDelivered.YES,
@@ -30,10 +30,10 @@ export const whatsAppHistory = mysqlTable("whatsapp_historico", {
   lido: mysqlEnum("lido", [WhatsAppRead.NO, WhatsAppRead.YES]).default(
     WhatsAppRead.NO
   ),
-  created_at: datetime("created_at")
+  created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at")
+  updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });

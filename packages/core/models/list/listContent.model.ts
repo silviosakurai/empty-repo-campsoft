@@ -1,9 +1,4 @@
-import {
-  mysqlTable,
-  int,
-  datetime,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, int, datetime, varchar } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const listContent = mysqlTable("lista_conteudo", {
@@ -19,6 +14,10 @@ export const listContent = mysqlTable("lista_conteudo", {
   var_info_obs: varchar("var_info_obs", { length: 100 }),
   debug: int("debug").default(0),
   obs: varchar("obs", { length: 100 }),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

@@ -8,7 +8,9 @@ import {
 import { sql } from "drizzle-orm";
 
 export const listContentOrder = mysqlTable("lista_conteudo_ordem", {
-  id_lista_conteudo_ordem: int("id_lista_conteudo_ordem").notNull().primaryKey(),
+  id_lista_conteudo_ordem: int("id_lista_conteudo_ordem")
+    .notNull()
+    .primaryKey(),
   id_api_acesso: int("id_api_acesso"),
   id_lista: int("id_lista").notNull(),
   ordem: int("ordem").notNull(),
@@ -16,6 +18,10 @@ export const listContentOrder = mysqlTable("lista_conteudo_ordem", {
   titulo: varchar("titulo", { length: 100 }),
   titulo_dinamico: mysqlEnum("titulo_dinamico", ["Y", "N"]).default("N"),
   var: varchar("var", { length: 75 }),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

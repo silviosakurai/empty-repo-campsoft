@@ -1,10 +1,12 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
-import { CreateClientRequestDto } from "./dtos/CreateClientRequest.dto";
+import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
 import { AccessService } from "@core/services/access.service";
 import { AccessType } from "@core/common/enums/models/access";
 import { encodePassword } from "@core/common/functions/encodePassword";
 import { InternalServerError } from "@core/common/exceptions/InternalServerError";
+import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
+import { TFAType } from "@core/common/enums/models/tfa";
 
 @injectable()
 export class ClientCreatorUseCase {
@@ -57,6 +59,24 @@ export class ClientCreatorUseCase {
     });
 
     return userCreated;
+  }
+
+  validateTypeTfa(
+    tfaInfo: ViewApiTfaResponse,
+    input: CreateClientRequestDto
+  ): boolean {
+    if (tfaInfo.type === TFAType.EMAIL && tfaInfo.destiny !== input.email) {
+      return false;
+    }
+
+    if (
+      (tfaInfo.type === TFAType.SMS || tfaInfo.type === TFAType.WHATSAPP) &&
+      tfaInfo.destiny !== input.phone
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   private async confirmIfRegisteredPreviously(input: IUserExistsFunction) {
