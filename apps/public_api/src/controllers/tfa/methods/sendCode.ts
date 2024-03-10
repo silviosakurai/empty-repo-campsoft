@@ -55,9 +55,9 @@ const loginUserId = async (
 ): Promise<LoginUserTFA> => {
   const isUuidValid = isUuid(login);
 
-  if (isUuidValid) {
-    const sendUserIdTFAUserCase = container.resolve(SendUserIdTFAUserCase);
+  const sendUserIdTFAUserCase = container.resolve(SendUserIdTFAUserCase);
 
+  if (isUuidValid) {
     const userIdTFA = await sendUserIdTFAUserCase.execute({
       login,
       type,
@@ -74,8 +74,10 @@ const loginUserId = async (
     };
   }
 
+  const findClient = await sendUserIdTFAUserCase.findClientByEmailPhone(login);
+
   return {
-    clientId: null,
+    clientId: findClient,
     login,
   };
 };

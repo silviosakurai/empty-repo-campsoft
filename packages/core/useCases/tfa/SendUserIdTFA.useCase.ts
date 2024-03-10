@@ -38,6 +38,19 @@ export class SendUserIdTFAUserCase {
     }
   }
 
+  async findClientByEmailPhone(login: string): Promise<string | null> {
+    const findUserId = await this.clientService.findClientByEmailPhone({
+      email: login,
+      phone: login,
+    });
+
+    if (!findUserId) {
+      return null;
+    }
+
+    return findUserId.id_cliente;
+  }
+
   private getLoginUserId(
     type: TFAType,
     viewClient: { email?: string; phone?: string }

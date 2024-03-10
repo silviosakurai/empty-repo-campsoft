@@ -19,6 +19,13 @@ export const updatePasswordClient = async (
   );
   const { t, tokenKeyData, tokenTfaData } = request;
 
+  if (!tokenTfaData.clientId) {
+    return sendResponse(reply, {
+      message: t('client_not_found'),
+      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+    });
+  }
+
   try {
     const response = await clientPasswordUpdaterUseCase.update(
       tokenTfaData,

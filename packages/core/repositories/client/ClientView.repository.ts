@@ -22,6 +22,7 @@ export class ClientViewRepository {
   ): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
+        client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
         first_name: client.nome,
         last_name: client.sobrenome,
