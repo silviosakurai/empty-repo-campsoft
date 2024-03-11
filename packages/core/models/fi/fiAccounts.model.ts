@@ -19,8 +19,13 @@ export const fiAccounts = mysqlTable("fi_contas", {
   banco_agencia_dv: varchar("banco_agencia_dv", { length: 2 }),
   banco_conta: varchar("banco_conta", { length: 20 }),
   banco_conta_dv: varchar("banco_conta_dv", { length: 2 }),
-  banco_conta_tipo: mysqlEnum("banco_conta_tipo", ["conta_corrente", "conta_poupanca", "conta_corrente_conjunta", "conta_poupanca_conjunta"]),
+  banco_conta_tipo: mysqlEnum("banco_conta_tipo", [
+    "conta_corrente",
+    "conta_poupanca",
+    "conta_corrente_conjunta",
+    "conta_poupanca_conjunta",
+  ]),
   obs: varchar("obs", { length: 200 }),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

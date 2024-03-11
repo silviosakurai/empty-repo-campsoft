@@ -1,3 +1,5 @@
+import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
+import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
 import { smsEnvironment } from "@core/config/environments";
 import {
   ISmsSentMessageResponse,
@@ -6,29 +8,25 @@ import {
   ISmsServiceSendInput,
 } from "@core/interfaces/services/ISms.service";
 import axios from "axios";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class SmsService implements ISmsService {
+  constructor(private readonly phoneNumberValidator: PhoneNumberValidator) {}
+
   async send(input: ISmsServiceSendInput) {
-    const regexPhoneNumberAndDDD = /^\d{11}$/;
-
-    if (!regexPhoneNumberAndDDD.test(input.phone)) {
-      return new Error("Telefone inválido, seguir o padrão 99999999999");
-    }
-
-    const response = await this.connection();
-
-    if (response instanceof Error) {
-      return response;
-    }
-
     try {
+      this.phonesValidate(input);
+
+      const response = await this.connection();
+
       const { data } = await axios.post<ISmsSentMessageResponse>(
         `${smsEnvironment.smsApiBaseUrl}/api/campanha/simples`,
         {
           produtoId: smsEnvironment.smsApiProdutoId,
           centroCustoId: smsEnvironment.smsApiCentralCustomId,
           telefones: input.phone,
-          nome: input.name,
+          nome: input.name ?? "Mania de App",
           mensagemCampanha: input.message,
         },
         {
@@ -42,16 +40,29 @@ export class SmsService implements ISmsService {
       );
 
       return data;
-    } catch (error) {
-      console.error(error);
-      return error;
+    } catch (error: unknown) {
+      throw new Error(error as string);
     }
+  }
+
+  private phonesValidate(
+    input: ISmsServiceSendInput
+  ): null | InvalidPhoneNumberError {
+    const phoneValidated = this.phoneNumberValidator.validateNational(
+      input.phone
+    );
+
+    if (phoneValidated) {
+      throw new InvalidPhoneNumberError("Phone is not valid.");
+    }
+
+    return null;
   }
 
   private async connection() {
     try {
       const response = await axios.post<ISmsServiceGatewayResponse>(
-        `${smsEnvironment.smsApiAuthUrl}/login"`,
+        `${smsEnvironment.smsApiAuthUrl}/login`,
         {
           email: smsEnvironment.smsApiEmail,
           password: smsEnvironment.smsApiPassword,
@@ -67,10 +78,8 @@ export class SmsService implements ISmsService {
       );
 
       return response.data;
-    } catch (error: any) {
-      return Error(
-        `${error.response.status} - ${error.response.data.message} - ${error.response.data.code}`
-      );
+    } catch (error: unknown) {
+      throw new Error(error as string);
     }
   }
 }

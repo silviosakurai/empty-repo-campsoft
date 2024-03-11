@@ -4,5 +4,12 @@
   "login_invalid": "Invalid login!",
   "login_success": "Login success!",
   "internal_server_error": "Internal server error!",
-  "client_not_found": "Client not found!"
+  "client_not_found": "Client not found!",
+  "error_send_code_verification": "Error send code verification!",
+  "previously_registered_user": "Previously registered user!",
+  "user_updated_successfully": "User updated successfully!",
+  "error_validate_code_verification": "Error validate code verification!",
+  "phone_not_match_token": "Phone not match token!",
+  "user_phone_updated_successfully": "User phone updated successfully!",
+  "user_password_updated_successfully": "User password updated successfully!"
 }

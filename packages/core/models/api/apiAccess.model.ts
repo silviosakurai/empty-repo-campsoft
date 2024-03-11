@@ -14,8 +14,6 @@ export const apiAccess = mysqlTable("api_acesso", {
   api_chave: varbinary("api_chave", { length: 32 }),
   api_chave_sandbox: varbinary("api_chave_sandbox", { length: 32 }),
   id_fi_zoop_split_regra: int("id_fi_zoop_split_regra"),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
-  id_empresa: int("id_empresa"),
-  id_api_acesso_permissao: int("id_api_acesso_permissao"),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

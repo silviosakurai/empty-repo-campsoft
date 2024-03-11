@@ -13,6 +13,10 @@ export const planItem = mysqlTable("plano_item", {
   id_produto_grupo: int("id_produto_grupo"),
   ordem: int("ordem").notNull().default(999),
   percentual_do_plano: double("percentual_do_plano"),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

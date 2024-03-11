@@ -1,9 +1,4 @@
-import {
-  mysqlTable,
-  tinyint,
-  datetime,
-  char,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, tinyint, datetime, char } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const clientCards = mysqlTable("cliente_cartoes", {
@@ -14,5 +9,7 @@ export const clientCards = mysqlTable("cliente_cartoes", {
   first_digits: char("first_digits", { length: 10 }),
   last_digits: char("last_digits", { length: 8 }),
   expiration_date: char("expiration_date", { length: 4 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

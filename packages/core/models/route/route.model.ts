@@ -6,15 +6,24 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
+import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 
 export const route = mysqlTable("rota", {
   id_rota: int("id_rota").notNull().primaryKey(),
-  api_acesso_permissao_tipo_rota: varchar("api_acesso_permissao_tipo_rota", { length: 50 }),
-  metodo: mysqlEnum("metodo", ["GET", "POST", "DELETE", "PATCH", "PUT"]),
-  module: varchar("module", { length: 30 }),
-  arquivo: varchar("arquivo", { length: 30 }),
-  funcao: varchar("funcao", { length: 30 }),
+  rota: varchar("rota", { length: 50 }),
+  metodo: mysqlEnum("metodo", [
+    RouteMethod.GET,
+    RouteMethod.POST,
+    RouteMethod.DELETE,
+    RouteMethod.PATCH,
+    RouteMethod.PUT,
+  ]),
+  module: mysqlEnum("module", [RouteModule.PARTNER, RouteModule.PUBLIC]),
   obs: varchar("obs", { length: 255 }),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

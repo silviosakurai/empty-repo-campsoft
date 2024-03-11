@@ -4,10 +4,24 @@ import { InvalidPhoneNumberError } from "../exceptions/InvalidPhoneNumberError";
 @injectable()
 export class PhoneNumberValidator {
   validate(phoneNumber: string): null | InvalidPhoneNumberError {
-    const regexPhoneNumberAndDDD = /^\d{11}$/;
+    const regexInternationalPhoneNumber = /^\+?[1-9]\d{1,14}$/;
 
-    if (!regexPhoneNumberAndDDD.test(phoneNumber)) {
-      return new InvalidPhoneNumberError("Invalid phone number.");
+    const cleanPhoneNumber = phoneNumber.replace(/[\s-()]/g, "");
+
+    if (!regexInternationalPhoneNumber.test(cleanPhoneNumber)) {
+      throw new InvalidPhoneNumberError("Invalid phone number.");
+    }
+
+    return null;
+  }
+
+  validateNational(phoneNumber: string): null | InvalidPhoneNumberError {
+    const regexNationalPhoneNumber = /^\d{10,11}$/;
+
+    const cleanPhoneNumber = phoneNumber.replace(/[\s-()]/g, "");
+
+    if (!regexNationalPhoneNumber.test(cleanPhoneNumber)) {
+      throw new InvalidPhoneNumberError("Invalid phone number.");
     }
 
     return null;

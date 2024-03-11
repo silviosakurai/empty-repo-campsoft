@@ -28,9 +28,23 @@ rules:
   max-depth: ['error', 4]
   max-nested-callbacks: ['error', 3]
   max-statements: ['error', 15]
-  max-len: ['error', { 'code': 100 }]
+  max-len: ['error', { 'code': 120 }]
   no-magic-numbers: 'off'
   'prettier/prettier': 'error'
   '@typescript-eslint/no-unused-vars': 'warn'
   '@typescript-eslint/type-annotation-spacing': 'error'
   '@typescript-eslint/no-explicit-any': 'error'
+  '@typescript-eslint/no-non-null-assertion': 'error'
+  no-implicit-globals: 'error'
+  prefer-promise-reject-errors: 'error'
+  no-await-in-loop: 'error'
+  no-duplicate-imports: 'error'
+  no-use-before-define: 'error'
+  '@typescript-eslint/member-delimiter-style':
+    [
+      'error',
+      {
+        multiline: { delimiter: 'semi', requireLast: true },
+        singleline: { delimiter: 'semi', requireLast: false },
+      },
+    ]

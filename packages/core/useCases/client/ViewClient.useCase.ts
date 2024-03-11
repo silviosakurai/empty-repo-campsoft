@@ -12,8 +12,9 @@ export class ViewClientUseCase {
   }
 
   async execute({
+    tokenKeyData,
     userId,
   }: ViewClientRequest): Promise<ViewClientResponse | null> {
-    return this.clientService.viewClient(userId);
+    return await this.clientService.viewClient(tokenKeyData, userId);
   }
 }

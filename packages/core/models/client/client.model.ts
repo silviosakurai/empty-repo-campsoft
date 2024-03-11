@@ -15,7 +15,10 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const client = mysqlTable("cliente", {
-  id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
+  id_cliente: binary("id_cliente", { length: 16 })
+    .default("uuid_to_bin(uuid())")
+    .notNull()
+    .primaryKey(),
   status: mysqlEnum("status", [ClientStatus.ACTIVE, ClientStatus.INACTIVE])
     .notNull()
     .default(ClientStatus.ACTIVE),
@@ -31,13 +34,13 @@ export const client = mysqlTable("cliente", {
   senha: varchar("senha", { length: 65 }),
   senha_campsoft: varchar("senha_campsoft", { length: 100 }),
   sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
-  sms_validacao: varchar("sms_validacao", { length: 6 }),
   cliente_hash: varchar("cliente_hash", { length: 32 }),
-  cliente_zoop: varchar("cliente_zoop", { length: 32 }),
+  cliente_zoop_producao: varchar("cliente_zoop_producao", { length: 32 }),
+  cliente_zoop_sandbox: varchar("cliente_zoop_sandbox", { length: 32 }),
   sandbox: mysqlEnum("sandbox", [ClientSandbox.YES, ClientSandbox.NO]).default(
     ClientSandbox.NO
   ),
   obs: varchar("obs", { length: 50 }),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

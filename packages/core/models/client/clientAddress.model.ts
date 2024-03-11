@@ -9,7 +9,10 @@ import {
 import { sql } from "drizzle-orm";
 
 export const clientAddress = mysqlTable("cliente_endereco", {
-  id_cliente_endereco: varbinary("id_cliente_endereco", { length: 16 }).notNull().default(sql`uuid_to_bin(uuid())`).primaryKey(),
+  id_cliente_endereco: varbinary("id_cliente_endereco", { length: 16 })
+    .notNull()
+    .default(sql`uuid_to_bin(uuid())`)
+    .primaryKey(),
   id_cliente: int("id_cliente"),
   tipo: mysqlEnum("tipo", ["Cobranca", "Envio"]).notNull().default("Cobranca"),
   primario: mysqlEnum("primario", ["Y", "N"]).notNull().default("N"),
@@ -20,6 +23,6 @@ export const clientAddress = mysqlTable("cliente_endereco", {
   bairro: varchar("bairro", { length: 100 }),
   cidade: varchar("cidade", { length: 50 }),
   uf: varchar("uf", { length: 2 }),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

@@ -31,6 +31,10 @@ export const product = mysqlTable("produto", {
   como_acessar_url_ios: varchar("como_acessar_url_ios", { length: 150 }),
   como_acessar_url_and: varchar("como_acessar_url_and", { length: 150 }),
   obs: varchar("obs", { length: 100 }),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

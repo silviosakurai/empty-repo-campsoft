@@ -8,7 +8,9 @@ import {
 import { sql } from "drizzle-orm";
 
 export const fiZoopPlan = mysqlTable("fi_zoop_planos", {
-  id_fi_zoop_planos: varchar("id_fi_zoop_planos", { length: 32 }).notNull().primaryKey(),
+  id_fi_zoop_planos: varchar("id_fi_zoop_planos", { length: 32 })
+    .notNull()
+    .primaryKey(),
   id_plano: int("id_plano"),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
   sandbox: int("sandbox"),
@@ -18,6 +20,10 @@ export const fiZoopPlan = mysqlTable("fi_zoop_planos", {
   interval: int("interval"),
   amount: int("amount"),
   duration: int("duration"),
-  created_at: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: datetime("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  created_at: datetime("created_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updated_at: datetime("updated_at", { mode: "string" }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 });

@@ -1,17 +1,26 @@
-import { AuthRepository } from "@core/repositories/client/auth.repository";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { AuthRepository } from "@core/repositories/client/Auth.repository";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class AuthService {
   private authRepository: AuthRepository;
 
-  constructor(clientRepository: AuthRepository) {
-    this.authRepository = clientRepository;
+  constructor(authRepository: AuthRepository) {
+    this.authRepository = authRepository;
   }
 
-  authenticate = async (login: string, password: string) => {
+  authenticate = async (
+    tokenKeyData: ITokenKeyData,
+    login: string,
+    password: string
+  ) => {
     try {
-      return await this.authRepository.authenticate(login, password);
+      return await this.authRepository.authenticate(
+        tokenKeyData,
+        login,
+        password
+      );
     } catch (error) {
       throw error;
     }

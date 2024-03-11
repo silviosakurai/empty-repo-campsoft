@@ -12,9 +12,10 @@ export class LoginAuthUseCase {
   }
 
   async execute({
+    tokenKeyData,
     login,
     password,
   }: LoginRequest): Promise<LoginResponse | null> {
-    return this.authService.authenticate(login, password);
+    return await this.authService.authenticate(tokenKeyData, login, password);
   }
 }

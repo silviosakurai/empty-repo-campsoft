@@ -4,5 +4,12 @@
   "login_invalid": "Login inválido",
   "login_success": "Login com sucesso",
   "internal_server_error": "Erro interno do servidor",
-  "client_not_found": "Cliente não encontrado"
+  "client_not_found": "Cliente não encontrado",
+  "error_send_code_verification": "Erro ao enviar o código de verificação",
+  "previously_registered_user": "Usuário já cadastrado anteriormente.",
+  "user_updated_successfully": "Usuário atualizado com sucesso.",
+  "error_validate_code_verification": "Erro ao validar o código de verificação",
+  "phone_not_match_token": "Celular, SMS ou WhatsAPP não corresponde ao token",
+  "user_phone_updated_successfully": "Telefone do usuário atualizado com sucesso",
+  "user_password_updated_successfully": "Senha do usuário atualizada com sucesso"
 }
