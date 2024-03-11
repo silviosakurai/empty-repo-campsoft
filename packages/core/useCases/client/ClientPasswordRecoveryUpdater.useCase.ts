@@ -1,34 +1,29 @@
-import { AuthService, ClientService } from "@core/services";
+import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
-import { UpdatePasswordClientRequestDto } from "./dtos/UpdatePasswordClientRequest.dto";
+import { UpdatePasswordRecoveryClientRequestDto } from "@core/useCases/client/dtos/UpdatePasswordRecoveryClientRequest.dto";
+import { encodePassword } from "@core/common/functions/encodePassword";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
-import { encodePassword } from "@core/common/functions/encodePassword";
 
 @injectable()
-export class ClientPasswordUpdaterUseCase {
+export class ClientPasswordRecoveryUpdaterUseCase {
   private clientService: ClientService;
-  private authService: AuthService;
 
-  constructor(clientService: ClientService, authService: AuthService) {
+  constructor(clientService: ClientService) {
     this.clientService = clientService;
-    this.authService = authService;
   }
 
   async update(
-    clientId: string,
-    input: UpdatePasswordClientRequestDto,
-    tokenKeyData: ITokenKeyData,
     tokenTfaData: ITokenTfaData,
+    tokenKeyData: ITokenKeyData,
+    input: UpdatePasswordRecoveryClientRequestDto
   ): Promise<boolean | null> {
-
-    const userLogged = await this.authService.authenticateByClientId(
+    const userFounded = await this.clientService.viewClient(
       tokenKeyData,
-      clientId,
-      input.current_password
+      tokenTfaData.clientId
     );
 
-    if (!userLogged) {
+    if (!userFounded) {
       return null;
     }
 

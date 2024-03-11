@@ -1,18 +1,23 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ClientPasswordUpdaterUseCase } from '@core/useCases/client/ClientPasswordUpdater.useCase';
-import { UpdatePasswordClientRequestDto } from '@core/useCases/client/dtos/UpdatePasswordClientRequest.dto';
+import { ClientPasswordRecoveryUpdaterUseCase } from '@core/useCases/client/ClientPasswordRecoveryUpdater.useCase';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
+import { UpdatePasswordRecoveryClientRequestDto } from '@core/useCases/client/dtos/UpdatePasswordRecoveryClientRequest.dto';
 
-export const updatePasswordClient = async (
+export const updatePasswordRecoveryClient = async (
   request: FastifyRequest<{
-    Body: UpdatePasswordClientRequestDto;
+    Body: UpdatePasswordRecoveryClientRequestDto;
+    Params: {
+      new_password: string;
+    };
   }>,
   reply: FastifyReply
 ) => {
-  const clientPasswordUpdaterUseCase = container.resolve(ClientPasswordUpdaterUseCase);
-  const { t, tokenKeyData, tokenJwtData, tokenTfaData } = request;
+  const clientPasswordRecoveryUpdaterUseCase = container.resolve(
+    ClientPasswordRecoveryUpdaterUseCase
+  );
+  const { t, tokenKeyData, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
     return sendResponse(reply, {
@@ -22,11 +27,10 @@ export const updatePasswordClient = async (
   }
 
   try {
-    const response = await clientPasswordUpdaterUseCase.update(
-      tokenJwtData.clientId,
-      request.body,
-      tokenKeyData,
+    const response = await clientPasswordRecoveryUpdaterUseCase.update(
       tokenTfaData,
+      tokenKeyData,
+      request.body
     );
 
     if (!response) {

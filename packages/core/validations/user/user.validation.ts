@@ -36,11 +36,17 @@ const userPhoneUpdaterSchema = {
   body: Schema.object().prop("phone", Schema.string().required()),
 };
 
+const userPasswordUpdaterSchema = {
+  body: Schema.object()
+    .prop("current_password", Schema.string().required())
+    .prop("new_password", Schema.string().required()),
+};
+
 const userPasswordRecoveryMethods = {
   params: Schema.object().prop("login", Schema.string().required()),
 };
 
-const userPasswordUpdaterSchema = {
+const userPasswordRecoveryUpdaterSchema = {
   body: Schema.object().prop("new_password", Schema.string().required()),
 };
 
@@ -49,6 +55,7 @@ export {
   userReaderSchema,
   userUpdaterSchema,
   userPhoneUpdaterSchema,
-  userPasswordRecoveryMethods,
   userPasswordUpdaterSchema,
+  userPasswordRecoveryMethods,
+  userPasswordRecoveryUpdaterSchema,
 };

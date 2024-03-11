@@ -62,4 +62,46 @@ export class AuthRepository {
 
     return result[0] as unknown as LoginResponse;
   };
+
+  authenticateByClientId = async (
+    tokenKeyData: ITokenKeyData,
+    clientId: string,
+    password: string
+  ): Promise<LoginResponse | null> => {
+    const result = await this.db
+      .select({
+        client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
+        status: client.status,
+        client_id_type: client.id_cliente_tipo,
+        facebook_id: client.id_facebook,
+        name: client.nome,
+        surname: client.sobrenome,
+        birth_date: client.data_nascimento,
+        email: client.email,
+        phone: client.telefone,
+        cpf: client.cpf,
+        gender: client.sexo,
+      })
+      .from(client)
+      .innerJoin(
+        clientType,
+        eq(clientType.id_cliente_tipo, client.id_cliente_tipo)
+      )
+      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
+      .where(
+        and(
+          eq(client.status, ClientStatus.ACTIVE),
+          eq(access.id_empresa, tokenKeyData.company_id),
+          eq(client.id_cliente, sql`UUID_TO_BIN(${clientId})`),
+          sql`SUBSTRING_INDEX(${client.senha}, ':', 1) = MD5(CONCAT(SUBSTRING_INDEX(${client.senha}, ':', -1), ${password}))`
+        )
+      )
+      .execute();
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as LoginResponse;
+  };
 }

@@ -25,4 +25,20 @@ export class AuthService {
       throw error;
     }
   };
+
+  authenticateByClientId = async (
+    tokenKeyData: ITokenKeyData,
+    clientId: string,
+    password: string
+  ) => {
+    try {
+      return await this.authRepository.authenticateByClientId(
+        tokenKeyData,
+        clientId,
+        password
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
 }
