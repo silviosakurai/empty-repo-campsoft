@@ -11,7 +11,9 @@ export const updatePasswordClient = async (
   }>,
   reply: FastifyReply
 ) => {
-  const clientPasswordUpdaterUseCase = container.resolve(ClientPasswordUpdaterUseCase);
+  const clientPasswordUpdaterUseCase = container.resolve(
+    ClientPasswordUpdaterUseCase
+  );
   const { t, tokenKeyData, tokenJwtData, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
@@ -26,7 +28,7 @@ export const updatePasswordClient = async (
       tokenJwtData.clientId,
       request.body,
       tokenKeyData,
-      tokenTfaData,
+      tokenTfaData
     );
 
     if (!response) {
