@@ -1,21 +1,21 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ClientPasswordUpdaterUseCase } from '@core/useCases/client/ClientPasswordUpdater.useCase';
+import { ClientPasswordRecoveryUpdaterUseCase } from '@core/useCases/client/ClientPasswordRecoveryUpdater.useCase';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
-import { UpdatePasswordClientRequestDto } from '@core/useCases/client/dtos/UpdatePasswordClientRequest.dto';
+import { UpdatePasswordRecoveryClientRequestDto } from '@core/useCases/client/dtos/UpdatePasswordRecoveryClientRequest.dto';
 
-export const updatePasswordClient = async (
+export const updatePasswordRecoveryClient = async (
   request: FastifyRequest<{
-    Body: UpdatePasswordClientRequestDto;
+    Body: UpdatePasswordRecoveryClientRequestDto;
     Params: {
       new_password: string;
     };
   }>,
   reply: FastifyReply
 ) => {
-  const clientPasswordUpdaterUseCase = container.resolve(
-    ClientPasswordUpdaterUseCase
+  const clientPasswordRecoveryUpdaterUseCase = container.resolve(
+    ClientPasswordRecoveryUpdaterUseCase
   );
   const { t, tokenKeyData, tokenTfaData } = request;
 
@@ -27,7 +27,7 @@ export const updatePasswordClient = async (
   }
 
   try {
-    const response = await clientPasswordUpdaterUseCase.update(
+    const response = await clientPasswordRecoveryUpdaterUseCase.update(
       tokenTfaData,
       tokenKeyData,
       request.body
