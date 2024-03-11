@@ -41,7 +41,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.patch('/user/password', {
-    schema: userPasswordRecoveryUpdaterSchema,
+    schema: userPasswordUpdaterSchema,
     handler: clientController.updatePassword,
     preHandler: [
       server.authenticateKeyApi,
@@ -51,7 +51,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.get('/user/recovery-password/:login', {
-    schema: userPasswordUpdaterSchema,
+    schema: userPasswordRecoveryMethods,
     handler: clientController.passwordRecoveryMethods,
     preHandler: [server.authenticateKeyApi],
   });
