@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { client, access } from "@core/models";
 import { eq, sql, and } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientViewRepository {
@@ -17,11 +17,12 @@ export class ClientViewRepository {
   }
 
   async view(
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     userId: string
   ): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
+        client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
         first_name: client.nome,
         last_name: client.sobrenome,
@@ -37,7 +38,7 @@ export class ClientViewRepository {
       .where(
         and(
           eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(access.id_empresa, apiAccess.company_id)
+          eq(access.id_empresa, tokenKeyData.company_id)
         )
       )
       .execute();

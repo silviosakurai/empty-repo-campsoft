@@ -1,4 +1,5 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
+import { createCacheKey } from "@core/common/functions/createCacheKey";
 import { sendResponse } from "@core/common/functions/sendResponse";
 import { ViewApiKeyUseCase } from "@core/useCases/api/ViewApiKey.useCase";
 import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto";
@@ -21,11 +22,18 @@ async function authenticateKeyApi(
   try {
     const viewApiKeyUseCase = container.resolve(ViewApiKeyUseCase);
 
-    const cacheKey = `keyapi:${keyapi}`;
+    const cacheKey = createCacheKey(
+      "keyCache",
+      keyapi,
+      routePath,
+      routeMethod,
+      routeModule
+    );
+
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
-      request.apiAccess = JSON.parse(cacheAuth);
+      request.tokenKeyData = JSON.parse(cacheAuth);
 
       return;
     }
@@ -46,7 +54,7 @@ async function authenticateKeyApi(
 
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
-    request.apiAccess = responseAuth;
+    request.tokenKeyData = responseAuth;
 
     return;
   } catch (error) {

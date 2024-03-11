@@ -10,12 +10,17 @@ export class GeneralEnvironment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
   private readonly JWT_SECRET: string | undefined;
   private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
+  private readonly BASE_URL_CAMPSOFT_API: string | undefined;
+  private readonly API_KEY_CAMPSOFT: string | undefined;
+
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
       .APP_ENVIRONMENT as unknown as AppEnvironment;
     this.JWT_SECRET = process.env.JWT_SECRET;
     this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
+    this.API_KEY_CAMPSOFT = process.env.API_KEY_CAMPSOFT;
+    this.BASE_URL_CAMPSOFT_API = process.env.BASE_URL_CAMPSOFT_API;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -50,5 +55,26 @@ export class GeneralEnvironment {
     }
 
     return this.JWT_SECRET_EXPIRES_IN;
+  }
+
+  public get apiKeyCampsoft(): string {
+    if (!this.API_KEY_CAMPSOFT) {
+      throw new InvalidConfigurationError(
+        "API_KEY_CAMPSOFT is not defined."
+      );
+    }
+
+    return this.API_KEY_CAMPSOFT;
+  }
+
+
+  public get apiCampsoft(): string {
+    if (!this.BASE_URL_CAMPSOFT_API) {
+      throw new InvalidConfigurationError(
+        "BASE_URL_CAMPSOFT_API is not defined."
+      );
+    }
+
+    return this.BASE_URL_CAMPSOFT_API;
   }
 }

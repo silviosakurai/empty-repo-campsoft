@@ -34,7 +34,6 @@ export const client = mysqlTable("cliente", {
   senha: varchar("senha", { length: 65 }),
   senha_campsoft: varchar("senha_campsoft", { length: 100 }),
   sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
-  sms_validacao: varchar("sms_validacao", { length: 6 }),
   cliente_hash: varchar("cliente_hash", { length: 32 }),
   cliente_zoop_producao: varchar("cliente_zoop_producao", { length: 32 }),
   cliente_zoop_sandbox: varchar("cliente_zoop_sandbox", { length: 32 }),

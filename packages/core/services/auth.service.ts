@@ -1,5 +1,5 @@
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AuthRepository } from "@core/repositories/client/Auth.repository";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 
 @injectable()
@@ -11,12 +11,32 @@ export class AuthService {
   }
 
   authenticate = async (
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     login: string,
     password: string
   ) => {
     try {
-      return await this.authRepository.authenticate(apiAccess, login, password);
+      return await this.authRepository.authenticate(
+        tokenKeyData,
+        login,
+        password
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  authenticateByClientId = async (
+    tokenKeyData: ITokenKeyData,
+    clientId: string,
+    password: string
+  ) => {
+    try {
+      return await this.authRepository.authenticateByClientId(
+        tokenKeyData,
+        clientId,
+        password
+      );
     } catch (error) {
       throw error;
     }

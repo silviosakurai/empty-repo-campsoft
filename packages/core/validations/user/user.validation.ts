@@ -22,13 +22,6 @@ const userReaderSchema = {
     .prop("text_search", Schema.string()),
 };
 
-const userViewSchema = {
-  params: Schema.object().prop(
-    "userId",
-    Schema.string().format("uuid").required()
-  ),
-};
-
 const userUpdaterSchema = {
   body: Schema.object()
     .prop("status", Schema.enum(Object.values(ClientStatus)).required())
@@ -40,14 +33,29 @@ const userUpdaterSchema = {
 };
 
 const userPhoneUpdaterSchema = {
+  body: Schema.object().prop("phone", Schema.string().required()),
+};
+
+const userPasswordUpdaterSchema = {
   body: Schema.object()
-    .prop("phone", Schema.string().required())
+    .prop("current_password", Schema.string().required())
+    .prop("new_password", Schema.string().required()),
+};
+
+const userPasswordRecoveryMethods = {
+  params: Schema.object().prop("login", Schema.string().required()),
+};
+
+const userPasswordRecoveryUpdaterSchema = {
+  body: Schema.object().prop("new_password", Schema.string().required()),
 };
 
 export {
   userCreatorSchema,
   userReaderSchema,
-  userViewSchema,
   userUpdaterSchema,
   userPhoneUpdaterSchema,
+  userPasswordUpdaterSchema,
+  userPasswordRecoveryMethods,
+  userPasswordRecoveryUpdaterSchema,
 };

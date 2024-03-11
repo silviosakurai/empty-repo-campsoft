@@ -1,5 +1,6 @@
 import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
 import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
+import { phoneNumberIncludesCountryCode } from "@core/common/functions/phoneNumberIncludesCountryCode";
 import { whatsappEnvironment } from "@core/config/environments";
 import {
   IWhatsappService,
@@ -19,9 +20,7 @@ export class WhatsappService implements IWhatsappService {
       this.phonesValidate(input);
 
       const sendPhone = this.sendPhone(input.sender_phone);
-      const targetPhone = this.phoneNumberIncludesCountryCode(
-        input.target_phone
-      );
+      const targetPhone = phoneNumberIncludesCountryCode(input.target_phone);
 
       const response = await client.messages.create({
         from: `whatsapp:${sendPhone}`,
@@ -39,7 +38,7 @@ export class WhatsappService implements IWhatsappService {
     sender_phone,
     target_phone,
   }: IWhatsappServiceInput): null | InvalidPhoneNumberError {
-    const targetPhone = this.phoneNumberIncludesCountryCode(target_phone);
+    const targetPhone = phoneNumberIncludesCountryCode(target_phone);
 
     const targetPhoneValidated =
       this.phoneNumberValidator.validate(targetPhone);
@@ -71,14 +70,6 @@ export class WhatsappService implements IWhatsappService {
   private sendPhone(sendPhone: string | null | undefined): string {
     const phoneNumber = sendPhone ?? whatsappEnvironment.whatsappApiNumber;
 
-    return this.phoneNumberIncludesCountryCode(phoneNumber);
-  }
-
-  private phoneNumberIncludesCountryCode(phoneNumber: string): string {
-    if (!phoneNumber.startsWith("+")) {
-      return `+55${phoneNumber}`;
-    }
-
-    return phoneNumber;
+    return phoneNumberIncludesCountryCode(phoneNumber);
   }
 }

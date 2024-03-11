@@ -8,11 +8,11 @@ import {
   whatsAppHistory,
 } from "@core/models";
 import { and, desc, eq, gte, or, sql } from "drizzle-orm";
-import { TFAType } from "@core/common/enums/models/tfa";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
 import { adjustCurrentTimeByMinutes } from "@core/common/functions/adjustCurrentTimeByMinutes";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaCodesWhatsAppRepository {
@@ -22,27 +22,6 @@ export class TfaCodesWhatsAppRepository {
     @inject("Database") mySql2Database: MySql2Database<typeof schema>
   ) {
     this.db = mySql2Database;
-  }
-
-  async insertCodeUser(
-    type: TFAType,
-    login: string,
-    code: string
-  ): Promise<boolean> {
-    const result = await this.db
-      .insert(tfaCodes)
-      .values({
-        tipo: type,
-        destino: login,
-        codigo: code,
-      })
-      .execute();
-
-    if (!result) {
-      throw new Error("Error inserting code");
-    }
-
-    return true;
   }
 
   async isTokenUniqueAndValid(token: string): Promise<boolean> {
@@ -63,7 +42,7 @@ export class TfaCodesWhatsAppRepository {
   }
 
   async getTemplateWhatsapp(
-    apiAccess: ViewApiResponse
+    tokenKeyData: ITokenKeyData
   ): Promise<ITemplateWhatsapp> {
     const result = await this.db
       .select({
@@ -81,7 +60,7 @@ export class TfaCodesWhatsAppRepository {
       .where(
         or(
           and(
-            eq(templateWhatsApp.id_empresa, apiAccess.company_id),
+            eq(templateWhatsApp.id_empresa, tokenKeyData.company_id),
             eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
           ),
           and(
@@ -106,19 +85,18 @@ export class TfaCodesWhatsAppRepository {
 
   async insertWhatsAppHistory(
     templateId: number,
+    loginUserTFA: LoginUserTFA,
     sender: string,
-    recipient: string,
     whatsappToken: string,
-    sendDate: string,
-    clientId: string | null = null
+    sendDate: string
   ): Promise<boolean> {
     const result = await this.db
       .insert(whatsAppHistory)
       .values({
         id_template: templateId,
-        id_cliente: clientId,
+        id_cliente: loginUserTFA.clientId ?? null,
         remetente: sender,
-        destinatario: recipient,
+        destinatario: loginUserTFA.login,
         whatsapp_token_externo: whatsappToken,
         data_envio: sendDate,
       })
