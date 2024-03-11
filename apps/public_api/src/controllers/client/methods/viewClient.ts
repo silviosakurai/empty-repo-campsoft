@@ -1,6 +1,5 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { ViewClientRequest } from '@core/useCases/client/dtos/ViewClientRequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ViewClientUseCase } from '@core/useCases/client/ViewClient.useCase';
 import { container } from 'tsyringe';
@@ -10,13 +9,12 @@ export const viewClient = async (
   reply: FastifyReply
 ) => {
   const viewClientUseCase = container.resolve(ViewClientUseCase);
-  const { t, apiAccess } = request;
-  const { userId } = request.params as ViewClientRequest;
+  const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
     const response = await viewClientUseCase.execute({
-      apiAccess,
-      userId,
+      tokenKeyData,
+      userId: tokenJwtData.clientId,
     });
 
     if (!response) {

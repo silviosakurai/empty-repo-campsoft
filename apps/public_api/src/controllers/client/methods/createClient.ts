@@ -10,10 +10,13 @@ export const createClient = async (
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientCreatorUseCase);
-  const { t, apiAccess, tfaInfo } = request;
+  const { t, tokenKeyData, tokenTfaData } = request;
 
   try {
-    const validateType = clientUseCase.validateTypeTfa(tfaInfo, request.body);
+    const validateType = clientUseCase.validateTypeTfa(
+      tokenTfaData,
+      request.body
+    );
 
     if (!validateType) {
       return sendResponse(reply, {
@@ -23,7 +26,7 @@ export const createClient = async (
     }
 
     const response = await clientUseCase.create(
-      apiAccess.company_id,
+      tokenKeyData.company_id,
       request.body
     );
 

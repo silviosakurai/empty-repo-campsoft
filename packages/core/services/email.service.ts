@@ -1,4 +1,7 @@
-import { IEmailService } from "@core/interfaces/services/IEmail.service";
+import {
+  IEmailSendService,
+  IEmailService,
+} from "@core/interfaces/services/IEmail.service";
 import { awsEnvironment } from "@core/config/environments";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { injectable } from "tsyringe";
@@ -11,7 +14,12 @@ export class EmailService implements IEmailService {
     this.client = new SESClient({ region: awsEnvironment.awsRegion });
   }
 
-  private parseEmail(html: string, to: string, subject: string) {
+  private parseEmail(
+    html: string,
+    subject: string,
+    to: string,
+    from: string | null
+  ) {
     return new SendEmailCommand({
       Destination: {
         ToAddresses: [to],
@@ -26,12 +34,18 @@ export class EmailService implements IEmailService {
           Data: subject,
         },
       },
-      Source: awsEnvironment.awsSesEmail,
+      Source: from ?? awsEnvironment.awsSesEmail,
     });
   }
 
-  public send(html: string, to: string, subject: string) {
-    const parsedEmail = this.parseEmail(html, to, subject);
+  public send(params: IEmailSendService) {
+    const parsedEmail = this.parseEmail(
+      params.html,
+      params.subject,
+      params.to,
+      params.from
+    );
+
     return this.client.send(parsedEmail);
   }
 }

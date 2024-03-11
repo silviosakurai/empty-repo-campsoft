@@ -14,10 +14,9 @@ export const smsHistory = mysqlTable("sms_historico", {
     .autoincrement(),
   id_template: int("id_template").notNull(),
   id_cliente: varbinary("id_cliente", { length: 16 }),
-  remetente: varchar("remetente", { length: 100 }).notNull(),
   destinatario: varchar("destinatario", { length: 100 }).notNull(),
   sms_token_externo: varchar("sms_token_externo", { length: 60 }),
-  data_envio: datetime("data_envio"),
+  data_envio: datetime("data_envio", { mode: "string" }),
   created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

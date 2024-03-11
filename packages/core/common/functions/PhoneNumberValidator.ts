@@ -14,4 +14,16 @@ export class PhoneNumberValidator {
 
     return null;
   }
+
+  validateNational(phoneNumber: string): null | InvalidPhoneNumberError {
+    const regexNationalPhoneNumber = /^\d{10,11}$/;
+
+    const cleanPhoneNumber = phoneNumber.replace(/[\s-()]/g, "");
+
+    if (!regexNationalPhoneNumber.test(cleanPhoneNumber)) {
+      throw new InvalidPhoneNumberError("Invalid phone number.");
+    }
+
+    return null;
+  }
 }

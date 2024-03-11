@@ -1,6 +1,6 @@
 import { ApiStatus } from "@core/common/enums/models/api";
 
-export interface ViewApiResponse {
+export interface ITokenKeyData {
   api_key: string;
   api_access_id: number;
   name: string;

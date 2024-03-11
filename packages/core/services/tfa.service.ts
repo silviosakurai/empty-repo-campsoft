@@ -1,67 +1,45 @@
-import { IWhatsappServiceInput } from "@core/interfaces/services/IWhatsapp.service";
 import { TfaCodesWhatsAppRepository } from "@core/repositories/tfa/TfaCodesWhatsApp.repository";
+import { TfaCodesSms } from "@core/repositories/tfa/TfaCodesSms.repository";
+import { TfaCodesEmail } from "@core/repositories/tfa/TfaCodesEmail.repository";
 import { TfaCodesRepository } from "@core/repositories/tfa/TfaCodes.repository";
-import { WhatsappService } from "@core/services/whatsapp.service";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 import { generateTokenTfa } from "@core/common/functions/generateTokenTfa";
 import { TFAType } from "@core/common/enums/models/tfa";
-import { TemplateMessageParams } from "@core/common/enums/TemplateMessageParams";
 import {
+  ITemplateEmail,
+  ITemplateSMS,
   ITemplateWhatsapp,
   IValidateCodeTFA,
 } from "@core/interfaces/repositories/tfa";
 import { extractPhoneNumber } from "@core/common/functions/extractPhoneNumber";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { formatDateToString } from "@core/common/functions/formatDateToString";
+import { ISmsSentMessageResponse } from "@core/interfaces/services/ISms.service";
+import { currentTime } from "@core/common/functions/currentTime";
+import { SendEmailCommandOutput } from "@aws-sdk/client-ses";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaService {
   private tfaCodesRepository: TfaCodesRepository;
   private tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository;
-  private whatsappService: WhatsappService;
+  private tfaCodesSms: TfaCodesSms;
+  private tfaCodesEmail: TfaCodesEmail;
 
   constructor(
     tfaCodesRepository: TfaCodesRepository,
     tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
-    whatsappService: WhatsappService
+    tfaCodesSms: TfaCodesSms,
+    tfaCodesEmail: TfaCodesEmail
   ) {
     this.tfaCodesRepository = tfaCodesRepository;
     this.tfaCodesWhatsAppRepository = tfaCodesWhatsAppRepository;
-    this.whatsappService = whatsappService;
+    this.tfaCodesSms = tfaCodesSms;
+    this.tfaCodesEmail = tfaCodesEmail;
   }
 
-  async sendWhatsApp(
-    apiAccess: ViewApiResponse,
-    type: TFAType,
-    login: string
-  ): Promise<boolean> {
-    try {
-      const code = await this.generateAndVerifyToken();
-      const { template, templateId } = await this.getTemplateWhatsapp(
-        apiAccess,
-        code
-      );
-
-      const payload = {
-        target_phone: login,
-        message: template,
-      } as IWhatsappServiceInput;
-
-      const sendWA = await this.whatsappService.send(payload);
-      await this.tfaCodesWhatsAppRepository.insertCodeUser(type, login, code);
-
-      if (sendWA) {
-        await this.insertWhatsAppHistory(templateId, sendWA);
-      }
-
-      return true;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  private async generateAndVerifyToken(): Promise<string> {
+  async generateAndVerifyToken(): Promise<string> {
     let token;
     let isUnique = false;
 
@@ -75,43 +53,95 @@ export class TfaService {
     return token;
   }
 
-  private async getTemplateWhatsapp(
-    apiAccess: ViewApiResponse,
-    code: string
+  public async getTemplateWhatsapp(
+    tokenKeyData: ITokenKeyData
   ): Promise<ITemplateWhatsapp> {
-    const template =
-      await this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(apiAccess);
-
-    template.template = template.template.replace(
-      TemplateMessageParams.CODE,
-      code
+    return await this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(
+      tokenKeyData
     );
-
-    return template;
   }
 
-  private async insertWhatsAppHistory(
+  public async getTemplateSms(
+    tokenKeyData: ITokenKeyData
+  ): Promise<ITemplateSMS> {
+    return await this.tfaCodesSms.getTemplateSms(tokenKeyData);
+  }
+
+  public async getTemplateEmail(
+    tokenKeyData: ITokenKeyData
+  ): Promise<ITemplateEmail> {
+    return await this.tfaCodesEmail.getTemplateEmail(tokenKeyData);
+  }
+
+  public async insertCodeUser(
+    type: TFAType,
+    loginUserTFA: LoginUserTFA,
+    code: string
+  ): Promise<boolean> {
+    return await this.tfaCodesRepository.insertCodeUser(
+      type,
+      loginUserTFA,
+      code
+    );
+  }
+
+  async insertWhatsAppHistory(
     templateId: number,
+    loginUserTFA: LoginUserTFA,
     sendWA: MessageInstance
   ): Promise<boolean> {
     const sender = extractPhoneNumber(sendWA.from);
-    const recipient = extractPhoneNumber(sendWA.to);
     const whatsappToken = sendWA.sid;
     const sendDate = formatDateToString(sendWA.dateCreated);
 
     return await this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
       templateId,
+      loginUserTFA,
       sender,
-      recipient,
       whatsappToken,
+      sendDate
+    );
+  }
+
+  async insertSmsHistory(
+    templateId: number,
+    loginUserTFA: LoginUserTFA,
+    sendSms: ISmsSentMessageResponse
+  ): Promise<boolean> {
+    const smsToken = sendSms.smsEnvios[0].smsId;
+    const sendDate = currentTime();
+
+    return await this.tfaCodesSms.insertSmsHistory(
+      templateId,
+      loginUserTFA,
+      smsToken,
+      sendDate
+    );
+  }
+
+  async insertEmailHistory(
+    templateId: number,
+    loginUserTFA: LoginUserTFA,
+    sender: string | null,
+    sendEmail: SendEmailCommandOutput
+  ): Promise<boolean> {
+    const emailToken = sendEmail.MessageId ?? "";
+    const sendDate = currentTime();
+
+    return await this.tfaCodesEmail.insertEmailHistory(
+      templateId,
+      loginUserTFA,
+      sender,
+      emailToken,
       sendDate
     );
   }
 
   async validateCode(
     login: string,
-    code: string
+    code: string,
+    isUuidValid: boolean
   ): Promise<IValidateCodeTFA | null> {
-    return await this.tfaCodesRepository.validateCode(login, code);
+    return await this.tfaCodesRepository.validateCode(login, code, isUuidValid);
   }
 }

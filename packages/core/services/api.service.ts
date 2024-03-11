@@ -1,6 +1,6 @@
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ApiRepository } from "@core/repositories/api/Api.repository";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { injectable } from "tsyringe";
 
 @injectable()
@@ -31,7 +31,7 @@ export class ApiService {
 
   findApiByJwt = async (
     clientId: string,
-    apiAccess: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
@@ -39,7 +39,7 @@ export class ApiService {
     try {
       return await this.apiRepository.findApiByJwt(
         clientId,
-        apiAccess,
+        tokenKeyData,
         routePath,
         routeMethod,
         routeModule

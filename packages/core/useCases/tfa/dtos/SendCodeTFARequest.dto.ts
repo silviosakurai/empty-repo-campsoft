@@ -1,8 +1,15 @@
 import { TFAType } from "@core/common/enums/models/tfa";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 export interface SendCodeTFARequest {
-  apiAccess: ViewApiResponse;
+  tokenKeyData: ITokenKeyData;
   type: TFAType;
   login: string;
+}
+
+export interface SendCodeLoginTFARequest {
+  tokenKeyData: ITokenKeyData;
+  type: TFAType;
+  loginUserTFA: LoginUserTFA;
 }
