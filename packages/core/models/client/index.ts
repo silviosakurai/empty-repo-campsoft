@@ -9,3 +9,4 @@ export * from "./clientEmailNewsletter.model";
 export * from "./clientEmailType.model";
 export * from "./clientInstantbuykey.model";
 export * from "./clientType.model";
+export * from "./clientDeleted.model";

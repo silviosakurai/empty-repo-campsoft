@@ -37,7 +37,7 @@ export class ClientCreatorRepository {
       })
       .execute();
 
-    if (!result.length) {
+    if (!result[0].affectedRows) {
       return null;
     }
 

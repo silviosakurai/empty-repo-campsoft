@@ -18,6 +18,9 @@ import { ClientPasswordUpdaterRepository } from "@core/repositories/client/Clien
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientByEmailPhone.repository";
+import { ClientDeleteRepository } from "@core/repositories/client/ClientDelete.repository";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 
 @injectable()
 export class ClientService {
@@ -30,6 +33,7 @@ export class ClientService {
   private clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository;
   private clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository;
   private clientByEmailPhoneRepository: ClientByEmailPhoneRepository;
+  private clientDeleteRepository: ClientDeleteRepository;
 
   constructor(
     clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
@@ -40,7 +44,8 @@ export class ClientService {
     clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
     clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
-    clientByEmailPhoneRepository: ClientByEmailPhoneRepository
+    clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
+    clientDeleteRepository: ClientDeleteRepository
   ) {
     this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
     this.clientViewRepository = clientViewRepository;
@@ -52,6 +57,7 @@ export class ClientService {
       clientPasswordRecoveryMethodsRepository;
     this.clientPasswordUpdaterRepository = clientPasswordUpdaterRepository;
     this.clientByEmailPhoneRepository = clientByEmailPhoneRepository;
+    this.clientDeleteRepository = clientDeleteRepository;
   }
 
   viewClient = async (tokenKeyData: ITokenKeyData, userId: string) => {
@@ -132,6 +138,20 @@ export class ClientService {
       return await this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
         tokenKeyData,
         login
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  delete = async (
+    tokenJwtData: ITokenJwtData,
+    userFounded: ViewClientResponse
+  ) => {
+    try {
+      return await this.clientDeleteRepository.delete(
+        tokenJwtData,
+        userFounded
       );
     } catch (error) {
       throw error;

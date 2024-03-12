@@ -66,7 +66,7 @@ async function authenticateKeyApi(
     return;
   } catch (error) {
     return sendResponse(reply, {
-      message: t("internal_server_error"),
+      message: t("not_authorized"),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
     });
   }

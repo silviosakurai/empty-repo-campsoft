@@ -11,5 +11,6 @@
   "error_validate_code_verification": "Erro ao validar o código de verificação",
   "phone_not_match_token": "Celular, SMS ou WhatsAPP não corresponde ao token",
   "user_phone_updated_successfully": "Telefone do usuário atualizado com sucesso",
-  "user_password_updated_successfully": "Senha do usuário atualizada com sucesso"
+  "user_password_updated_successfully": "Senha do usuário atualizada com sucesso",
+  "user_deleted_successfully": "Usuário deletado com sucesso"
 }

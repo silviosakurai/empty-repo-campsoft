@@ -1,0 +1,59 @@
+import { inject, injectable } from "tsyringe";
+import * as schema from "@core/models";
+import { MySql2Database } from "drizzle-orm/mysql2";
+import { eq, sql } from "drizzle-orm";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
+import { client, clientDeleted } from "@core/models";
+import { ClientStatus } from "@core/common/enums/models/client";
+
+@injectable()
+export class ClientDeleteRepository {
+  private db: MySql2Database<typeof schema>;
+
+  constructor(
+    @inject("Database") mySql2Database: MySql2Database<typeof schema>
+  ) {
+    this.db = mySql2Database;
+  }
+
+  async delete(
+    tokenJwtData: ITokenJwtData,
+    userFounded: ViewClientResponse
+  ): Promise<boolean> {
+    const insertClientDeletedId = await this.insertClientDeleted(userFounded);
+
+    const result = await this.db
+      .update(schema.client)
+      .set({
+        status: ClientStatus.DELETED,
+        telefone: `del_${insertClientDeletedId}`,
+        email: `del_${insertClientDeletedId}`,
+        cpf: `del_${insertClientDeletedId}`,
+      })
+      .where(eq(client.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`))
+      .execute();
+
+    return !!result[0].affectedRows;
+  }
+
+  async insertClientDeleted(
+    userFounded: ViewClientResponse
+  ): Promise<number | null> {
+    const result = await this.db
+      .insert(clientDeleted)
+      .values({
+        id_cliente: sql`UUID_TO_BIN(${userFounded.client_id})`,
+        email: userFounded.email,
+        telefone: userFounded.phone,
+        cpf: userFounded.cpf,
+      })
+      .execute();
+
+    if (!result[0].affectedRows) {
+      return null;
+    }
+
+    return result[0].insertId;
+  }
+}
