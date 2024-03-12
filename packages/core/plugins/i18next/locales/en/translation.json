@@ -11,5 +11,6 @@
   "error_validate_code_verification": "Error validate code verification!",
   "phone_not_match_token": "Phone not match token!",
   "user_phone_updated_successfully": "User phone updated successfully!",
-  "user_password_updated_successfully": "User password updated successfully!"
+  "user_password_updated_successfully": "User password updated successfully!",
+  "user_deleted_successfully": "User deleted successfully!"
 }

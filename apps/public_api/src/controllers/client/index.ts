@@ -6,12 +6,14 @@ import { updatePhoneClient } from './methods/updatePhoneClient';
 import { updatePasswordClient } from './methods/updatePasswordClient';
 import { passwordRecoveryMethodsClient } from './methods/passwordRecoveryMethodsClient';
 import { updatePasswordRecoveryClient } from './methods/updatePasswordRecoveryClient';
+import { deleteClient } from './methods/deleteClient';
 
 @injectable()
 class ClientController {
   public view = viewClient;
   public create = createClient;
   public update = updateClient;
+  public delete = deleteClient;
   public updatePhone = updatePhoneClient;
   public updatePassword = updatePasswordClient;
   public passwordRecoveryMethods = passwordRecoveryMethodsClient;

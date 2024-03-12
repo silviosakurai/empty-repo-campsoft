@@ -19,7 +19,11 @@ export const client = mysqlTable("cliente", {
     .default("uuid_to_bin(uuid())")
     .notNull()
     .primaryKey(),
-  status: mysqlEnum("status", [ClientStatus.ACTIVE, ClientStatus.INACTIVE])
+  status: mysqlEnum("status", [
+    ClientStatus.ACTIVE,
+    ClientStatus.INACTIVE,
+    ClientStatus.DELETED,
+  ])
     .notNull()
     .default(ClientStatus.ACTIVE),
   id_cliente_tipo: int("id_cliente_tipo").notNull().default(1),
