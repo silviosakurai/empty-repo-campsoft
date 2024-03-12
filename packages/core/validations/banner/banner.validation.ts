@@ -4,8 +4,8 @@ import Schema from "fluent-json-schema";
 
 const bannerReaderSchema = {
   querystring: Schema.object<BannerReaderRequestDto>()
-    .prop("location", Schema.string().maxLength(20).required())
-    .prop("type", Schema.integer().minimum(0).required())
+    .prop("location", Schema.string())
+    .prop("type", Schema.integer().minimum(0))
     .extend(paginationReaderSchema),
 };
 

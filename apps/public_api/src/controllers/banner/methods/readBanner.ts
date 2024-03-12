@@ -11,19 +11,17 @@ export const readBanner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenKeyData } = request;
   const bannerUseCase = container.resolve(BannerReaderUseCase);
 
   try {
-    const response = await bannerUseCase.read(request.query);
+    const response = await bannerUseCase.read(tokenKeyData, request.query);
 
     return sendResponse(reply, {
       data: response,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.log(error);
-
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

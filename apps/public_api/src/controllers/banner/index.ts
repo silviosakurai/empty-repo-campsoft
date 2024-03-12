@@ -5,4 +5,5 @@ import { readBanner } from './methods/readBanner';
 class BannerController {
   public read = readBanner;
 }
+
 export default BannerController;

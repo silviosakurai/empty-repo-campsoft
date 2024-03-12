@@ -1,3 +1,4 @@
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { IBannerReaderInput } from "@core/interfaces/repositories/banner";
 import { BannerReaderRepository } from "@core/repositories/banner/BannerReader.repository";
 import { injectable } from "tsyringe";
@@ -10,9 +11,28 @@ export class BannerService {
     this.bannerReaderRepository = bannerReaderRepository;
   }
 
-  read = async (input: IBannerReaderInput) => {
+  banners = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
     try {
-      return await this.bannerReaderRepository.read(input);
+      return await this.bannerReaderRepository.banners(tokenKeyData, input);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  bannerItens = async (bannerIds: number[]) => {
+    try {
+      return await this.bannerReaderRepository.bannerItens(bannerIds);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  countTotal = async (
+    tokenKeyData: ITokenKeyData,
+    input: IBannerReaderInput
+  ) => {
+    try {
+      return await this.bannerReaderRepository.countTotal(tokenKeyData, input);
     } catch (error) {
       throw error;
     }
