@@ -28,7 +28,6 @@ rules:
   max-depth: ['error', 4]
   max-nested-callbacks: ['error', 3]
   max-statements: ['error', 15]
-  max-len: ['error', { 'code': 120 }]
   no-magic-numbers: 'off'
   'prettier/prettier': 'error'
   '@typescript-eslint/no-unused-vars': 'warn'

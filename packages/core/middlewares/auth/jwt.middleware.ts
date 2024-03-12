@@ -18,6 +18,13 @@ async function authenticateJwt(
   const routeMethod = request.routeOptions.method;
   const routeModule = request.module;
 
+  if (!tokenKeyData) {
+    return sendResponse(reply, {
+      message: t("not_authorized"),
+      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+    });
+  }
+
   try {
     const viewApiJwtUseCase = container.resolve(ViewApiJwtUseCase);
     const decoded = (await request.jwtVerify()) as { clientId: string };

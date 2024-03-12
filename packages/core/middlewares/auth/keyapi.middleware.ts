@@ -19,6 +19,13 @@ async function authenticateKeyApi(
   const routeMethod = request.routeOptions.method;
   const routeModule = request.module;
 
+  if (!keyapi) {
+    return sendResponse(reply, {
+      message: t("not_authorized"),
+      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+    });
+  }
+
   try {
     const viewApiKeyUseCase = container.resolve(ViewApiKeyUseCase);
 
