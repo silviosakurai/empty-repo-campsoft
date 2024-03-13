@@ -8,7 +8,7 @@ const listProductSchema = {
     .prop("status", Schema.string().enum(Object.values(ProductStatus)).default(ProductStatus.ACTIVE))
     .prop("name", Schema.string())
     .prop("description", Schema.string())
-    .prop("productType", Schema.string())
+    .prop("product_type", Schema.string())
     .prop("slug", Schema.string())
     .prop("sort_by", Schema.string().enum(Object.keys(ProductFieldsToOrder)))
     .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))

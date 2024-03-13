@@ -6,7 +6,7 @@ export interface ListProductRequest {
   status?: ProductStatus;
   name?: string;
   description?: string;
-  productType?: string;
+  product_type?: string;
   slug?: string;
   sort_by?: ProductFields;
   sort_order?: SortOrder;

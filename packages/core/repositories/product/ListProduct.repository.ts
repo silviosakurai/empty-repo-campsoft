@@ -103,8 +103,8 @@ export class ListProductRepository {
       filters.push(eq(product.descricao, query.description));
     }
 
-    if (query.productType) {
-      filters.push(eq(productType.produto_tipo, query.productType));
+    if (query.product_type) {
+      filters.push(eq(productType.produto_tipo, query.product_type));
     }
 
     if (query.slug) {
