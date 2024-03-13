@@ -59,7 +59,7 @@ export class ListProductRepository {
       .from(product)
       .innerJoin(productCompany, eq(product.id_produto, productCompany.id_produto))
       .innerJoin(productType, eq(product.id_produto_tipo, productType.id_produto_tipo))
-      .orderBy(this.setOrderBy(query.sortBy, query.sortOrder))
+      .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
       .where(
         and(
           eq(productCompany.id_empresa, companyId),

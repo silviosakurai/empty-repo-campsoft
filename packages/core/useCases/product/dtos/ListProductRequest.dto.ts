@@ -8,8 +8,8 @@ export interface ListProductRequest {
   description?: string;
   productType?: string;
   slug?: string;
-  sortBy?: ProductFields;
-  sortOrder?: SortOrder;
+  sort_by?: ProductFields;
+  sort_order?: SortOrder;
   limit: number;
   page: number;
 }

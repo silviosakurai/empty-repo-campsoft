@@ -10,8 +10,8 @@ const listProductSchema = {
     .prop("description", Schema.string())
     .prop("productType", Schema.string())
     .prop("slug", Schema.string())
-    .prop("sortBy", Schema.string().enum(Object.keys(ProductFieldsToOrder)))
-    .prop("sortOrder", Schema.string().enum(Object.values(SortOrder)))
+    .prop("sort_by", Schema.string().enum(Object.keys(ProductFieldsToOrder)))
+    .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))
     .prop("limit", Schema.number().default(10))
     .prop("page", Schema.number().default(1))
 };
