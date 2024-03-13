@@ -1,4 +1,7 @@
 import {
+  ProductStatus
+} from "@core/common/enums/models/product";
+import {
   mysqlTable,
   int,
   timestamp,
@@ -8,7 +11,7 @@ import {
 
 export const product = mysqlTable("produto", {
   id_produto: varchar("id_produto", { length: 10 }).notNull().primaryKey(),
-  status: mysqlEnum("status", ["ativo", "inativo"]),
+  status: mysqlEnum("status", [ProductStatus.ACTIVE, ProductStatus.INACTIVE]).default(ProductStatus.ACTIVE),
   id_produto_tipo: int("id_produto_tipo"),
   produto: varchar("produto", { length: 50 }),
   descricao: varchar("descricao", { length: 1000 }),
