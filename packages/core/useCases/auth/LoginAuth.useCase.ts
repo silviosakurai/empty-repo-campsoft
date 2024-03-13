@@ -7,8 +7,8 @@ import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 export class LoginAuthUseCase {
   private authService: AuthService;
 
-  constructor(clientService: AuthService) {
-    this.authService = clientService;
+  constructor(authService: AuthService) {
+    this.authService = authService;
   }
 
   async execute({

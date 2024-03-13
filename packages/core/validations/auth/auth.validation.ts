@@ -6,4 +6,8 @@ const loginSchema = {
     .prop("password", Schema.string().minLength(6).required()),
 };
 
-export { loginSchema };
+const loginTokenSchema = {
+  body: Schema.object().prop("login_token", Schema.string().required()),
+};
+
+export { loginSchema, loginTokenSchema };
