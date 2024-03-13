@@ -10,7 +10,7 @@ export default async function productRoutes(server: FastifyInstance) {
 
   server.get('/product', {
     schema: listProductSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    preHandler: [server.authenticateKeyApi],
     handler: productController.list,
   });
 }
