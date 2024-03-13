@@ -69,14 +69,14 @@ export class ListProductRepository {
 
     const totalResult = await allQuery.execute();
       
-    const paginatedQuery = allQuery.limit(query.limit).offset((query.page - 1) * query.limit);
+    const paginatedQuery = allQuery.limit(query.per_page).offset((query.current_page - 1) * query.per_page);
     const totalPaginated = await paginatedQuery.execute();
 
     if (!totalPaginated.length) {
       return null;
     }
 
-    const paging = this.setPaginationData(totalPaginated.length, totalResult.length, query.limit, query.page);
+    const paging = this.setPaginationData(totalPaginated.length, totalResult.length, query.per_page, query.current_page);
 
     return {
       paging,
@@ -134,11 +134,11 @@ export class ListProductRepository {
     return defaultOrderBy;
   }
 
-  private setPaginationData(productsLength: number, total: number, limit: number, current_page: number) {
+  private setPaginationData(productsLength: number, total: number, per_page: number, current_page: number) {
     return {
       current_page,
-      total_pages: Math.ceil(total / limit),
-      per_page: limit,
+      total_pages: Math.ceil(total / per_page),
+      per_page,
       count: productsLength,
       total,
     }

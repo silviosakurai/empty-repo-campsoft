@@ -10,6 +10,6 @@ export interface ListProductRequest {
   slug?: string;
   sort_by?: ProductFields;
   sort_order?: SortOrder;
-  limit: number;
-  page: number;
+  per_page: number;
+  current_page: number;
 }

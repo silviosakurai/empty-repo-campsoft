@@ -12,8 +12,8 @@ const listProductSchema = {
     .prop("slug", Schema.string())
     .prop("sort_by", Schema.string().enum(Object.keys(ProductFieldsToOrder)))
     .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))
-    .prop("limit", Schema.number().default(10))
-    .prop("page", Schema.number().default(1))
+    .prop("per_page", Schema.number().default(10))
+    .prop("current_page", Schema.number().default(1))
 };
 
 export {
