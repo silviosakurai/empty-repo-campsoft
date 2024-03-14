@@ -16,6 +16,11 @@ const listProductSchema = {
     .prop("current_page", Schema.number().default(1))
 };
 
+const getProduct = {
+  params: Schema.object().prop("sku", Schema.string().required()),
+};
+
 export {
   listProductSchema,
+  getProduct,
 };
