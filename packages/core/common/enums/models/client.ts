@@ -23,3 +23,8 @@ export enum ClientType {
   FRANCHISEE_SELLER = 6,
   MANIA_OPERATOR = 7,
 }
+
+export enum ClientMagicTokenStatus {
+  YES = "Y",
+  NO = "N",
+}
