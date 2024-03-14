@@ -13,8 +13,9 @@ import jwtPlugin from '@core/plugins/jwt';
 import cacheRedisConnector from '@core/config/cache';
 import { RouteModule } from '@core/common/enums/models/route';
 import { v4 } from 'uuid';
+import { container } from 'tsyringe';
 
-const logger = new LoggerService();
+const logger = container.resolve(LoggerService);
 
 const server = fastify({
   genReqId: () => v4(),
@@ -38,7 +39,9 @@ server.register(routes);
 const start = async () => {
   try {
     await server.listen({ port: 3001, host: '0.0.0.0' });
+
     logger.info('Server running');
+    console.log('Server running');
   } catch (err) {
     logger.error(err);
     process.exit(1);
