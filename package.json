@@ -19,7 +19,7 @@
     "sonar": "turbo run sonar",
     "sonar:partner": "turbo run sonar --filter=partner",
     "sonar:public": "turbo run sonar --filter=public",
-    "prepare": "husky install"
+    "prepare": "[ \"$NODE_ENV\" != 'production' ] && husky install || echo 'In production'"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +37,7 @@
     "prettier": "^3.2.5",
     "sonar-scanner": "^3.1.0",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.1",
     "turbo": "^1.12.5",
