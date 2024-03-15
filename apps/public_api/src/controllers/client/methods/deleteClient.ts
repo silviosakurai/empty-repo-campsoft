@@ -12,6 +12,8 @@ export const deleteClient = async (
   const { t, tokenKeyData, tokenJwtData, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
+    request.server.logger.warn(tokenTfaData, request.id);
+
     return sendResponse(reply, {
       message: t('client_not_found'),
       httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
@@ -25,6 +27,8 @@ export const deleteClient = async (
     );
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('client_not_found'),
         httpStatusCode: HTTPStatusCode.BAD_REQUEST,
@@ -36,6 +40,8 @@ export const deleteClient = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

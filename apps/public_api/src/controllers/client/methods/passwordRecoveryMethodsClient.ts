@@ -21,6 +21,8 @@ export const passwordRecoveryMethodsClient = async (
 
   try {
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('client_not_found'),
         httpStatusCode: HTTPStatusCode.NOT_FOUND,
@@ -32,6 +34,8 @@ export const passwordRecoveryMethodsClient = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

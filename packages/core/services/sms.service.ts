@@ -1,5 +1,4 @@
 import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
-import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
 import { smsEnvironment } from "@core/config/environments";
 import {
   ISmsSentMessageResponse,
@@ -9,10 +8,16 @@ import {
 } from "@core/interfaces/services/ISms.service";
 import axios from "axios";
 import { injectable } from "tsyringe";
+import { LoggerService } from "@core/services/logger.service";
+import { phoneNumberValidateNational } from "@core/common/functions/phoneNumberValidateNational";
 
 @injectable()
 export class SmsService implements ISmsService {
-  constructor(private readonly phoneNumberValidator: PhoneNumberValidator) {}
+  private logger: LoggerService;
+
+  constructor(logger: LoggerService) {
+    this.logger = logger;
+  }
 
   async send(input: ISmsServiceSendInput) {
     try {
@@ -41,18 +46,23 @@ export class SmsService implements ISmsService {
 
       return data;
     } catch (error: unknown) {
-      throw new Error(error as string);
+      this.logger.error(error);
+
+      throw error;
     }
   }
 
   private phonesValidate(
     input: ISmsServiceSendInput
   ): null | InvalidPhoneNumberError {
-    const phoneValidated = this.phoneNumberValidator.validateNational(
-      input.phone
-    );
+    const phoneValidated = phoneNumberValidateNational(input.phone);
 
     if (phoneValidated) {
+      this.logger.warn({
+        message: "Phone is not valid.",
+        phone: input.phone,
+      });
+
       throw new InvalidPhoneNumberError("Phone is not valid.");
     }
 
@@ -79,7 +89,9 @@ export class SmsService implements ISmsService {
 
       return response.data;
     } catch (error: unknown) {
-      throw new Error(error as string);
+      this.logger.error(error);
+
+      throw error;
     }
   }
 }

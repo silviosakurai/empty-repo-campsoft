@@ -19,6 +19,8 @@ export const createClient = async (
     );
 
     if (!validateType) {
+      request.server.logger.warn(validateType, request.id);
+
       return sendResponse(reply, {
         message: t('phone_not_match_token'),
         httpStatusCode: HTTPStatusCode.FORBIDDEN,
@@ -31,6 +33,8 @@ export const createClient = async (
     );
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         data: response,
         message: t('previously_registered_user'),
@@ -43,6 +47,8 @@ export const createClient = async (
       httpStatusCode: HTTPStatusCode.CREATED,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

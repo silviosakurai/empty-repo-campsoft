@@ -7,27 +7,28 @@ import authenticateJwt from '@core/middlewares/auth/jwt.middleware';
 import authenticateTfa from '@core/middlewares/auth/tfa.middleware';
 import authenticateKeyApi from '@core/middlewares/auth/keyapi.middleware';
 import i18nextPlugin from '@core/plugins/i18next';
-import { LoggerService } from '@core/services';
-import { requestHook, responseHook } from '@core/hooks';
+import { requestHook, responseHook, errorHook } from '@core/hooks';
 import jwtPlugin from '@core/plugins/jwt';
 import cacheRedisConnector from '@core/config/cache';
 import { RouteModule } from '@core/common/enums/models/route';
 import { v4 } from 'uuid';
-
-const logger = new LoggerService();
+import loggerServicePlugin from '@core/plugins/logger';
 
 const server = fastify({
   genReqId: () => v4(),
+  logger: true,
 });
 
 server.addHook('preValidation', requestHook);
 server.addHook('onSend', responseHook);
+server.addHook('onError', errorHook);
 
 server.decorateRequest('module', RouteModule.PUBLIC);
 
 server.register(dbConnector);
 server.register(cacheRedisConnector);
 server.register(auth);
+server.register(loggerServicePlugin);
 server.register(authenticateJwt);
 server.register(authenticateTfa);
 server.register(authenticateKeyApi);
@@ -38,9 +39,10 @@ server.register(routes);
 const start = async () => {
   try {
     await server.listen({ port: 3001, host: '0.0.0.0' });
-    logger.info('Server running');
+
+    server.logger.info('Server running');
   } catch (err) {
-    logger.error(err);
+    server.logger.error(err);
     process.exit(1);
   }
 };
