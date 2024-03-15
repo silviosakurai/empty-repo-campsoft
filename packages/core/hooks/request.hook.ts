@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from "fastify";
-import { LoggerService } from "../services/logger.service";
+import { LoggerService } from "@core/services/logger.service";
 import { container } from "tsyringe";
 
 const logger = container.resolve(LoggerService);

@@ -58,7 +58,7 @@ export class SmsService implements ISmsService {
     const phoneValidated = phoneNumberValidateNational(input.phone);
 
     if (phoneValidated) {
-      this.logger.error({
+      this.logger.warn({
         message: "Phone is not valid.",
         phone: input.phone,
       });

@@ -32,6 +32,8 @@ export const updatePasswordClient = async (
     );
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('client_not_found'),
         httpStatusCode: HTTPStatusCode.BAD_REQUEST,
@@ -43,7 +45,8 @@ export const updatePasswordClient = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.log(error);
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

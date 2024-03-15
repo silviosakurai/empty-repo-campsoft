@@ -50,7 +50,7 @@ export class WhatsappService implements IWhatsappService {
     const targetPhoneValidated = phoneNumberValidator(targetPhone);
 
     if (targetPhoneValidated) {
-      this.logger.error({
+      this.logger.warn({
         message: "Target Phone is not valid.",
         target_phone,
       });
@@ -62,7 +62,7 @@ export class WhatsappService implements IWhatsappService {
 
     const senderPhoneValidated = phoneNumberValidator(sendPhone);
     if (senderPhoneValidated) {
-      this.logger.error({
+      this.logger.warn({
         message: "Sender Phone is not valid.",
         sender_phone,
       });

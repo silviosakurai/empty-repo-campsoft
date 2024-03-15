@@ -7,7 +7,7 @@ import authenticateJwt from '@core/middlewares/auth/jwt.middleware';
 import authenticateTfa from '@core/middlewares/auth/tfa.middleware';
 import authenticateKeyApi from '@core/middlewares/auth/keyapi.middleware';
 import i18nextPlugin from '@core/plugins/i18next';
-import { requestHook, responseHook } from '@core/hooks';
+import { requestHook, responseHook, errorHook } from '@core/hooks';
 import jwtPlugin from '@core/plugins/jwt';
 import cacheRedisConnector from '@core/config/cache';
 import { RouteModule } from '@core/common/enums/models/route';
@@ -21,6 +21,7 @@ const server = fastify({
 
 server.addHook('preValidation', requestHook);
 server.addHook('onSend', responseHook);
+server.addHook('onError', errorHook);
 
 server.decorateRequest('module', RouteModule.PUBLIC);
 
