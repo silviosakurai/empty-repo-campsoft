@@ -1,5 +1,4 @@
 import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
-import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
 import { phoneNumberIncludesCountryCode } from "@core/common/functions/phoneNumberIncludesCountryCode";
 import { whatsappEnvironment } from "@core/config/environments";
 import {
@@ -8,10 +7,16 @@ import {
 } from "@core/interfaces/services/IWhatsapp.service";
 import { injectable } from "tsyringe";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
+import { LoggerService } from "@core/services/logger.service";
+import { phoneNumberValidator } from "@core/common/functions/phoneNumberValidator";
 
 @injectable()
 export class WhatsappService implements IWhatsappService {
-  constructor(private readonly phoneNumberValidator: PhoneNumberValidator) {}
+  private logger: LoggerService;
+
+  constructor(logger: LoggerService) {
+    this.logger = logger;
+  }
 
   async send(input: IWhatsappServiceInput): Promise<MessageInstance> {
     const client = await this.connection();
@@ -30,7 +35,9 @@ export class WhatsappService implements IWhatsappService {
 
       return response as MessageInstance;
     } catch (error: unknown) {
-      throw new Error(error as string);
+      this.logger.error(error);
+
+      throw error;
     }
   }
 
@@ -40,17 +47,26 @@ export class WhatsappService implements IWhatsappService {
   }: IWhatsappServiceInput): null | InvalidPhoneNumberError {
     const targetPhone = phoneNumberIncludesCountryCode(target_phone);
 
-    const targetPhoneValidated =
-      this.phoneNumberValidator.validate(targetPhone);
+    const targetPhoneValidated = phoneNumberValidator(targetPhone);
 
     if (targetPhoneValidated) {
+      this.logger.warn({
+        message: "Target Phone is not valid.",
+        target_phone,
+      });
+
       throw new InvalidPhoneNumberError("Target Phone is not valid.");
     }
 
     const sendPhone = this.sendPhone(sender_phone);
 
-    const senderPhoneValidated = this.phoneNumberValidator.validate(sendPhone);
+    const senderPhoneValidated = phoneNumberValidator(sendPhone);
     if (senderPhoneValidated) {
+      this.logger.warn({
+        message: "Sender Phone is not valid.",
+        sender_phone,
+      });
+
       throw new InvalidPhoneNumberError("Sender Phone is not valid.");
     }
 

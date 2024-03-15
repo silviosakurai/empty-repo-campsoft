@@ -1,26 +1,26 @@
 import {
   FastifyRequest,
   FastifyReply,
-  RequestPayload,
   HookHandlerDoneFunction,
+  FastifyError,
 } from "fastify";
 import { LoggerService } from "@core/services/logger.service";
 import { container } from "tsyringe";
 
 const logger = container.resolve(LoggerService);
 
-export const responseHook = (
+export const errorHook = (
   request: FastifyRequest,
   reply: FastifyReply,
-  payload: RequestPayload,
+  error: FastifyError,
   done: HookHandlerDoneFunction
 ) => {
-  const responseBody =
-    typeof payload === "string" ? JSON.parse(payload) : payload;
-
+  const responseBody = typeof error === "string" ? JSON.parse(error) : error;
   const { keyapi } = request.headers;
 
-  logger.info({ type: "RESPONSE", keyapi, response: responseBody }, request.id);
+  console.log("errorHook", responseBody);
+
+  logger.error({ type: "ERROR", keyapi, response: responseBody }, request.id);
 
   done();
 };

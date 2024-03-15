@@ -16,6 +16,7 @@ import { TFunction } from 'i18next';
 import { TFAVerificationError } from '@core/common/exceptions/TFAVerificationError';
 import { LoginUserTFA } from '@core/interfaces/services/IClient.service';
 import { ITokenKeyData } from '@core/common/interfaces/ITokenKeyData';
+import { InvalidPhoneNumberError } from '@core/common/exceptions/InvalidPhoneNumberError';
 
 const handleTfaType = async (
   type: TFAType,
@@ -97,6 +98,8 @@ export const sendCode = async (
     const response = await handleTfaType(type, tokenKeyData, loginUserTFA);
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('error_send_code_verification'),
         httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
@@ -107,10 +110,19 @@ export const sendCode = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     if (error instanceof TFAVerificationError) {
       return sendResponse(reply, {
         message: error.message,
         httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
+
+    if (error instanceof InvalidPhoneNumberError) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
       });
     }
 

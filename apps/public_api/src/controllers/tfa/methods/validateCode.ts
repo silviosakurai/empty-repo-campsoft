@@ -21,6 +21,8 @@ export const validateCode = async (
 
   try {
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('error_validate_code_verification'),
         httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
@@ -45,6 +47,8 @@ export const validateCode = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
