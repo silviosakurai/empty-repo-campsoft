@@ -40,11 +40,15 @@ export const login = async (
       });
     }
 
+    request.server.logger.info(responseAuth, request.id);
+
     return sendResponse(reply, {
       message: t('login_invalid'),
       httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('login_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
