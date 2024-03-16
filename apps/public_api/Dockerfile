@@ -20,12 +20,10 @@ FROM node:20.11.1
 
 WORKDIR /app
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/pnpm-lock.yaml* ./
-
 COPY --from=builder /app/apps/public_api/dist /app
+COPY --from=builder /app/node_modules /app/node_modules
 
-RUN npm install -g pnpm
-RUN pnpm install --prod
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
 
 CMD ["node", "/app/apps/public_api/src/index.js"]
