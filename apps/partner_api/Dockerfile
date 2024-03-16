@@ -14,7 +14,7 @@ RUN npm install -g pnpm
 RUN pnpm add -g turbo
 RUN pnpm install
 
-RUN turbo run build --filter=public
+RUN turbo run build --filter=partner
 
 FROM node:20.11.1
 
