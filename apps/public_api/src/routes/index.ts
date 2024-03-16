@@ -4,6 +4,7 @@ import clientRoutes from '@/routes/client.route';
 import tfaRoutes from '@/routes/tfa.route';
 import bannerRoutes from '@/routes/banner.route';
 import productRoutes from '@/routes/product.route';
+import planRoutes from '@/routes/plan.route';
 
 export default async function (server: FastifyInstance) {
   server.register(authRoutes);
@@ -11,4 +12,5 @@ export default async function (server: FastifyInstance) {
   server.register(tfaRoutes);
   server.register(bannerRoutes);
   server.register(productRoutes);
+  server.register(planRoutes);
 }

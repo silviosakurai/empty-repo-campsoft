@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const planoPrice = mysqlTable("plano_preco", {
+export const planPrice = mysqlTable("plano_preco", {
   id_plano: int("id_plano").notNull().primaryKey(),
   meses: int("meses").notNull().primaryKey().default(1),
   preco: double("preco"),

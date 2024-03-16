@@ -1,8 +1,3 @@
-export enum ProductStatus {
-  ACTIVE = "ativo",
-  INACTIVE = "inativo",
-}
-
 export enum ProductFields {
   product_id = "product_id",
   name = "name",
@@ -15,6 +10,19 @@ export enum ProductFieldsPT {
   produto = "produto",
   conteudista_nome = "conteudista_nome",
   url_caminho = "url_caminho",
+}
+
+export type ProductGroupProduct = {
+  product_id: string;
+  product_group_id: number;
+  name: string | null;
+  quantity: number;
+}
+
+export type ProductGroup = {
+  product_group_id: number;
+  name: string | null;
+  quantity: number;
 }
 
 export const ProductFieldsToOrder = {

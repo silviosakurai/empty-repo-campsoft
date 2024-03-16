@@ -1,8 +1,8 @@
-import { ProductStatus } from "@core/common/enums/models/product";
+import { Status } from "@core/common/enums/Status";
 
 export interface ProductResponse {
-  product_id: number;
-  status: ProductStatus;
+  product_id: string;
+  status: Status;
   name: string;
   long_description: string;
   short_description: string;
