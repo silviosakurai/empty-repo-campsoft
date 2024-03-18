@@ -47,7 +47,9 @@ export class LoggerService implements ILoggerService {
   private parseMessage(message: any, requestId?: string) {
     const parsedMessage = this.getObjectMessage(message);
 
-    return requestId ? { requestId, log: parsedMessage } : parsedMessage;
+    return requestId
+      ? { requestId, log: parsedMessage }
+      : { log: parsedMessage };
   }
 
   fatal(message: any, requestId?: string) {
