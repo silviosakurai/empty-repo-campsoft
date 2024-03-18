@@ -18,8 +18,6 @@ export const errorHook = (
   const responseBody = typeof error === "string" ? JSON.parse(error) : error;
   const { keyapi } = request.headers;
 
-  console.log("errorHook", responseBody);
-
   logger.error({ type: "ERROR", keyapi, response: responseBody }, request.id);
 
   done();

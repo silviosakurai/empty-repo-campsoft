@@ -26,7 +26,6 @@ export const client = mysqlTable("cliente", {
   ])
     .notNull()
     .default(ClientStatus.ACTIVE),
-  id_cliente_tipo: int("id_cliente_tipo").notNull().default(1),
   id_facebook: bigint("id_facebook", { mode: "bigint", unsigned: true }),
   nome: varchar("nome", { length: 50 }),
   sobrenome: varchar("sobrenome", { length: 50 }),
