@@ -1,4 +1,4 @@
-import { eq} from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import * as schema from "@core/models";
 import { planPrice } from "@core/models";
 import { inject, injectable } from "tsyringe";
@@ -15,23 +15,17 @@ export class ListPlanPriceRepository {
     this.db = mySql2Database;
   }
 
-  async listByPlanId(
-    planId: number,
-  ): Promise<PlanPrice[]> {
+  async listByPlanId(planId: number): Promise<PlanPrice[]> {
     const result = await this.db
-      .select(
-        {
-          months: planPrice.meses,
-          price: planPrice.preco,
-          discount_value: planPrice.desconto_valor,
-          discount_percentage: planPrice.desconto_porcentagem,
-          price_with_discount: planPrice.preco_desconto,
-        }
-      )
+      .select({
+        months: planPrice.meses,
+        price: sql<number>`${planPrice.preco}`,
+        discount_value: sql<number>`${planPrice.desconto_valor}`,
+        discount_percentage: sql<number>`${planPrice.desconto_porcentagem}`,
+        price_with_discount: sql<number>`${planPrice.preco_desconto}`,
+      })
       .from(planPrice)
-      .where(
-        eq(planPrice.id_plano, planId),
-      )
+      .where(eq(planPrice.id_plano, planId))
       .execute();
 
     return result;

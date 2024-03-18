@@ -15,7 +15,7 @@ export enum PlanFieldsPT {
 export const PlanFieldsToOrder = {
   [PlanFields.plan_id]: PlanFieldsPT.id_plano,
   [PlanFields.plan]: PlanFieldsPT.plano,
-}
+};
 
 export type PlanPrice = {
   months: number;
@@ -23,19 +23,19 @@ export type PlanPrice = {
   discount_value: number | null;
   discount_percentage: number | null;
   price_with_discount: number | null;
-}
+};
 
 export type PlanItem = {
   plan_id: number;
   product_id: string | null;
-}
+};
 
 export type ProductsGroups = {
   product_group_id: number;
   name: string | null;
   quantity: number;
   available_products: ProductResponse[];
-}
+};
 
 export type Plan = {
   plan_id: number;
@@ -51,4 +51,4 @@ export type Plan = {
   prices: PlanPrice[];
   products: ProductResponse[];
   product_groups: ProductsGroups[];
-}
+};
