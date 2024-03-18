@@ -67,8 +67,25 @@ class OpenSearchService {
         index,
         body: message,
       });
-    } catch (error) {
-      throw new Error(`Error sending log to OpenSearch: ${error}`);
+    } catch (error: any) {
+      console.error(`Error sending log to OpenSearch: ${error.message}`);
+
+      if (error.message.includes("illegal_argument_exception")) {
+        try {
+          await this.client.index({
+            index: "logs-errors",
+            body: {
+              originalIndex: index,
+              errorMessage: error.message,
+              log: message,
+            },
+          });
+        } catch (fallbackError) {
+          console.error(
+            `Error sending log to fallback index: ${fallbackError}`
+          );
+        }
+      }
     }
   }
 }
