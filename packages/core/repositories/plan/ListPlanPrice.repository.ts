@@ -19,10 +19,10 @@ export class ListPlanPriceRepository {
     const result = await this.db
       .select({
         months: planPrice.meses,
-        price: sql<number>`CAST(${planPrice.preco} AS DECIMAL(10,2))`,
-        discount_value: sql<number>`CAST(${planPrice.desconto_valor} AS DECIMAL(10,2))`,
-        discount_percentage: sql<number>`CAST(${planPrice.desconto_porcentagem} AS DECIMAL(10,2))`,
-        price_with_discount: sql<number>`CAST(${planPrice.preco_desconto} AS DECIMAL(10,2))`,
+        price: planPrice.preco,
+        discount_value: planPrice.desconto_valor,
+        discount_percentage: planPrice.desconto_porcentagem,
+        price_with_discount: planPrice.preco_desconto,
       })
       .from(planPrice)
       .where(eq(planPrice.id_plano, planId))

@@ -38,16 +38,16 @@ export class LoggerService implements ILoggerService {
 
   private getObjectMessage(message: any) {
     if (typeof message === "object") {
-      return message;
+      return JSON.stringify(message);
     }
 
-    return { msg: message };
+    return message;
   }
 
   private parseMessage(message: any, requestId?: string) {
     const parsedMessage = this.getObjectMessage(message);
 
-    return requestId ? { requestId, ...parsedMessage } : parsedMessage;
+    return requestId ? { requestId, log: parsedMessage } : parsedMessage;
   }
 
   fatal(message: any, requestId?: string) {
