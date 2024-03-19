@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
 import { product, productType, productCrossSell } from "@core/models";
-import { SQLWrapper, and, asc, desc, eq, ne } from "drizzle-orm";
+import { SQLWrapper, and, asc, desc, eq, like, ne, sql } from "drizzle-orm";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
@@ -30,7 +30,7 @@ export class ListCrossSellProductRepository {
 
     const allQuery = this.db
       .select({
-        product_id: product.id_produto,
+        product_id: productCrossSell.id_produto,
         status: product.status,
         name: product.produto,
         long_description: product.descricao,
@@ -48,6 +48,13 @@ export class ListCrossSellProductRepository {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
         },
+        price: {
+          months: productCrossSell.meses,
+          price: sql<number>`CAST(${product.preco} AS DECIMAL(10,2))`,
+          // discount_value: sql<number>`CAST(${product.desconto_valor} AS DECIMAL(10,2))`,
+          // discount_percentage: sql<number>`CAST(${planPrice.desconto_porcentagem} AS DECIMAL(10,2))`,
+          price_with_discount: sql<number>`CAST(${productCrossSell.preco_desconto} AS DECIMAL(10,2))`,
+        },
         created_at: product.created_at,
         updated_at: product.updated_at,
       })
@@ -57,28 +64,10 @@ export class ListCrossSellProductRepository {
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .innerJoin(
-        schema.planItem,
-        eq(product.id_produto, schema.planItem.id_produto)
-      )
-      .innerJoin(
-        schema.planPrice,
-        eq(schema.planItem.id_plano, schema.planPrice.id_plano)
-      )
-      .leftJoin(
-        schema.clientSignature,
-        eq(schema.planItem.id_plano, schema.clientSignature.id_plano)
-      )
       .orderBy(this.setOrderBy(input.sort_by, input.sort_order))
-      .where(
-        and(
-          eq(productCrossSell.id_plano, input.plan_id),
-          ne(schema.clientSignature.id_cliente, input.client_id),
-          ...filters
-        )
-      );
+      .groupBy(product.id_produto)
+      .where(and(ne(productCrossSell.id_plano, input.plan_id), ...filters));
 
-    const totalResult = await allQuery.execute();
     const paginatedQuery = allQuery
       .limit(input.per_page)
       .offset(input.current_page * input.per_page);
@@ -88,6 +77,8 @@ export class ListCrossSellProductRepository {
     if (!records.length) {
       return null;
     }
+
+    const totalResult = await allQuery.execute();
 
     const paging = setPaginationData(
       records.length,
@@ -108,19 +99,19 @@ export class ListCrossSellProductRepository {
     const filters: SQLWrapper[] = [];
 
     if (input.id) {
-      filters.push(eq(product.id_produto, input.id));
+      filters.push(like(product.id_produto, `%${input.id}%`));
     }
 
     if (input.name) {
-      filters.push(eq(product.produto, input.name));
+      filters.push(like(product.produto, `%${input.name}%`));
     }
 
     if (input.description) {
-      filters.push(eq(product.descricao, input.description));
+      filters.push(like(product.descricao, `%${input.description}%`));
     }
 
     if (input.product_type) {
-      filters.push(eq(productType.produto_tipo, input.product_type));
+      filters.push(like(productType.produto_tipo, `%${input.product_type}%`));
     }
 
     return filters;
