@@ -24,16 +24,19 @@ export class LoggerService implements ILoggerService {
   }
 
   private pathsToRedact(): string[] {
-    return [
-      "password",
-      "*.password",
-      "*.*.password",
-      "*.*.*.password",
-      "token",
-      "*.token",
-      "*.*.token",
-      "*.*.*.token",
-    ];
+    return ["password", "token"];
+  }
+
+  private sanitizeLog(message: any): any {
+    let sanitizedMessage = this.getObjectMessage(message);
+
+    this.pathsToRedact().forEach((word) => {
+      const regex = new RegExp(`("${word}":".*?")`, "g");
+
+      sanitizedMessage = sanitizedMessage.replace(regex, `"${word}":"******"`);
+    });
+
+    return sanitizedMessage;
   }
 
   private getObjectMessage(message: any) {
@@ -46,10 +49,11 @@ export class LoggerService implements ILoggerService {
 
   private parseMessage(message: any, requestId?: string) {
     const parsedMessage = this.getObjectMessage(message);
+    const sanitizedMessage = this.sanitizeLog(parsedMessage);
 
     return requestId
-      ? { requestId, log: parsedMessage }
-      : { log: parsedMessage };
+      ? { requestId, log: sanitizedMessage }
+      : { log: sanitizedMessage };
   }
 
   fatal(message: any, requestId?: string) {
