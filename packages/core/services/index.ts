@@ -10,3 +10,4 @@ export * from "./product.service";
 export * from "./sms.service";
 export * from "./tfa.service";
 export * from "./whatsapp.service";
+export * from "./notification.service";
