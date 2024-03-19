@@ -43,8 +43,6 @@ const start = async () => {
 
     server.logger.info('Server running');
   } catch (err) {
-    console.log(err);
-
     server.logger.error(err);
     process.exit(1);
   }
