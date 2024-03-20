@@ -25,16 +25,17 @@ server.addHook('onError', errorHook);
 
 server.decorateRequest('module', RouteModule.PUBLIC);
 
-server.register(dbConnector);
-server.register(cacheRedisConnector);
-server.register(auth);
-server.register(loggerServicePlugin);
-server.register(authenticateJwt);
-server.register(authenticateTfa);
-server.register(authenticateKeyApi);
-server.register(i18nextPlugin);
-server.register(jwtPlugin);
-server.register(routes);
+server.register(loggerServicePlugin).after(() => {
+  server.register(dbConnector);
+  server.register(cacheRedisConnector);
+  server.register(auth);
+  server.register(authenticateJwt);
+  server.register(authenticateTfa);
+  server.register(authenticateKeyApi);
+  server.register(i18nextPlugin);
+  server.register(jwtPlugin);
+  server.register(routes);
+});
 
 const start = async () => {
   try {

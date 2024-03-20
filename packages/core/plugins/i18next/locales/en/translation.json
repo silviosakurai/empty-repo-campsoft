@@ -13,5 +13,7 @@
   "phone_not_match_token": "Phone not match token!",
   "user_phone_updated_successfully": "User phone updated successfully!",
   "user_password_updated_successfully": "User password updated successfully!",
-  "user_deleted_successfully": "User deleted successfully!"
+  "user_deleted_successfully": "User deleted successfully!",
+  "phone_is_not_valid": "Phone is not valid!",
+  "email_is_not_valid": "Email is not valid!"
 }
