@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 import { CrossSellProductRequest } from "./dtos/ListCrossSellProductRequest.dto";
 import { ProductService } from "@core/services";
 import { SignatureService } from "@core/services/signature.service";
+import { ListProductResponse } from "./dtos/ListProductResponse.dto";
 
 @injectable()
 export class ListCrossSellProductUseCase {
@@ -10,7 +11,9 @@ export class ListCrossSellProductUseCase {
     private signatureService: SignatureService
   ) {}
 
-  async list(input: CrossSellProductRequest) {
+  async list(
+    input: CrossSellProductRequest
+  ): Promise<ListProductResponse | null> {
     const records = await this.productService.listCrossSell(input);
 
     if (!records) return null;
@@ -19,8 +22,18 @@ export class ListCrossSellProductUseCase {
       input.client_id
     );
 
-    const recordsAvailable = records.results.reduce((prev, crr) => {}, []);
+    if (!signatures) return records;
 
-    return records;
+    const recordsAvailable = records.results.filter(
+      (record) =>
+        !signatures.some(
+          (signature) => signature.product_id === record.product_id
+        )
+    );
+
+    return {
+      paging: records.paging,
+      results: recordsAvailable,
+    };
   }
 }
