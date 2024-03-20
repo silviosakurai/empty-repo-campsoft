@@ -77,54 +77,52 @@ services:
       - sonarnet
 
   elasticsearch:
-    depends_on:
-      setup:
-        condition: service_healthy
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12
-    labels:
-      co.elastic.logs/module: elasticsearch
+    image: elasticsearch:8.12.2
+    container_name: elasticsearch
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - esdata01:/usr/share/elasticsearch/data
+      - elasticsearch:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
+      - 9201:9200
     environment:
-      - node.name=es01
-      - cluster.name=es01
+      - node.name=elasticsearch
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=vrjwB85ZggmT
       - bootstrap.memory_lock=true
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=certs/es01/es01.key
-      - xpack.security.http.ssl.certificate=certs/es01/es01.crt
-      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.key=certs/es01/es01.key
-      - xpack.security.transport.ssl.certificate=certs/es01/es01.crt
-      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${ES_MEM_LIMIT}
+      - "ES_JAVA_OPTS=-Xms1g -Xmx2g"
+      - "xpack.security.enabled=true"
+      - "ELASTICSEARCH_USERNAME=kibana_user"
+      - "ELASTICSEARCH_PASSWORD=senha_kibana_user"
+      - "ELASTICSEARCH_SERVICE_USER=kibana"
+      - "ELASTICSEARCH_SERVICE_PASSWORD=senha_kibana_user"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
-    networks: sonarnet
+    mem_limit: 2g
+    networks:
+      - elastic
+
+  kibana:
+    image: kibana:8.12.2
+    container_name: kibana
+    ports:
+      - 5602:5601
+    environment:
+      - KIBANA_SYSTEM_PASSWORD=sHPT9CWpg7c34
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_user
+      - ELASTICSEARCH_PASSWORD=senha_kibana_user
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+    mem_limit: 1g
+    networks:
+      - elastic
 
 networks:
   sonarnet:
+  elastic:
 
 volumes:
   postgresql:
   postgresql_data:
   opensearch_data:
+  elasticsearch:
+  kibana:
