@@ -15,5 +15,7 @@
   "user_password_updated_successfully": "User password updated successfully!",
   "user_deleted_successfully": "User deleted successfully!",
   "phone_is_not_valid": "Phone is not valid!",
-  "email_is_not_valid": "Email is not valid!"
+  "email_is_not_valid": "Email is not valid!",
+  "voucher_not_eligible": "Voucher not eligible!",
+  "voucher_not_redeemable": "Voucher not redeemable!"
 }
