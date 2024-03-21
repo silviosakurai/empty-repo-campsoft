@@ -9,3 +9,18 @@ export enum ClientSignatureRecorrencia {
   NO = "0",
   YES = "1",
 }
+
+export enum ClientProductSignatureProcess {
+  YES = "Y",
+  NO = "N",
+}
+
+export enum ClientProductSignatureStatusCampsoft {
+  INACTIVE = "inativo",
+  ACTIVE = "ativo",
+}
+
+export enum ClientProductSignatureUpdateCampsoft {
+  YES = "Y",
+  NO = "N",
+}

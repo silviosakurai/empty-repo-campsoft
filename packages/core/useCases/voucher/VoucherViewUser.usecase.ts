@@ -38,7 +38,14 @@ export class VoucherViewUserUseCase {
         throw new VoucherError(t("voucher_not_redeemable"));
       }
 
-      console.log("isRedemption", isRedemption);
+      const listProductsUser =
+        await this.voucherService.listVoucherEligibleProductsUser(
+          tokenKeyData,
+          tokenJwtData,
+          voucher
+        );
+
+      console.log(listProductsUser);
 
       return true;
     } catch (error) {
