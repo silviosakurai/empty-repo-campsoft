@@ -1,11 +1,12 @@
 import Schema from "fluent-json-schema";
-import { ProductFieldsToOrder, ProductStatus } from "@core/common/enums/models/product";
+import { Status } from "@core/common/enums/Status";
 import { SortOrder } from "@core/common/enums/SortOrder";
+import { ProductFieldsToOrder } from "@core/common/enums/models/product";
 
 const listProductSchema = {
   querystring: Schema.object()
     .prop("id", Schema.string())
-    .prop("status", Schema.string().enum(Object.values(ProductStatus)).default(ProductStatus.ACTIVE))
+    .prop("status", Schema.string().enum(Object.values(Status)).default(Status.ACTIVE))
     .prop("name", Schema.string())
     .prop("description", Schema.string())
     .prop("product_type", Schema.string())

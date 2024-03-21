@@ -1,3 +1,5 @@
+import { Status } from "@core/common/enums/Status";
+import { YesOrNo } from "@core/common/enums/YesOrNo";
 import {
   mysqlTable,
   int,
@@ -8,8 +10,8 @@ import {
 
 export const plan = mysqlTable("plano", {
   id_plano: int("id_plano").notNull().primaryKey(),
-  status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
-  visivel_site: mysqlEnum("visivel_site", ["Y", "N"]).notNull().default("Y"),
+  status: mysqlEnum("status", [Status.ACTIVE, Status.INACTIVE]).default(Status.ACTIVE),
+  visivel_site: mysqlEnum("visivel_site", [YesOrNo.YES, YesOrNo.NO]).default(YesOrNo.YES),
   ordem: int("ordem"),
   id_empresa: int("id_empresa"),
   plano: varchar("plano", { length: 50 }),

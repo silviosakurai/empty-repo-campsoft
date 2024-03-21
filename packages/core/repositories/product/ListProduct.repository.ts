@@ -2,12 +2,13 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { product, productCompany, productType } from "@core/models";
-import { eq, and, asc, desc,SQLWrapper } from "drizzle-orm";
+import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { ProductFields, ProductFieldsToOrder } from "@core/common/enums/models/product";
 import { ListProductResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
+import { setPaginationData } from "@core/common/functions/createPaginationData";
 
 @injectable()
 export class ListProductRepository {
@@ -76,12 +77,61 @@ export class ListProductRepository {
       return null;
     }
 
-    const paging = this.setPaginationData(totalPaginated.length, totalResult.length, query.per_page, query.current_page);
+    const paging = setPaginationData(totalPaginated.length, totalResult.length, query.per_page, query.current_page);
 
     return {
       paging,
       results: totalPaginated as unknown as ProductResponse[]
     }
+  }
+
+  async listByIds(
+    companyId: number,
+    productIds: string[],
+  ): Promise<ProductResponse[]> {
+
+    const products = await this.db
+      .select({
+        product_id: product.id_produto,
+        status: product.status,
+        name: product.produto,
+        long_description: product.descricao,
+        short_description: product.descricao_curta,
+        marketing_phrases: product.frases_marketing,
+        content_provider_name: product.conteudista_nome,
+        slug: product.url_caminho,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
+        how_to_access: {
+          desktop: product.como_acessar_desk,
+          mobile: product.como_acessar_mob,
+          url_web: product.como_acessar_url,
+          url_ios: product.como_acessar_url_ios,
+          url_android: product.como_acessar_url_and,
+        },
+        product_type: {
+          product_type_id: productType.id_produto_tipo,
+          product_type_name: productType.produto_tipo,
+        },
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+      })
+      .from(product)
+      .innerJoin(productCompany, eq(product.id_produto, productCompany.id_produto))
+      .innerJoin(productType, eq(product.id_produto_tipo, productType.id_produto_tipo))
+      .where(
+        and(
+          eq(productCompany.id_empresa, companyId),
+          inArray(product.id_produto, productIds),
+        ),
+      )
+      .execute();
+
+    return products as unknown as ProductResponse[];
   }
 
   private setFilters(query: ListProductRequest): SQLWrapper[] {
@@ -132,15 +182,5 @@ export class ListProductRepository {
     }
 
     return defaultOrderBy;
-  }
-
-  private setPaginationData(productsLength: number, total: number, per_page: number, current_page: number) {
-    return {
-      current_page,
-      total_pages: Math.ceil(total / per_page),
-      per_page,
-      count: productsLength,
-      total,
-    }
   }
 }

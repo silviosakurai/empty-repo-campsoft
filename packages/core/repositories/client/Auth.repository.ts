@@ -1,5 +1,5 @@
 import * as schema from "@core/models";
-import { access, client, clientType, clientMagicToken } from "@core/models";
+import { access, client, clientMagicToken } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq, or, and, sql } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
@@ -29,7 +29,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        client_id_type: client.id_cliente_tipo,
         facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
@@ -40,10 +39,6 @@ export class AuthRepository {
         gender: client.sexo,
       })
       .from(client)
-      .innerJoin(
-        clientType,
-        eq(clientType.id_cliente_tipo, client.id_cliente_tipo)
-      )
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
@@ -75,7 +70,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        client_id_type: client.id_cliente_tipo,
         facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
@@ -86,10 +80,6 @@ export class AuthRepository {
         gender: client.sexo,
       })
       .from(client)
-      .innerJoin(
-        clientType,
-        eq(clientType.id_cliente_tipo, client.id_cliente_tipo)
-      )
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
@@ -116,7 +106,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        client_id_type: client.id_cliente_tipo,
         facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,

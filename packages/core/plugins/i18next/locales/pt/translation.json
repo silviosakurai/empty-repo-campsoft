@@ -13,5 +13,7 @@
   "phone_not_match_token": "Celular, SMS ou WhatsAPP não corresponde ao token",
   "user_phone_updated_successfully": "Telefone do usuário atualizado com sucesso",
   "user_password_updated_successfully": "Senha do usuário atualizada com sucesso",
-  "user_deleted_successfully": "Usuário deletado com sucesso"
+  "user_deleted_successfully": "Usuário deletado com sucesso",
+  "phone_is_not_valid": "Telefone não é válido",
+  "email_is_not_valid": "E-mail não é válido"
 }
