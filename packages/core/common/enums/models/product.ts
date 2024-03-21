@@ -36,4 +36,5 @@ export enum ProductVoucherStatus {
   IN_USE = "in_use",
   IN_ADDITION = "in_addition",
   ACTIVE = "active",
+  EXPIRED = "expired",
 }

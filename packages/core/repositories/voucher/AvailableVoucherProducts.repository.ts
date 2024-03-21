@@ -20,6 +20,7 @@ import {
 import { CouponRescueItemDeleted } from "@core/common/enums/models/coupon";
 import { Status } from "@core/common/enums/Status";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
+import { currentTime } from "@core/common/functions/currentTime";
 
 @injectable()
 export class AvailableVoucherProductsRepository {
@@ -36,6 +37,8 @@ export class AvailableVoucherProductsRepository {
     tokenJwtData: ITokenJwtData,
     voucher: string
   ) {
+    const validUntil = currentTime();
+
     const result = await this.db
       .select({
         product_id: product.id_produto,
@@ -56,6 +59,7 @@ export class AvailableVoucherProductsRepository {
           product_type_name: productType.produto_tipo,
         },
         status: sql`CASE 
+          WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} THEN ${ProductVoucherStatus.EXPIRED}
           WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} THEN ${ProductVoucherStatus.IN_USE} 
           WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${ProductVoucherStatus.IN_ADDITION}
           ELSE ${ProductVoucherStatus.ACTIVE}
@@ -64,6 +68,7 @@ export class AvailableVoucherProductsRepository {
           WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientSignature.data_assinatura_ate}
           ELSE null
         END`,
+        expiration_date: couponRescueItem.validade_ate,
       })
       .from(clientSignature)
       .innerJoin(order, eq(clientSignature.id_pedido, order.id_pedido))

@@ -10,6 +10,7 @@ import {
   varchar,
   mysqlEnum,
   date,
+  datetime,
 } from "drizzle-orm/mysql-core";
 
 export const couponRescueItem = mysqlTable("cupom_resgatar_item", {
@@ -22,7 +23,7 @@ export const couponRescueItem = mysqlTable("cupom_resgatar_item", {
     CouponRescueItemTypeTime.MONTH,
   ]),
   tempo: int("tempo"),
-  validade_ate: date("validade_ate"),
+  validade_ate: datetime("validade_ate", { mode: "string" }),
   resgate_obrigatorio: mysqlEnum("resgate_obrigatorio", [
     CouponRescueItemRedeem.YES,
     CouponRescueItemRedeem.NO,
