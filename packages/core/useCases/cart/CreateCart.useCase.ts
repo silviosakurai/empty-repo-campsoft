@@ -6,7 +6,7 @@ import { PlanService, ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { CartOrder, CreateCartResponse } from "./dtos/CreateCartResponse.dto";
-import { Plan } from "@core/common/enums/models/plan";
+import { Plan, PlanPrice } from "@core/common/enums/models/plan";
 
 @injectable()
 export class CreateCartUseCase {
@@ -32,13 +32,18 @@ export class CreateCartUseCase {
         )
       : [];
 
-    const totals = plans.map((item) => this.generateOrder(item));
+    const totals: CartOrder[] = [];
+    for (let plan of plans) {
+      for (let price of plan.prices) {
+        totals.push(this.generateOrder(price));
+      }
+    }
 
     const cart: CreateCartResponse = {
       id: uuidv4(),
+      totals: totals,
       products,
       plans: plans,
-      totals: [],
     };
 
     await this.saveValuesTemporary(cart);
@@ -46,18 +51,27 @@ export class CreateCartUseCase {
     return cart;
   }
 
-  private generateOrder(plan: Pick<Plan, "prices">): CartOrder[] {
-    const record = plan.prices.map<CartOrder>((item) => ({
-      subtotal_price: item.price ?? 0,
-      discount_coupon_value: 0,
-      discount_percentage: item.discount_percentage ?? 0,
-      discount_item_value: item.discount_value ?? 0,
-      discount_products_value: 0,
-      installments: [],
-      total: item.price ?? 0,
-    }));
+  private generateOrder(planPrice: PlanPrice): CartOrder {
+    const discount_percentage = planPrice.discount_percentage ?? 0;
+    const discount_coupon_value = 0;
+    const subtotal_price = planPrice.price ?? 0;
+    const discount_item_value = planPrice.discount_value ?? 0;
+    const discount_products_value = 0;
 
-    return record;
+    return {
+      subtotal_price, // valor cheio, quanto que pagaria se comprasse fora do mania
+      discount_coupon_value, // valor do disconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
+      discount_percentage,
+      discount_item_value, // de para que está na tela, do valor cheio para o valor da assinatura com desconto
+      discount_products_value, //é o desconto do upgrade, caso o usuário escolha um produto a parte, mostra o valor em si
+      installments: new Array(+planPrice.months).fill({}).map((_, index) => ({
+        installment: index + 1,
+        value: +(subtotal_price / planPrice.months).toFixed(2),
+      })),
+      total:
+        subtotal_price -
+        (discount_coupon_value + discount_item_value + discount_products_value),
+    };
   }
 
   private async saveValuesTemporary(cart: CreateCartResponse) {
