@@ -1,12 +1,25 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { CreateCartUseCase } from '@core/useCases/cart/CreateCart.useCase';
+import { container } from 'tsyringe';
+import { CreateCartRequest } from '@core/useCases/cart/dtos/CreateCartRequest.dto';
+import { sendResponse } from '@core/common/functions/sendResponse';
+import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 
 export const createCart = async (
-  request: FastifyRequest,
+  request: FastifyRequest<{ Body: CreateCartRequest }>,
   reply: FastifyReply
 ) => {
+  const service = container.resolve(CreateCartUseCase);
+  const { t, tokenKeyData } = request;
+
   try {
-    console.log('');
+    return await service.create(request.body, tokenKeyData.company_id);
   } catch (error) {
-    console.log(error);
+    request.server.logger.error(error, request.id);
+
+    return sendResponse(reply, {
+      message: t('internal_server_error'),
+      httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+    });
   }
 };

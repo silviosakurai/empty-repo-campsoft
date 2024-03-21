@@ -9,5 +9,6 @@ export default async function cartRoutes(server: FastifyInstance) {
   server.post('/cart', {
     handler: cartController.create,
     schema: createCartSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
   });
 }
