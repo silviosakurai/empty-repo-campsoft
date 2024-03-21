@@ -12,12 +12,16 @@ export const viewVoucher = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenKeyData } = request;
   const { voucherCode } = request.params;
   const voucherViewUseCase = container.resolve(VoucherViewUseCase);
 
   try {
-    const response = await voucherViewUseCase.view(t, voucherCode);
+    const response = await voucherViewUseCase.view(
+      t,
+      tokenKeyData,
+      voucherCode
+    );
 
     return sendResponse(reply, {
       data: response,

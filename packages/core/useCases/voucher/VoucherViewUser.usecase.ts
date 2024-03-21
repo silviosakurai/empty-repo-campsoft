@@ -20,8 +20,10 @@ export class VoucherViewUserUseCase {
     voucher: string
   ) => {
     try {
-      const isEligibility =
-        await this.voucherService.verifyEligibilityUser(voucher);
+      const isEligibility = await this.voucherService.verifyEligibilityUser(
+        tokenKeyData,
+        voucher
+      );
 
       if (!isEligibility) {
         throw new VoucherError(t("voucher_not_eligible"));

@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 import { VoucherService } from "@core/services/voucher.service";
 import { TFunction } from "i18next";
 import { VoucherError } from "@core/common/exceptions/VoucherError";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class VoucherViewUseCase {
@@ -11,10 +12,16 @@ export class VoucherViewUseCase {
     this.voucherService = voucherService;
   }
 
-  view = async (t: TFunction<"translation", undefined>, voucher: string) => {
+  view = async (
+    t: TFunction<"translation", undefined>,
+    tokenKeyData: ITokenKeyData,
+    voucher: string
+  ) => {
     try {
-      const isEligibility =
-        await this.voucherService.verifyEligibilityUser(voucher);
+      const isEligibility = await this.voucherService.verifyEligibilityUser(
+        tokenKeyData,
+        voucher
+      );
 
       if (!isEligibility) {
         throw new VoucherError(t("voucher_not_eligible"));

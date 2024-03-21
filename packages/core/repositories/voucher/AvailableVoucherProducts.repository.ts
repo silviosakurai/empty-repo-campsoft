@@ -13,9 +13,13 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { and, eq, sql } from "drizzle-orm";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { SignatureStatus } from "@core/common/enums/models/signature";
+import {
+  ClientSignatureRecorrencia,
+  SignatureStatus,
+} from "@core/common/enums/models/signature";
 import { CouponRescueItemDeleted } from "@core/common/enums/models/coupon";
 import { Status } from "@core/common/enums/Status";
+import { ProductVoucherStatus } from "@core/common/enums/models/product";
 
 @injectable()
 export class AvailableVoucherProductsRepository {
@@ -51,7 +55,15 @@ export class AvailableVoucherProductsRepository {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
         },
-        status: product.status,
+        status: sql`CASE 
+          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} THEN ${ProductVoucherStatus.IN_USE} 
+          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${ProductVoucherStatus.IN_ADDITION}
+          ELSE ${ProductVoucherStatus.ACTIVE}
+        END`,
+        current_expiration: sql`CASE 
+          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientSignature.data_assinatura_ate}
+          ELSE null
+        END`,
       })
       .from(clientSignature)
       .innerJoin(order, eq(clientSignature.id_pedido, order.id_pedido))
@@ -73,9 +85,12 @@ export class AvailableVoucherProductsRepository {
       )
       .leftJoin(
         clientProductSignature,
-        eq(
-          clientSignature.id_assinatura_cliente,
-          clientProductSignature.id_assinatura_cliente
+        and(
+          eq(
+            clientSignature.id_assinatura_cliente,
+            clientProductSignature.id_assinatura_cliente
+          ),
+          eq(clientProductSignature.id_produto, product.id_produto)
         )
       )
       .where(
@@ -91,6 +106,7 @@ export class AvailableVoucherProductsRepository {
           eq(product.status, Status.ACTIVE)
         )
       )
+      .groupBy(product.id_produto)
       .execute();
 
     return result;

@@ -25,9 +25,13 @@ export class VoucherService {
       availableVoucherProductsRepository;
   }
 
-  verifyEligibilityUser = async (voucher: string) => {
+  verifyEligibilityUser = async (
+    tokenKeyData: ITokenKeyData,
+    voucher: string
+  ) => {
     try {
       return await this.verifyVoucherEligibilityRepository.verifyEligibilityUser(
+        tokenKeyData,
         voucher
       );
     } catch (error) {
