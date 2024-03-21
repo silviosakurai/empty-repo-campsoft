@@ -1,11 +1,12 @@
 import { injectable, inject } from "tsyringe";
 import * as schema from "@core/models";
-import { couponRescueCode } from "@core/models";
+import { clientSignature, order } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { and, eq, gte } from "drizzle-orm";
-import { CouponRescueCodeStatus } from "@core/common/enums/models/voucher";
+import { and, eq, sql } from "drizzle-orm";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { IVerifyEligibilityUser } from "@core/interfaces/repositories/voucher";
+import { SignatureStatus } from "@core/common/enums/models/signature";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class VerifyCustomerVoucherRedemptionRepository {
@@ -18,20 +19,28 @@ export class VerifyCustomerVoucherRedemptionRepository {
   }
 
   async verifyRedemptionUser(
+    tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     isEligibility: IVerifyEligibilityUser,
     voucher: string
   ): Promise<boolean> {
     const result = await this.db
       .select({
-        cupom_resgatar_codigo: couponRescueCode.cupom_resgatar_codigo,
+        total: sql`count(${clientSignature.id_assinatura_cliente})`.mapWith(
+          Number
+        ),
       })
-      .from(couponRescueCode)
+      .from(clientSignature)
+      .innerJoin(order, eq(clientSignature.id_pedido, order.id_pedido))
       .where(
         and(
-          eq(couponRescueCode.cupom_resgatar_codigo, voucher),
-          eq(couponRescueCode.status, CouponRescueCodeStatus.ACTIVE),
-          gte(couponRescueCode.qnt_uso_faltante, 1)
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${tokenJwtData.clientId})`
+          ),
+          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
+          eq(order.cupom_resgatar_codigo, voucher),
+          eq(clientSignature.id_empresa, tokenKeyData.company_id)
         )
       )
       .execute();
@@ -40,6 +49,10 @@ export class VerifyCustomerVoucherRedemptionRepository {
       return false;
     }
 
-    return result.length > 0;
+    if (result[0].total > isEligibility.qnt_uso_por_cli) {
+      return false;
+    }
+
+    return true;
   }
 }

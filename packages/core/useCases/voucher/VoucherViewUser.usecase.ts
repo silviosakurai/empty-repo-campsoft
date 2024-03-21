@@ -3,6 +3,7 @@ import { VoucherService } from "@core/services/voucher.service";
 import { TFunction } from "i18next";
 import { VoucherError } from "@core/common/exceptions/VoucherError";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class VoucherViewUserUseCase {
@@ -14,6 +15,7 @@ export class VoucherViewUserUseCase {
 
   view = async (
     t: TFunction<"translation", undefined>,
+    tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     voucher: string
   ) => {
@@ -26,6 +28,7 @@ export class VoucherViewUserUseCase {
       }
 
       const isRedemption = await this.voucherService.verifyRedemptionUser(
+        tokenKeyData,
         tokenJwtData,
         isEligibility,
         voucher
@@ -34,6 +37,8 @@ export class VoucherViewUserUseCase {
       if (!isRedemption) {
         throw new VoucherError(t("voucher_not_redeemable"));
       }
+
+      console.log("isRedemption", isRedemption);
 
       return true;
     } catch (error) {
