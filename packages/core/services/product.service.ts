@@ -10,7 +10,7 @@ export class ProductService {
 
   constructor(
     listProductRepository: ListProductRepository,
-    viewProductRepository: ViewProductRepository,
+    viewProductRepository: ViewProductRepository
   ) {
     this.listProductRepository = listProductRepository;
     this.viewProductRepository = viewProductRepository;
@@ -27,6 +27,14 @@ export class ProductService {
   viewProduct = async (companyId: number, sku: string) => {
     try {
       return await this.viewProductRepository.get(companyId, sku);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  findProductsByIds = async (companyId: number, productIds: string[]) => {
+    try {
+      return await this.listProductRepository.listByIds(companyId, productIds);
     } catch (error) {
       throw error;
     }

@@ -1,3 +1,3 @@
 export enum RedisKeys {
-  cart = "CART",
+  cart = "cart",
 }
