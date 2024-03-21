@@ -28,6 +28,6 @@ COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
 
 EXPOSE 3001:3001
 
-WORKDIR /app/apps/public_api/
+WORKDIR /app/apps/public_api/src/
 
 CMD ["index.js"]
