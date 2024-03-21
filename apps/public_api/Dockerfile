@@ -16,7 +16,7 @@ RUN pnpm install
 
 RUN turbo run build --filter=public
 
-FROM node:20.11.1
+FROM gcr.io/distroless/nodejs20-debian11
 
 WORKDIR /app
 
@@ -28,4 +28,6 @@ COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
 
 EXPOSE 3001:3001
 
-CMD ["node", "/app/apps/public_api/src/index.js"]
+WORKDIR /app/apps/public_api/
+
+CMD ["index.js"]
