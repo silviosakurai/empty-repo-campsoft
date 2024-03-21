@@ -19,7 +19,9 @@
     "sonar": "turbo run sonar",
     "sonar:partner": "turbo run sonar --filter=partner",
     "sonar:public": "turbo run sonar --filter=public",
-    "prepare": "[ \"$NODE_ENV\" != 'production' ] && husky install || echo 'In production'"
+    "prepare": "[ \"$NODE_ENV\" != 'production' ] && husky install || echo 'In production'",
+    "docker:public": "docker build -f apps/public_api/Dockerfile -t mania-public .",
+    "docker:partner": "docker build -f apps/partner_api/Dockerfile -t mania-partner ."
   },
   "keywords": [],
   "author": "",
