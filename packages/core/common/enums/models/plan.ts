@@ -28,6 +28,7 @@ export type PlanPrice = {
 export type PlanItem = {
   plan_id: number;
   product_id: string | null;
+  discountPercent: number | null;
 };
 
 export type ProductsGroups = {
