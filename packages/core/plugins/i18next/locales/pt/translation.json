@@ -15,5 +15,6 @@
   "user_password_updated_successfully": "Senha do usuário atualizada com sucesso",
   "user_deleted_successfully": "Usuário deletado com sucesso",
   "phone_is_not_valid": "Telefone não é válido",
-  "email_is_not_valid": "E-mail não é válido"
+  "email_is_not_valid": "E-mail não é válido",
+  "order_not_found": "Pedido não encontrado"
 }

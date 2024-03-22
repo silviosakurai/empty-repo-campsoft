@@ -14,8 +14,11 @@ export class FindOrderByNumberRepository {
         order_id: sql`BIN_TO_UUID(${order.id_pedido})`,
       })
       .from(order)
+      .groupBy(order.id_pedido)
       .where(eq(order.id_pedido, sql`UUID_TO_BIN(${orderNumber})`));
 
-    return record;
+    if (!record.length) return null;
+
+    return record[0];
   }
 }
