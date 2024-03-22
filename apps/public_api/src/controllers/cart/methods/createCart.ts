@@ -13,7 +13,12 @@ export const createCart = async (
   const { t, tokenKeyData } = request;
 
   try {
-    return await service.create(request.body, tokenKeyData.company_id);
+    const data = await service.create(request.body, tokenKeyData.company_id);
+
+    return sendResponse(reply, {
+      data,
+      httpStatusCode: HTTPStatusCode.OK,
+    });
   } catch (error) {
     request.server.logger.error(error, request.id);
 

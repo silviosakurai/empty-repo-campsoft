@@ -53,17 +53,17 @@ export class CreateCartUseCase {
 
   private generateOrder(planPrice: PlanPrice): CartOrder {
     const discount_percentage = planPrice.discount_percentage ?? 0;
-    const discount_coupon_value = 0;
+    const discount_coupon_value = 0; // valor do disconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
     const subtotal_price = planPrice.price ?? 0;
     const discount_item_value = planPrice.discount_value ?? 0;
-    const discount_products_value = 0;
+    const discount_products_value = 0; //é o desconto do upgrade, caso o usuário escolha um produto a parte, mostra o valor em si
 
     return {
       subtotal_price, // valor cheio, quanto que pagaria se comprasse fora do mania
-      discount_coupon_value, // valor do disconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
+      discount_coupon_value,
       discount_percentage,
       discount_item_value, // de para que está na tela, do valor cheio para o valor da assinatura com desconto
-      discount_products_value, //é o desconto do upgrade, caso o usuário escolha um produto a parte, mostra o valor em si
+      discount_products_value,
       installments: new Array(+planPrice.months).fill({}).map((_, index) => ({
         installment: index + 1,
         value: +(subtotal_price / planPrice.months).toFixed(2),
