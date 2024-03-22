@@ -16,6 +16,8 @@ export const productCrossSell = mysqlTable("produto_cross_sell", {
   id_produto: varchar("id_produto", { length: 10 }),
   meses: int("meses"),
   preco_desconto: double("preco_desconto"),
+  desconto_valor: double("desconto_valor"),
+  desconto_porcentagem: double("desconto_porcentagem"),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()
     .defaultNow(),
