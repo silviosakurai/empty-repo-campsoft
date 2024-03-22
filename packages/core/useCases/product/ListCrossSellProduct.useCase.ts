@@ -3,6 +3,7 @@ import { CrossSellProductRequest } from "./dtos/ListCrossSellProductRequest.dto"
 import { ProductService } from "@core/services";
 import { SignatureService } from "@core/services/signature.service";
 import { ListProductResponse } from "./dtos/ListProductResponse.dto";
+import { ProductResponse } from "./dtos/ProductResponse.dto";
 
 @injectable()
 export class ListCrossSellProductUseCase {
@@ -22,9 +23,17 @@ export class ListCrossSellProductUseCase {
       input.client_id
     );
 
-    if (!signatures) return records;
+    const recordsWithDiscounts: ProductResponse[] = records.results.map(
+      (item) => this.generateDiscountValues(item)
+    );
 
-    const recordsAvailable = records.results.filter(
+    if (!signatures)
+      return {
+        paging: records.paging,
+        results: recordsWithDiscounts,
+      };
+
+    const recordsAvailable = recordsWithDiscounts.filter(
       (record) =>
         !signatures.some(
           (signature) => signature.product_id === record.product_id
@@ -34,6 +43,22 @@ export class ListCrossSellProductUseCase {
     return {
       paging: records.paging,
       results: recordsAvailable,
+    };
+  }
+
+  private generateDiscountValues(item: ProductResponse) {
+    const price = +item.price.price;
+    const price_with_discount = +item.price.price_with_discount;
+
+    return {
+      ...item,
+      price: {
+        ...item.price,
+        discount_percentage: +((price - price_with_discount) / price).toFixed(
+          2
+        ),
+        discount_value: price - price_with_discount,
+      },
     };
   }
 }
