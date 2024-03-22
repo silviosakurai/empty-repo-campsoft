@@ -6,6 +6,7 @@ import {
   order,
   couponRescueCode,
   couponRescueItem,
+  couponRescue,
   product,
   productType,
 } from "@core/models";
@@ -25,6 +26,7 @@ import {
 import { Status } from "@core/common/enums/Status";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { currentTime } from "@core/common/functions/currentTime";
+import { ProductDetail } from "@core/interfaces/repositories/voucher";
 
 @injectable()
 export class AvailableVoucherProductsRepository {
@@ -36,11 +38,31 @@ export class AvailableVoucherProductsRepository {
     this.db = mySql2Database;
   }
 
-  async listVoucherEligibleProductsUser(
+  async isClientSignatureActive(tokenJwtData: ITokenJwtData): Promise<boolean> {
+    const result = await this.db
+      .select({
+        id: clientSignature.id_assinatura_cliente,
+      })
+      .from(clientSignature)
+      .where(
+        and(
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${tokenJwtData.clientId})`
+          ),
+          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE)
+        )
+      )
+      .execute();
+
+    return result.length > 0;
+  }
+
+  async listVoucherEligibleProductsSignatureUser(
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     voucher: string
-  ) {
+  ): Promise<ProductDetail[] | null> {
     const validUntil = currentTime();
 
     const result = await this.db
@@ -63,9 +85,12 @@ export class AvailableVoucherProductsRepository {
           product_type_name: productType.produto_tipo,
         },
         status: sql`CASE 
-          WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} THEN ${ProductVoucherStatus.EXPIRED}
-          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} THEN ${ProductVoucherStatus.IN_USE} 
-          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${ProductVoucherStatus.IN_ADDITION}
+          WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
+            THEN ${ProductVoucherStatus.EXPIRED}
+          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} 
+            THEN ${ProductVoucherStatus.IN_USE} 
+          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} 
+            THEN ${ProductVoucherStatus.IN_ADDITION}
           ELSE ${ProductVoucherStatus.ACTIVE}
         END`,
         current_expiration: sql`CASE 
@@ -75,16 +100,18 @@ export class AvailableVoucherProductsRepository {
         expiration_date: sql`CASE 
           WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} THEN 
             CASE 
-              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} MONTH)
-              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} DAY)
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} 
+                THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} MONTH)
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} 
+                THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} DAY)
               ELSE CURRENT_DATE()
             END
           WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN 
             CASE 
-              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} THEN 
-                DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} MONTH)
-              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} THEN 
-                DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} DAY)
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} 
+                THEN DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} MONTH)
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} 
+                THEN DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} DAY)
               ELSE 
                 COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE())
             END
@@ -137,6 +164,89 @@ export class AvailableVoucherProductsRepository {
       .groupBy(product.id_produto)
       .execute();
 
-    return result;
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result as ProductDetail[];
+  }
+
+  async listVoucherEligibleProductsNotSignatureUser(
+    tokenKeyData: ITokenKeyData,
+    voucher: string
+  ): Promise<ProductDetail[] | null> {
+    const validUntil = currentTime();
+
+    const result = await this.db
+      .select({
+        product_id: product.id_produto,
+        name: product.produto,
+        long_description: product.descricao,
+        short_description: product.descricao_curta,
+        marketing_phrases: product.frases_marketing,
+        content_provider_name: product.conteudista_nome,
+        slug: product.url_caminho,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
+        product_type: {
+          product_type_id: productType.id_produto_tipo,
+          product_type_name: productType.produto_tipo,
+        },
+        status: sql`CASE 
+          WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
+            THEN ${ProductVoucherStatus.EXPIRED}
+          ELSE ${ProductVoucherStatus.ACTIVE}
+        END`,
+        current_expiration: sql<null>`null`,
+        expiration_date: sql`CASE 
+          WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} 
+            THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} MONTH)
+          WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} 
+            THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} DAY)
+          ELSE 
+            CURRENT_DATE()
+        END`,
+        redemption_date: sql<null>`null`,
+      })
+      .from(product)
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
+      .innerJoin(
+        couponRescueItem,
+        eq(product.id_produto, couponRescueItem.id_produto)
+      )
+      .innerJoin(
+        couponRescueCode,
+        eq(
+          couponRescueItem.id_cupom_resgatar,
+          couponRescueCode.id_cupom_resgatar
+        )
+      )
+      .innerJoin(
+        couponRescue,
+        eq(couponRescue.id_cupom_resgatar, couponRescueCode.id_cupom_resgatar)
+      )
+      .where(
+        and(
+          eq(couponRescueCode.cupom_resgatar_codigo, voucher),
+          eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
+          eq(product.status, Status.ACTIVE),
+          eq(couponRescue.id_empresa, tokenKeyData.company_id)
+        )
+      )
+      .groupBy(product.id_produto)
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result as ProductDetail[];
   }
 }

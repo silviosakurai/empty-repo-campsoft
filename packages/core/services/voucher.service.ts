@@ -63,9 +63,21 @@ export class VoucherService {
     voucher: string
   ) => {
     try {
-      return await this.availableVoucherProductsRepository.listVoucherEligibleProductsUser(
+      const isClientSignatureActive =
+        await this.availableVoucherProductsRepository.isClientSignatureActive(
+          tokenJwtData
+        );
+
+      if (isClientSignatureActive) {
+        return await this.availableVoucherProductsRepository.listVoucherEligibleProductsSignatureUser(
+          tokenKeyData,
+          tokenJwtData,
+          voucher
+        );
+      }
+
+      return await this.availableVoucherProductsRepository.listVoucherEligibleProductsNotSignatureUser(
         tokenKeyData,
-        tokenJwtData,
         voucher
       );
     } catch (error) {
