@@ -40,15 +40,27 @@ export class VoucherViewUserUseCase {
         throw new VoucherError(t("voucher_not_redeemable"));
       }
 
-      const listProductsUser =
-        await this.voucherService.listVoucherEligibleProductsUser(
+      const isClientSignatureActive =
+        await this.voucherService.isClientSignatureActive(tokenJwtData);
+
+      const [listProductsUserResult, listPlansUserResult] = await Promise.all([
+        this.voucherService.listVoucherEligibleProductsUser(
           tokenKeyData,
           tokenJwtData,
-          voucher
-        );
+          voucher,
+          isClientSignatureActive
+        ),
+        this.voucherService.listVoucherEligiblePlansUser(
+          tokenKeyData,
+          tokenJwtData,
+          voucher,
+          isClientSignatureActive
+        ),
+      ]);
 
       return {
-        products: listProductsUser,
+        products: listProductsUserResult,
+        plans: listPlansUserResult,
       };
     } catch (error) {
       throw error;

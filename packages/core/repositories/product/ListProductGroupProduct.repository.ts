@@ -1,4 +1,4 @@
-import { SQLWrapper, and, eq, inArray} from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import * as schema from "@core/models";
 import { productGroupProduct, productGroup } from "@core/models";
 import { inject, injectable } from "tsyringe";
@@ -16,23 +16,21 @@ export class ListProductGroupProductRepository {
   }
 
   async listByProductsIds(
-    productIds: string[],
+    productIds: string[]
   ): Promise<ProductGroupProduct[]> {
-
     const result = await this.db
-      .select(
-        {
-          product_id: productGroupProduct.id_produto,
-          product_group_id: productGroupProduct.id_produto_grupo,
-          name: productGroup.produto_grupo,
-          quantity: productGroup.qtd_produtos_selecionavies,
-        }
-      )
+      .select({
+        product_id: productGroupProduct.id_produto,
+        product_group_id: productGroupProduct.id_produto_grupo,
+        name: productGroup.produto_grupo,
+        quantity: productGroup.qtd_produtos_selecionavies,
+      })
       .from(productGroupProduct)
-      .innerJoin(productGroup, eq(productGroupProduct.id_produto_grupo, productGroup.id_produto_grupo))
-      .where(
-        inArray(productGroupProduct.id_produto, productIds)
+      .innerJoin(
+        productGroup,
+        eq(productGroupProduct.id_produto_grupo, productGroup.id_produto_grupo)
       )
+      .where(inArray(productGroupProduct.id_produto, productIds))
       .execute();
 
     return result;

@@ -1,35 +1,33 @@
 import { injectable, inject } from "tsyringe";
 import * as schema from "@core/models";
 import {
-  clientSignature,
-  clientProductSignature,
-  order,
-  couponRescueCode,
+  plan,
   couponRescueItem,
+  couponRescueCode,
   couponRescue,
-  product,
-  productType,
+  clientSignature,
+  order,
+  planItem,
 } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { and, eq, sql } from "drizzle-orm";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import {
-  ClientProductSignatureStatus,
-  ClientSignatureRecorrencia,
-  SignatureStatus,
-} from "@core/common/enums/models/signature";
+import { currentTime } from "@core/common/functions/currentTime";
+import { PlanVisivelSite } from "@core/common/enums/models/plan";
+import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import {
   CouponRescueItemDeleted,
   CouponRescueItemTypeTime,
 } from "@core/common/enums/models/coupon";
 import { Status } from "@core/common/enums/Status";
-import { ProductVoucherStatus } from "@core/common/enums/models/product";
-import { currentTime } from "@core/common/functions/currentTime";
-import { ProductDetail } from "@core/interfaces/repositories/voucher";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import {
+  ClientSignatureRecorrencia,
+  SignatureStatus,
+} from "@core/common/enums/models/signature";
 
 @injectable()
-export class AvailableVoucherProductsRepository {
+export class AvailableVoucherPlansRepository {
   private db: MySql2Database<typeof schema>;
 
   constructor(
@@ -38,43 +36,36 @@ export class AvailableVoucherProductsRepository {
     this.db = mySql2Database;
   }
 
-  async listVoucherEligibleProductsSignatureUser(
+  async listVoucherEligiblePlansSignatureUser(
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     voucher: string
-  ): Promise<ProductDetail[] | null> {
+  ) {
     const validUntil = currentTime();
 
     const result = await this.db
       .select({
-        product_id: product.id_produto,
-        name: product.produto,
-        long_description: product.descricao,
-        short_description: product.descricao_curta,
-        marketing_phrases: product.frases_marketing,
-        content_provider_name: product.conteudista_nome,
-        slug: product.url_caminho,
-        images: {
-          main_image: product.imagem,
-          icon: product.icon,
-          logo: product.logo,
-          background_image: product.imagem_background,
-        },
-        product_type: {
-          product_type_id: productType.id_produto_tipo,
-          product_type_name: productType.produto_tipo,
-        },
+        plan_id: plan.id_plano,
+        visible_site: sql<boolean>`CASE 
+          WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
+          ELSE false
+        END`,
+        business_id: plan.id_empresa,
+        plan: plan.plano,
+        image: plan.imagem,
+        description: plan.descricao,
+        short_description: plan.descricao_curta,
         status: sql`CASE 
           WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
             THEN ${ProductVoucherStatus.EXPIRED}
-          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} 
+          WHEN ${clientSignature.id_plano} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} 
             THEN ${ProductVoucherStatus.IN_USE} 
-          WHEN ${clientProductSignature.id_produto} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} 
+          WHEN ${clientSignature.id_plano} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} 
             THEN ${ProductVoucherStatus.IN_ADDITION}
           ELSE ${ProductVoucherStatus.ACTIVE}
         END`,
         current_expiration: sql`CASE 
-          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientProductSignature.data_expiracao}
+          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientSignature.data_assinatura_ate}
           ELSE null
         END`,
         expiration_date: sql`CASE 
@@ -89,15 +80,15 @@ export class AvailableVoucherProductsRepository {
           WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN 
             CASE 
               WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} 
-                THEN DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} MONTH)
+                THEN DATE_ADD(COALESCE(${clientSignature.data_assinatura_ate}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} MONTH)
               WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} 
-                THEN DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} DAY)
+                THEN DATE_ADD(COALESCE(${clientSignature.data_assinatura_ate}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} DAY)
               ELSE 
-                COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE())
+                COALESCE(${clientSignature.data_assinatura_ate}, CURRENT_DATE())
             END
           ELSE null
         END`,
-        redemption_date: clientProductSignature.data_ativacao,
+        redemption_date: clientSignature.data_inicio,
       })
       .from(clientSignature)
       .innerJoin(order, eq(clientSignature.id_pedido, order.id_pedido))
@@ -112,22 +103,8 @@ export class AvailableVoucherProductsRepository {
           couponRescueItem.id_cupom_resgatar
         )
       )
-      .innerJoin(product, eq(couponRescueItem.id_produto, product.id_produto))
-      .innerJoin(
-        productType,
-        eq(product.id_produto_tipo, productType.id_produto_tipo)
-      )
-      .leftJoin(
-        clientProductSignature,
-        and(
-          eq(
-            clientSignature.id_assinatura_cliente,
-            clientProductSignature.id_assinatura_cliente
-          ),
-          eq(clientProductSignature.id_produto, product.id_produto),
-          eq(clientProductSignature.status, ClientProductSignatureStatus.ACTIVE)
-        )
-      )
+      .innerJoin(plan, eq(couponRescueItem.id_plano, plan.id_plano))
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
       .where(
         and(
           eq(
@@ -138,44 +115,40 @@ export class AvailableVoucherProductsRepository {
           eq(order.cupom_resgatar_codigo, voucher),
           eq(clientSignature.id_empresa, tokenKeyData.company_id),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
-          eq(product.status, Status.ACTIVE)
+          eq(plan.status, Status.ACTIVE)
         )
       )
-      .groupBy(product.id_produto)
+      .groupBy(plan.id_plano)
       .execute();
 
     if (result.length === 0) {
       return null;
     }
 
-    return result as ProductDetail[];
+    const enrichPromises =
+      await this.enrichPlanAndProductGroupsPromises(result);
+
+    return enrichPromises;
   }
 
-  async listVoucherEligibleProductsNotSignatureUser(
+  async listVoucherEligiblePlansNotSignatureUser(
     tokenKeyData: ITokenKeyData,
     voucher: string
-  ): Promise<ProductDetail[] | null> {
+  ) {
     const validUntil = currentTime();
 
     const result = await this.db
       .select({
-        product_id: product.id_produto,
-        name: product.produto,
-        long_description: product.descricao,
-        short_description: product.descricao_curta,
-        marketing_phrases: product.frases_marketing,
-        content_provider_name: product.conteudista_nome,
-        slug: product.url_caminho,
-        images: {
-          main_image: product.imagem,
-          icon: product.icon,
-          logo: product.logo,
-          background_image: product.imagem_background,
-        },
-        product_type: {
-          product_type_id: productType.id_produto_tipo,
-          product_type_name: productType.produto_tipo,
-        },
+        plan_id: plan.id_plano,
+        visible_site: sql<boolean>`CASE 
+          WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
+          ELSE false
+        END`,
+        business_id: plan.id_empresa,
+        plan: plan.plano,
+        image: plan.imagem,
+        description: plan.descricao,
+        short_description: plan.descricao_curta,
         status: sql`CASE 
           WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
             THEN ${ProductVoucherStatus.EXPIRED}
@@ -192,15 +165,8 @@ export class AvailableVoucherProductsRepository {
         END`,
         redemption_date: sql<null>`null`,
       })
-      .from(product)
-      .innerJoin(
-        productType,
-        eq(product.id_produto_tipo, productType.id_produto_tipo)
-      )
-      .innerJoin(
-        couponRescueItem,
-        eq(product.id_produto, couponRescueItem.id_produto)
-      )
+      .from(plan)
+      .innerJoin(couponRescueItem, eq(plan.id_plano, couponRescueItem.id_plano))
       .innerJoin(
         couponRescueCode,
         eq(
@@ -216,17 +182,28 @@ export class AvailableVoucherProductsRepository {
         and(
           eq(couponRescueCode.cupom_resgatar_codigo, voucher),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
-          eq(product.status, Status.ACTIVE),
+          eq(plan.status, Status.ACTIVE),
           eq(couponRescue.id_empresa, tokenKeyData.company_id)
         )
       )
-      .groupBy(product.id_produto)
+      .groupBy(plan.id_plano)
       .execute();
 
     if (result.length === 0) {
       return null;
     }
 
-    return result as ProductDetail[];
+    return result;
+  }
+
+  async enrichPlanAndProductGroupsPromises(result: any) {
+    const enrichPlanPromises = result.map(async (plan: any) => ({
+      ...plan,
+      plan_products: await this.fetchPlanProductDetails(plan.plan_id),
+    }));
+
+    const enrichedPlans = await Promise.all(enrichPlanPromises);
+
+    return enrichedPlans;
   }
 }
