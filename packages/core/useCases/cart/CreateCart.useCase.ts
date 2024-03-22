@@ -41,6 +41,7 @@ export class CreateCartUseCase {
 
     const cart: CreateCartResponse = {
       id: uuidv4(),
+      expires_in: 15 * 60 * 60,
       totals: totals,
       products,
       plans: plans,
