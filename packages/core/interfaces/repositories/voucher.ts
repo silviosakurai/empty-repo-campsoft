@@ -32,3 +32,23 @@ export interface ProductDetail {
   expiration_date: string;
   redemption_date: string | null;
 }
+
+export interface PlanDetails {
+  plan_id: number;
+  visible_site: boolean;
+  business_id: number | null;
+  plan: string | null;
+  image: string | null;
+  description: string | null;
+  short_description: string | null;
+  status: ProductVoucherStatus;
+  current_expiration: string | null;
+  expiration_date: string | null;
+  redemption_date: string | null;
+}
+
+export interface AvailableProducts {
+  product_group_id: number;
+  name: string | null;
+  quantity: number;
+}

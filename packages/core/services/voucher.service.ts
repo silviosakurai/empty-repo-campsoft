@@ -106,9 +106,16 @@ export class VoucherService {
     isClientSignatureActive: boolean
   ) => {
     try {
-      return await this.availableVoucherPlansRepository.listVoucherEligiblePlansSignatureUser(
+      if (isClientSignatureActive) {
+        return await this.availableVoucherPlansRepository.listVoucherEligiblePlansSignatureUser(
+          tokenKeyData,
+          tokenJwtData,
+          voucher
+        );
+      }
+
+      return await this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
         tokenKeyData,
-        tokenJwtData,
         voucher
       );
     } catch (error) {

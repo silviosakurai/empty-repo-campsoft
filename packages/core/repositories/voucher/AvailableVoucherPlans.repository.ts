@@ -8,6 +8,10 @@ import {
   clientSignature,
   order,
   planItem,
+  product,
+  productType,
+  productGroup,
+  productGroupProduct,
 } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { and, eq, sql } from "drizzle-orm";
@@ -25,6 +29,10 @@ import {
   ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
+import {
+  AvailableProducts,
+  PlanDetails,
+} from "@core/interfaces/repositories/voucher";
 
 @injectable()
 export class AvailableVoucherPlansRepository {
@@ -55,7 +63,7 @@ export class AvailableVoucherPlansRepository {
         image: plan.imagem,
         description: plan.descricao,
         short_description: plan.descricao_curta,
-        status: sql`CASE 
+        status: sql<ProductVoucherStatus>`CASE 
           WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
             THEN ${ProductVoucherStatus.EXPIRED}
           WHEN ${clientSignature.id_plano} IS NOT NULL AND ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} 
@@ -64,11 +72,11 @@ export class AvailableVoucherPlansRepository {
             THEN ${ProductVoucherStatus.IN_ADDITION}
           ELSE ${ProductVoucherStatus.ACTIVE}
         END`,
-        current_expiration: sql`CASE 
+        current_expiration: sql<string | null>`CASE 
           WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientSignature.data_assinatura_ate}
           ELSE null
         END`,
-        expiration_date: sql`CASE 
+        expiration_date: sql<string | null>`CASE 
           WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} THEN 
             CASE 
               WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} 
@@ -149,13 +157,13 @@ export class AvailableVoucherPlansRepository {
         image: plan.imagem,
         description: plan.descricao,
         short_description: plan.descricao_curta,
-        status: sql`CASE 
+        status: sql<ProductVoucherStatus>`CASE 
           WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
             THEN ${ProductVoucherStatus.EXPIRED}
           ELSE ${ProductVoucherStatus.ACTIVE}
         END`,
         current_expiration: sql<null>`null`,
-        expiration_date: sql`CASE 
+        expiration_date: sql<string | null>`CASE 
           WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} 
             THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} MONTH)
           WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} 
@@ -193,13 +201,144 @@ export class AvailableVoucherPlansRepository {
       return null;
     }
 
+    const enrichPromises =
+      await this.enrichPlanAndProductGroupsPromises(result);
+
+    return enrichPromises;
+  }
+
+  async fetchPlanProductDetails(planId: number) {
+    const result = await this.db
+      .select({
+        product_id: planItem.id_produto,
+        status: product.status,
+        name: product.produto,
+        long_description: product.descricao,
+        short_description: product.descricao_curta,
+        marketing_phrases: product.frases_marketing,
+        content_provider_name: product.conteudista_nome,
+        slug: product.url_caminho,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
+        product_type: {
+          product_type_id: productType.id_produto_tipo,
+          product_type_name: productType.produto_tipo,
+        },
+      })
+      .from(plan)
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(product, eq(planItem.id_produto, product.id_produto))
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
+      .where(eq(plan.id_plano, planId))
+      .execute();
+
     return result;
   }
 
-  async enrichPlanAndProductGroupsPromises(result: any) {
-    const enrichPlanPromises = result.map(async (plan: any) => ({
+  async fetchPlanProductGroupsDetails(planId: number) {
+    const result = await this.db
+      .select({
+        product_group_id: productGroup.id_produto_grupo,
+        name: productGroup.produto_grupo,
+        quantity: sql<number>`COUNT(${productGroupProduct.id_produto_grupo})`,
+      })
+      .from(plan)
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(
+        productGroup,
+        eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
+      )
+      .leftJoin(
+        productGroupProduct,
+        eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
+      )
+      .where(eq(plan.id_plano, planId))
+      .groupBy(productGroupProduct.id_produto_grupo)
+      .execute();
+
+    if (result.length === 0) {
+      return [];
+    }
+
+    const enrichPromises =
+      await this.enrichAvailableProductsByProductGroupsPromises(result);
+
+    return enrichPromises;
+  }
+
+  async fetchPlanProductGroupsProductsByProductGroupId(productGroupId: number) {
+    const result = await this.db
+      .select({
+        product_id: productGroupProduct.id_produto,
+        status: product.status,
+        name: product.produto,
+        long_description: product.descricao,
+        short_description: product.descricao_curta,
+        marketing_phrases: product.frases_marketing,
+        content_provider_name: product.conteudista_nome,
+        slug: product.url_caminho,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
+        product_type: {
+          product_type_id: productType.id_produto_tipo,
+          product_type_name: productType.produto_tipo,
+        },
+      })
+      .from(productGroupProduct)
+      .innerJoin(
+        product,
+        eq(product.id_produto, productGroupProduct.id_produto)
+      )
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
+      .where(eq(productGroupProduct.id_produto_grupo, productGroupId))
+      .execute();
+
+    if (result.length === 0) {
+      return [];
+    }
+
+    return result;
+  }
+
+  async enrichAvailableProductsByProductGroupsPromises(
+    result: AvailableProducts[]
+  ) {
+    const enrichProductGroupsPromises = result.map(
+      async (productGroups: AvailableProducts) => ({
+        ...productGroups,
+        available_products:
+          await this.fetchPlanProductGroupsProductsByProductGroupId(
+            productGroups.product_group_id
+          ),
+      })
+    );
+
+    const enrichedProductGroups = await Promise.all(
+      enrichProductGroupsPromises
+    );
+
+    return enrichedProductGroups;
+  }
+
+  async enrichPlanAndProductGroupsPromises(result: PlanDetails[]) {
+    const enrichPlanPromises = result.map(async (plan: PlanDetails) => ({
       ...plan,
       plan_products: await this.fetchPlanProductDetails(plan.plan_id),
+      product_groups: await this.fetchPlanProductGroupsDetails(plan.plan_id),
     }));
 
     const enrichedPlans = await Promise.all(enrichPlanPromises);
