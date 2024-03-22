@@ -133,8 +133,10 @@ export class AvailableVoucherPlansRepository {
       return null;
     }
 
-    const enrichPromises =
-      await this.enrichPlanAndProductGroupsPromises(result);
+    const enrichPromises = await this.enrichPlanAndProductGroupsPromises(
+      tokenKeyData,
+      result
+    );
 
     return enrichPromises;
   }
@@ -201,13 +203,15 @@ export class AvailableVoucherPlansRepository {
       return null;
     }
 
-    const enrichPromises =
-      await this.enrichPlanAndProductGroupsPromises(result);
+    const enrichPromises = await this.enrichPlanAndProductGroupsPromises(
+      tokenKeyData,
+      result
+    );
 
     return enrichPromises;
   }
 
-  async fetchPlanProductDetails(planId: number) {
+  async fetchPlanProductDetails(tokenKeyData: ITokenKeyData, planId: number) {
     const result = await this.db
       .select({
         product_id: planItem.id_produto,
@@ -236,13 +240,21 @@ export class AvailableVoucherPlansRepository {
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(eq(plan.id_plano, planId))
+      .where(
+        and(
+          eq(plan.id_plano, planId),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
       .execute();
 
     return result;
   }
 
-  async fetchPlanProductGroupsDetails(planId: number) {
+  async fetchPlanProductGroupsDetails(
+    tokenKeyData: ITokenKeyData,
+    planId: number
+  ) {
     const result = await this.db
       .select({
         product_group_id: productGroup.id_produto_grupo,
@@ -259,7 +271,12 @@ export class AvailableVoucherPlansRepository {
         productGroupProduct,
         eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
       )
-      .where(eq(plan.id_plano, planId))
+      .where(
+        and(
+          eq(plan.id_plano, planId),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
       .groupBy(productGroupProduct.id_produto_grupo)
       .execute();
 
@@ -334,11 +351,20 @@ export class AvailableVoucherPlansRepository {
     return enrichedProductGroups;
   }
 
-  async enrichPlanAndProductGroupsPromises(result: PlanDetails[]) {
+  async enrichPlanAndProductGroupsPromises(
+    tokenKeyData: ITokenKeyData,
+    result: PlanDetails[]
+  ) {
     const enrichPlanPromises = result.map(async (plan: PlanDetails) => ({
       ...plan,
-      plan_products: await this.fetchPlanProductDetails(plan.plan_id),
-      product_groups: await this.fetchPlanProductGroupsDetails(plan.plan_id),
+      plan_products: await this.fetchPlanProductDetails(
+        tokenKeyData,
+        plan.plan_id
+      ),
+      product_groups: await this.fetchPlanProductGroupsDetails(
+        tokenKeyData,
+        plan.plan_id
+      ),
     }));
 
     const enrichedPlans = await Promise.all(enrichPlanPromises);
