@@ -30,4 +30,4 @@ EXPOSE 3001:3001
 
 WORKDIR /app/apps/public_api/src/
 
-CMD ["index.js"]
+CMD ["node", "index.js"]
