@@ -39,9 +39,11 @@ export class CreateCartUseCase {
       }
     }
 
+    const fifteenMinutesInMilliseconds = 15 * 60 * 60;
+
     const cart: CreateCartResponse = {
       id: uuidv4(),
-      expires_in: 15 * 60 * 60,
+      expires_in: fifteenMinutesInMilliseconds,
       totals: totals,
       products,
       plans: plans,
