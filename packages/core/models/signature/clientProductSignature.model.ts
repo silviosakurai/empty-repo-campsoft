@@ -8,7 +8,7 @@ import {
 import { sql } from "drizzle-orm";
 import {
   ClientProductSignatureProcess,
-  ClientProductSignatureStatusCampsoft,
+  ClientProductSignatureStatus,
   ClientProductSignatureUpdateCampsoft,
 } from "@core/common/enums/models/signature";
 
@@ -23,11 +23,11 @@ export const clientProductSignature = mysqlTable("assinatura_cliente_produto", {
   ])
     .notNull()
     .default(ClientProductSignatureProcess.YES),
+  status: mysqlEnum("status", [
+    ClientProductSignatureStatus.INACTIVE,
+    ClientProductSignatureStatus.ACTIVE,
+  ]).default(ClientProductSignatureStatus.INACTIVE),
   subscribe_id: varchar("subscribe_id", { length: 36 }),
-  status_campsoft: mysqlEnum("status_campsoft", [
-    ClientProductSignatureStatusCampsoft.INACTIVE,
-    ClientProductSignatureStatusCampsoft.ACTIVE,
-  ]).default(ClientProductSignatureStatusCampsoft.INACTIVE),
   obs: varchar("obs", { length: 30 }),
   atualizar_campsoft: mysqlEnum("atualizar_campsoft", [
     ClientProductSignatureUpdateCampsoft.YES,
@@ -36,6 +36,8 @@ export const clientProductSignature = mysqlTable("assinatura_cliente_produto", {
     .notNull()
     .default(ClientProductSignatureUpdateCampsoft.NO),
   data_ativacao: datetime("data_ativacao", { mode: "string" }),
+  data_agendamento: datetime("data_agendamento", { mode: "string" }).notNull(),
+  data_expiracao: datetime("data_expiracao", { mode: "string" }).notNull(),
   created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

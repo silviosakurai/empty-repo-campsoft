@@ -14,10 +14,14 @@ import { and, eq, sql } from "drizzle-orm";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import {
+  ClientProductSignatureStatus,
   ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
-import { CouponRescueItemDeleted } from "@core/common/enums/models/coupon";
+import {
+  CouponRescueItemDeleted,
+  CouponRescueItemTypeTime,
+} from "@core/common/enums/models/coupon";
 import { Status } from "@core/common/enums/Status";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { currentTime } from "@core/common/functions/currentTime";
@@ -65,10 +69,28 @@ export class AvailableVoucherProductsRepository {
           ELSE ${ProductVoucherStatus.ACTIVE}
         END`,
         current_expiration: sql`CASE 
-          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientSignature.data_assinatura_ate}
+          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN ${clientProductSignature.data_expiracao}
           ELSE null
         END`,
-        expiration_date: couponRescueItem.validade_ate,
+        expiration_date: sql`CASE 
+          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.YES} THEN 
+            CASE 
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} MONTH)
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} THEN DATE_ADD(CURRENT_DATE(), INTERVAL ${couponRescueItem.tempo} DAY)
+              ELSE CURRENT_DATE()
+            END
+          WHEN ${clientSignature.recorrencia} = ${ClientSignatureRecorrencia.NO} THEN 
+            CASE 
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.MONTH} THEN 
+                DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} MONTH)
+              WHEN ${couponRescueItem.tempo_tipo} = ${CouponRescueItemTypeTime.DAY} THEN 
+                DATE_ADD(COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE()), INTERVAL ${couponRescueItem.tempo} DAY)
+              ELSE 
+                COALESCE(${clientProductSignature.data_expiracao}, CURRENT_DATE())
+            END
+          ELSE null
+        END`,
+        redemption_date: clientProductSignature.data_ativacao,
       })
       .from(clientSignature)
       .innerJoin(order, eq(clientSignature.id_pedido, order.id_pedido))
@@ -95,7 +117,8 @@ export class AvailableVoucherProductsRepository {
             clientSignature.id_assinatura_cliente,
             clientProductSignature.id_assinatura_cliente
           ),
-          eq(clientProductSignature.id_produto, product.id_produto)
+          eq(clientProductSignature.id_produto, product.id_produto),
+          eq(clientProductSignature.status, ClientProductSignatureStatus.ACTIVE)
         )
       )
       .where(

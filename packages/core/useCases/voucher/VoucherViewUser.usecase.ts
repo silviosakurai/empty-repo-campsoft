@@ -47,9 +47,9 @@ export class VoucherViewUserUseCase {
           voucher
         );
 
-      console.log(listProductsUser);
-
-      return true;
+      return {
+        products: listProductsUser,
+      };
     } catch (error) {
       throw error;
     }

@@ -15,7 +15,7 @@ export enum ClientProductSignatureProcess {
   NO = "N",
 }
 
-export enum ClientProductSignatureStatusCampsoft {
+export enum ClientProductSignatureStatus {
   INACTIVE = "inativo",
   ACTIVE = "ativo",
 }
