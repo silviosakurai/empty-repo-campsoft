@@ -47,6 +47,19 @@ export interface PlanDetails {
   redemption_date: string | null;
 }
 
+export interface PlanProducts {
+  product_id: string;
+  status: string;
+  name: string;
+  long_description: string;
+  short_description: string;
+  marketing_phrases: string;
+  content_provider_name: string;
+  slug: string;
+  images: Images;
+  product_type: ProductType;
+}
+
 export interface AvailableProducts {
   product_group_id: number;
   name: string | null;

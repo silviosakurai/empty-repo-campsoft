@@ -4,6 +4,7 @@ import { TFunction } from "i18next";
 import { VoucherError } from "@core/common/exceptions/VoucherError";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { VoucherViewRequestDto } from "@core/useCases/voucher/dtos/VoucherViewResponse.dto";
 
 @injectable()
 export class VoucherViewUserUseCase {
@@ -61,7 +62,7 @@ export class VoucherViewUserUseCase {
       return {
         products: listProductsUserResult,
         plans: listPlansUserResult,
-      };
+      } as VoucherViewRequestDto;
     } catch (error) {
       throw error;
     }

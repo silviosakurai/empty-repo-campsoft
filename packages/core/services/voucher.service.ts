@@ -90,6 +90,20 @@ export class VoucherService {
         );
       }
 
+      return await this.listVoucherEligibleProductsNotSignatureUser(
+        tokenKeyData,
+        voucher
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  listVoucherEligibleProductsNotSignatureUser = async (
+    tokenKeyData: ITokenKeyData,
+    voucher: string
+  ) => {
+    try {
       return await this.availableVoucherProductsRepository.listVoucherEligibleProductsNotSignatureUser(
         tokenKeyData,
         voucher
@@ -114,6 +128,20 @@ export class VoucherService {
         );
       }
 
+      return await this.listVoucherEligiblePlansNotSignatureUser(
+        tokenKeyData,
+        voucher
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  listVoucherEligiblePlansNotSignatureUser = async (
+    tokenKeyData: ITokenKeyData,
+    voucher: string
+  ) => {
+    try {
       return await this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
         tokenKeyData,
         voucher
