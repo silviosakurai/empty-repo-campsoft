@@ -1,4 +1,3 @@
-import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
 import { smsEnvironment } from "@core/config/environments";
 import {
   ISmsSentMessageResponse,
@@ -9,7 +8,6 @@ import {
 import axios from "axios";
 import { injectable } from "tsyringe";
 import { LoggerService } from "@core/services/logger.service";
-import { phoneNumberValidateNational } from "@core/common/functions/phoneNumberValidateNational";
 
 @injectable()
 export class SmsService implements ISmsService {
@@ -21,8 +19,6 @@ export class SmsService implements ISmsService {
 
   async send(input: ISmsServiceSendInput) {
     try {
-      this.phonesValidate(input);
-
       const response = await this.connection();
 
       const { data } = await axios.post<ISmsSentMessageResponse>(
@@ -50,23 +46,6 @@ export class SmsService implements ISmsService {
 
       throw error;
     }
-  }
-
-  private phonesValidate(
-    input: ISmsServiceSendInput
-  ): null | InvalidPhoneNumberError {
-    const phoneValidated = phoneNumberValidateNational(input.phone);
-
-    if (phoneValidated) {
-      this.logger.warn({
-        message: "Phone is not valid.",
-        phone: input.phone,
-      });
-
-      throw new InvalidPhoneNumberError("Phone is not valid.");
-    }
-
-    return null;
   }
 
   private async connection() {

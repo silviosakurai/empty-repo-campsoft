@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { listOrder } from './methods/listOrder'
+import { listOrder } from './methods/listOrder';
 
 @injectable()
 class OrderController {

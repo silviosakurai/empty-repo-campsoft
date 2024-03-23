@@ -1,3 +1,5 @@
+import { OrderRecorrencia } from "@core/common/enums/models/order";
+
 import {
   mysqlTable,
   int,
@@ -14,15 +16,17 @@ export const order = mysqlTable("pedido", {
     .notNull()
     .primaryKey()
     .default(sql`uuid_to_bin(uuid())`),
+  id_cliente: varbinary("id_cliente", { length: 16 }),
+  id_vendedor: varbinary("id_vendedor", { length: 16 }),
   id_empresa: int("id_empresa").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
   id_fi_contas_split_regra: int("id_fi_contas_split_regra"),
   id_fi_zoop_split_regra: int("id_fi_zoop_split_regra"),
-  id_assinatura_cliente: int("id_assinatura_cliente"),
-  id_cliente: int("id_cliente"),
-  id_vendedor: int("id_vendedor"),
   id_pedido_presenteador: int("id_pedido_presenteador"),
-  recorrencia: mysqlEnum("recorrencia", ["0", "1"]).default("0"),
+  recorrencia: mysqlEnum("recorrencia", [
+    OrderRecorrencia.NO,
+    OrderRecorrencia.YES,
+  ]).default(OrderRecorrencia.NO),
   recorrencia_periodo: int("recorrencia_periodo").notNull().default(1),
   valor_preco: double("valor_preco").notNull().default(0.0),
   valor_desconto: double("valor_desconto").notNull().default(0.0),
@@ -40,8 +44,8 @@ export const order = mysqlTable("pedido", {
   cliente_ultimo_nome: varchar("cliente_ultimo_nome", { length: 50 }),
   cliente_cpf: varchar("cliente_cpf", { length: 11 }),
   cliente_telefone: varchar("cliente_telefone", { length: 11 }),
-  sandbox: mysqlEnum("sandbox", ["Y", "N"]).default("N"),
-  remote_ip: varchar("remote_ip", { length: 16 }),
+  audio_s3: varchar("audio_s3", { length: 150 }),
+  pdf_s3: varchar("pdf_s3", { length: 150 }),
   obs: varchar("obs", { length: 50 }),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()
