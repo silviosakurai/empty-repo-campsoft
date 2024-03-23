@@ -8,7 +8,7 @@ export default async function vouchersRoutes(server: FastifyInstance) {
 
   server.get('/vouchers/:voucherCode', {
     schema: voucherSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    preHandler: [server.authenticateKeyApi],
     handler: voucherController.view,
   });
 }
