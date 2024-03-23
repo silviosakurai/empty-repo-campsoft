@@ -3,22 +3,31 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ListOrdersUseCase } from '@core/useCases/order/ListOrders.useCase';
 import { container } from 'tsyringe';
-import { ListPlanRequest } from '@core/useCases/plan/dtos/ListPlanRequest.dto';
 
 export const listOrder = async (
-  request: FastifyRequest<{
-    Querystring: ListPlanRequest;
-  }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   const listOrdersUseCase = container.resolve(ListOrdersUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
     const response = await listOrdersUseCase.execute(
-      tokenKeyData.company_id,
-      request.query
+      tokenKeyData,
+      tokenJwtData
     );
+
+    if (!response) {
+      return sendResponse(reply, {
+        message: t('order_not_found'),
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
+      });
+    }
+
+    return sendResponse(reply, {
+      data: response,
+      httpStatusCode: HTTPStatusCode.OK,
+    });
   } catch (error) {
     request.server.logger.error(error, request.id);
 

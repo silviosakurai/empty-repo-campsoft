@@ -1,6 +1,7 @@
 import { injectable } from "tsyringe";
 import { ListOrdersRepository } from "@core/repositories/order/ListOrders.repository";
-import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class OrderService {
@@ -10,9 +11,12 @@ export class OrderService {
     this.listOrdersRepository = listOrdersRepository;
   }
 
-  listPlan = async (companyId: number, query: ListPlanRequest) => {
+  listOrder = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
     try {
-      return await this.listOrdersRepository.list(companyId, query);
+      return await this.listOrdersRepository.list(tokenKeyData, tokenJwtData);
     } catch (error) {
       throw error;
     }
