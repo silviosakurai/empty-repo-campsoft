@@ -28,4 +28,7 @@ COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
 
 EXPOSE 3001:3001
 
-CMD ["node", "/app/apps/public_api/src/index.js"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+USER node
+
+CMD ["dumb-init", "node", "/app/apps/public_api/src/index.js"]
