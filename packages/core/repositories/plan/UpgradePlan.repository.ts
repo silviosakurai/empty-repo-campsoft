@@ -44,6 +44,7 @@ export class UpgradePlanRepository {
         and(
           eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
+          eq(clientSignature.id_empresa, companyId),
         ),
       )
       .execute();
