@@ -19,7 +19,7 @@ export const clientSignature = mysqlTable("assinatura_cliente", {
   id_empresa: int("id_empresa"),
   ciclo: int("ciclo"),
   id_assinatura_status: int("id_assinatura_status").notNull(),
-  id_plano: int("id_plano"),
+  id_plano: int("id_plano").notNull(),
   pag_order_sub: varchar("pag_order_sub", { length: 32 }),
   recorrencia: mysqlEnum("recorrencia", [
     ClientSignatureRecorrencia.NO,
