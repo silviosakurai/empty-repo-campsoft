@@ -2,6 +2,7 @@ import Schema from "fluent-json-schema";
 import { Status } from "@core/common/enums/Status";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { PlanFieldsToOrder } from "@core/common/enums/models/plan";
+import { paginationReaderSchema } from "@core/common/validations/pagination.validation";
 
 const listPlanSchema = {
   querystring: Schema.object()
@@ -14,8 +15,7 @@ const listPlanSchema = {
     .prop("description", Schema.string())
     .prop("sort_by", Schema.string().enum(Object.keys(PlanFieldsToOrder)))
     .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))
-    .prop("per_page", Schema.number().default(10))
-    .prop("current_page", Schema.number().default(1)),
+    .extend(paginationReaderSchema),
 };
 
 const getPlan = {
