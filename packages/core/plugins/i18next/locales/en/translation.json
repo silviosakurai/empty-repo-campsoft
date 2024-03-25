@@ -14,6 +14,7 @@
   "user_phone_updated_successfully": "User phone updated successfully!",
   "user_password_updated_successfully": "User password updated successfully!",
   "user_deleted_successfully": "User deleted successfully!",
+  "cross_sell_product_empty": "The Cross Sell Product list is empty.",
   "phone_is_not_valid": "Phone is not valid!",
   "email_is_not_valid": "Email is not valid!",
   "voucher_not_eligible": "Voucher not eligible!",
