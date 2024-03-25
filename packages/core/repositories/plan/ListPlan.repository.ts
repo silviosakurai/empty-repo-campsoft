@@ -5,14 +5,14 @@ import { plan } from "@core/models";
 import { eq, and, asc, desc,SQLWrapper } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
-import { Plan, PlanFields, PlanFieldsToOrder, ProductsGroups } from "@core/common/enums/models/plan";
+import { GroupProductGroupMapper, Plan, PlanFields, PlanFieldsToOrder, ProductsGroups } from "@core/common/enums/models/plan";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { ListPlanPriceRepository } from "./ListPlanPrice.repository";
 import { ListPlanItemRepository } from "./ListPlanItem.repository";
 import { ListProductRepository } from "../product/ListProduct.repository";
 import { ListProductGroupProductRepository } from "../product/ListProductGroupProduct.repository";
 import { ListPlanResponse } from "@core/useCases/plan/dtos/ListPlanResponse.dto";
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class ListPlanRepository {
@@ -63,10 +63,10 @@ export class ListPlanRepository {
         ),
       );
 
-    const totalResult = await allQuery.execute();
+    const totalResult: ViewPlanRepositoryDTO[] = await allQuery.execute();
       
     const paginatedQuery = allQuery.limit(query.per_page).offset((query.current_page - 1) * query.per_page);
-    const plans = await paginatedQuery.execute();
+    const plans: ViewPlanRepositoryDTO[] = await paginatedQuery.execute();
 
     if (!plans.length) {
       return null;
@@ -155,7 +155,7 @@ export class ListPlanRepository {
   }
 
   private groupProductsByGroupId = (products: ProductsGroups[]) => {
-    const groupedProducts: any = {};
+    const groupedProducts: GroupProductGroupMapper = {};
 
     products.forEach((product) => {
       const groupId = product.product_group_id;
@@ -170,13 +170,13 @@ export class ListPlanRepository {
       }
 
       groupedProducts[groupId].quantity++;
-      groupedProducts[groupId].available_products.push(product.available_products);
+      groupedProducts[groupId].available_products.push(...product.available_products);
     });
 
     return Object.values(groupedProducts);
   }
 
-  private getPlansRelactions = async (plans: any[], companyId: number) => {
+  private getPlansRelactions = async (plans: ViewPlanRepositoryDTO[], companyId: number) => {
     const plansCompleted: Plan[] = [];
 
     for (const plan of plans) {

@@ -7,6 +7,7 @@ import { Plan, PlanItem } from "@core/common/enums/models/plan";
 import { ListPlanRepository } from "./ListPlan.repository";
 import { ListPlanItemRepository } from "./ListPlanItem.repository";
 import { SignatureStatus } from "@core/common/enums/models/signature";
+import { UpgradePlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class UpgradePlanRepository {
@@ -28,7 +29,7 @@ export class UpgradePlanRepository {
     productIds: string[]
   ): Promise<Plan[] | null> {
 
-    const result = await this.db
+    const result: UpgradePlanRepositoryDTO[] = await this.db
       .select(
         {
           client_id: sql`BIN_TO_UUID(${clientSignature.id_cliente})`,
@@ -51,7 +52,7 @@ export class UpgradePlanRepository {
       return null;
     }
 
-    const uniquePlans = [...new Set(result.map((item: any) => item.plan_id))].map(planId => ({ plan_id: planId }));
+    const uniquePlans = [...new Set(result.map((item) => item.plan_id))].map(planId => ({ plan_id: planId }));
 
     const plansToUpgrade = await this.calculatePlansNewPrices(uniquePlans[0].plan_id, companyId, productIds);
     
@@ -62,7 +63,7 @@ export class UpgradePlanRepository {
     return planItems.find(planItem => planItem.product_id === productId)?.discountPercent as number;
   }
 
-  private calculatePlansNewPrices = async (planId: any, companyId: number, productIdsToFilter: string[]): Promise<Plan[]> => {
+  private calculatePlansNewPrices = async (planId: number, companyId: number, productIdsToFilter: string[]): Promise<Plan[]> => {
     const plans = await this.listPlanRepository.listWithoutPagination(companyId);
     
     const actualPlan = plans.find(plan => plan.plan_id === planId) as Plan;
@@ -88,13 +89,15 @@ export class UpgradePlanRepository {
       const productRepeated = plan.products.filter(product => productIds.includes(product.product_id));
       const valueInPercentToSub = productRepeated.reduce((acc, product) => acc + this.getPlanItemByProcutId(product.product_id, planItems), 0);
 
-      plan.prices = plan.prices.map((planPrice: any) => {
-        const discountValue = planPrice.price * valueInPercentToSub;
-        const priceWithDiscount =  planPrice.price - (planPrice.price * valueInPercentToSub);
-        
-        planPrice.discount_percentage = parseFloat(valueInPercentToSub.toFixed(2));
-        planPrice.discount_value = parseFloat(discountValue.toFixed(2));
-        planPrice.price_with_discount = parseFloat(priceWithDiscount.toFixed(2));
+      plan.prices = plan.prices.map((planPrice) => {
+        if (planPrice.price) {
+          const discountValue = planPrice.price * valueInPercentToSub;
+          const priceWithDiscount =  planPrice.price - (planPrice.price * valueInPercentToSub);
+          
+          planPrice.discount_percentage = parseFloat(valueInPercentToSub.toFixed(2));
+          planPrice.discount_value = parseFloat(discountValue.toFixed(2));
+          planPrice.price_with_discount = parseFloat(priceWithDiscount.toFixed(2));
+        }
         
         return planPrice;
       });

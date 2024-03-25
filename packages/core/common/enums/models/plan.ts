@@ -42,6 +42,11 @@ export type ProductsGroups = {
   available_products: ProductResponse[];
 };
 
+export type GroupProductGroupMapper = {
+  [key: number]: ProductsGroups;
+};
+
+
 export type Plan = {
   plan_id: number;
   status: Status | null;
