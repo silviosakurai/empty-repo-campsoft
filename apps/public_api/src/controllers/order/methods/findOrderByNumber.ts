@@ -15,12 +15,12 @@ export const findOrderByNumber = async (
   try {
     const data = await service.find(request.params.order_number);
 
-    // if (!data) {
-    //   return sendResponse(reply, {
-    //     message: t('order_not_found'),
-    //     httpStatusCode: HTTPStatusCode.NOT_FOUND,
-    //   });
-    // }
+    if (!data) {
+      return sendResponse(reply, {
+        message: t('order_not_found'),
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
+      });
+    }
 
     return sendResponse(reply, {
       data,

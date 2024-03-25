@@ -6,7 +6,7 @@ export default async function orderRoutes(server: FastifyInstance) {
   const orderController = container.resolve(OrderController);
 
   server.get('/orders/:order_number', {
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.readByNumber,
-    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
   });
 }
