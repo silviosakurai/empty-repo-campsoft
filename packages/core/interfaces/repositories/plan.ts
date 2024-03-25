@@ -1,10 +1,10 @@
 import { Status } from "@core/common/enums/Status";
-import { Plan, PlanItem, PlanVisivelSite } from "@core/common/enums/models/plan";
+import { Plan, PlanItem } from "@core/common/enums/models/plan";
 
 export interface ViewPlanRepositoryDTO {
   plan_id: number;
   status: Status | null;
-  visible_site: PlanVisivelSite | null;
+  visible_site: boolean;
   business_id: number | null;
   plan: string | null;
   image: string | null;

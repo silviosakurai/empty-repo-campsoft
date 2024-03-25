@@ -14,14 +14,15 @@ export const upgradePlan = async (
   const upgradePlanUseCase = container.resolve(UpgradeUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
 
-  const productIds = 
-    request.query.products ? request.query.products.split(',') : [];
-  
+  const productIds = request.query.products
+    ? request.query.products.split(',')
+    : [];
+
   try {
     const response = await upgradePlanUseCase.execute(
       tokenKeyData.company_id,
       tokenJwtData.clientId,
-      productIds,
+      productIds
     );
 
     if (!response) {
