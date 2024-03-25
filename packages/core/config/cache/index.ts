@@ -10,7 +10,6 @@ async function cacheRedisConnection(fastify: FastifyInstance) {
       host: cacheEnvironment.cacheHost,
       password: cacheEnvironment.cachePassword,
       port: cacheEnvironment.cachePort,
-      username: cacheEnvironment.cacheUser
     })
     .register(FastifyCaching, {
       expiresIn: 300,

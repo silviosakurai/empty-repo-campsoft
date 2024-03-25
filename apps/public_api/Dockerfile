@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/node:lts-alpine3.19 as builder
+FROM node:20.11.1 as builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN pnpm install
 
 RUN turbo run build --filter=public
 
-FROM public.ecr.aws/docker/library/node:lts-alpine3.19
+FROM node:20.11.1
 
 WORKDIR /app
 
@@ -28,7 +28,6 @@ COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
 
 EXPOSE 3001
 
-ENTRYPOINT ["docker-entrypoint.sh"]
-USER node
+WORKDIR /app/apps/public_api/src
 
-CMD ["dumb-init", "node", "/app/apps/public_api/src/index.js"]
+CMD ["node", "index.js"]
