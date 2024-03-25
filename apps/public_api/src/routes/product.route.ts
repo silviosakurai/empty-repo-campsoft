@@ -4,7 +4,9 @@ import { container } from 'tsyringe';
 import {
   listProductSchema,
   getProduct,
+  getProductCrossSell,
 } from '@core/validations/product/product.validation';
+import { listCrossSellProduct } from '@/controllers/product/methods/listCrossSellProduct';
 
 export default async function productRoutes(server: FastifyInstance) {
   const productController = container.resolve(ProductController);
@@ -19,5 +21,11 @@ export default async function productRoutes(server: FastifyInstance) {
     schema: getProduct,
     preHandler: [server.authenticateKeyApi],
     handler: productController.view,
+  });
+
+  server.get('/products/cross-sell', {
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: listCrossSellProduct,
+    schema: getProductCrossSell,
   });
 }
