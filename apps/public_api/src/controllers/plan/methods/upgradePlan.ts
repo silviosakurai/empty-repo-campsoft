@@ -45,12 +45,4 @@ export const upgradePlan = async (
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
     });
   }
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
-    console.log('request.params:', request.params)
 };
