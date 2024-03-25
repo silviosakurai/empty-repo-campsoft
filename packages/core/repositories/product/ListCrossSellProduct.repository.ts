@@ -68,7 +68,7 @@ export class ListCrossSellProductRepository {
 
     const paginatedQuery = allQuery
       .limit(input.per_page)
-      .offset(input.current_page * input.per_page);
+      .offset((input.current_page - 1) * input.per_page);
 
     const records = await paginatedQuery.execute();
 
