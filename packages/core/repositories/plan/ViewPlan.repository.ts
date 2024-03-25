@@ -8,6 +8,7 @@ import { ListPlanPriceRepository } from "./ListPlanPrice.repository";
 import { ListPlanItemRepository } from "./ListPlanItem.repository";
 import { ListProductRepository } from "../product/ListProduct.repository";
 import { ListProductGroupProductRepository } from "../product/ListProductGroupProduct.repository";
+import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class ViewPlanRepository {
@@ -32,7 +33,7 @@ export class ViewPlanRepository {
     planId: number,
   ): Promise<Plan | null> {
 
-    const result = await this.db
+    const result: ViewPlanRepositoryDTO[] = await this.db
       .select(
         {
           plan_id: plan.id_plano,
@@ -65,7 +66,7 @@ export class ViewPlanRepository {
     return planCompleted;
   }
 
-  private getPlanRelactions = async (plan: any, companyId: number): Promise<Plan> => {
+  private getPlanRelactions = async (plan: ViewPlanRepositoryDTO, companyId: number): Promise<Plan> => {
     const planItems = await this.listPlanItemRepository.listByPlanId(plan.plan_id);
     const productIds = planItems.map(item => item.product_id) as string[];
     

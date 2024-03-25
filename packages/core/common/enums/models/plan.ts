@@ -32,6 +32,7 @@ export type PlanPrice = {
 export type PlanItem = {
   plan_id: number;
   product_id: string | null;
+  discountPercent: number | null;
 };
 
 export type ProductsGroups = {
@@ -40,6 +41,11 @@ export type ProductsGroups = {
   quantity: number;
   available_products: ProductResponse[];
 };
+
+export type GroupProductGroupMapper = {
+  [key: number]: ProductsGroups;
+};
+
 
 export type Plan = {
   plan_id: number;

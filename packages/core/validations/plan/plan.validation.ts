@@ -22,4 +22,13 @@ const getPlan = {
   params: Schema.object().prop("planId", Schema.string().required()),
 };
 
-export { listPlanSchema, getPlan };
+const upgradePlan = {
+  querystring: Schema.object()
+    .prop("products", Schema.string())
+};
+
+export {
+  listPlanSchema,
+  getPlan,
+  upgradePlan,
+};

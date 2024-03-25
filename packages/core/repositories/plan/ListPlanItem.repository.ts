@@ -23,6 +23,7 @@ export class ListPlanItemRepository {
         {
           plan_id: planItem.id_plano,
           product_id: planItem.id_produto,
+          discountPercent: planItem.percentual_do_plano,
         }
       )
       .from(planItem)
