@@ -1,4 +1,5 @@
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
+import { paginationReaderSchema } from "@core/common/validations/pagination.validation";
 import Schema from "fluent-json-schema";
 
 const userCreatorSchema = {
@@ -17,9 +18,8 @@ const userCreatorSchema = {
 
 const userReaderSchema = {
   querystring: Schema.object()
-    .prop("current_page", Schema.number().minimum(1).required())
-    .prop("per_page", Schema.number().minimum(1).maximum(200).required())
-    .prop("text_search", Schema.string()),
+    .prop("text_search", Schema.string())
+    .extend(paginationReaderSchema),
 };
 
 const userUpdaterSchema = {
