@@ -7,7 +7,7 @@ import { Plan, PlanItem } from "@core/common/enums/models/plan";
 import { ListPlanRepository } from "./ListPlan.repository";
 import { ListPlanItemRepository } from "./ListPlanItem.repository";
 import { SignatureStatus } from "@core/common/enums/models/signature";
-import { UpgradePlanRepositoryDTO } from "@core/interfaces/repositories/plan";
+import { UpgradePlanRepositoryDTO, UpgradePlanRepositoryResponse } from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class UpgradePlanRepository {
@@ -27,7 +27,7 @@ export class UpgradePlanRepository {
     companyId: number,
     clientId: string,
     productIds: string[]
-  ): Promise<Plan[] | null> {
+  ): Promise<UpgradePlanRepositoryResponse | null> {
 
     const result: UpgradePlanRepositoryDTO[] = await this.db
       .select(
@@ -54,22 +54,15 @@ export class UpgradePlanRepository {
 
     const uniquePlans = [...new Set(result.map((item) => item.plan_id))].map(planId => ({ plan_id: planId }));
 
-    const plansToUpgrade = await this.calculatePlansNewPrices(uniquePlans[0].plan_id, companyId, productIds);
-    
-    return plansToUpgrade;
+    return this.getPlansToUpgrade(uniquePlans[0].plan_id, companyId, productIds);
   }
 
-  private getPlanItemByProcutId = (productId: string, planItems: PlanItem[]): number => {
-    return planItems.find(planItem => planItem.product_id === productId)?.discountPercent as number;
-  }
-
-  private calculatePlansNewPrices = async (planId: number, companyId: number, productIdsToFilter: string[]): Promise<Plan[]> => {
+  private getPlansToUpgrade = async (planId: number, companyId: number, productIdsToFilter: string[]) => {
     const plans = await this.listPlanRepository.listWithoutPagination(companyId);
     
     const actualPlan = plans.find(plan => plan.plan_id === planId) as Plan;
 
     const planItems = await this.listPlanItemRepository.listByPlanId(actualPlan.plan_id);
-    const productIds = planItems.map(item => item.product_id) as string[];
     
     const plansToUpgrade = plans.filter(plan => plan.plan_id !== planId);
 
@@ -85,26 +78,9 @@ export class UpgradePlanRepository {
       });
     }
 
-    const plansWithDiscount = plansToUpgradeWithProductsToFilter.map(plan => {
-      const productRepeated = plan.products.filter(product => productIds.includes(product.product_id));
-      const valueInPercentToSub = productRepeated.reduce((acc, product) => acc + this.getPlanItemByProcutId(product.product_id, planItems), 0);
-
-      plan.prices = plan.prices.map((planPrice) => {
-        if (planPrice.price) {
-          const discountValue = planPrice.price * valueInPercentToSub;
-          const priceWithDiscount =  planPrice.price - (planPrice.price * valueInPercentToSub);
-          
-          planPrice.discount_percentage = parseFloat(valueInPercentToSub.toFixed(2));
-          planPrice.discount_value = parseFloat(discountValue.toFixed(2));
-          planPrice.price_with_discount = parseFloat(priceWithDiscount.toFixed(2));
-        }
-        
-        return planPrice;
-      });
-
-      return plan;
-    });
-
-    return plansWithDiscount;
+    return {
+      plans: plansToUpgradeWithProductsToFilter,
+      planItems,
+    };
   }
 }

@@ -1,5 +1,5 @@
 import { Status } from "@core/common/enums/Status";
-import { PlanVisivelSite } from "@core/common/enums/models/plan";
+import { Plan, PlanItem, PlanVisivelSite } from "@core/common/enums/models/plan";
 
 export interface ViewPlanRepositoryDTO {
   plan_id: number;
@@ -19,4 +19,9 @@ export interface UpgradePlanRepositoryDTO {
   client_signature_id: unknown;
   status: number;
   plan_id: number;
+}
+
+export interface UpgradePlanRepositoryResponse {
+  plans: Plan[];
+  planItems: PlanItem[];
 }
