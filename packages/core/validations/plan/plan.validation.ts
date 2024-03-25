@@ -14,8 +14,8 @@ const listPlanSchema = {
     .prop("description", Schema.string())
     .prop("sort_by", Schema.string().enum(Object.keys(PlanFieldsToOrder)))
     .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))
-    .prop("per_page", Schema.number().default(10))
-    .prop("current_page", Schema.number().default(1)),
+    .prop("per_page", Schema.number().minimum(1).maximum(200).required())
+    .prop("current_page", Schema.number().minimum(1).required()),
 };
 
 const getPlan = {

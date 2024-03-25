@@ -17,8 +17,8 @@ const userCreatorSchema = {
 
 const userReaderSchema = {
   querystring: Schema.object()
-    .prop("current_page", Schema.number().required())
-    .prop("per_page", Schema.number().required())
+    .prop("current_page", Schema.number().minimum(1).required())
+    .prop("per_page", Schema.number().minimum(1).maximum(200).required())
     .prop("text_search", Schema.string()),
 };
 
