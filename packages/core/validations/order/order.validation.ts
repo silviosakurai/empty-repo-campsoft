@@ -1,9 +1,8 @@
+import { paginationReaderSchema } from "@core/common/validations/pagination.validation";
 import Schema from "fluent-json-schema";
 
 const ordersSchema = {
-  querystring: Schema.object()
-    .prop("current_page", Schema.number().required())
-    .prop("per_page", Schema.number().required()),
+  querystring: Schema.object().extend(paginationReaderSchema),
 };
 
 export { ordersSchema };

@@ -19,7 +19,7 @@ export class VoucherViewUserUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     voucher: string
-  ) => {
+  ): Promise<VoucherViewRequestDto> => {
     try {
       const isEligibility = await this.voucherService.verifyEligibilityUser(
         tokenKeyData,

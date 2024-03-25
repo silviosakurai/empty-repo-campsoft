@@ -2,17 +2,22 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ListOrdersUseCase } from '@core/useCases/order/ListOrders.useCase';
+import { ListOrderRequestDto } from '@core/useCases/order/dtos/ListOrderRequest.dto';
 import { container } from 'tsyringe';
 
 export const listOrder = async (
-  request: FastifyRequest,
+  request: FastifyRequest<{
+    Querystring: ListOrderRequestDto;
+  }>,
   reply: FastifyReply
 ) => {
   const listOrdersUseCase = container.resolve(ListOrdersUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
+  const input = request.query;
 
   try {
     const response = await listOrdersUseCase.execute(
+      input,
       tokenKeyData,
       tokenJwtData
     );

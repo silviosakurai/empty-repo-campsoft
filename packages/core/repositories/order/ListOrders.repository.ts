@@ -18,10 +18,20 @@ import {
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { and, eq, sql } from "drizzle-orm";
-import { ListOrder } from "@core/interfaces/repositories/order";
+import { and, count, eq, sql } from "drizzle-orm";
+import {
+  ListOrder,
+  OrderPayments,
+  PlanDetails,
+} from "@core/interfaces/repositories/order";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
+import {
+  AvailableProducts,
+  PlanProducts,
+} from "@core/interfaces/repositories/voucher";
+import { ListOrderResponse } from "@core/useCases/order/dtos/ListOrderResponse.dto";
+import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 
 @injectable()
 export class ListOrdersRepository {
@@ -33,19 +43,81 @@ export class ListOrdersRepository {
     this.db = mySql2Database;
   }
 
-  async list(tokenKeyData: ITokenKeyData, tokenJwtData: ITokenJwtData) {
+  async list(
+    input: ListOrderRequestDto,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ): Promise<ListOrderResponse[]> {
+    const offset = input.current_page
+      ? (input.current_page - 1) * input.per_page
+      : 0;
+
     const result = await this.db
       .select({
         order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
         status: orderStatus.pedido_status,
+        totals: {
+          subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
+          discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
+          discount_coupon_value: sql<number>`CASE
+            WHEN ${orderItem.valor_cupom} IS NOT NULL 
+              THEN SUM(${orderItem.valor_cupom}) 
+            ELSE 0
+          END`.mapWith(Number),
+          discount_percentage: sql<number>`CASE 
+            WHEN ${order.valor_total} > 0 
+              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
+            ELSE 0 
+          END`.mapWith(Number),
+          total: sql`${order.valor_total}`.mapWith(Number),
+        },
+        installments: {
+          installment: order.pedido_parcelas_vezes,
+          value: order.pedido_parcelas_valor,
+        },
+        created_at: order.created_at,
+        updated_at: order.updated_at,
       })
       .from(order)
       .innerJoin(
         orderStatus,
         eq(orderStatus.id_pedido_status, order.id_pedido_status)
       )
+      .leftJoin(orderItem, eq(orderItem.id_pedido, order.id_pedido))
+      .where(
+        and(
+          eq(order.id_empresa, tokenKeyData.company_id),
+          eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
+        )
+      )
+      .limit(input.per_page)
+      .offset(offset)
+      .groupBy(order.id_pedido)
+      .execute();
+
+    if (result.length === 0) {
+      return [];
+    }
+
+    const enrichPromises = await this.enrichPaymentsAndPlansPromises(
+      tokenKeyData,
+      result
+    );
+
+    return enrichPromises as ListOrderResponse[];
+  }
+
+  async countTotal(
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ): Promise<number> {
+    const countResult = await this.db
+      .select({
+        count: count(),
+      })
+      .from(order)
       .where(
         and(
           eq(order.id_empresa, tokenKeyData.company_id),
@@ -54,38 +126,10 @@ export class ListOrdersRepository {
       )
       .execute();
 
-    if (result.length === 0) {
-      return null;
-    }
-
-    const enrichPromises = await this.enrichPaymentsAndPlansPromises(result);
-
-    return enrichPromises;
+    return countResult[0].count;
   }
 
-  private async enrichPaymentsAndPlansPromises(result: ListOrder[]) {
-    const enrichPaymentsAndPlansPromises = result.map(
-      async (orderPayments: ListOrder) => ({
-        ...orderPayments,
-        payments: await this.fetchOrderPayments(orderPayments.order_id),
-        plans: await this.fetchOrderPlans(orderPayments.order_id),
-        plan_products: await this.fetchOrderPlansProducts(
-          orderPayments.order_id
-        ),
-        product_groups: await this.fetchOrderPlansProductsGroups(
-          orderPayments.order_id
-        ),
-      })
-    );
-
-    const enrichedPaymentsAndPlans = await Promise.all(
-      enrichPaymentsAndPlansPromises
-    );
-
-    return enrichedPaymentsAndPlans;
-  }
-
-  private async fetchOrderPayments(orderId: string) {
+  private async fetchOrderPayments(orderId: string): Promise<OrderPayments[]> {
     const result = await this.db
       .select({
         type: orderPaymentMethod.pedido_pag_metodo,
@@ -143,13 +187,13 @@ export class ListOrdersRepository {
       .execute();
 
     if (result.length === 0) {
-      return null;
+      return [];
     }
 
-    return result;
+    return result as OrderPayments[];
   }
 
-  private async fetchOrderPlans(orderId: string) {
+  private async fetchOrderPlans(tokenKeyData: ITokenKeyData, orderId: string) {
     const result = await this.db
       .select({
         plan_id: plan.id_plano,
@@ -163,32 +207,39 @@ export class ListOrdersRepository {
         image: plan.imagem,
         description: plan.descricao,
         short_description: plan.descricao_curta,
-        prices: {
-          price: planPrice.preco,
-          discount_value: planPrice.desconto_valor,
-          discount_percentage: planPrice.desconto_porcentagem,
-          price_with_discount: planPrice.preco_desconto,
-        },
       })
       .from(plan)
       .innerJoin(orderItem, eq(orderItem.id_plano, plan.id_plano))
       .innerJoin(order, eq(order.id_pedido, orderItem.id_pedido))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
-      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .where(
+        and(
+          eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
       .groupBy(plan.id_plano)
       .execute();
 
     if (result.length === 0) {
-      return null;
+      return [];
     }
 
-    return result;
+    const enrichPromises = await this.enrichPlanAndProductGroupsPromises(
+      tokenKeyData,
+      result
+    );
+
+    return enrichPromises;
   }
 
-  private async fetchOrderPlansProducts(orderId: string) {
+  private async fetchPlanProductDetails(
+    tokenKeyData: ITokenKeyData,
+    planId: number
+  ): Promise<PlanProducts[]> {
     const result = await this.db
       .select({
-        product_id: product.id_produto,
+        product_id: planItem.id_produto,
         status: product.status,
         name: product.produto,
         long_description: product.descricao,
@@ -207,50 +258,187 @@ export class ListOrdersRepository {
           product_type_name: productType.produto_tipo,
         },
       })
-      .from(product)
-      .innerJoin(orderItem, eq(orderItem.id_produto, product.id_produto))
-      .innerJoin(order, eq(orderItem.id_pedido, order.id_pedido))
+      .from(plan)
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(product, eq(planItem.id_produto, product.id_produto))
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .where(
+        and(
+          eq(plan.id_plano, planId),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
       .execute();
 
     if (result.length === 0) {
-      return null;
+      return [];
     }
 
-    return result;
+    return result as PlanProducts[];
   }
 
-  private async fetchOrderPlansProductsGroups(orderId: string) {
+  private async fetchPlanProductGroupsDetails(
+    tokenKeyData: ITokenKeyData,
+    planId: number
+  ) {
     const result = await this.db
       .select({
         product_group_id: productGroup.id_produto_grupo,
         name: productGroup.produto_grupo,
         quantity: sql<number>`COUNT(${productGroupProduct.id_produto_grupo})`,
       })
-      .from(productGroup)
+      .from(plan)
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
       .innerJoin(
-        planItem,
-        eq(planItem.id_produto_grupo, productGroup.id_produto_grupo)
+        productGroup,
+        eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
       )
-      .innerJoin(plan, eq(plan.id_plano, planItem.id_plano))
-      .innerJoin(orderItem, eq(orderItem.id_plano, plan.id_plano))
-      .innerJoin(order, eq(order.id_pedido, orderItem.id_pedido))
       .leftJoin(
         productGroupProduct,
         eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
       )
-      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .where(
+        and(
+          eq(plan.id_plano, planId),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
       .groupBy(productGroupProduct.id_produto_grupo)
       .execute();
 
     if (result.length === 0) {
-      return null;
+      return [];
+    }
+
+    const enrichPromises =
+      await this.enrichAvailableProductsByProductGroupsPromises(result);
+
+    return enrichPromises;
+  }
+
+  private async fetchPlanProductGroupsProductsByProductGroupId(
+    productGroupId: number
+  ): Promise<PlanProducts[]> {
+    const result = await this.db
+      .select({
+        product_id: productGroupProduct.id_produto,
+        status: product.status,
+        name: product.produto,
+        long_description: product.descricao,
+        short_description: product.descricao_curta,
+        marketing_phrases: product.frases_marketing,
+        content_provider_name: product.conteudista_nome,
+        slug: product.url_caminho,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
+        product_type: {
+          product_type_id: productType.id_produto_tipo,
+          product_type_name: productType.produto_tipo,
+        },
+      })
+      .from(productGroupProduct)
+      .innerJoin(
+        product,
+        eq(product.id_produto, productGroupProduct.id_produto)
+      )
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
+      .where(eq(productGroupProduct.id_produto_grupo, productGroupId))
+      .execute();
+
+    if (result.length === 0) {
+      return [];
+    }
+
+    return result as PlanProducts[];
+  }
+
+  private async fetchPricesByPlan(planId: number) {
+    const result = await this.db
+      .select({
+        price: planPrice.preco,
+        discount_value: planPrice.desconto_valor,
+        discount_percentage: planPrice.desconto_porcentagem,
+        price_with_discount: planPrice.preco_desconto,
+      })
+      .from(planPrice)
+      .where(and(eq(planPrice.id_plano, planId)))
+      .execute();
+
+    if (result.length === 0) {
+      return [];
     }
 
     return result;
+  }
+
+  private async enrichPaymentsAndPlansPromises(
+    tokenKeyData: ITokenKeyData,
+    result: ListOrder[]
+  ) {
+    const enrichPaymentsAndPlansPromises = result.map(
+      async (orderPayments: ListOrder) => ({
+        ...orderPayments,
+        payments: await this.fetchOrderPayments(orderPayments.order_id),
+        plans: await this.fetchOrderPlans(tokenKeyData, orderPayments.order_id),
+      })
+    );
+
+    const enrichedPaymentsAndPlans = await Promise.all(
+      enrichPaymentsAndPlansPromises
+    );
+
+    return enrichedPaymentsAndPlans;
+  }
+
+  private async enrichPlanAndProductGroupsPromises(
+    tokenKeyData: ITokenKeyData,
+    result: PlanDetails[]
+  ) {
+    const enrichPlanPromises = result.map(async (plan: PlanDetails) => ({
+      ...plan,
+      prices: await this.fetchPricesByPlan(plan.plan_id),
+      plan_products: await this.fetchPlanProductDetails(
+        tokenKeyData,
+        plan.plan_id
+      ),
+      product_groups: await this.fetchPlanProductGroupsDetails(
+        tokenKeyData,
+        plan.plan_id
+      ),
+    }));
+
+    const enrichedPlans = await Promise.all(enrichPlanPromises);
+
+    return enrichedPlans;
+  }
+
+  private async enrichAvailableProductsByProductGroupsPromises(
+    result: AvailableProducts[]
+  ) {
+    const enrichProductGroupsPromises = result.map(
+      async (productGroups: AvailableProducts) => ({
+        ...productGroups,
+        available_products:
+          await this.fetchPlanProductGroupsProductsByProductGroupId(
+            productGroups.product_group_id
+          ),
+      })
+    );
+
+    const enrichedProductGroups = await Promise.all(
+      enrichProductGroupsPromises
+    );
+
+    return enrichedProductGroups;
   }
 }
