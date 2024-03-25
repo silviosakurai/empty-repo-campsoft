@@ -13,14 +13,14 @@ export const findOrderByNumber = async (
   const { t, tokenKeyData } = request;
 
   try {
-    const data = await service.find(request.params.orderNumber);
+    const data = await service.find(request.params.order_number);
 
-    if (!data) {
-      return sendResponse(reply, {
-        message: t('order_not_found'),
-        httpStatusCode: HTTPStatusCode.NOT_FOUND,
-      });
-    }
+    // if (!data) {
+    //   return sendResponse(reply, {
+    //     message: t('order_not_found'),
+    //     httpStatusCode: HTTPStatusCode.NOT_FOUND,
+    //   });
+    // }
 
     return sendResponse(reply, {
       data,

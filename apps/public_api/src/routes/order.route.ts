@@ -5,8 +5,8 @@ import { container } from 'tsyringe';
 export default async function orderRoutes(server: FastifyInstance) {
   const orderController = container.resolve(OrderController);
 
-  server.get('/orders/:orderNumber', {
+  server.get('/orders/:order_number', {
     handler: orderController.readByNumber,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
   });
 }

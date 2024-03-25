@@ -1,3 +1,3 @@
 export interface FindOrderByNumberRequest {
-  orderNumber: string;
+  order_number: string;
 }
