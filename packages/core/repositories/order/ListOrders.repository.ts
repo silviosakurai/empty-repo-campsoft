@@ -10,6 +10,11 @@ import {
   orderPaymentStatus,
   plan,
   planPrice,
+  product,
+  productType,
+  productGroup,
+  planItem,
+  productGroupProduct,
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -64,6 +69,12 @@ export class ListOrdersRepository {
         ...orderPayments,
         payments: await this.fetchOrderPayments(orderPayments.order_id),
         plans: await this.fetchOrderPlans(orderPayments.order_id),
+        plan_products: await this.fetchOrderPlansProducts(
+          orderPayments.order_id
+        ),
+        product_groups: await this.fetchOrderPlansProductsGroups(
+          orderPayments.order_id
+        ),
       })
     );
 
@@ -165,6 +176,75 @@ export class ListOrdersRepository {
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .groupBy(plan.id_plano)
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result;
+  }
+
+  private async fetchOrderPlansProducts(orderId: string) {
+    const result = await this.db
+      .select({
+        product_id: product.id_produto,
+        status: product.status,
+        name: product.produto,
+        long_description: product.descricao,
+        short_description: product.descricao_curta,
+        marketing_phrases: product.frases_marketing,
+        content_provider_name: product.conteudista_nome,
+        slug: product.url_caminho,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
+        product_type: {
+          product_type_id: productType.id_produto_tipo,
+          product_type_name: productType.produto_tipo,
+        },
+      })
+      .from(product)
+      .innerJoin(orderItem, eq(orderItem.id_produto, product.id_produto))
+      .innerJoin(order, eq(orderItem.id_pedido, order.id_pedido))
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
+      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result;
+  }
+
+  private async fetchOrderPlansProductsGroups(orderId: string) {
+    const result = await this.db
+      .select({
+        product_group_id: productGroup.id_produto_grupo,
+        name: productGroup.produto_grupo,
+        quantity: sql<number>`COUNT(${productGroupProduct.id_produto_grupo})`,
+      })
+      .from(productGroup)
+      .innerJoin(
+        planItem,
+        eq(planItem.id_produto_grupo, productGroup.id_produto_grupo)
+      )
+      .innerJoin(plan, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(orderItem, eq(orderItem.id_plano, plan.id_plano))
+      .innerJoin(order, eq(order.id_pedido, orderItem.id_pedido))
+      .leftJoin(
+        productGroupProduct,
+        eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
+      )
+      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .groupBy(productGroupProduct.id_produto_grupo)
       .execute();
 
     if (result.length === 0) {
