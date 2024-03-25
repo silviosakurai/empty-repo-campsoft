@@ -47,7 +47,6 @@ export class UpgradePlanRepository {
       )
       .execute();
       
-    console.log('UpgradePlanRepository : result:', result)
     if (!result.length) {
       return null;
     }
