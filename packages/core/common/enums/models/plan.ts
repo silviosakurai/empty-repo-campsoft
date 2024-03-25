@@ -1,6 +1,10 @@
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { Status } from "../Status";
-import { YesOrNo } from "../YesOrNo";
+
+export enum PlanVisivelSite {
+  YES = "Y",
+  NO = "N",
+}
 
 export enum PlanFields {
   plan_id = "plan_id",
@@ -40,7 +44,7 @@ export type ProductsGroups = {
 export type Plan = {
   plan_id: number;
   status: Status | null;
-  visible_site: YesOrNo | null;
+  visible_site: PlanVisivelSite | null;
   business_id: number | null;
   plan: string | null;
   image: string | null;
