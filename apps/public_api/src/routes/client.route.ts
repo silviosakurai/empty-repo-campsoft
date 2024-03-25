@@ -9,6 +9,7 @@ import {
   userPasswordRecoveryMethods,
   userPasswordRecoveryUpdaterSchema,
 } from '@core/validations/user/user.validation';
+import { voucherSchema } from '@core/validations/voucher/voucher.validation';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
@@ -69,5 +70,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: userPasswordRecoveryUpdaterSchema,
     handler: clientController.updatePasswordRecovery,
     preHandler: [server.authenticateKeyApi, server.authenticateTfa],
+  });
+
+  server.get('/user/vouchers/:voucherCode', {
+    schema: voucherSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.viewVoucher,
   });
 }
