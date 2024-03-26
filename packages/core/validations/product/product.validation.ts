@@ -17,8 +17,7 @@ const listProductSchema = {
     .prop("slug", Schema.string())
     .prop("sort_by", Schema.string().enum(Object.keys(ProductFieldsToOrder)))
     .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))
-    .prop("per_page", Schema.number().default(10))
-    .prop("current_page", Schema.number().default(1)),
+    .extend(paginationReaderSchema),
 };
 
 const getProduct = {

@@ -17,7 +17,7 @@ export class VoucherViewUseCase {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     voucher: string
-  ) => {
+  ): Promise<VoucherViewRequestDto> => {
     try {
       const isEligibility = await this.voucherService.verifyEligibilityUser(
         tokenKeyData,

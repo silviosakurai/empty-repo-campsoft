@@ -46,10 +46,14 @@ export const orderPayment = mysqlTable("pedido_pagamento", {
   pag_trans_id: varchar("pag_trans_id", { length: 25 }),
   pag_transaction: varchar("pag_transaction", { length: 500 }),
   pag_transaction_raw: json("pag_transaction_raw"),
-  pag_info_adicional: varchar("pag_info_adicional", { length: 300 }),
+  pag_info_adicional: varchar("pag_info_adicional", { length: 2000 }),
   pag_customer_id: varchar("pag_customer_id", { length: 32 }),
   remote_ip: varchar("remote_ip", { length: 16 }),
   obs: varchar("obs", { length: 200 }),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });

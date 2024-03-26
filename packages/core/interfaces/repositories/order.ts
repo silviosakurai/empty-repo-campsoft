@@ -1,0 +1,68 @@
+import { Status } from "@core/common/enums/Status";
+
+export interface ListOrder {
+  order_id: string;
+  client_id: string;
+  seller_id: string;
+  status: string;
+}
+
+export interface PlanDetails {
+  plan_id: number;
+  status: Status | null;
+  visible_site: boolean;
+  business_id: number | null;
+  plan: string | null;
+  image: string | null;
+  description: string | null;
+  short_description: string | null;
+}
+
+export interface OrderPayments {
+  type: string;
+  status: string;
+  credit_card: CreditCard;
+  voucher: string;
+  boleto: Boleto;
+  pix: Pix;
+  cycle: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Prices {
+  price: number;
+  discount_value: number;
+  discount_percentage: number | null;
+  price_with_discount: number;
+}
+
+export interface TotalsOrder {
+  subtotal_price: number;
+  discount_item_value: number;
+  discount_coupon_value: number;
+  discount_percentage: number;
+  total: number;
+}
+
+export interface Installments {
+  installment: number | null;
+  value: number | null;
+}
+
+interface CreditCard {
+  brand: string;
+  number: string;
+  credit_card_id: string;
+}
+
+interface Boleto {
+  url: string;
+  code: string;
+}
+
+interface Pix {
+  url: string;
+  code: string;
+  expire_at: string;
+}

@@ -5,7 +5,7 @@ import tfaRoutes from '@/routes/tfa.route';
 import bannerRoutes from '@/routes/banner.route';
 import productRoutes from '@/routes/product.route';
 import planRoutes from '@/routes/plan.route';
-import orderRoutes from './order.route';
+import orderRoutes from '@/routes/order.route';
 import vouchersRoutes from '@/routes/voucher.route';
 
 export default async function (server: FastifyInstance) {
