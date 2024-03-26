@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import {
   listPlanSchema,
   getPlan,
+  upgradePlan,
 } from '@core/validations/plan/plan.validation';
 
 export default async function planRoutes(server: FastifyInstance) {
@@ -19,5 +20,11 @@ export default async function planRoutes(server: FastifyInstance) {
     schema: getPlan,
     preHandler: [server.authenticateKeyApi],
     handler: planController.view,
+  });
+
+  server.get('/plans/upgrades', {
+    schema: upgradePlan,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: planController.upgrade,
   });
 }
