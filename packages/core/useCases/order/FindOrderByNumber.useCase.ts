@@ -39,6 +39,7 @@ export class FindOrderByNumberUseCase {
         discount_item_value: order.totals.discount_item_value,
         discount_coupon_value: order.totals.discount_coupon_value,
         discount_percentage: order.totals.discount_percentage,
+        discount_product_value: order.totals.discount_product_value,
         total: order.totals.total,
         installments: {
           installment: order.totals.installment,

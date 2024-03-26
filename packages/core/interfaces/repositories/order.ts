@@ -44,6 +44,7 @@ export interface TotalsOrder {
   discount_item_value: number;
   discount_coupon_value: number;
   discount_percentage: number;
+  discount_product_value: number | null;
   total: number;
 }
 

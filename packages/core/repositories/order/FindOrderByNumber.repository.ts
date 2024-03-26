@@ -41,6 +41,11 @@ export class FindOrderByNumberRepository {
               THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
             ELSE 0 
           END`.mapWith(Number),
+          discount_product_value: sql<number>`CASE
+            WHEN ${orderItem.desconto_produto} IS NOT NULL 
+              THEN SUM(${orderItem.desconto_produto}) 
+            ELSE 0
+          END`.mapWith(Number),
           total: sql`${order.valor_total}`.mapWith(Number),
           installment: sql`${order.pedido_parcelas_vezes}`.mapWith(Number),
           value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
