@@ -32,11 +32,7 @@ export class CacheEnvironment {
     return this.DB_CACHE_PORT;
   }
 
-  public get cachePassword(): string {
-    if (!this.DB_CACHE_PASSWORD) {
-      throw new InvalidConfigurationError("DB_CACHE_PASSWORD is not defined.");
-    }
-
+  public get cachePassword(): string | undefined {
     return this.DB_CACHE_PASSWORD;
   }
 }

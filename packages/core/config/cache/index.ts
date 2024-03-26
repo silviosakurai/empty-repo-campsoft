@@ -5,15 +5,18 @@ import FastifyRedis from "@fastify/redis";
 import FastifyCaching from "@fastify/caching";
 
 async function cacheRedisConnection(fastify: FastifyInstance) {
-  fastify
-    .register(FastifyRedis, {
-      host: cacheEnvironment.cacheHost,
-      password: cacheEnvironment.cachePassword,
-      port: cacheEnvironment.cachePort,
-    })
-    .register(FastifyCaching, {
-      expiresIn: 300,
-    });
+  let config: { host: string; port: number; password?: string } = {
+    host: cacheEnvironment.cacheHost,
+    port: cacheEnvironment.cachePort,
+  };
+
+  if (cacheEnvironment.cachePassword) {
+    config.password = cacheEnvironment.cachePassword;
+  }
+
+  fastify.register(FastifyRedis, config).register(FastifyCaching, {
+    expiresIn: 300,
+  });
 }
 
 export default fp(cacheRedisConnection);
