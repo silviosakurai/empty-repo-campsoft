@@ -15,7 +15,7 @@ export class CreateCartUseCase {
     private productService: ProductService
   ) {}
 
-  async create(input: CreateCartRequest, companyId: number) {
+  async create(input: CreateCartRequest, companyId: number, clientId: string) {
     const plans = input.plans_id?.length
       ? await Promise.all(
           input.plans_id.map(
@@ -31,6 +31,17 @@ export class CreateCartUseCase {
           input.products_id
         )
       : [];
+
+    const productsIdToDiscount = plans
+      ?.map((item) => item?.products?.map((product) => product?.product_id))
+      .join()
+      .split(",");
+
+    const productsToDiscount = await this.generateDiscountProductsValue(
+      companyId,
+      clientId,
+      productsIdToDiscount
+    );
 
     const totals: CartOrder[] = [];
     for (let plan of plans) {
@@ -49,7 +60,7 @@ export class CreateCartUseCase {
       plans: plans,
     };
 
-    await this.saveValuesTemporary(cart);
+    await this.saveValuesTemporarily(cart);
 
     return cart;
   }
@@ -77,7 +88,7 @@ export class CreateCartUseCase {
     };
   }
 
-  private async saveValuesTemporary(cart: CreateCartResponse) {
+  private async saveValuesTemporarily(cart: CreateCartResponse) {
     const redis = new Redis({
       host: cacheEnvironment.cacheHost,
       password: cacheEnvironment.cachePassword,
@@ -93,4 +104,22 @@ export class CreateCartUseCase {
       fifteenMinutes
     );
   }
+
+  private async generateDiscountProductsValue(
+    companyId: number,
+    clientId: string,
+    productsId: string[]
+  ) {
+    const results = await this.planService.upgradePlan(
+      companyId,
+      clientId,
+      productsId
+    );
+    console.log(results);
+  }
 }
+
+// pelo jwt, logar em todas as assinaturas que o usuário já tem
+// vou bater na tabela assinatura que com ela eu bato nos pedidos(ativos) por ela e
+// depois em pedidos itens, que ai vou saber todos os produtos que ele tem
+// e ai verifico se os produtos que ele quer adicionar tem já

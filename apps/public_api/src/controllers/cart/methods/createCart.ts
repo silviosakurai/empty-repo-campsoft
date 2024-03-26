@@ -10,10 +10,14 @@ export const createCart = async (
   reply: FastifyReply
 ) => {
   const service = container.resolve(CreateCartUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
-    const data = await service.create(request.body, tokenKeyData.company_id);
+    const data = await service.create(
+      request.body,
+      tokenKeyData.company_id,
+      tokenJwtData.clientId
+    );
 
     return sendResponse(reply, {
       data,
