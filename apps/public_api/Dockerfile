@@ -1,4 +1,4 @@
-FROM node:20.11.1 as builder
+FROM public.ecr.aws/docker/library/node:20.11.1-alpine as builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN pnpm install
 
 RUN turbo run build --filter=public
 
-FROM node:20.11.1
+FROM public.ecr.aws/docker/library/node:20.11.1-alpine
 
 WORKDIR /app
 
