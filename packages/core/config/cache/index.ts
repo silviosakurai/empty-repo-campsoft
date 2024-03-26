@@ -14,7 +14,9 @@ async function cacheRedisConnection(fastify: FastifyInstance) {
     config.password = cacheEnvironment.cachePassword;
   }
 
-  fastify.register(FastifyRedis, config).register(FastifyCaching, {
+  await fastify.register(FastifyRedis, config);
+
+  fastify.register(FastifyCaching, {
     expiresIn: 300,
   });
 }
