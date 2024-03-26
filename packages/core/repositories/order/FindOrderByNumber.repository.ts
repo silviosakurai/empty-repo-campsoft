@@ -1,35 +1,52 @@
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
-import {
-  order,
-  orderStatus,
-  orderPaymentMethod,
-  orderPaymentStatus,
-} from "@core/models";
-import { eq, sql } from "drizzle-orm";
+import { order, orderStatus, orderItem } from "@core/models";
+import { and, eq, sql } from "drizzle-orm";
 import { FindOrderPaymentByOrderIdRepository } from "./FindOrderPaymentByOrderId.repository";
-import { FindOrderPlanProductsByOrderIdRepository } from "./FindOrderPlanProductsByOrderId.repository";
 import { FindOrderPlansByOrderIdRepository } from "./FindOrderPlansByOrderId.repository";
-import { FindOrderPlansProductGroupsByOrderIdRepository } from "./FindOrderPlansProductGroupsByOrderId.repository";
+import { OrderByNumberResponse } from "@core/interfaces/repositories/order";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class FindOrderByNumberRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
     private readonly findOrderPlansByOrderId: FindOrderPlansByOrderIdRepository,
-    private readonly findOrderPaymentByOrderId: FindOrderPaymentByOrderIdRepository,
-    private readonly findOrderPlanProductsByOrderId: FindOrderPlanProductsByOrderIdRepository,
-    private readonly findOrderPlansProductGroupsByOrderId: FindOrderPlansProductGroupsByOrderIdRepository
+    private readonly findOrderPaymentByOrderId: FindOrderPaymentByOrderIdRepository
   ) {}
 
-  async find(orderNumber: string) {
+  async find(
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ): Promise<OrderByNumberResponse | null> {
     const record = await this.db
       .select({
-        order_id: sql`BIN_TO_UUID(${order.id_pedido})`,
+        order_id: sql`BIN_TO_UUID(${order.id_pedido})`.mapWith(String),
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
         status: orderStatus.pedido_status,
+        totals: {
+          subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
+          discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
+          discount_coupon_value: sql<number>`CASE
+            WHEN ${orderItem.valor_cupom} IS NOT NULL 
+              THEN SUM(${orderItem.valor_cupom}) 
+            ELSE 0
+          END`.mapWith(Number),
+          discount_percentage: sql<number>`CASE 
+            WHEN ${order.valor_total} > 0 
+              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
+            ELSE 0 
+          END`.mapWith(Number),
+          total: sql`${order.valor_total}`.mapWith(Number),
+          installment: sql`${order.pedido_parcelas_vezes}`.mapWith(Number),
+          value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
+        },
+        created_at: order.created_at,
+        updated_at: order.updated_at,
       })
       .from(order)
       .groupBy(order.id_pedido)
@@ -37,28 +54,38 @@ export class FindOrderByNumberRepository {
         orderStatus,
         eq(orderStatus.id_pedido_status, order.id_pedido_status)
       )
-      .where(eq(order.id_pedido, sql`UUID_TO_BIN(${orderNumber})`));
+      .leftJoin(orderItem, eq(orderItem.id_pedido, order.id_pedido))
+      .where(
+        and(
+          eq(order.id_pedido, sql`UUID_TO_BIN(${orderNumber})`),
+          eq(order.id_empresa, tokenKeyData.company_id),
+          eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
+        )
+      );
 
     if (!record.length) return null;
 
-    const results = await this.completePaymentsAndPlansPromises(record[0]);
+    const results = await this.completePaymentsAndPlansPromises(
+      record[0],
+      tokenKeyData
+    );
 
     return results;
   }
 
-  private async completePaymentsAndPlansPromises(result: any) {
-    const paymentsAndPlans = {
+  private async completePaymentsAndPlansPromises(
+    result: Omit<OrderByNumberResponse, "payments" | "products" | "plans">,
+    tokenKeyData: ITokenKeyData
+  ): Promise<OrderByNumberResponse> {
+    const recordsFormatted = {
       ...result,
       payments: await this.findOrderPaymentByOrderId.find(result.order_id),
-      plans: await this.findOrderPlansByOrderId.find(result.order_id),
-      plan_products: await this.findOrderPlanProductsByOrderId.find(
-        result.order_id
-      ),
-      product_groups: await this.findOrderPlansProductGroupsByOrderId.find(
-        result.order_id
+      plans: await this.findOrderPlansByOrderId.find(
+        result.order_id,
+        tokenKeyData
       ),
     };
 
-    return paymentsAndPlans;
+    return recordsFormatted;
   }
 }

@@ -8,12 +8,13 @@ import {
 } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
+import { OrderPayments } from "@core/interfaces/repositories/order";
 
 @injectable()
 export class FindOrderPaymentByOrderIdRepository {
   constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
-  async find(orderId: string) {
+  async find(orderId: string): Promise<OrderPayments[]> {
     const result = await this.db
       .select({
         type: orderPaymentMethod.pedido_pag_metodo,
@@ -72,9 +73,9 @@ export class FindOrderPaymentByOrderIdRepository {
       .execute();
 
     if (result.length === 0) {
-      return null;
+      return [];
     }
 
-    return result;
+    return result as OrderPayments[];
   }
 }

@@ -32,9 +32,17 @@ export class OrderService {
     }
   };
 
-  findOrderByNumber = async (orderNumber: string) => {
+  findOrderByNumber = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
     try {
-      return await this.findOrderByNumberRepository.find(orderNumber);
+      return await this.findOrderByNumberRepository.find(
+        orderNumber,
+        tokenKeyData,
+        tokenJwtData
+      );
     } catch (error) {
       throw error;
     }
