@@ -1,9 +1,9 @@
 import { injectable } from 'tsyringe';
-import { viewVoucher } from './methods/viewVoucher';
+import { viewHealth } from './methods/viewHealth';
 
 @injectable()
 class HealthController {
-  public view = viewVoucher;
+  public view = viewHealth;
 }
 
 export default HealthController;

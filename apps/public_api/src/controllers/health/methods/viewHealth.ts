@@ -2,7 +2,7 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-export const viewVoucher = async (
+export const viewHealth = async (
   _request: FastifyRequest,
   reply: FastifyReply
 ) => {
