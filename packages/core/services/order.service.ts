@@ -3,13 +3,19 @@ import { ListOrdersRepository } from "@core/repositories/order/ListOrders.reposi
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
+import { ListPaymentRepository } from "@core/repositories/order/ListPayments.repository";
 
 @injectable()
 export class OrderService {
   private listOrdersRepository: ListOrdersRepository;
+  private listPaymentRepository: ListPaymentRepository;
 
-  constructor(listOrdersRepository: ListOrdersRepository) {
+  constructor(
+    listOrdersRepository: ListOrdersRepository,
+    listPaymentRepository: ListPaymentRepository,
+  ) {
     this.listOrdersRepository = listOrdersRepository;
+    this.listPaymentRepository = listPaymentRepository;
   }
 
   listOrder = async (
@@ -37,6 +43,18 @@ export class OrderService {
         tokenKeyData,
         tokenJwtData
       );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  findOrderByNumber = async (orderNumber: string) => {
+    //
+  };
+
+  listPayment = async (orderId: string) => {
+    try {
+      return this.listPaymentRepository.list(orderId);
     } catch (error) {
       throw error;
     }
