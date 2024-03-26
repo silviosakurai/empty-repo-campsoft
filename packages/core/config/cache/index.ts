@@ -14,11 +14,17 @@ async function cacheRedisConnection(fastify: FastifyInstance) {
     config.password = cacheEnvironment.cachePassword;
   }
 
-  await fastify.register(FastifyRedis, config);
+  try {
+    await fastify.register(FastifyRedis, config);
 
-  fastify.register(FastifyCaching, {
-    expiresIn: 300,
-  });
+    fastify.register(FastifyCaching, {
+      expiresIn: 300,
+    });
+  } catch (error) {
+    console.log(error);
+
+    fastify.logger.error(error);
+  }
 }
 
 export default fp(cacheRedisConnection);
