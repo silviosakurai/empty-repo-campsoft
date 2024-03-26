@@ -10,10 +10,10 @@ export const findOrderByNumber = async (
   reply: FastifyReply
 ) => {
   const service = container.resolve(FindOrderByNumberUseCase);
-  const { t, tokenKeyData } = request;
+  const { t } = request;
 
   try {
-    const data = await service.find(request.params.order_number);
+    const data = await service.find(request.params.orderNumber);
 
     if (!data) {
       return sendResponse(reply, {

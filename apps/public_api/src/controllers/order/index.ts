@@ -5,7 +5,7 @@ import { findOrderByNumber } from './methods/findOrderByNumber';
 @injectable()
 class OrderController {
   public list = listOrder;
-  public readByNumber = findOrderByNumber;
+  public findByNumber = findOrderByNumber;
 }
 
 export default OrderController;
