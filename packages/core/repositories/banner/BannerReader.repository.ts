@@ -75,10 +75,12 @@ export class BannerReaderRepository {
       return [];
     }
 
-    return result as unknown as IBanner[];
+    const enrichPromises = await this.enrichBannerItensPromises(result);
+
+    return enrichPromises;
   }
 
-  async bannerItens(bannerIds: number[]): Promise<IBannerItem[]> {
+  async bannerItens(bannerId: number): Promise<IBannerItem[]> {
     const timeNow = currentTime();
 
     const result = await this.db
@@ -101,7 +103,7 @@ export class BannerReaderRepository {
       .from(bannerItem)
       .where(
         and(
-          inArray(bannerItem.id_banner, bannerIds),
+          eq(bannerItem.id_banner, bannerId),
           eq(bannerItem.status, BannerItemStatus.ACTIVE),
           lte(bannerItem.banner_data_in, timeNow),
           gte(bannerItem.banner_data_fim, timeNow)
@@ -131,5 +133,16 @@ export class BannerReaderRepository {
       .execute();
 
     return countResult[0].count;
+  }
+
+  private async enrichBannerItensPromises(result: IBanner[]) {
+    const enrichBannerPromises = result.map(async (banner: IBanner) => ({
+      ...banner,
+      items: await this.bannerItens(banner.banner_id),
+    }));
+
+    const enrichedItens = await Promise.all(enrichBannerPromises);
+
+    return enrichedItens;
   }
 }

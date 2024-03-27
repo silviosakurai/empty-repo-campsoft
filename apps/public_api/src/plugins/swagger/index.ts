@@ -50,6 +50,34 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           description: 'End-points relacionados à autenticação',
         },
         {
+          name: TagSwagger.banner,
+          description: 'End-points relacionados ao banner',
+        },
+        {
+          name: TagSwagger.health,
+          description: 'End-points relacionados à saúde da aplicação',
+        },
+        {
+          name: TagSwagger.order,
+          description: 'End-points relacionados ao pedido',
+        },
+        {
+          name: TagSwagger.plan,
+          description: 'End-points relacionados ao plano',
+        },
+        {
+          name: TagSwagger.product,
+          description: 'End-points relacionados ao produto',
+        },
+        {
+          name: TagSwagger.tfa,
+          description: 'End-points relacionados ao TFA',
+        },
+        {
+          name: TagSwagger.voucher,
+          description: 'End-points relacionados ao voucher',
+        },
+        {
           name: TagSwagger.user,
           description: 'End-points relacionados ao usuário',
         },

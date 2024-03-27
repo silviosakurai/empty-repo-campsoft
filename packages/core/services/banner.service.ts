@@ -19,14 +19,6 @@ export class BannerService {
     }
   };
 
-  bannerItens = async (bannerIds: number[]) => {
-    try {
-      return await this.bannerReaderRepository.bannerItens(bannerIds);
-    } catch (error) {
-      throw error;
-    }
-  };
-
   countTotal = async (
     tokenKeyData: ITokenKeyData,
     input: IBannerReaderInput
