@@ -48,6 +48,14 @@ export class CreateCartUseCase {
       productsIdToDiscount
     );
 
+    if (!allPlansWithDiscounts.length) {
+      const totals = this.generateOrders(plans);
+
+      const cart = await this.createCart(totals, products, plans);
+
+      return cart;
+    }
+
     const selectedPlansWithDiscount = this.setSelectedPlans(
       allPlansWithDiscounts,
       input.plans_id
@@ -57,14 +65,7 @@ export class CreateCartUseCase {
       selectedPlansWithDiscount
     );
 
-    const totals: CartOrder[] = [];
-    for (const plan of plansAsMarketInterface) {
-      if (plan.prices.length) {
-        for (const price of plan.prices) {
-          totals.push(this.generateOrder(price));
-        }
-      }
-    }
+    const totals = this.generateOrders(plansAsMarketInterface);
 
     const cart = await this.createCart(
       totals,
@@ -92,27 +93,41 @@ export class CreateCartUseCase {
     return cart;
   }
 
-  private generateOrder(planPrice: PlanPrice): CartOrder {
-    const discount_percentage = planPrice.discount_percentage ?? 0;
-    const discount_coupon_value = 0; // valor do desconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
-    const subtotal_price = planPrice.price ?? 0;
-    const discount_item_value = planPrice.discount_value ?? 0;
-    const discount_products_value = parseFloat(
-      (discount_item_value * +(planPrice.discount_percentage ?? 0)).toFixed(2)
-    );
+  private generateOrders(plans: Plan[]): CartOrder[] {
+    const totals: CartOrder[] = [];
+    for (const plan of plans) {
+      if (plan.prices.length) {
+        for (const price of plan.prices) {
+          const discount_percentage = price.discount_percentage ?? 0;
+          const discount_coupon_value = 0; // valor do desconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
+          const subtotal_price = price.price ?? 0;
+          const discount_item_value = price.discount_value ?? 0;
+          const discount_products_value = parseFloat(
+            (discount_item_value * +(price.discount_percentage ?? 0)).toFixed(2)
+          );
 
-    return {
-      subtotal_price,
-      discount_coupon_value,
-      discount_percentage,
-      discount_item_value,
-      discount_products_value,
-      installments: new Array(+planPrice.months).fill({}).map((_, index) => ({
-        installment: index + 1,
-        value: +(subtotal_price / planPrice.months).toFixed(2),
-      })),
-      total: subtotal_price - (discount_coupon_value + discount_item_value),
-    };
+          totals.push({
+            subtotal_price,
+            discount_coupon_value,
+            discount_percentage,
+            discount_item_value,
+            discount_products_value,
+            installments: new Array(+price.months).fill({}).map((_, index) => ({
+              installment: index + 1,
+              value: +(subtotal_price / price.months).toFixed(2),
+            })),
+            total: parseFloat(
+              (
+                subtotal_price -
+                (discount_coupon_value + discount_item_value)
+              ).toFixed(2)
+            ),
+          });
+        }
+      }
+    }
+
+    return totals;
   }
 
   private async generateDiscountProductsValue(
