@@ -46,6 +46,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
       produces: ['application/json'],
       tags: [
         {
+          name: TagSwagger.authentication,
+          description: 'End-points relacionados à autenticação',
+        },
+        {
           name: TagSwagger.user,
           description: 'End-points relacionados ao usuário',
         },
@@ -56,7 +60,7 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
   await fastify.register(fastifySwaggerUi, {
     routePrefix: '/docs',
     uiConfig: {
-      docExpansion: 'full',
+      docExpansion: 'none',
       deepLinking: false,
     },
     uiHooks: {

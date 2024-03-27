@@ -1,10 +1,7 @@
 import AuthController from '@/controllers/auth';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
-import {
-  loginSchema,
-  loginTokenSchema,
-} from '@core/validations/auth/auth.validation';
+import { loginSchema, loginTokenSchema } from '@core/validations/auth';
 
 export default async function authRoutes(server: FastifyInstance) {
   const authController = container.resolve(AuthController);
