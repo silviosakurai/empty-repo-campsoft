@@ -1,35 +1,10 @@
-import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { paginationReaderSchema } from "@core/common/validations/pagination.validation";
 import Schema from "fluent-json-schema";
-
-const userCreatorSchema = {
-  body: Schema.object()
-    .prop("status", Schema.enum(Object.values(ClientStatus)).required())
-    .prop("first_name", Schema.string().required())
-    .prop("last_name", Schema.string().required())
-    .prop("birthday", Schema.string().format("date").required())
-    .prop("email", Schema.string().format("email").required())
-    .prop("phone", Schema.string().minLength(11).maxLength(12).required())
-    .prop("cpf", Schema.string().minLength(11).maxLength(11).required())
-    .prop("password", Schema.string().minLength(6).required())
-    .prop("gender", Schema.enum(Object.values(ClientGender)).required())
-    .prop("obs", Schema.string()),
-};
 
 const userReaderSchema = {
   querystring: Schema.object()
     .prop("text_search", Schema.string())
     .extend(paginationReaderSchema),
-};
-
-const userUpdaterSchema = {
-  body: Schema.object()
-    .prop("status", Schema.enum(Object.values(ClientStatus)).required())
-    .prop("first_name", Schema.string().required())
-    .prop("last_name", Schema.string().required())
-    .prop("birthday", Schema.string().format("date").required())
-    .prop("gender", Schema.enum(Object.values(ClientGender)).required())
-    .prop("obs", Schema.string()),
 };
 
 const userPhoneUpdaterSchema = {
@@ -51,9 +26,7 @@ const userPasswordRecoveryUpdaterSchema = {
 };
 
 export {
-  userCreatorSchema,
   userReaderSchema,
-  userUpdaterSchema,
   userPhoneUpdaterSchema,
   userPasswordUpdaterSchema,
   userPasswordRecoveryMethods,

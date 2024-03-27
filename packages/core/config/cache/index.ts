@@ -29,7 +29,7 @@ async function cacheRedisConnection(fastify: FastifyInstance) {
   try {
     await fastify.register(FastifyRedis, config);
 
-    fastify.register(FastifyCaching, {
+    await fastify.register(FastifyCaching, {
       expiresIn: 300,
     });
   } catch (error) {

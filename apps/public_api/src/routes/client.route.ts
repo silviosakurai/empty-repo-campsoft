@@ -2,19 +2,23 @@ import ClientController from '@/controllers/client';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
-  userCreatorSchema,
-  userUpdaterSchema,
   userPhoneUpdaterSchema,
   userPasswordUpdaterSchema,
   userPasswordRecoveryMethods,
   userPasswordRecoveryUpdaterSchema,
 } from '@core/validations/user/user.validation';
 import { voucherSchema } from '@core/validations/voucher/voucher.validation';
+import {
+  getUserSchema,
+  userCreatorSchema,
+  userUpdaterSchema,
+} from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
   server.get('/user', {
+    schema: getUserSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
   });
