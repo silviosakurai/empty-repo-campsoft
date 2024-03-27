@@ -20,7 +20,6 @@ async function authenticateKeyApi(
   const routeModule = request.module;
 
   if (!keyapi) {
-    console.log("keyapiiiiii");
     return sendResponse(reply, {
       message: t("not_authorized"),
       httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
