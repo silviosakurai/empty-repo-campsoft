@@ -2,6 +2,7 @@ import { Client } from "@opensearch-project/opensearch";
 import { injectable } from "tsyringe";
 import { openSearchEnvironment } from "@core/config/environments";
 import { LogLevel } from "@core/common/enums/LogLevel";
+import { CreateCartResponse } from "@core/useCases/cart/dtos/CreateCartResponse.dto";
 
 @injectable()
 class OpenSearchService {
@@ -86,6 +87,17 @@ class OpenSearchService {
           );
         }
       }
+    }
+  }
+
+  async indexCart(cart: CreateCartResponse) {
+    try {
+      await this.client.index({
+        index: "cart",
+        body: cart,
+      });
+    } catch (error) {
+      console.error(`Error indexing cart: ${error}`);
     }
   }
 }

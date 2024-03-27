@@ -3,7 +3,6 @@ import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto
 
 export interface CreateCartResponse {
   id: string;
-  expires_in: number;
   products: ProductResponse[];
   plans: Plan[] | null;
   totals: CartOrder[];

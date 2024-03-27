@@ -25,6 +25,7 @@ export const createCart = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+    console.log(error);
 
     return sendResponse(reply, {
       message: t('internal_server_error'),

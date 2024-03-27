@@ -1,30 +1,23 @@
-import { Redis } from "ioredis";
 import { CreateCartRequest } from "./dtos/CreateCartRequest.dto";
-import { cacheEnvironment } from "@core/config/environments";
-import { RedisKeys } from "@core/common/enums/RedisKeys";
 import { PlanService, ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { CartOrder, CreateCartResponse } from "./dtos/CreateCartResponse.dto";
 import { Plan, PlanPrice } from "@core/common/enums/models/plan";
+import { UpgradeUseCase } from "../plan/UpgradePlan.useCase";
+import OpenSearchService from "@core/services/openSearch.service";
+import { ProductResponse } from "../product/dtos/ProductResponse.dto";
 
 @injectable()
 export class CreateCartUseCase {
   constructor(
     private planService: PlanService,
-    private productService: ProductService
+    private upgradeUseCase: UpgradeUseCase,
+    private productService: ProductService,
+    private openSearchService: OpenSearchService
   ) {}
 
   async create(input: CreateCartRequest, companyId: number, clientId: string) {
-    const plans = input.plans_id?.length
-      ? await Promise.all(
-          input.plans_id.map(
-            (item) =>
-              this.planService.viewPlan(companyId, item) as Promise<Plan>
-          )
-        )
-      : [];
-
     const products = input.products_id?.length
       ? await this.productService.findProductsByIds(
           companyId,
@@ -32,77 +25,94 @@ export class CreateCartUseCase {
         )
       : [];
 
+    if (!input.plans_id?.length) {
+      const cart = await this.createCart([], products, []);
+
+      return cart;
+    }
+
+    const plans = await Promise.all(
+      input.plans_id.map(
+        (item) => this.planService.viewPlan(companyId, item) as Promise<Plan>
+      )
+    );
+
     const productsIdToDiscount = plans
-      ?.map((item) => item?.products?.map((product) => product?.product_id))
+      .map((item) => item?.products?.map((product) => product?.product_id))
       .join()
       .split(",");
 
-    const productsToDiscount = await this.generateDiscountProductsValue(
+    const allPlansWithDiscounts = await this.generateDiscountProductsValue(
       companyId,
       clientId,
       productsIdToDiscount
     );
 
+    const selectedPlansWithDiscount = this.setSelectedPlans(
+      allPlansWithDiscounts,
+      input.plans_id
+    );
+
+    const plansAsMarketInterface = this.formatPlanValuesToCart(
+      selectedPlansWithDiscount
+    );
+
     const totals: CartOrder[] = [];
-    for (let plan of plans) {
-      for (let price of plan.prices) {
-        totals.push(this.generateOrder(price));
+    for (const plan of plansAsMarketInterface) {
+      if (plan.prices.length) {
+        for (const price of plan.prices) {
+          totals.push(this.generateOrder(price));
+        }
       }
     }
 
-    const fifteenMinutesInMilliseconds = 15 * 60 * 60;
+    const cart = await this.createCart(
+      totals,
+      products,
+      plansAsMarketInterface
+    );
 
+    return cart;
+  }
+
+  private async createCart(
+    totals: CartOrder[],
+    products: ProductResponse[],
+    plans: Plan[]
+  ) {
     const cart: CreateCartResponse = {
       id: uuidv4(),
-      expires_in: fifteenMinutesInMilliseconds,
       totals: totals,
       products,
       plans: plans,
     };
 
-    await this.saveValuesTemporarily(cart);
+    await this.openSearchService.indexCart(cart);
 
     return cart;
   }
 
   private generateOrder(planPrice: PlanPrice): CartOrder {
     const discount_percentage = planPrice.discount_percentage ?? 0;
-    const discount_coupon_value = 0; // valor do disconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
+    const discount_coupon_value = 0; // valor do desconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
     const subtotal_price = planPrice.price ?? 0;
     const discount_item_value = planPrice.discount_value ?? 0;
-    const discount_products_value = 0; //é o desconto do upgrade, caso o usuário escolha um produto a parte, mostra o valor em si
+    const discount_products_value = parseFloat(
+      (discount_item_value * +(planPrice.discount_percentage ?? 0)).toFixed(2)
+    );
 
     return {
-      subtotal_price, // valor cheio, quanto que pagaria se comprasse fora do mania
+      subtotal_price,
       discount_coupon_value,
       discount_percentage,
-      discount_item_value, // de para que está na tela, do valor cheio para o valor da assinatura com desconto
+      discount_item_value,
       discount_products_value,
       installments: new Array(+planPrice.months).fill({}).map((_, index) => ({
         installment: index + 1,
         value: +(subtotal_price / planPrice.months).toFixed(2),
       })),
-      total:
-        subtotal_price -
-        (discount_coupon_value + discount_item_value + discount_products_value),
+      total: subtotal_price - (discount_coupon_value + discount_item_value),
     };
-  }
-
-  private async saveValuesTemporarily(cart: CreateCartResponse) {
-    const redis = new Redis({
-      host: cacheEnvironment.cacheHost,
-      password: cacheEnvironment.cachePassword,
-      port: cacheEnvironment.cachePort,
-    });
-
-    const fifteenMinutes = 15 * 60;
-
-    await redis.set(
-      `${RedisKeys.cart}:${cart.id}`,
-      JSON.stringify(cart),
-      "EX",
-      fifteenMinutes
-    );
   }
 
   private async generateDiscountProductsValue(
@@ -110,12 +120,46 @@ export class CreateCartUseCase {
     clientId: string,
     productsId: string[]
   ) {
-    const results = await this.planService.upgradePlan(
+    const results = await this.upgradeUseCase.execute(
       companyId,
       clientId,
       productsId
     );
-    console.log(results);
+
+    if (!results) return [];
+
+    return results;
+  }
+
+  private setSelectedPlans(
+    plansWithDiscount: Plan[],
+    selectedPlansId: number[]
+  ) {
+    const selectedPlans = plansWithDiscount.filter((item) =>
+      selectedPlansId.some((selectedPlanId) => selectedPlanId === item.plan_id)
+    );
+
+    return selectedPlans;
+  }
+
+  private formatPlanValuesToCart(plans: Plan[]): Plan[] {
+    return plans.map(
+      (item): Plan => ({
+        plan_id: item.plan_id,
+        status: item.status,
+        visible_site: item.visible_site,
+        business_id: item.business_id,
+        plan: item.plan,
+        image: item.image,
+        description: item.description,
+        short_description: item.short_description,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        prices: item.prices,
+        products: item.products,
+        product_groups: item.product_groups,
+      })
+    );
   }
 }
 
