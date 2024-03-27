@@ -6,7 +6,6 @@ import { TagSwagger } from "@core/common/enums/TagSwagger";
 export const userCreatorSchema = {
   description: "Cria um novo usuário",
   tags: [TagSwagger.user],
-  operationId: "postUser",
   produces: ["application/json"],
   security: [
     {

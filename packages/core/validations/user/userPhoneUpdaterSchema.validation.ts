@@ -5,7 +5,6 @@ import { TagSwagger } from "@core/common/enums/TagSwagger";
 export const userPhoneUpdaterSchema = {
   description: "Atualiza o telefone do usuário",
   tags: [TagSwagger.user],
-  operationId: "patchUser",
   produces: ["application/json"],
   security: [
     {

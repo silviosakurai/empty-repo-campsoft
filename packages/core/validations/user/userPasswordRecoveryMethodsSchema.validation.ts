@@ -6,7 +6,6 @@ import { TFAType } from "@core/common/enums/models/tfa";
 export const userPasswordRecoveryMethodsSchema = {
   description: "Seleciona os tipos de recuperação de senha do usuário",
   tags: [TagSwagger.user],
-  operationId: "patchUser",
   produces: ["application/json"],
   security: [
     {

@@ -5,7 +5,6 @@ import { TagSwagger } from "@core/common/enums/TagSwagger";
 export const userPasswordUpdaterSchema = {
   description: "Atualiza a senha do usuário",
   tags: [TagSwagger.user],
-  operationId: "patchUser",
   produces: ["application/json"],
   security: [
     {

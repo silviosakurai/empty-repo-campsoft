@@ -52,7 +52,6 @@ const PlanDetailsWithProductsSchema = Schema.object()
 export const getUserVoucherSchema = {
   description: "Obtém informações do voucher do usuário",
   tags: [TagSwagger.user],
-  operationId: "getUser",
   produces: ["application/json"],
   security: [
     {

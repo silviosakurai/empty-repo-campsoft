@@ -5,7 +5,6 @@ import { TagSwagger } from "@core/common/enums/TagSwagger";
 export const userDeleteSchema = {
   description: "Deleta o usuário",
   tags: [TagSwagger.user],
-  operationId: "deleteUser",
   produces: ["application/json"],
   security: [
     {
