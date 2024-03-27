@@ -53,7 +53,6 @@ async function authenticateKeyApi(
     } as ViewApiKeyRequest);
 
     if (!responseAuth) {
-      console.log("response auth");
       return sendResponse(reply, {
         message: t("not_authorized"),
         httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
@@ -66,7 +65,6 @@ async function authenticateKeyApi(
 
     return;
   } catch (error) {
-    console.log("error");
     return sendResponse(reply, {
       message: t("not_authorized"),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
