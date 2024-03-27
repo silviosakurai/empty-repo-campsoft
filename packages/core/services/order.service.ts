@@ -7,14 +7,10 @@ import { FindOrderByNumberRepository } from "@core/repositories/order/FindOrderB
 
 @injectable()
 export class OrderService {
-  private listOrdersRepository: ListOrdersRepository;
-
   constructor(
-    listOrdersRepository: ListOrdersRepository,
+    private readonly listOrdersRepository: ListOrdersRepository,
     private readonly findOrderByNumberRepository: FindOrderByNumberRepository
-  ) {
-    this.listOrdersRepository = listOrdersRepository;
-  }
+  ) {}
 
   listOrder = async (
     input: ListOrderRequestDto,
