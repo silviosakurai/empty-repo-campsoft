@@ -14,12 +14,12 @@ export const passwordRecoveryMethodsClient = async (
   const { t, tokenKeyData } = request;
   const { login } = request.params as { login: string };
 
-  const response = await clientPasswordRecoveryMethodsUseCase.execute({
-    tokenKeyData,
-    login,
-  });
-
   try {
+    const response = await clientPasswordRecoveryMethodsUseCase.execute({
+      tokenKeyData,
+      login,
+    });
+
     if (!response) {
       request.server.logger.warn(response, request.id);
 

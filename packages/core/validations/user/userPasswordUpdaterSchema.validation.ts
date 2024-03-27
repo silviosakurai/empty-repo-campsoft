@@ -1,16 +1,16 @@
 import Schema from "fluent-json-schema";
 import { Language } from "@core/common/enums/Language";
-import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
-export const userCreatorSchema = {
-  description: "Cria um novo usuário",
+export const userPasswordUpdaterSchema = {
+  description: "Atualiza a senha do usuário",
   tags: [TagSwagger.user],
-  operationId: "postUser",
+  operationId: "patchUser",
   produces: ["application/json"],
   security: [
     {
       authenticateKeyApi: [],
+      authenticateJwt: [],
       authenticateTfa: [],
     },
   ],
@@ -22,37 +22,21 @@ export const userCreatorSchema = {
       .default(Language.pt)
   ),
   body: Schema.object()
-    .prop("status", Schema.enum(Object.values(ClientStatus)).required())
-    .prop("first_name", Schema.string().required())
-    .prop("last_name", Schema.string().required())
-    .prop("birthday", Schema.string().format("date").required())
-    .prop("email", Schema.string().format("email").required())
-    .prop("phone", Schema.string().minLength(11).maxLength(12).required())
-    .prop("cpf", Schema.string().minLength(11).maxLength(11).required())
-    .prop("password", Schema.string().minLength(6).required())
-    .prop("gender", Schema.enum(Object.values(ClientGender)).required())
-    .prop("obs", Schema.string()),
+    .prop("current_password", Schema.string().required())
+    .prop("new_password", Schema.string().required()),
   response: {
-    201: Schema.object()
+    200: Schema.object()
       .description("Successful")
       .prop("status", Schema.boolean())
       .prop("message", Schema.string())
-      .prop(
-        "data",
-        Schema.object().prop("user_id", Schema.string().format("uuid"))
-      ),
+      .prop("data", Schema.null()),
     401: Schema.object()
       .description("Unauthorized")
       .prop("status", Schema.boolean().default(false))
       .prop("message", Schema.string())
       .prop("data", Schema.null()),
-    403: Schema.object()
-      .description("Forbidden")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    409: Schema.object()
-      .description("Conflict")
+    404: Schema.object()
+      .description("Not Found")
       .prop("status", Schema.boolean().default(false))
       .prop("message", Schema.string())
       .prop("data", Schema.null()),

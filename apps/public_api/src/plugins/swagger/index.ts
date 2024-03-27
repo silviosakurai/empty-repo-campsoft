@@ -9,6 +9,7 @@ import {
 import fp from 'fastify-plugin';
 import { generalEnvironment } from '@core/config/environments';
 import routes from '@/routes';
+import { TagSwagger } from '@core/common/enums/TagSwagger';
 
 const swaggerPlugin = async (fastify: FastifyInstance) => {
   await fastify.register(fastifySwagger, {
@@ -23,19 +24,19 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
       schemes: ['http'],
       consumes: ['application/json'],
       securityDefinitions: {
-        bearerAuth: {
+        authenticateJwt: {
           type: 'apiKey',
           in: 'header',
           name: 'Authorization',
           description: 'Token JWT para autenticação',
         },
-        keyapi: {
+        authenticateKeyApi: {
           type: 'apiKey',
           in: 'header',
           name: 'keyapi',
           description: 'Chave API para autenticação',
         },
-        tokentfa: {
+        authenticateTfa: {
           type: 'apiKey',
           in: 'header',
           name: 'tokentfa',
@@ -44,7 +45,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
       },
       produces: ['application/json'],
       tags: [
-        { name: 'user', description: 'End-points relacionados ao usuário' },
+        {
+          name: TagSwagger.user,
+          description: 'End-points relacionados ao usuário',
+        },
       ],
     },
   });

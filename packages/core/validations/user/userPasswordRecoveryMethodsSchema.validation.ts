@@ -1,17 +1,16 @@
 import Schema from "fluent-json-schema";
 import { Language } from "@core/common/enums/Language";
-import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { TFAType } from "@core/common/enums/models/tfa";
 
-export const userUpdaterSchema = {
-  description: "Atualiza os dados do usuário",
+export const userPasswordRecoveryMethodsSchema = {
+  description: "Seleciona os tipos de recuperação de senha do usuário",
   tags: [TagSwagger.user],
-  operationId: "putUser",
+  operationId: "patchUser",
   produces: ["application/json"],
   security: [
     {
       authenticateKeyApi: [],
-      authenticateJwt: [],
     },
   ],
   headers: Schema.object().prop(
@@ -21,19 +20,25 @@ export const userUpdaterSchema = {
       .enum(Object.values(Language))
       .default(Language.pt)
   ),
-  body: Schema.object()
-    .prop("status", Schema.enum(Object.values(ClientStatus)).required())
-    .prop("first_name", Schema.string().required())
-    .prop("last_name", Schema.string().required())
-    .prop("birthday", Schema.string().format("date").required())
-    .prop("gender", Schema.enum(Object.values(ClientGender)).required())
-    .prop("obs", Schema.string()),
+  params: Schema.object().prop("login", Schema.string().required()),
   response: {
     200: Schema.object()
       .description("Successful")
       .prop("status", Schema.boolean())
       .prop("message", Schema.string())
-      .prop("data", Schema.null()),
+      .prop(
+        "data",
+        Schema.object()
+          .prop("client_id", Schema.string().format("uuid").required())
+          .prop("name", Schema.string().required())
+          .prop("profile_image", Schema.string().required())
+          .prop(
+            "recovery_types",
+            Schema.array()
+              .items(Schema.string().enum(Object.values(TFAType)))
+              .required()
+          )
+      ),
     401: Schema.object()
       .description("Unauthorized")
       .prop("status", Schema.boolean().default(false))

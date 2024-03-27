@@ -1,60 +1,59 @@
+import Schema from "fluent-json-schema";
 import { Language } from "@core/common/enums/Language";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
+import { TagSwagger } from "@core/common/enums/TagSwagger";
 
 export const getUserSchema = {
-  description: "Seleciona os dados do usuário logado",
-  tags: ["user"],
+  description: "Seleciona os dados do usuário",
+  tags: [TagSwagger.user],
   operationId: "getUser",
   produces: ["application/json"],
   security: [
     {
-      keyapi: [],
-      bearerAuth: [],
+      authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
-  headers: {
-    type: "object",
-    properties: {
-      "Accept-Language": {
-        type: "string",
-        description: "Idioma preferencial para a resposta",
-        enum: Object.values(Language),
-        default: Language.pt,
-      },
-    },
-  },
+  headers: Schema.object().prop(
+    "Accept-Language",
+    Schema.string()
+      .description("Idioma preferencial para a resposta")
+      .enum(Object.values(Language))
+      .default(Language.pt)
+  ),
   response: {
-    200: {
-      description: "Successful",
-      type: "object",
-      properties: {
-        status: { type: "boolean" },
-        message: { type: "string" },
-        data: {
-          type: "object",
-          properties: {
-            client_id: { type: "string", format: "uuid" },
-            status: { type: "string", enum: Object.values(ClientStatus) },
-            first_name: { type: "string" },
-            last_name: { type: "string" },
-            birthday: { type: "string", format: "date-time" },
-            email: { type: "string", format: "email" },
-            phone: { type: "string" },
-            cpf: { type: "string" },
-            gender: { type: "string", enum: Object.values(ClientGender) },
-            obs: { type: "string" },
-          },
-        },
-      },
-    },
-    401: {
-      description: "Unauthorized",
-      type: "object",
-      properties: {
-        status: { type: "boolean" },
-        message: { type: "string" },
-        data: { type: "null" },
-      },
-    },
+    200: Schema.object()
+      .description("Successful")
+      .prop("status", Schema.boolean())
+      .prop("message", Schema.string())
+      .prop(
+        "data",
+        Schema.object()
+          .prop("client_id", Schema.string().format("uuid"))
+          .prop("status", Schema.enum(Object.values(ClientStatus)))
+          .prop("first_name", Schema.string())
+          .prop("last_name", Schema.string())
+          .prop("birthday", Schema.string().format("date-time"))
+          .prop("email", Schema.string().format("email"))
+          .prop("phone", Schema.string())
+          .prop("cpf", Schema.string())
+          .prop("gender", Schema.enum(Object.values(ClientGender)))
+          .prop("obs", Schema.string())
+      ),
+    401: Schema.object()
+      .description("Unauthorized")
+      .prop("status", Schema.boolean().default(false))
+      .prop("message", Schema.string())
+      .prop("data", Schema.null()),
+    404: Schema.object()
+      .description("Not Found")
+      .prop("status", Schema.boolean().default(false))
+      .prop("message", Schema.string())
+      .prop("data", Schema.null()),
+    500: Schema.object()
+      .description("Internal Server Error")
+      .prop("status", Schema.boolean().default(false))
+      .prop("message", Schema.string())
+      .prop("data", Schema.null()),
   },
 };
