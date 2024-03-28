@@ -12,7 +12,7 @@ import { ListPlanProductGroupDetailsRepository } from "../plan/ListPlanProductGr
 import { FindOrderByNumberPlans } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
 
 @injectable()
-export class FindOrderPlansByOrderIdRepository {
+export class FindOrderPlansByOrderIdViewerRepository {
   constructor(
     @inject("Database") private db: MySql2Database<typeof schema>,
     private readonly listPricesByPlanId: ListPricesByPlanIdRepository,
@@ -20,7 +20,7 @@ export class FindOrderPlansByOrderIdRepository {
     private readonly listPlanProductGroupDetails: ListPlanProductGroupDetailsRepository
   ) {}
 
-  async find(
+  async view(
     orderId: string,
     tokenKeyData: ITokenKeyData
   ): Promise<FindOrderByNumberPlans[]> {

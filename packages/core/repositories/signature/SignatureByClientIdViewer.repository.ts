@@ -10,14 +10,8 @@ import { and, eq, sql } from "drizzle-orm";
 import { ISignatureFindByClientId } from "@core/interfaces/repositories/signature";
 
 @injectable()
-export class FindSignatureByClientId {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+export class SignatureByClientIdViewer {
+  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
   async find(client_id: string): Promise<ISignatureFindByClientId[] | null> {
     const records = await this.db

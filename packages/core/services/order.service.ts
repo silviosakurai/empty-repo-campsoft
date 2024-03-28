@@ -1,17 +1,17 @@
 import { injectable } from "tsyringe";
-import { ListOrdersRepository } from "@core/repositories/order/ListOrders.repository";
+import { OrdersListerRepository } from "@core/repositories/order/OrdersLister.repository";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
-import { ListPaymentRepository } from "@core/repositories/order/ListPayments.repository";
-import { FindOrderByNumberRepository } from "@core/repositories/order/FindOrderByNumber.repository";
+import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
+import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
 
 @injectable()
 export class OrderService {
   constructor(
-    private readonly ordersListerRepository: ListOrdersRepository,
-    private readonly paymentListerRepository: ListPaymentRepository,
-    private readonly orderByNumberViewerRepository: FindOrderByNumberRepository
+    private readonly ordersListerRepository: OrdersListerRepository,
+    private readonly paymentListerRepository: PaymentListerRepository,
+    private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository
   ) {}
 
   list = async (
@@ -50,7 +50,7 @@ export class OrderService {
     tokenJwtData: ITokenJwtData
   ) => {
     try {
-      return await this.orderByNumberViewerRepository.find(
+      return await this.orderByNumberViewerRepository.view(
         orderNumber,
         tokenKeyData,
         tokenJwtData

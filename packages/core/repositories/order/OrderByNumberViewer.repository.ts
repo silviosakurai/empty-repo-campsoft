@@ -3,21 +3,21 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { order, orderStatus, orderItem } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
-import { FindOrderPaymentByOrderIdRepository } from "./FindOrderPaymentByOrderId.repository";
-import { FindOrderPlansByOrderIdRepository } from "./FindOrderPlansByOrderId.repository";
+import { OrderPaymentByOrderIdViewerRepository } from "./OrderPaymentByOrderIdViewer.repository";
+import { FindOrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer.repository";
 import { OrderByNumberResponse } from "@core/interfaces/repositories/order";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
-export class FindOrderByNumberRepository {
+export class OrderByNumberViewerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
-    private readonly findOrderPlansByOrderId: FindOrderPlansByOrderIdRepository,
-    private readonly findOrderPaymentByOrderId: FindOrderPaymentByOrderIdRepository
+    private readonly findOrderPlansByOrderId: FindOrderPlansByOrderIdViewerRepository,
+    private readonly findOrderPaymentByOrderId: OrderPaymentByOrderIdViewerRepository
   ) {}
 
-  async find(
+  async view(
     orderNumber: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
@@ -87,7 +87,7 @@ export class FindOrderByNumberRepository {
     const recordsFormatted = {
       ...result,
       payments: await this.findOrderPaymentByOrderId.find(result.order_id),
-      plans: await this.findOrderPlansByOrderId.find(
+      plans: await this.findOrderPlansByOrderId.view(
         result.order_id,
         tokenKeyData
       ),

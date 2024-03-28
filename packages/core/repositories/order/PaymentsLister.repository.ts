@@ -1,24 +1,24 @@
+import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import * as schema from "@core/models";
+import { eq, and, sql } from "drizzle-orm";
+import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
+import { OrderPayments } from "@core/interfaces/repositories/order";
 import {
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
 } from "@core/models";
-import { and, eq, sql } from "drizzle-orm";
-import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
-import { OrderPayments } from "@core/interfaces/repositories/order";
 
 @injectable()
-export class FindOrderPaymentByOrderIdRepository {
+export class PaymentListerRepository {
   constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
-  async find(orderId: string): Promise<OrderPayments[]> {
+  async list(orderId: string): Promise<OrderPayments[] | null> {
     const result = await this.db
       .select({
-        type: orderPaymentMethod.pedido_pag_metodo,
-        status: orderPaymentStatus.pedido_pagamento_status,
+        type: schema.orderPaymentMethod.pedido_pag_metodo,
+        status: schema.orderPaymentStatus.pedido_pagamento_status,
         credit_card: {
           brand: orderPayment.pag_cc_tipo,
           number: orderPayment.pag_cc_numero_cartao,
@@ -54,9 +54,8 @@ export class FindOrderPaymentByOrderIdRepository {
         updated_at: orderPayment.updated_at,
       })
       .from(orderPayment)
-      .groupBy(orderPayment.id_pedido)
       .innerJoin(
-        orderPaymentMethod,
+        schema.orderPaymentMethod,
         eq(
           orderPaymentMethod.id_pedido_pag_metodo,
           orderPayment.id_pedido_pag_metodo
@@ -72,8 +71,8 @@ export class FindOrderPaymentByOrderIdRepository {
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
 
-    if (result.length === 0) {
-      return [];
+    if (!result.length) {
+      return null;
     }
 
     return result as OrderPayments[];

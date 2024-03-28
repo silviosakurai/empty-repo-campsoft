@@ -1,10 +1,10 @@
-import { FindSignatureByClientId } from "@core/repositories/signature/FindSignatureByClientId.repository";
+import { SignatureByClientIdViewer } from "@core/repositories/signature/SignatureByClientIdViewer.repository";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class SignatureService {
   constructor(
-    private readonly signatureViewerByClientId: FindSignatureByClientId
+    private readonly signatureViewerByClientId: SignatureByClientIdViewer
   ) {}
 
   findByClientId = async (client_id: string) => {

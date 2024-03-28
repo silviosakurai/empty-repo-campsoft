@@ -1,31 +1,24 @@
-import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { eq, and, sql } from "drizzle-orm";
-import { Plan } from "@core/common/enums/models/plan";
-import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
-import { OrderPayments } from "@core/interfaces/repositories/order";
+import * as schema from "@core/models";
 import {
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
 } from "@core/models";
+import { and, eq, sql } from "drizzle-orm";
+import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
+import { OrderPayments } from "@core/interfaces/repositories/order";
 
 @injectable()
-export class ListPaymentRepository {
-  private db: MySql2Database<typeof schema>;
+export class OrderPaymentByOrderIdViewerRepository {
+  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
-  constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
-
-  async list(orderId: string): Promise<OrderPayments[] | null> {
+  async find(orderId: string): Promise<OrderPayments[]> {
     const result = await this.db
       .select({
-        type: schema.orderPaymentMethod.pedido_pag_metodo,
-        status: schema.orderPaymentStatus.pedido_pagamento_status,
+        type: orderPaymentMethod.pedido_pag_metodo,
+        status: orderPaymentStatus.pedido_pagamento_status,
         credit_card: {
           brand: orderPayment.pag_cc_tipo,
           number: orderPayment.pag_cc_numero_cartao,
@@ -61,8 +54,9 @@ export class ListPaymentRepository {
         updated_at: orderPayment.updated_at,
       })
       .from(orderPayment)
+      .groupBy(orderPayment.id_pedido)
       .innerJoin(
-        schema.orderPaymentMethod,
+        orderPaymentMethod,
         eq(
           orderPaymentMethod.id_pedido_pag_metodo,
           orderPayment.id_pedido_pag_metodo
@@ -78,8 +72,8 @@ export class ListPaymentRepository {
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
 
-    if (!result.length) {
-      return null;
+    if (result.length === 0) {
+      return [];
     }
 
     return result as OrderPayments[];
