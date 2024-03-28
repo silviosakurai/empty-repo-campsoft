@@ -8,13 +8,7 @@ const { client } = schema;
 
 @injectable()
 export class ClientPasswordUpdaterRepository {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
   async update(tokenTfaData: ITokenTfaData, newPass: string) {
     const result = await this.db

@@ -3,7 +3,7 @@ import { ClientCreatorRepository } from "@core/repositories/client/ClientCreator
 import { ClientAccessCreatorRepository } from "@core/repositories/client/ClientAccessCreator.repository";
 import { ClientByCpfEmailPhoneReaderRepository } from "@core/repositories/client/ClientByCPFEmailPhoneReader.repository";
 import { ClientPasswordRecoveryMethodsRepository } from "@core/repositories/client/ClientPasswordRecoveryMethods.repository";
-import { ClientViewRepository } from "@core/repositories/client/ClientView.repository";
+import { ClientViewerRepository } from "@core/repositories/client/ClientViewer.repository";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
 import { injectable } from "tsyringe";
 import { ClientUpdaterRepository } from "@core/repositories/client/ClientUpdater.repository";
@@ -18,7 +18,7 @@ import { ClientPasswordUpdaterRepository } from "@core/repositories/client/Clien
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientByEmailPhone.repository";
-import { ClientDeleteRepository } from "@core/repositories/client/ClientDelete.repository";
+import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 
@@ -26,7 +26,7 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 export class ClientService {
   constructor(
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
-    private readonly clientViewerRepository: ClientViewRepository,
+    private readonly clientViewerRepository: ClientViewerRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
     private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
     private readonly clientUpdaterRepository: ClientUpdaterRepository,
@@ -34,7 +34,7 @@ export class ClientService {
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
     private readonly clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
-    private readonly clientEraserRepository: ClientDeleteRepository
+    private readonly clientEraserRepository: ClientEraserRepository
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {

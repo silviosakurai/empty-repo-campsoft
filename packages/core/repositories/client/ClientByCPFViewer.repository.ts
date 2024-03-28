@@ -5,16 +5,10 @@ import { eq, sql } from "drizzle-orm";
 import { client } from "@core/models";
 
 @injectable()
-export class ClientByCPFFinderRepository {
-  private db: MySql2Database<typeof schema>;
+export class ClientByCPFViewerRepository {
+  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
-  constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
-
-  async find(cpf: string): Promise<{ id_cliente: string } | null> {
+  async view(cpf: string): Promise<{ id_cliente: string } | null> {
     const result = await this.db
       .select({
         id_cliente: sql`BIN_TO_UUID(${client.id_cliente})`,

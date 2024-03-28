@@ -7,14 +7,8 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
-export class ClientViewRepository {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+export class ClientViewerRepository {
+  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
 
   async view(
     tokenKeyData: ITokenKeyData,
