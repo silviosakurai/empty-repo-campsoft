@@ -1,6 +1,8 @@
 import { injectable } from "tsyringe";
 import { OrderService } from "@core/services/order.service";
 import { OrderPayments } from "@core/interfaces/repositories/order";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class ListPaymentUseCase {
@@ -10,10 +12,21 @@ export class ListPaymentUseCase {
     this.orderService = orderService;
   }
 
-  async execute(orderNumber: string): Promise<OrderPayments[] | null> {
-    //TODO: GET Order By Order Number to get Order Id
-    const order: any = await this.orderService.findOrderByNumber(orderNumber)
+  async execute(
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ): Promise<OrderPayments[] | null> {
+    const order = await this.orderService.findOrderByNumber(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
 
-    return this.orderService.listPayment(order.id);
+    if (!order) {
+      return null;
+    }
+
+    return this.orderService.listPayment(order.order_id);
   }
 }

@@ -12,11 +12,15 @@ export const listPayment = async (
   reply: FastifyReply
 ) => {
   const listPaymentUseCase = container.resolve(ListPaymentUseCase);
-  const { t } = request;
+  const { t, tokenKeyData, tokenJwtData } = request;
   const { orderNumber } = request.params;
 
   try {
-    const response = await listPaymentUseCase.execute(orderNumber);
+    const response = await listPaymentUseCase.execute(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
 
     if (!response) {
       return sendResponse(reply, {
