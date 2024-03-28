@@ -5,19 +5,19 @@ import * as schema from "@core/models";
 import { plan, orderItem, order, planPrice } from "@core/models";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { ListPricesByPlanIdRepository } from "../plan/ListPricesByPlanId.repository";
-import { ListPlanProductDetailsRepository } from "../plan/ListPlanProductDetails.repository";
+import { PricesByPlanIdListerRepository } from "../plan/PricesByPlanIdLister.repository";
+import { PlanProductDetailsListerRepository } from "../plan/PlanProductDetailsLister.repository";
 import { PlanDetails } from "@core/interfaces/repositories/order";
-import { ListPlanProductGroupDetailsRepository } from "../plan/ListPlanProductGroupDetails.repository";
+import { PlanProductGroupDetailsListerRepository } from "../plan/PlanProductGroupDetailsLister.repository";
 import { FindOrderByNumberPlans } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
 
 @injectable()
-export class FindOrderPlansByOrderIdViewerRepository {
+export class OrderPlansByOrderIdViewerRepository {
   constructor(
-    @inject("Database") private db: MySql2Database<typeof schema>,
-    private readonly listPricesByPlanId: ListPricesByPlanIdRepository,
-    private readonly listPlanProductDetails: ListPlanProductDetailsRepository,
-    private readonly listPlanProductGroupDetails: ListPlanProductGroupDetailsRepository
+    @inject("Database") private readonly db: MySql2Database<typeof schema>,
+    private readonly pricesByPlanIdLister: PricesByPlanIdListerRepository,
+    private readonly planProductDetailsLister: PlanProductDetailsListerRepository,
+    private readonly planProductGroupDetailsLister: PlanProductGroupDetailsListerRepository
   ) {}
 
   async view(
@@ -66,12 +66,12 @@ export class FindOrderPlansByOrderIdViewerRepository {
   ) {
     const planPromises = results.map(async (plan: PlanDetails) => ({
       ...plan,
-      prices: await this.listPricesByPlanId.find(plan.plan_id),
-      plan_products: await this.listPlanProductDetails.list(
+      prices: await this.pricesByPlanIdLister.find(plan.plan_id),
+      plan_products: await this.planProductDetailsLister.list(
         plan.plan_id,
         tokenKeyData
       ),
-      product_groups: await this.listPlanProductGroupDetails.list(
+      product_groups: await this.planProductGroupDetailsLister.list(
         plan.plan_id,
         tokenKeyData
       ),

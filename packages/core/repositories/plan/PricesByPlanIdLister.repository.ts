@@ -6,8 +6,10 @@ import { planPrice } from "@core/models";
 import { Prices } from "@core/interfaces/repositories/order";
 
 @injectable()
-export class ListPricesByPlanIdRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+export class PricesByPlanIdListerRepository {
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async find(planId: number): Promise<Prices[]> {
     const result = await this.db

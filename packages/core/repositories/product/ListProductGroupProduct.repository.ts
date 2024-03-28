@@ -23,7 +23,7 @@ export class ListProductGroupProductRepository {
         product_id: productGroupProduct.id_produto,
         product_group_id: productGroupProduct.id_produto_grupo,
         name: productGroup.produto_grupo,
-        quantity: productGroup.qtd_produtos_selecionavies,
+        quantity: productGroup.qtd_produtos_selecionaveis,
       })
       .from(productGroupProduct)
       .innerJoin(

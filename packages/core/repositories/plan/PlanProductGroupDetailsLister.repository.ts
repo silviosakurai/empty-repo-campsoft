@@ -10,14 +10,14 @@ import {
 import { and, eq, sql } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AvailableProducts } from "@core/interfaces/repositories/voucher";
-import { ListPlanProductGroupsProductsByProductGroupIdRepository } from "./ListPlanProductGroupsProductsByProductGroupId.repository";
+import { PlanProductGroupsProductsByProductGroupIdListerRepository } from "./PlanProductGroupsProductsByProductGroupIdLister.repository";
 import { FindOrderByNumberAvailableProducts } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
 
 @injectable()
-export class ListPlanProductGroupDetailsRepository {
+export class PlanProductGroupDetailsListerRepository {
   constructor(
-    @inject("Database") private db: MySql2Database<typeof schema>,
-    private listPlanProductGroupsProductsByProductGroupId: ListPlanProductGroupsProductsByProductGroupIdRepository
+    @inject("Database") private readonly db: MySql2Database<typeof schema>,
+    private readonly planProductGroupsProductsByProductGroupIdLister: PlanProductGroupsProductsByProductGroupIdListerRepository
   ) {}
 
   async list(
@@ -65,7 +65,7 @@ export class ListPlanProductGroupDetailsRepository {
       async (productGroups: AvailableProducts) => ({
         ...productGroups,
         selected_products:
-          await this.listPlanProductGroupsProductsByProductGroupId.list(
+          await this.planProductGroupsProductsByProductGroupIdLister.list(
             productGroups.product_group_id
           ),
       })

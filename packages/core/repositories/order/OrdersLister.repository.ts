@@ -35,7 +35,9 @@ import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.
 
 @injectable()
 export class OrdersListerRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async list(
     input: ListOrderRequestDto,

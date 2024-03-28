@@ -14,31 +14,22 @@ import {
   ProductsGroups,
 } from "@core/common/enums/models/plan";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
-import { ListPlanPriceRepository } from "./ListPlanPrice.repository";
-import { ListPlanItemRepository } from "./ListPlanItem.repository";
+import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
+import { PlanItemListerRepository } from "./PlanItemLister.repository";
 import { ListProductRepository } from "../product/ListProduct.repository";
 import { ListProductGroupProductRepository } from "../product/ListProductGroupProduct.repository";
 import { ListPlanResponse } from "@core/useCases/plan/dtos/ListPlanResponse.dto";
 import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
 @injectable()
-export class ListPlanRepository {
-  private db: MySql2Database<typeof schema>;
-  private listPlanPriceRepository: ListPlanPriceRepository;
-  private listPlanItemRepository: ListPlanItemRepository;
-  private listProductRepository: ListProductRepository;
-  private listProductGroupProductRepository: ListProductGroupProductRepository;
-
+export class PlanListerRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-    this.listPlanPriceRepository = new ListPlanPriceRepository(mySql2Database);
-    this.listPlanItemRepository = new ListPlanItemRepository(mySql2Database);
-    this.listProductRepository = new ListProductRepository(mySql2Database);
-    this.listProductGroupProductRepository =
-      new ListProductGroupProductRepository(mySql2Database);
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>,
+    private readonly planPriceListerRepository: PlanPriceListerRepository,
+    private readonly planItemListerRepository: PlanItemListerRepository,
+    private readonly productListerRepository: ListProductRepository,
+    private readonly productGroupProductListerRepository: ListProductGroupProductRepository
+  ) {}
 
   async list(
     companyId: number,
@@ -191,20 +182,20 @@ export class ListPlanRepository {
     const plansCompleted: Plan[] = [];
 
     for (const plan of plans) {
-      const planItems = await this.listPlanItemRepository.listByPlanId(
+      const planItems = await this.planItemListerRepository.listByPlanId(
         plan.plan_id
       );
       const productIds = planItems.map((item) => item.product_id) as string[];
 
-      const pricesPromise = this.listPlanPriceRepository.listByPlanId(
+      const pricesPromise = this.planPriceListerRepository.listByPlanId(
         plan.plan_id
       );
-      const productsPromise = this.listProductRepository.listByIds(
+      const productsPromise = this.productListerRepository.listByIds(
         companyId,
         productIds
       );
       const productGroupsPromise =
-        this.listProductGroupProductRepository.listByProductsIds(productIds);
+        this.productGroupProductListerRepository.listByProductsIds(productIds);
 
       const [prices, products, productGroups] = await Promise.all([
         pricesPromise,

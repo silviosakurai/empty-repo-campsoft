@@ -1,15 +1,15 @@
 import { injectable } from "tsyringe";
-import { ListPlanRepository } from "@core/repositories/plan/ListPlan.repository";
-import { ViewPlanRepository } from "@core/repositories/plan/ViewPlan.repository";
+import { PlanListerRepository } from "@core/repositories/plan/PlanLister.repository";
+import { PlanViewerRepository } from "@core/repositories/plan/PlanViewer.repository";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
-import { UpgradePlanRepository } from "@core/repositories/plan/UpgradePlan.repository";
+import { PlanUpgraderRepository } from "@core/repositories/plan/PlanUpgrader.repository";
 
 @injectable()
 export class PlanService {
   constructor(
-    private readonly planListerRepository: ListPlanRepository,
-    private readonly planViewerRepository: ViewPlanRepository,
-    private readonly planUpgraderRepository: UpgradePlanRepository
+    private readonly planListerRepository: PlanListerRepository,
+    private readonly planViewerRepository: PlanViewerRepository,
+    private readonly planUpgraderRepository: PlanUpgraderRepository
   ) {}
 
   list = async (companyId: number, query: ListPlanRequest) => {

@@ -12,7 +12,9 @@ import {
 
 @injectable()
 export class PaymentListerRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async list(orderId: string): Promise<OrderPayments[] | null> {
     const result = await this.db

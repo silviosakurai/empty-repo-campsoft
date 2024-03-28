@@ -15,19 +15,15 @@ export class ViewProductGroupRepository {
     this.db = mySql2Database;
   }
 
-  async get(
-    id_product_group: number,
-  ): Promise<ProductGroup | null> {
+  async get(id_product_group: number): Promise<ProductGroup | null> {
     const result = await this.db
       .select({
         product_group_id: productGroup.id_produto_grupo,
         name: productGroup.produto_grupo,
-        quantity: productGroup.qtd_produtos_selecionavies,
+        quantity: productGroup.qtd_produtos_selecionaveis,
       })
       .from(productGroup)
-      .where(
-        eq(productGroup.id_produto_grupo, id_product_group),
-      )
+      .where(eq(productGroup.id_produto_grupo, id_product_group))
       .execute();
 
     if (!result.length) {

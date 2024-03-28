@@ -4,7 +4,7 @@ import * as schema from "@core/models";
 import { order, orderStatus, orderItem } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
 import { OrderPaymentByOrderIdViewerRepository } from "./OrderPaymentByOrderIdViewer.repository";
-import { FindOrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer.repository";
+import { OrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer.repository";
 import { OrderByNumberResponse } from "@core/interfaces/repositories/order";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -13,8 +13,8 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 export class OrderByNumberViewerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
-    private readonly findOrderPlansByOrderId: FindOrderPlansByOrderIdViewerRepository,
-    private readonly findOrderPaymentByOrderId: OrderPaymentByOrderIdViewerRepository
+    private readonly orderPlansByOrderIdViewer: OrderPlansByOrderIdViewerRepository,
+    private readonly orderPaymentByOrderIdViewer: OrderPaymentByOrderIdViewerRepository
   ) {}
 
   async view(
@@ -86,8 +86,8 @@ export class OrderByNumberViewerRepository {
   ): Promise<OrderByNumberResponse> {
     const recordsFormatted = {
       ...result,
-      payments: await this.findOrderPaymentByOrderId.find(result.order_id),
-      plans: await this.findOrderPlansByOrderId.view(
+      payments: await this.orderPaymentByOrderIdViewer.find(result.order_id),
+      plans: await this.orderPlansByOrderIdViewer.view(
         result.order_id,
         tokenKeyData
       ),

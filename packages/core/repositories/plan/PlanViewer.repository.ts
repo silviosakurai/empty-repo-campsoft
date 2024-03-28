@@ -4,30 +4,21 @@ import { inject, injectable } from "tsyringe";
 import { plan } from "@core/models";
 import { eq, and, sql } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
-import { ListPlanPriceRepository } from "./ListPlanPrice.repository";
-import { ListPlanItemRepository } from "./ListPlanItem.repository";
+import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
+import { PlanItemListerRepository } from "./PlanItemLister.repository";
 import { ListProductRepository } from "../product/ListProduct.repository";
 import { ListProductGroupProductRepository } from "../product/ListProductGroupProduct.repository";
 import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
 @injectable()
-export class ViewPlanRepository {
-  private db: MySql2Database<typeof schema>;
-  private listPlanPriceRepository: ListPlanPriceRepository;
-  private listPlanItemRepository: ListPlanItemRepository;
-  private listProductRepository: ListProductRepository;
-  private listProductGroupProductRepository: ListProductGroupProductRepository;
-
+export class PlanViewerRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-    this.listPlanPriceRepository = new ListPlanPriceRepository(mySql2Database);
-    this.listPlanItemRepository = new ListPlanItemRepository(mySql2Database);
-    this.listProductRepository = new ListProductRepository(mySql2Database);
-    this.listProductGroupProductRepository =
-      new ListProductGroupProductRepository(mySql2Database);
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>,
+    private readonly planPriceListerRepository: PlanPriceListerRepository,
+    private readonly planItemListerRepository: PlanItemListerRepository,
+    private readonly productListerRepository: ListProductRepository,
+    private readonly productGroupProductListerRepository: ListProductGroupProductRepository
+  ) {}
 
   async get(companyId: number, planId: number): Promise<Plan | null> {
     const result: ViewPlanRepositoryDTO[] = await this.db
@@ -63,20 +54,20 @@ export class ViewPlanRepository {
     plan: ViewPlanRepositoryDTO,
     companyId: number
   ): Promise<Plan> => {
-    const planItems = await this.listPlanItemRepository.listByPlanId(
+    const planItems = await this.planItemListerRepository.listByPlanId(
       plan.plan_id
     );
     const productIds = planItems.map((item) => item.product_id) as string[];
 
-    const pricesPromise = this.listPlanPriceRepository.listByPlanId(
+    const pricesPromise = this.planPriceListerRepository.listByPlanId(
       plan.plan_id
     );
-    const productsPromise = this.listProductRepository.listByIds(
+    const productsPromise = this.productListerRepository.listByIds(
       companyId,
       productIds
     );
     const productGroupsPromise =
-      this.listProductGroupProductRepository.listByProductsIds(productIds);
+      this.productGroupProductListerRepository.listByProductsIds(productIds);
 
     const [prices, products, productGroups] = await Promise.all([
       pricesPromise,

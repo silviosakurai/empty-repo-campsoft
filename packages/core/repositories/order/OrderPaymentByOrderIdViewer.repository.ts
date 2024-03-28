@@ -12,7 +12,9 @@ import { OrderPayments } from "@core/interfaces/repositories/order";
 
 @injectable()
 export class OrderPaymentByOrderIdViewerRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async find(orderId: string): Promise<OrderPayments[]> {
     const result = await this.db

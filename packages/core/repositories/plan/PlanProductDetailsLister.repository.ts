@@ -1,18 +1,24 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { product, productGroupProduct, productType } from "@core/models";
-import { eq } from "drizzle-orm";
+import { plan, product, productType, planItem } from "@core/models";
+import { and, eq } from "drizzle-orm";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PlanProducts } from "@core/interfaces/repositories/voucher";
 
 @injectable()
-export class ListPlanProductGroupsProductsByProductGroupIdRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+export class PlanProductDetailsListerRepository {
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
-  async list(productGroupId: number): Promise<PlanProducts[]> {
+  async list(
+    planId: number,
+    tokenKeyData: ITokenKeyData
+  ): Promise<PlanProducts[]> {
     const result = await this.db
       .select({
-        product_id: productGroupProduct.id_produto,
+        product_id: planItem.id_produto,
         status: product.status,
         name: product.produto,
         long_description: product.descricao,
@@ -31,16 +37,19 @@ export class ListPlanProductGroupsProductsByProductGroupIdRepository {
           product_type_name: productType.produto_tipo,
         },
       })
-      .from(productGroupProduct)
-      .innerJoin(
-        product,
-        eq(product.id_produto, productGroupProduct.id_produto)
-      )
+      .from(plan)
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(product, eq(planItem.id_produto, product.id_produto))
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(eq(productGroupProduct.id_produto_grupo, productGroupId))
+      .where(
+        and(
+          eq(plan.id_plano, planId),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
       .execute();
 
     if (result.length === 0) {
