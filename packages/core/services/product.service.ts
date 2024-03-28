@@ -1,16 +1,16 @@
 import { injectable } from "tsyringe";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
-import { ListProductRepository } from "@core/repositories/product/ListProduct.repository";
-import { ViewProductRepository } from "@core/repositories/product/ViewProduct.repository";
-import { ListCrossSellProductRepository } from "@core/repositories/product/ListCrossSellProduct.repository";
+import { ProductListerRepository } from "@core/repositories/product/ProductLister.repository";
+import { ProductViewerRepository } from "@core/repositories/product/ProductViewer.repository";
+import { CrossSellProductListerRepository } from "@core/repositories/product/CrossSellProductLister.repository";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
 
 @injectable()
 export class ProductService {
   constructor(
-    private readonly productListerRepository: ListProductRepository,
-    private readonly productViewerRepository: ViewProductRepository,
-    private readonly crossSellProductListerRepository: ListCrossSellProductRepository
+    private readonly productListerRepository: ProductListerRepository,
+    private readonly productViewerRepository: ProductViewerRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository
   ) {}
 
   list = async (companyId: number, query: ListProductRequest) => {

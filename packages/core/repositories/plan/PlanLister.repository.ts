@@ -16,8 +16,8 @@ import {
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
-import { ListProductRepository } from "../product/ListProduct.repository";
-import { ListProductGroupProductRepository } from "../product/ListProductGroupProduct.repository";
+import { ProductListerRepository } from "../product/ProductLister.repository";
+import { ProductGroupProductListerRepository } from "../product/ProductGroupProductLister.repository";
 import { ListPlanResponse } from "@core/useCases/plan/dtos/ListPlanResponse.dto";
 import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
@@ -27,8 +27,8 @@ export class PlanListerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planItemListerRepository: PlanItemListerRepository,
-    private readonly productListerRepository: ListProductRepository,
-    private readonly productGroupProductListerRepository: ListProductGroupProductRepository
+    private readonly productListerRepository: ProductListerRepository,
+    private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
   async list(

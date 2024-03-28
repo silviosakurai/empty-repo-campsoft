@@ -6,7 +6,9 @@ import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientR
 
 @injectable()
 export class ClientUpdaterRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async update(clientId: string, input: UpdateClientRequestDto) {
     const result = await this.db

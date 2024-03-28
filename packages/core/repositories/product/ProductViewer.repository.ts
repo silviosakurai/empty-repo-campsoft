@@ -6,19 +6,12 @@ import { product, productCompany, productType } from "@core/models";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
-export class ViewProductRepository {
-  private db: MySql2Database<typeof schema>;
-
+export class ProductViewerRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
-  async get(
-    companyId: number,
-    sku: string,
-  ): Promise<ProductResponse | null> {
+  async get(companyId: number, sku: string): Promise<ProductResponse | null> {
     const result = await this.db
       .select({
         product_id: product.id_produto,
@@ -50,13 +43,19 @@ export class ViewProductRepository {
         updated_at: product.updated_at,
       })
       .from(product)
-      .innerJoin(productCompany, eq(product.id_produto, productCompany.id_produto))
-      .innerJoin(productType, eq(product.id_produto_tipo, productType.id_produto_tipo))
+      .innerJoin(
+        productCompany,
+        eq(product.id_produto, productCompany.id_produto)
+      )
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
       .where(
         and(
           eq(productCompany.id_empresa, companyId),
-          eq(product.id_produto, sku),
-        ),
+          eq(product.id_produto, sku)
+        )
       )
       .execute();
 

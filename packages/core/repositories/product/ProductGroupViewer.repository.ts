@@ -6,14 +6,10 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { ProductGroup } from "@core/common/enums/models/product";
 
 @injectable()
-export class ViewProductGroupRepository {
-  private db: MySql2Database<typeof schema>;
-
+export class ProductGroupViewerRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async get(id_product_group: number): Promise<ProductGroup | null> {
     const result = await this.db

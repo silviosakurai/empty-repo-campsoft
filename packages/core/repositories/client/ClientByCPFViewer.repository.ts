@@ -6,7 +6,9 @@ import { client } from "@core/models";
 
 @injectable()
 export class ClientByCPFViewerRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async view(cpf: string): Promise<{ id_cliente: string } | null> {
     const result = await this.db

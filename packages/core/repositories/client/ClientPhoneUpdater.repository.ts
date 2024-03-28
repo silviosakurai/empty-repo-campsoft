@@ -8,7 +8,9 @@ const { client } = schema;
 
 @injectable()
 export class ClientPhoneUpdaterRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async update(clientId: string, input: UpdatePhoneClientRequestDto) {
     const result = await this.db

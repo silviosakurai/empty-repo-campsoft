@@ -6,7 +6,9 @@ import { sql } from "drizzle-orm";
 
 @injectable()
 export class ClientAccessCreatorRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async create(input: IClientConnectClientAndCompany): Promise<boolean> {
     const result = await this.db

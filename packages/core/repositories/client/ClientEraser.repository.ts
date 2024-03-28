@@ -9,7 +9,9 @@ import { ClientStatus } from "@core/common/enums/models/client";
 
 @injectable()
 export class ClientEraserRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async delete(
     tokenJwtData: ITokenJwtData,

@@ -8,8 +8,8 @@ import { ClientByCPFViewerRepository } from "./ClientByCPFViewer.repository";
 @injectable()
 export class ClientCreatorRepository {
   constructor(
-    @inject("Database") private db: MySql2Database<typeof schema>,
-    private findClientByCPF: ClientByCPFViewerRepository
+    @inject("Database") private readonly db: MySql2Database<typeof schema>,
+    private readonly findClientByCPF: ClientByCPFViewerRepository
   ) {}
 
   async create(

@@ -7,7 +7,9 @@ import { ClientMagicTokenStatus } from "@core/common/enums/models/client";
 
 @injectable()
 export class ClientMagicTokenRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async magicTokenIsUsed(token: string): Promise<boolean> {
     const result = await this.db

@@ -14,14 +14,10 @@ import {
 import { SortOrder } from "@core/common/enums/SortOrder";
 
 @injectable()
-export class ListCrossSellProductRepository {
-  private db: MySql2Database<typeof schema>;
-
+export class CrossSellProductListerRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async list(
     input: CrossSellProductRequest

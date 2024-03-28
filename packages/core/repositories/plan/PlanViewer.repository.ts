@@ -6,8 +6,8 @@ import { eq, and, sql } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
-import { ListProductRepository } from "../product/ListProduct.repository";
-import { ListProductGroupProductRepository } from "../product/ListProductGroupProduct.repository";
+import { ProductListerRepository } from "../product/ProductLister.repository";
+import { ProductGroupProductListerRepository } from "../product/ProductGroupProductLister.repository";
 import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
 
 @injectable()
@@ -16,8 +16,8 @@ export class PlanViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planItemListerRepository: PlanItemListerRepository,
-    private readonly productListerRepository: ListProductRepository,
-    private readonly productGroupProductListerRepository: ListProductGroupProductRepository
+    private readonly productListerRepository: ProductListerRepository,
+    private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
   async get(companyId: number, planId: number): Promise<Plan | null> {
