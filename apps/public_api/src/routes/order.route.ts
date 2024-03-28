@@ -20,4 +20,10 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.findByNumber,
   });
+
+  server.get('/orders/:orderNumber/payments', {
+    schema: getPayments,
+    handler: orderController.listPayments,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+  });
 }

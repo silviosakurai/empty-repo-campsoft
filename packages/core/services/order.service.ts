@@ -3,13 +3,15 @@ import { ListOrdersRepository } from "@core/repositories/order/ListOrders.reposi
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
+import { ListPaymentRepository } from "@core/repositories/order/ListPayments.repository";
 import { FindOrderByNumberRepository } from "@core/repositories/order/FindOrderByNumber.repository";
 
 @injectable()
 export class OrderService {
   constructor(
     private readonly listOrdersRepository: ListOrdersRepository,
-    private readonly findOrderByNumberRepository: FindOrderByNumberRepository
+    private readonly listPaymentRepository: ListPaymentRepository,
+    private readonly findOrderByNumberRepository: FindOrderByNumberRepository,
   ) {}
 
   listOrder = async (
@@ -20,6 +22,20 @@ export class OrderService {
     try {
       return await this.listOrdersRepository.list(
         input,
+        tokenKeyData,
+        tokenJwtData
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  countTotal = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    try {
+      return await this.listOrdersRepository.countTotal(
         tokenKeyData,
         tokenJwtData
       );
@@ -44,15 +60,9 @@ export class OrderService {
     }
   };
 
-  countTotal = async (
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData
-  ) => {
+  listPayment = async (orderId: string) => {
     try {
-      return await this.listOrdersRepository.countTotal(
-        tokenKeyData,
-        tokenJwtData
-      );
+      return this.listPaymentRepository.list(orderId);
     } catch (error) {
       throw error;
     }
