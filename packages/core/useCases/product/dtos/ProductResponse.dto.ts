@@ -26,7 +26,7 @@ export interface ProductResponse {
     product_type_id: number;
     product_type_name: string;
   };
-  price: {
+  prices: {
     months: number;
     price: number;
     discount_value: number;
