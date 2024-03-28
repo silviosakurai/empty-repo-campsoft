@@ -1,7 +1,10 @@
 import Schema from "fluent-json-schema";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { paginationReaderSchema } from "@core/common/validations/pagination.validation";
+import {
+  paginationReaderSchema,
+  pagingResponseSchema,
+} from "@core/common/validations/pagination.validation";
 
 const BannerItemImageSchema = Schema.object()
   .prop("desktop", Schema.string().format("uri"))
@@ -27,11 +30,9 @@ const BannerReaderResponseItemSchema = Schema.object()
   .prop("banner_name", Schema.string())
   .prop("items", Schema.array().items(BannerItemSchema));
 
-const PaginationSchema = Schema.object().extend(paginationReaderSchema);
-
 const BannerReaderResponseDtoSchema = Schema.object()
-  .prop("paging", PaginationSchema)
-  .prop("results", Schema.array().items(BannerReaderResponseItemSchema));
+  .prop("results", Schema.array().items(BannerReaderResponseItemSchema))
+  .extend(pagingResponseSchema);
 
 export const bannerReaderSchema = {
   description: "Lista os banners disponíveis",

@@ -1,7 +1,7 @@
 import OrderController from '@/controllers/order';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
-import { ordersSchema } from '@core/validations/order/order.validation';
+import { ordersSchema } from '@core/validations/order';
 
 export default async function orderRoutes(server: FastifyInstance) {
   const orderController = container.resolve(OrderController);

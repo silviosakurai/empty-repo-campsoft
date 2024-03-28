@@ -7,7 +7,7 @@ import {
   IBannerItem,
   IBannerReaderInput,
 } from "@core/interfaces/repositories/banner";
-import { and, count, eq, gte, lte, inArray } from "drizzle-orm";
+import { and, count, eq, gte, lte } from "drizzle-orm";
 import {
   BannerItemStatus,
   BannerStatus,

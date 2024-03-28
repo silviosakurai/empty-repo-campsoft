@@ -8,4 +8,14 @@ const paginationReaderSchema = Schema.object<IPaginationQueryString>()
     Schema.number().minimum(1).maximum(200).default(10).required()
   );
 
-export { paginationReaderSchema };
+const pagingResponseSchema = Schema.object().prop(
+  "paging",
+  Schema.object()
+    .prop("current_page", Schema.number())
+    .prop("total_pages", Schema.number())
+    .prop("per_page", Schema.number())
+    .prop("count", Schema.number())
+    .prop("total", Schema.number())
+);
+
+export { paginationReaderSchema, pagingResponseSchema };
