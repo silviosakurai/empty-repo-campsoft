@@ -9,14 +9,10 @@ import { SignatureStatus } from "@core/common/enums/models/signature";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
-export class VerifyCustomerVoucherRedemptionRepository {
-  private db: MySql2Database<typeof schema>;
-
+export class CustomerVoucherRedemptionVerifierRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async verifyRedemptionUser(
     tokenKeyData: ITokenKeyData,

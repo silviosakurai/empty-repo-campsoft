@@ -10,14 +10,10 @@ import { CouponRescueStatus } from "@core/common/enums/models/coupon";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
-export class VerifyVoucherEligibilityRepository {
-  private db: MySql2Database<typeof schema>;
-
+export class VoucherEligibilityVerifierRepository {
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async verifyEligibilityUser(
     tokenKeyData: ITokenKeyData,

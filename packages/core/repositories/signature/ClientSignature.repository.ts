@@ -8,7 +8,9 @@ import { SignatureStatus } from "@core/common/enums/models/signature";
 
 @injectable()
 export class ClientSignatureRepository {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async isClientSignatureActive(tokenJwtData: ITokenJwtData): Promise<boolean> {
     const result = await this.db

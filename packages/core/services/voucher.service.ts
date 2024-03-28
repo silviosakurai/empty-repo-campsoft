@@ -1,5 +1,5 @@
-import { VerifyVoucherEligibilityRepository } from "@core/repositories/voucher/VerifyVoucherEligibility.repository";
-import { VerifyCustomerVoucherRedemptionRepository } from "@core/repositories/voucher/VerifyCustomerVoucherRedemption.repository";
+import { VoucherEligibilityVerifierRepository } from "@core/repositories/voucher/VoucherEligibilityVerifier.repository";
+import { CustomerVoucherRedemptionVerifierRepository } from "@core/repositories/voucher/CustomerVoucherRedemptionVerifier.repository";
 import { AvailableVoucherProductsRepository } from "@core/repositories/voucher/AvailableVoucherProducts.repository";
 import { ClientSignatureRepository } from "@core/repositories/signature/ClientSignature.repository";
 import { AvailableVoucherPlansRepository } from "@core/repositories/voucher/AvailableVoucherPlans.repository";
@@ -11,8 +11,8 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 @injectable()
 export class VoucherService {
   constructor(
-    private readonly voucherEligibilityVerifierRepository: VerifyVoucherEligibilityRepository,
-    private readonly customerVoucherRedemptionVerifierRepository: VerifyCustomerVoucherRedemptionRepository,
+    private readonly voucherEligibilityVerifierRepository: VoucherEligibilityVerifierRepository,
+    private readonly customerVoucherRedemptionVerifierRepository: CustomerVoucherRedemptionVerifierRepository,
     private readonly availableVoucherProductsRepository: AvailableVoucherProductsRepository,
     private readonly clientSignatureRepository: ClientSignatureRepository,
     private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository

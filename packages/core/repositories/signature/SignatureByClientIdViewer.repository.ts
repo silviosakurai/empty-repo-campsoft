@@ -11,7 +11,9 @@ import { ISignatureFindByClientId } from "@core/interfaces/repositories/signatur
 
 @injectable()
 export class SignatureByClientIdViewer {
-  constructor(@inject("Database") private db: MySql2Database<typeof schema>) {}
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async find(client_id: string): Promise<ISignatureFindByClientId[] | null> {
     const records = await this.db
