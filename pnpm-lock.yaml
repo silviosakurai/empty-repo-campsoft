@@ -29,9 +29,15 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^3.0.0
         version: 3.0.0
+      '@fastify/type-provider-typebox':
+        specifier: ^4.0.0
+        version: 4.0.0(@sinclair/typebox@0.32.20)
       '@opensearch-project/opensearch':
         specifier: ^2.6.0
         version: 2.6.0
+      '@sinclair/typebox':
+        specifier: ^0.32.20
+        version: 0.32.20
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
@@ -1005,6 +1011,14 @@ packages:
       - supports-color
     dev: false
 
+  /@fastify/type-provider-typebox@4.0.0(@sinclair/typebox@0.32.20):
+    resolution: {integrity: sha512-kTlN0saC/+xhcQPyBjb3YONQAMjiD/EHlCRjQjsr5E3NFjS5K8ZX5LGzXYDRjSa+sV4y8gTL5Q7FlObePv4iTA==}
+    peerDependencies:
+      '@sinclair/typebox': '>=0.26 <=0.32'
+    dependencies:
+      '@sinclair/typebox': 0.32.20
+    dev: false
+
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
@@ -1107,6 +1121,10 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dev: true
+
+  /@sinclair/typebox@0.32.20:
+    resolution: {integrity: sha512-ziK497ILSIYMxD/thl496idIb03IZPlha04itLQu1xAFQbumWZ+Dj4PMMCkDRpAYhvVSdmRlTjGu2B2MA5RplQ==}
+    dev: false
 
   /@smithy/abort-controller@2.2.0:
     resolution: {integrity: sha512-wRlta7GuLWpTqtFfGo+nZyOO1vEvewdNR1R4rTxpC8XU6vG/NDyrFBhwLZsqg1NUoR1noVaXJPC/7ZK47QCySw==}
