@@ -7,23 +7,15 @@ import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSe
 
 @injectable()
 export class ProductService {
-  private listProductRepository: ListProductRepository;
-  private viewProductRepository: ViewProductRepository;
-  private listCrossSellProductRepository: ListCrossSellProductRepository;
-
   constructor(
-    listProductRepository: ListProductRepository,
-    viewProductRepository: ViewProductRepository,
-    listCrossSellProductRepository: ListCrossSellProductRepository
-  ) {
-    this.listProductRepository = listProductRepository;
-    this.viewProductRepository = viewProductRepository;
-    this.listCrossSellProductRepository = listCrossSellProductRepository;
-  }
+    private readonly productListerRepository: ListProductRepository,
+    private readonly productViewerRepository: ViewProductRepository,
+    private readonly crossSellProductListerRepository: ListCrossSellProductRepository
+  ) {}
 
   listProduct = async (companyId: number, query: ListProductRequest) => {
     try {
-      return await this.listProductRepository.list(companyId, query);
+      return await this.productListerRepository.list(companyId, query);
     } catch (error) {
       throw error;
     }
@@ -31,7 +23,7 @@ export class ProductService {
 
   viewProduct = async (companyId: number, sku: string) => {
     try {
-      return await this.viewProductRepository.get(companyId, sku);
+      return await this.productViewerRepository.get(companyId, sku);
     } catch (error) {
       throw error;
     }
@@ -39,7 +31,7 @@ export class ProductService {
 
   listCrossSell = async (input: CrossSellProductRequest) => {
     try {
-      return await this.listCrossSellProductRepository.list(input);
+      return await this.crossSellProductListerRepository.list(input);
     } catch (error) {
       throw error;
     }

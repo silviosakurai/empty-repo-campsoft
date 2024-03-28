@@ -3,11 +3,13 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class SignatureService {
-  constructor(private findSignatureByClientId: FindSignatureByClientId) {}
+  constructor(
+    private readonly signatureViewerByClientId: FindSignatureByClientId
+  ) {}
 
   findByClientId = async (client_id: string) => {
     try {
-      return await this.findSignatureByClientId.find(client_id);
+      return await this.signatureViewerByClientId.find(client_id);
     } catch (error) {
       throw error;
     }

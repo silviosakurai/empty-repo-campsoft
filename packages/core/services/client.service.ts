@@ -24,41 +24,18 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 
 @injectable()
 export class ClientService {
-  private clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository;
-  private clientViewRepository: ClientViewRepository;
-  private clientCreatorRepository: ClientCreatorRepository;
-  private clientAccessCreatorRepository: ClientAccessCreatorRepository;
-  private clientUpdaterRepository: ClientUpdaterRepository;
-  private clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository;
-  private clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository;
-  private clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository;
-  private clientByEmailPhoneRepository: ClientByEmailPhoneRepository;
-  private clientDeleteRepository: ClientDeleteRepository;
-
   constructor(
-    clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
-    clientViewRepository: ClientViewRepository,
-    clientCreatorRepository: ClientCreatorRepository,
-    clientAccessCreatorRepository: ClientAccessCreatorRepository,
-    clientUpdaterRepository: ClientUpdaterRepository,
-    clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
-    clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
-    clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
-    clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
-    clientDeleteRepository: ClientDeleteRepository
-  ) {
-    this.clientByCpfEmailPhoneRepository = clientByCpfEmailPhoneRepository;
-    this.clientViewRepository = clientViewRepository;
-    this.clientCreatorRepository = clientCreatorRepository;
-    this.clientAccessCreatorRepository = clientAccessCreatorRepository;
-    this.clientUpdaterRepository = clientUpdaterRepository;
-    this.clientPhoneUpdaterRepository = clientPhoneUpdaterRepository;
-    this.clientPasswordRecoveryMethodsRepository =
-      clientPasswordRecoveryMethodsRepository;
-    this.clientPasswordUpdaterRepository = clientPasswordUpdaterRepository;
-    this.clientByEmailPhoneRepository = clientByEmailPhoneRepository;
-    this.clientDeleteRepository = clientDeleteRepository;
-  }
+    private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
+    private readonly clientViewRepository: ClientViewRepository,
+    private readonly clientCreatorRepository: ClientCreatorRepository,
+    private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
+    private readonly clientUpdaterRepository: ClientUpdaterRepository,
+    private readonly clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
+    private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
+    private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
+    private readonly clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
+    private readonly clientEraserRepository: ClientDeleteRepository
+  ) {}
 
   viewClient = async (tokenKeyData: ITokenKeyData, userId: string) => {
     try {
@@ -149,7 +126,7 @@ export class ClientService {
     userFounded: ViewClientResponse
   ) => {
     try {
-      return await this.clientDeleteRepository.delete(
+      return await this.clientEraserRepository.delete(
         tokenJwtData,
         userFounded
       );

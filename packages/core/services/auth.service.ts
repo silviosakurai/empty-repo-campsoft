@@ -6,16 +6,10 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class AuthService {
-  private authRepository: AuthRepository;
-  private clientMagicTokenRepository: ClientMagicTokenRepository;
-
   constructor(
-    authRepository: AuthRepository,
-    clientMagicTokenRepository: ClientMagicTokenRepository
-  ) {
-    this.authRepository = authRepository;
-    this.clientMagicTokenRepository = clientMagicTokenRepository;
-  }
+    private readonly authRepository: AuthRepository,
+    private readonly clientMagicTokenRepository: ClientMagicTokenRepository
+  ) {}
 
   authenticate = async (
     tokenKeyData: ITokenKeyData,

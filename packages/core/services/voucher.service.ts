@@ -10,35 +10,20 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class VoucherService {
-  private verifyVoucherEligibilityRepository: VerifyVoucherEligibilityRepository;
-  private verifyCustomerVoucherRedemptionRepository: VerifyCustomerVoucherRedemptionRepository;
-  private availableVoucherProductsRepository: AvailableVoucherProductsRepository;
-  private clientSignatureRepository: ClientSignatureRepository;
-  private availableVoucherPlansRepository: AvailableVoucherPlansRepository;
-
   constructor(
-    verifyVoucherEligibilityRepository: VerifyVoucherEligibilityRepository,
-    verifyCustomerVoucherRedemptionRepository: VerifyCustomerVoucherRedemptionRepository,
-    availableVoucherProductsRepository: AvailableVoucherProductsRepository,
-    clientSignatureRepository: ClientSignatureRepository,
-    availableVoucherPlansRepository: AvailableVoucherPlansRepository
-  ) {
-    this.verifyVoucherEligibilityRepository =
-      verifyVoucherEligibilityRepository;
-    this.verifyCustomerVoucherRedemptionRepository =
-      verifyCustomerVoucherRedemptionRepository;
-    this.availableVoucherProductsRepository =
-      availableVoucherProductsRepository;
-    this.clientSignatureRepository = clientSignatureRepository;
-    this.availableVoucherPlansRepository = availableVoucherPlansRepository;
-  }
+    private readonly voucherEligibilityVerifierRepository: VerifyVoucherEligibilityRepository,
+    private readonly customerVoucherRedemptionVerifierRepository: VerifyCustomerVoucherRedemptionRepository,
+    private readonly availableVoucherProductsRepository: AvailableVoucherProductsRepository,
+    private readonly clientSignatureRepository: ClientSignatureRepository,
+    private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository
+  ) {}
 
   verifyEligibilityUser = async (
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
     try {
-      return await this.verifyVoucherEligibilityRepository.verifyEligibilityUser(
+      return await this.voucherEligibilityVerifierRepository.verifyEligibilityUser(
         tokenKeyData,
         voucher
       );
@@ -54,7 +39,7 @@ export class VoucherService {
     voucher: string
   ) => {
     try {
-      return await this.verifyCustomerVoucherRedemptionRepository.verifyRedemptionUser(
+      return await this.customerVoucherRedemptionVerifierRepository.verifyRedemptionUser(
         tokenKeyData,
         tokenJwtData,
         isEligibility,

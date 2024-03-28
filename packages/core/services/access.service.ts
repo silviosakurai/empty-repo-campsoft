@@ -4,11 +4,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class AccessService {
-  private accessCreator: AccessCreator;
-
-  constructor(accessCreator: AccessCreator) {
-    this.accessCreator = accessCreator;
-  }
+  constructor(private readonly accessCreator: AccessCreator) {}
 
   create = async (input: IAccessCreate) => {
     try {

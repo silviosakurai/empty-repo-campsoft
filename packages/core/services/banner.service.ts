@@ -5,11 +5,9 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class BannerService {
-  private bannerReaderRepository: BannerReaderRepository;
-
-  constructor(bannerReaderRepository: BannerReaderRepository) {
-    this.bannerReaderRepository = bannerReaderRepository;
-  }
+  constructor(
+    private readonly bannerReaderRepository: BannerReaderRepository
+  ) {}
 
   banners = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
     try {

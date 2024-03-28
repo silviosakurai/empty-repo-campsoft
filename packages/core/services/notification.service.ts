@@ -12,19 +12,11 @@ import { TFunction } from "i18next";
 
 @injectable()
 class NotificationService {
-  private sendWhatsAppTFAUserCase: SendWhatsAppTFAUserCase;
-  private sendSmsTFAUserCase: SendSmsTFAUserCase;
-  private sendEmailTFAUserCase: SendEmailTFAUserCase;
-
   constructor(
-    sendWhatsAppTFAUserCase: SendWhatsAppTFAUserCase,
-    sendSmsTFAUserCase: SendSmsTFAUserCase,
-    sendEmailTFAUserCase: SendEmailTFAUserCase
-  ) {
-    this.sendWhatsAppTFAUserCase = sendWhatsAppTFAUserCase;
-    this.sendSmsTFAUserCase = sendSmsTFAUserCase;
-    this.sendEmailTFAUserCase = sendEmailTFAUserCase;
-  }
+    private readonly whatsAppTFASenderUseCase: SendWhatsAppTFAUserCase,
+    private readonly smsTFASenderUseCase: SendSmsTFAUserCase,
+    private readonly emailTFASenderUseCase: SendEmailTFAUserCase
+  ) {}
 
   public async executeTfa(
     t: TFunction<"translation", undefined>,
@@ -35,7 +27,7 @@ class NotificationService {
         throw new TFAVerificationError(t("phone_is_not_valid"));
       }
 
-      return await this.sendWhatsAppTFAUserCase.execute(options);
+      return await this.whatsAppTFASenderUseCase.execute(options);
     }
 
     if (options.type === TFAType.SMS) {
@@ -43,7 +35,7 @@ class NotificationService {
         throw new TFAVerificationError(t("phone_is_not_valid"));
       }
 
-      return await this.sendSmsTFAUserCase.execute(options);
+      return await this.smsTFASenderUseCase.execute(options);
     }
 
     if (options.type === TFAType.EMAIL) {
@@ -51,7 +43,7 @@ class NotificationService {
         throw new TFAVerificationError(t("email_is_not_valid"));
       }
 
-      return await this.sendEmailTFAUserCase.execute(options);
+      return await this.emailTFASenderUseCase.execute(options);
     }
 
     return false;

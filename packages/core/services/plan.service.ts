@@ -6,23 +6,15 @@ import { UpgradePlanRepository } from "@core/repositories/plan/UpgradePlan.repos
 
 @injectable()
 export class PlanService {
-  private listPlanRepository: ListPlanRepository;
-  private viewPlanRepository: ViewPlanRepository;
-  private upgradePlanRepository: UpgradePlanRepository;
-
   constructor(
-    listPlanRepository: ListPlanRepository,
-    viewPlanRepository: ViewPlanRepository,
-    upgradePlanRepository: UpgradePlanRepository
-  ) {
-    this.listPlanRepository = listPlanRepository;
-    this.viewPlanRepository = viewPlanRepository;
-    this.upgradePlanRepository = upgradePlanRepository;
-  }
+    private readonly planListerRepository: ListPlanRepository,
+    private readonly planViewerRepository: ViewPlanRepository,
+    private readonly planUpgraderRepository: UpgradePlanRepository
+  ) {}
 
   listPlan = async (companyId: number, query: ListPlanRequest) => {
     try {
-      return await this.listPlanRepository.list(companyId, query);
+      return await this.planListerRepository.list(companyId, query);
     } catch (error) {
       throw error;
     }
@@ -30,15 +22,23 @@ export class PlanService {
 
   viewPlan = async (companyId: number, planId: number) => {
     try {
-      return await this.viewPlanRepository.get(companyId, planId);
+      return await this.planViewerRepository.get(companyId, planId);
     } catch (error) {
       throw error;
     }
   };
 
-  upgradePlan = async (companyId: number, clientId: string, productIds: string[]) => {
+  upgradePlan = async (
+    companyId: number,
+    clientId: string,
+    productIds: string[]
+  ) => {
     try {
-      return await this.upgradePlanRepository.get(companyId, clientId, productIds);
+      return await this.planUpgraderRepository.get(
+        companyId,
+        clientId,
+        productIds
+      );
     } catch (error) {
       throw error;
     }
