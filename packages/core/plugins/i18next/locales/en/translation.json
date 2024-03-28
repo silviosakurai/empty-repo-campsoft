@@ -17,6 +17,7 @@
   "cross_sell_product_empty": "The Cross Sell Product list is empty.",
   "phone_is_not_valid": "Phone is not valid!",
   "email_is_not_valid": "Email is not valid!",
+  "order_not_found": "Order not found.",
   "voucher_not_eligible": "Voucher not eligible!",
   "voucher_not_redeemable": "Voucher not redeemable!",
   "order_not_found": "Order not found!",

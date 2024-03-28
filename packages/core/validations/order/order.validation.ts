@@ -9,7 +9,15 @@ const getPayments = {
   params: Schema.object().prop("orderNumber", Schema.string().required()),
 };
 
+const ordersByNumberParamSchema = {
+  params: Schema.object().prop(
+    "orderNumber",
+    Schema.string().format("uuid").required()
+  ),
+};
+
 export {
   ordersSchema,
   getPayments,
+  ordersByNumberParamSchema
 };
