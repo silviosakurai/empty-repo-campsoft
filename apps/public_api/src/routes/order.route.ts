@@ -16,8 +16,8 @@ export default async function orderRoutes(server: FastifyInstance) {
   });
 
   server.get('/orders/:orderNumber', {
+    schema: ordersByNumberParamSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.findByNumber,
-    schema: ordersByNumberParamSchema,
   });
 }
