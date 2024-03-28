@@ -47,8 +47,10 @@ export class FindOrderByNumberRepository {
             ELSE 0
           END`.mapWith(Number),
           total: sql`${order.valor_total}`.mapWith(Number),
-          installment: sql`${order.pedido_parcelas_vezes}`.mapWith(Number),
-          value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
+        },
+        installments: {
+          installment: order.pedido_parcelas_vezes,
+          value: order.pedido_parcelas_valor,
         },
         created_at: order.created_at,
         updated_at: order.updated_at,
