@@ -47,13 +47,13 @@ export class ListCrossSellProductUseCase {
   }
 
   private generateDiscountValues(item: ProductResponse) {
-    const price = +item.price.price;
-    const price_with_discount = +item.price.price_with_discount;
+    const price = +item.prices.price;
+    const price_with_discount = +item.prices.price_with_discount;
 
     return {
       ...item,
-      price: {
-        ...item.price,
+      prices: {
+        ...item.prices,
         discount_percentage: +((price - price_with_discount) / price).toFixed(
           2
         ),

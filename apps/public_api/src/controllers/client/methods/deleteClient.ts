@@ -16,7 +16,7 @@ export const deleteClient = async (
 
     return sendResponse(reply, {
       message: t('client_not_found'),
-      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      httpStatusCode: HTTPStatusCode.NOT_FOUND,
     });
   }
 
@@ -31,7 +31,7 @@ export const deleteClient = async (
 
       return sendResponse(reply, {
         message: t('client_not_found'),
-        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 

@@ -48,7 +48,7 @@ export class ListCrossSellProductRepository {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
         },
-        price: {
+        prices: {
           months: productCrossSell.meses,
           price: sql<number>`CAST(${product.preco_face} AS DECIMAL(10,2))`,
           price_with_discount: sql<number>`CAST(${productCrossSell.preco_desconto} AS DECIMAL(10,2))`,

@@ -1,10 +1,10 @@
 import {
+  Installments,
   OrderPayments,
   PlanDetails,
   Prices,
   TotalsOrder,
 } from "@core/interfaces/repositories/order";
-import { ListOrderResponse } from "./ListOrderResponse.dto";
 import {
   AvailableProducts,
   PlanProducts,
@@ -25,12 +25,8 @@ export type FindOrderByNumberResponse = {
   client_id: string;
   seller_id: string;
   status: string;
-  totals: TotalsOrder & {
-    installments: {
-      installment: number | null;
-      value: number | null;
-    };
-  };
+  totals: TotalsOrder;
+  installments: Installments;
   plans: FindOrderByNumberPlans[];
   payments: OrderPayments[];
   created_at: string;

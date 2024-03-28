@@ -8,15 +8,18 @@ dotenv.config({
 
 export class GeneralEnvironment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
+  private readonly APP_URL_PUBLIC: string | undefined;
+  private readonly APP_URL_PARTNER: string | undefined;
   private readonly JWT_SECRET: string | undefined;
   private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
   private readonly BASE_URL_CAMPSOFT_API: string | undefined;
   private readonly API_KEY_CAMPSOFT: string | undefined;
 
-
   constructor() {
     this.APP_ENVIRONMENT = process.env
       .APP_ENVIRONMENT as unknown as AppEnvironment;
+    this.APP_URL_PUBLIC = process.env.APP_URL_PUBLIC;
+    this.APP_URL_PARTNER = process.env.APP_URL_PARTNER;
     this.JWT_SECRET = process.env.JWT_SECRET;
     this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
     this.API_KEY_CAMPSOFT = process.env.API_KEY_CAMPSOFT;
@@ -29,6 +32,7 @@ export class GeneralEnvironment {
     }
 
     if (
+      this.APP_ENVIRONMENT !== AppEnvironment.LOCAL &&
       this.APP_ENVIRONMENT !== AppEnvironment.DEV &&
       this.APP_ENVIRONMENT !== AppEnvironment.HMG &&
       this.APP_ENVIRONMENT !== AppEnvironment.PROD
@@ -37,6 +41,22 @@ export class GeneralEnvironment {
     }
 
     return this.APP_ENVIRONMENT;
+  }
+
+  public get appUrlPublic(): string {
+    if (!this.APP_URL_PUBLIC) {
+      throw new InvalidConfigurationError("APP_URL_PUBLIC is not defined.");
+    }
+
+    return this.APP_URL_PUBLIC;
+  }
+
+  public get appUrlPartner(): string {
+    if (!this.APP_URL_PARTNER) {
+      throw new InvalidConfigurationError("APP_URL_PARTNER is not defined.");
+    }
+
+    return this.APP_URL_PARTNER;
   }
 
   public get jwtSecret(): string {
@@ -59,14 +79,11 @@ export class GeneralEnvironment {
 
   public get apiKeyCampsoft(): string {
     if (!this.API_KEY_CAMPSOFT) {
-      throw new InvalidConfigurationError(
-        "API_KEY_CAMPSOFT is not defined."
-      );
+      throw new InvalidConfigurationError("API_KEY_CAMPSOFT is not defined.");
     }
 
     return this.API_KEY_CAMPSOFT;
   }
-
 
   public get apiCampsoft(): string {
     if (!this.BASE_URL_CAMPSOFT_API) {

@@ -1,6 +1,5 @@
 import { Status } from "@core/common/enums/Status";
 import { FindOrderByNumberPlans } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
-import { PlanDetailsWithProducts } from "@core/useCases/order/dtos/ListOrderResponse.dto";
 
 export interface ListOrder {
   order_id: string;
@@ -75,7 +74,8 @@ export interface OrderByNumberResponse {
   client_id: string;
   seller_id: string;
   status: string;
-  totals: TotalsOrder & Installments;
+  totals: TotalsOrder;
+  installments: Installments;
   payments: OrderPayments[];
   plans: FindOrderByNumberPlans[];
   created_at: string;

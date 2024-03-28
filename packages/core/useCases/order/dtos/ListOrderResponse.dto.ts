@@ -12,7 +12,7 @@ import {
 } from "@core/interfaces/repositories/voucher";
 
 export interface AvailableProductsWithProducts extends AvailableProducts {
-  available_products: ProductDetail[];
+  selected_products: ProductDetail[];
 }
 
 export interface PlanDetailsWithProducts extends PlanDetails {

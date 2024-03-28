@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import fastify from 'fastify';
 import dbConnector from '@core/config/database';
-import routes from '@/routes';
 import auth from '@fastify/auth';
 import authenticateJwt from '@core/middlewares/auth/jwt.middleware';
 import authenticateTfa from '@core/middlewares/auth/tfa.middleware';
@@ -13,6 +12,7 @@ import cacheRedisConnector from '@core/config/cache';
 import { RouteModule } from '@core/common/enums/models/route';
 import { v4 } from 'uuid';
 import loggerServicePlugin from '@core/plugins/logger';
+import swaggerPlugin from '@/plugins/swagger';
 
 const server = fastify({
   genReqId: () => v4(),
@@ -25,17 +25,16 @@ server.addHook('onError', errorHook);
 
 server.decorateRequest('module', RouteModule.PUBLIC);
 
-server.register(loggerServicePlugin).after(() => {
-  server.register(dbConnector);
-  server.register(cacheRedisConnector);
-  server.register(auth);
-  server.register(authenticateJwt);
-  server.register(authenticateTfa);
-  server.register(authenticateKeyApi);
-  server.register(i18nextPlugin);
-  server.register(jwtPlugin);
-  server.register(routes);
-});
+server.register(dbConnector);
+server.register(loggerServicePlugin);
+server.register(cacheRedisConnector);
+server.register(auth);
+server.register(authenticateJwt);
+server.register(authenticateTfa);
+server.register(authenticateKeyApi);
+server.register(i18nextPlugin);
+server.register(jwtPlugin);
+server.register(swaggerPlugin);
 
 const start = async () => {
   try {

@@ -10,13 +10,13 @@ import vouchersRoutes from '@/routes/voucher.route';
 import healthRoutes from '@/routes/health.route';
 
 export default async function (server: FastifyInstance) {
-  server.register(authRoutes);
-  server.register(clientRoutes);
-  server.register(tfaRoutes);
-  server.register(bannerRoutes);
-  server.register(productRoutes);
-  server.register(planRoutes);
-  server.register(orderRoutes);
-  server.register(vouchersRoutes);
-  server.register(healthRoutes);
+  await server.register(authRoutes);
+  await server.register(clientRoutes);
+  await server.register(tfaRoutes);
+  await server.register(bannerRoutes);
+  await server.register(productRoutes);
+  await server.register(planRoutes);
+  await server.register(orderRoutes);
+  await server.register(vouchersRoutes);
+  await server.register(healthRoutes);
 }

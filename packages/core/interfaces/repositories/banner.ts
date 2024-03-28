@@ -7,9 +7,9 @@ export interface IBannerReaderInput extends IPaginationQueryString {
 
 export interface IBanner {
   banner_id: number;
-  location: string;
-  type: number;
-  banner_name: string;
+  location: string | null;
+  type: number | null;
+  banner_name: string | null;
 }
 
 export interface IBannerItem {
