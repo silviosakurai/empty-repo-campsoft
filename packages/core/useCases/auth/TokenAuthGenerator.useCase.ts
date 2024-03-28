@@ -4,14 +4,11 @@ import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
 
 @injectable()
-export class TokenAuthGenerateUseCase {
-  private authService: AuthService;
-  private clientService: ClientService;
-
-  constructor(authService: AuthService, clientService: ClientService) {
-    this.authService = authService;
-    this.clientService = clientService;
-  }
+export class TokenAuthGeneratorUseCase {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly clientService: ClientService
+  ) {}
 
   async execute(
     tokenKeyData: ITokenKeyData,

@@ -11,13 +11,10 @@ import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 
 @injectable()
 export class ClientCreatorUseCase {
-  private clientService: ClientService;
-  private accessService: AccessService;
-
-  constructor(clientService: ClientService, accessService: AccessService) {
-    this.clientService = clientService;
-    this.accessService = accessService;
-  }
+  constructor(
+    private readonly clientService: ClientService,
+    private readonly accessService: AccessService
+  ) {}
 
   async create(
     companyId: number,

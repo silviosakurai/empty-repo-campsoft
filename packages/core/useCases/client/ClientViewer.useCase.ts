@@ -4,12 +4,8 @@ import { ViewClientRequest } from "@core/useCases/client/dtos/ViewClientRequest.
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 
 @injectable()
-export class ViewClientUseCase {
-  private clientService: ClientService;
-
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
-  }
+export class ClientViewerUseCase {
+  constructor(private readonly clientService: ClientService) {}
 
   async execute({
     tokenKeyData,

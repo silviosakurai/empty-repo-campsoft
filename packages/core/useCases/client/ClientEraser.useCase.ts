@@ -4,12 +4,8 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
-export class ClientDeleteUseCase {
-  private clientService: ClientService;
-
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
-  }
+export class ClientEraserUseCase {
+  constructor(private readonly clientService: ClientService) {}
 
   async delete(
     tokenJwtData: ITokenJwtData,

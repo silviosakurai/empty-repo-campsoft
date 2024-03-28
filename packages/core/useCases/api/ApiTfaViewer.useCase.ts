@@ -5,14 +5,11 @@ import { ViewApiTfaRequest } from "@core/useCases/api/dtos/ViewApiTfaRequest.dto
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 
 @injectable()
-export class ViewApiTfaUseCase {
-  private apiService: ApiService;
-  private clientService: ClientService;
-
-  constructor(apiService: ApiService, clientService: ClientService) {
-    this.apiService = apiService;
-    this.clientService = clientService;
-  }
+export class ApiTfaViewerUseCase {
+  constructor(
+    private readonly apiService: ApiService,
+    private readonly clientService: ClientService
+  ) {}
 
   async execute({ token }: ViewApiTfaRequest): Promise<ITokenTfaData | null> {
     const findTfa = await this.apiService.findApiByTfa(token);

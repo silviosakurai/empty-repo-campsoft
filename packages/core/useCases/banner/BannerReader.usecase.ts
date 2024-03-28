@@ -9,11 +9,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class BannerReaderUseCase {
-  private bannerService: BannerService;
-
-  constructor(bannerService: BannerService) {
-    this.bannerService = bannerService;
-  }
+  constructor(private readonly bannerService: BannerService) {}
 
   async read(
     tokenKeyData: ITokenKeyData,

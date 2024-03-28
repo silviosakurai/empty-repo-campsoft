@@ -4,12 +4,8 @@ import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
-export class ViewApiJwtUseCase {
-  private apiService: ApiService;
-
-  constructor(apiService: ApiService) {
-    this.apiService = apiService;
-  }
+export class ApiJwtViewerUseCase {
+  constructor(private readonly apiService: ApiService) {}
 
   async execute({
     clientId,

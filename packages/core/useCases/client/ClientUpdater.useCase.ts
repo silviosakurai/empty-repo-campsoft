@@ -5,11 +5,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientUpdaterUseCase {
-  private clientService: ClientService;
-
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
-  }
+  constructor(private readonly clientService: ClientService) {}
 
   async update(
     clientId: string,

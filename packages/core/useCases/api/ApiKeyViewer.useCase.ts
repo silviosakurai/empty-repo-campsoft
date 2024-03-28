@@ -4,12 +4,8 @@ import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
-export class ViewApiKeyUseCase {
-  private apiService: ApiService;
-
-  constructor(apiService: ApiService) {
-    this.apiService = apiService;
-  }
+export class ApiKeyViewerUseCase {
+  constructor(private readonly apiService: ApiService) {}
 
   async execute({
     keyApi,

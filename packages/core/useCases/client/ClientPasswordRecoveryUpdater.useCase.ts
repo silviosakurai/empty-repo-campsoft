@@ -7,11 +7,7 @@ import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 
 @injectable()
 export class ClientPasswordRecoveryUpdaterUseCase {
-  private clientService: ClientService;
-
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
-  }
+  constructor(private readonly clientService: ClientService) {}
 
   async update(
     tokenTfaData: ITokenTfaData,
