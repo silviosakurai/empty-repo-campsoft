@@ -26,7 +26,7 @@ async function i18nextPlugin(fastify: FastifyInstance) {
       },
     });
 
-  fastify.register(plugin, {
+  await fastify.register(plugin, {
     i18next,
   });
 }

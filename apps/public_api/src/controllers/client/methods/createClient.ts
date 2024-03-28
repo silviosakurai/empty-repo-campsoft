@@ -36,7 +36,6 @@ export const createClient = async (
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        data: response,
         message: t('previously_registered_user'),
         httpStatusCode: HTTPStatusCode.CONFLICT,
       });

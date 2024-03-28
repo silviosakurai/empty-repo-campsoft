@@ -26,6 +26,13 @@ export interface ProductResponse {
     product_type_id: number;
     product_type_name: string;
   };
+  prices: {
+    months: number;
+    price: number;
+    discount_value: number;
+    discount_percentage: number;
+    price_with_discount: number;
+  };
   created_at: string;
   updated_at: string;
 }

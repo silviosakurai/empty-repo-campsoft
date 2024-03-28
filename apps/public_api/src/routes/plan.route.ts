@@ -2,9 +2,10 @@ import PlanController from '@/controllers/plan';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
+  getPlanSchema,
   listPlanSchema,
-  getPlan,
-} from '@core/validations/plan/plan.validation';
+  upgradePlanSchema,
+} from '@core/validations/plan';
 
 export default async function planRoutes(server: FastifyInstance) {
   const planController = container.resolve(PlanController);
@@ -16,8 +17,14 @@ export default async function planRoutes(server: FastifyInstance) {
   });
 
   server.get('/plans/:planId', {
-    schema: getPlan,
+    schema: getPlanSchema,
     preHandler: [server.authenticateKeyApi],
     handler: planController.view,
+  });
+
+  server.get('/plans/upgrades', {
+    schema: upgradePlanSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: planController.upgrade,
   });
 }

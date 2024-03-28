@@ -2,18 +2,22 @@ import ClientController from '@/controllers/client';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
+  getUserSchema,
   userCreatorSchema,
   userUpdaterSchema,
+  userDeleteSchema,
   userPhoneUpdaterSchema,
   userPasswordUpdaterSchema,
-  userPasswordRecoveryMethods,
+  userPasswordRecoveryMethodsSchema,
   userPasswordRecoveryUpdaterSchema,
-} from '@core/validations/user/user.validation';
+  getUserVoucherSchema,
+} from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
   server.get('/user', {
+    schema: getUserSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
   });
@@ -31,6 +35,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.delete('/user', {
+    schema: userDeleteSchema,
     handler: clientController.delete,
     preHandler: [
       server.authenticateKeyApi,
@@ -60,7 +65,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.get('/user/recovery-password/:login', {
-    schema: userPasswordRecoveryMethods,
+    schema: userPasswordRecoveryMethodsSchema,
     handler: clientController.passwordRecoveryMethods,
     preHandler: [server.authenticateKeyApi],
   });
@@ -69,5 +74,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: userPasswordRecoveryUpdaterSchema,
     handler: clientController.updatePasswordRecovery,
     preHandler: [server.authenticateKeyApi, server.authenticateTfa],
+  });
+
+  server.get('/user/vouchers/:voucherCode', {
+    schema: getUserVoucherSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.viewVoucher,
   });
 }
