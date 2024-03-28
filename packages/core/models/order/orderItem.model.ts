@@ -25,6 +25,7 @@ export const orderItem = mysqlTable("pedido_item", {
   valor_preco: double("valor_preco"),
   valor_cupom: double("valor_cupom").notNull().default(0),
   percentual_cupom: double("percentual_cupom").notNull().default(0),
+  desconto_produto: double("desconto_produto"),
   valor_total: double("valor_total").notNull().default(0),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()

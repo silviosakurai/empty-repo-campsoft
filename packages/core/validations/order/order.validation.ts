@@ -5,4 +5,11 @@ const ordersSchema = {
   querystring: Schema.object().extend(paginationReaderSchema),
 };
 
-export { ordersSchema };
+const ordersByNumberParamSchema = {
+  params: Schema.object().prop(
+    "orderNumber",
+    Schema.string().format("uuid").required()
+  ),
+};
+
+export { ordersSchema, ordersByNumberParamSchema };
