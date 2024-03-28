@@ -88,7 +88,7 @@ export class ClientCreatorUseCase {
   }
 
   private async confirmIfRegisteredPreviously(input: IUserExistsFunction) {
-    const response = await this.clientService.readClientByCpfEmailPhone(input);
+    const response = await this.clientService.listClientByCpfEmailPhone(input);
 
     if (response) return true;
 

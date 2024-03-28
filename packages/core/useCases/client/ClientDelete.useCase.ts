@@ -15,7 +15,7 @@ export class ClientDeleteUseCase {
     tokenJwtData: ITokenJwtData,
     tokenKeyData: ITokenKeyData
   ): Promise<boolean | null> {
-    const userFounded = await this.clientService.viewClient(
+    const userFounded = await this.clientService.view(
       tokenKeyData,
       tokenJwtData.clientId
     );

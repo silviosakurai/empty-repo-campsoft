@@ -14,7 +14,7 @@ export class FindOrderByNumberUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ): Promise<FindOrderByNumberResponse | null> {
-    const result = await this.orderService.findOrderByNumber(
+    const result = await this.orderService.viewOrderByNumber(
       orderNumber,
       tokenKeyData,
       tokenJwtData

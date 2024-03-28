@@ -11,6 +11,6 @@ export class ViewPlanUseCase {
   }
 
   async execute(companyId: number, planId: number): Promise<Plan | null> {
-    return await this.planService.viewPlan(companyId, planId);
+    return await this.planService.view(companyId, planId);
   }
 }

@@ -19,7 +19,7 @@ export class BannerReaderUseCase {
     tokenKeyData: ITokenKeyData,
     input: BannerReaderRequestDto
   ): Promise<BannerReaderResponseDto | null> {
-    const bannersResult = await this.bannerService.banners(tokenKeyData, input);
+    const bannersResult = await this.bannerService.list(tokenKeyData, input);
     const count = await this.bannerService.countTotal(tokenKeyData, input);
 
     if (!bannersResult.length) {

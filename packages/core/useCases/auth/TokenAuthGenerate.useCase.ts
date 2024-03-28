@@ -17,10 +17,7 @@ export class TokenAuthGenerateUseCase {
     tokenKeyData: ITokenKeyData,
     clientId: string
   ): Promise<boolean> {
-    const userFounded = await this.clientService.viewClient(
-      tokenKeyData,
-      clientId
-    );
+    const userFounded = await this.clientService.view(tokenKeyData, clientId);
 
     if (!userFounded) {
       return false;

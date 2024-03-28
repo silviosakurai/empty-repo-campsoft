@@ -18,7 +18,7 @@ export class ClientPasswordRecoveryUpdaterUseCase {
     tokenKeyData: ITokenKeyData,
     input: UpdatePasswordRecoveryClientRequestDto
   ): Promise<boolean | null> {
-    const userFounded = await this.clientService.viewClient(
+    const userFounded = await this.clientService.view(
       tokenKeyData,
       tokenTfaData.clientId
     );

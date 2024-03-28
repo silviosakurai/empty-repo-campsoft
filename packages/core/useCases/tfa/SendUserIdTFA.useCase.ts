@@ -13,10 +13,7 @@ export class SendUserIdTFAUserCase {
     login,
   }: SendCodeTFARequest): Promise<SendCodeTFARequest | null> {
     try {
-      const viewClient = await this.clientService.viewClient(
-        tokenKeyData,
-        login
-      );
+      const viewClient = await this.clientService.view(tokenKeyData, login);
 
       if (!viewClient) {
         return null;
@@ -39,7 +36,7 @@ export class SendUserIdTFAUserCase {
   }
 
   async findClientByEmailPhone(login: string): Promise<string | null> {
-    const findUserId = await this.clientService.findClientByEmailPhone({
+    const findUserId = await this.clientService.viewClientByEmailPhone({
       email: login,
       phone: login,
     });

@@ -26,7 +26,7 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 export class ClientService {
   constructor(
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
-    private readonly clientViewRepository: ClientViewRepository,
+    private readonly clientViewerRepository: ClientViewRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
     private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
     private readonly clientUpdaterRepository: ClientUpdaterRepository,
@@ -37,15 +37,15 @@ export class ClientService {
     private readonly clientEraserRepository: ClientDeleteRepository
   ) {}
 
-  viewClient = async (tokenKeyData: ITokenKeyData, userId: string) => {
+  view = async (tokenKeyData: ITokenKeyData, userId: string) => {
     try {
-      return await this.clientViewRepository.view(tokenKeyData, userId);
+      return await this.clientViewerRepository.view(tokenKeyData, userId);
     } catch (error) {
       throw error;
     }
   };
 
-  readClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
+  listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     try {
       return await this.clientByCpfEmailPhoneRepository.find(input);
     } catch (error) {
@@ -53,7 +53,7 @@ export class ClientService {
     }
   };
 
-  findClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
+  viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
     try {
       return await this.clientByEmailPhoneRepository.find(input);
     } catch (error) {

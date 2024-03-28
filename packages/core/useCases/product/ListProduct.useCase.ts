@@ -11,7 +11,10 @@ export class ListProductUseCase {
     this.productService = productService;
   }
 
-  async execute(companyId: number, query: ListProductRequest): Promise<ListProductResponse | null> {
-    return await this.productService.listProduct(companyId, query);
+  async execute(
+    companyId: number,
+    query: ListProductRequest
+  ): Promise<ListProductResponse | null> {
+    return await this.productService.list(companyId, query);
   }
 }

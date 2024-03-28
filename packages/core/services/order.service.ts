@@ -9,18 +9,18 @@ import { FindOrderByNumberRepository } from "@core/repositories/order/FindOrderB
 @injectable()
 export class OrderService {
   constructor(
-    private readonly listOrdersRepository: ListOrdersRepository,
-    private readonly listPaymentRepository: ListPaymentRepository,
-    private readonly findOrderByNumberRepository: FindOrderByNumberRepository,
+    private readonly ordersListerRepository: ListOrdersRepository,
+    private readonly paymentListerRepository: ListPaymentRepository,
+    private readonly orderByNumberViewerRepository: FindOrderByNumberRepository
   ) {}
 
-  listOrder = async (
+  list = async (
     input: ListOrderRequestDto,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
     try {
-      return await this.listOrdersRepository.list(
+      return await this.ordersListerRepository.list(
         input,
         tokenKeyData,
         tokenJwtData
@@ -35,7 +35,7 @@ export class OrderService {
     tokenJwtData: ITokenJwtData
   ) => {
     try {
-      return await this.listOrdersRepository.countTotal(
+      return await this.ordersListerRepository.countTotal(
         tokenKeyData,
         tokenJwtData
       );
@@ -44,13 +44,13 @@ export class OrderService {
     }
   };
 
-  findOrderByNumber = async (
+  viewOrderByNumber = async (
     orderNumber: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
     try {
-      return await this.findOrderByNumberRepository.find(
+      return await this.orderByNumberViewerRepository.find(
         orderNumber,
         tokenKeyData,
         tokenJwtData
@@ -62,7 +62,7 @@ export class OrderService {
 
   listPayment = async (orderId: string) => {
     try {
-      return this.listPaymentRepository.list(orderId);
+      return this.paymentListerRepository.list(orderId);
     } catch (error) {
       throw error;
     }

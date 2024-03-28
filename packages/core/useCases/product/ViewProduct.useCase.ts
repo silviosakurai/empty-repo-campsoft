@@ -10,7 +10,10 @@ export class ViewProductUseCase {
     this.productService = productService;
   }
 
-  async execute(companyId: number, sku: string): Promise<ProductResponse | null> {
-    return await this.productService.viewProduct(companyId, sku);
+  async execute(
+    companyId: number,
+    sku: string
+  ): Promise<ProductResponse | null> {
+    return await this.productService.view(companyId, sku);
   }
 }

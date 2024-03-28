@@ -10,7 +10,10 @@ export class ListPlanUseCase {
     this.planService = planService;
   }
 
-  async execute(companyId: number, query: ListPlanRequest): Promise<object | null> {
-    return await this.planService.listPlan(companyId, query);
+  async execute(
+    companyId: number,
+    query: ListPlanRequest
+  ): Promise<object | null> {
+    return await this.planService.list(companyId, query);
   }
 }

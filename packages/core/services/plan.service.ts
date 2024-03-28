@@ -12,7 +12,7 @@ export class PlanService {
     private readonly planUpgraderRepository: UpgradePlanRepository
   ) {}
 
-  listPlan = async (companyId: number, query: ListPlanRequest) => {
+  list = async (companyId: number, query: ListPlanRequest) => {
     try {
       return await this.planListerRepository.list(companyId, query);
     } catch (error) {
@@ -20,7 +20,7 @@ export class PlanService {
     }
   };
 
-  viewPlan = async (companyId: number, planId: number) => {
+  view = async (companyId: number, planId: number) => {
     try {
       return await this.planViewerRepository.get(companyId, planId);
     } catch (error) {
@@ -28,7 +28,7 @@ export class PlanService {
     }
   };
 
-  upgradePlan = async (
+  upgrade = async (
     companyId: number,
     clientId: string,
     productIds: string[]

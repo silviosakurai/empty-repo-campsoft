@@ -20,7 +20,7 @@ export class ListOrdersUseCase {
     tokenJwtData: ITokenJwtData
   ): Promise<ListOrderResponseDto & IPaginationResponse> {
     const [results, count] = await Promise.all([
-      this.orderService.listOrder(input, tokenKeyData, tokenJwtData),
+      this.orderService.list(input, tokenKeyData, tokenJwtData),
       this.orderService.countTotal(tokenKeyData, tokenJwtData),
     ]);
 

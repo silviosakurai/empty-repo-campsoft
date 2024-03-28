@@ -13,7 +13,7 @@ export class ProductService {
     private readonly crossSellProductListerRepository: ListCrossSellProductRepository
   ) {}
 
-  listProduct = async (companyId: number, query: ListProductRequest) => {
+  list = async (companyId: number, query: ListProductRequest) => {
     try {
       return await this.productListerRepository.list(companyId, query);
     } catch (error) {
@@ -21,7 +21,7 @@ export class ProductService {
     }
   };
 
-  viewProduct = async (companyId: number, sku: string) => {
+  view = async (companyId: number, sku: string) => {
     try {
       return await this.productViewerRepository.get(companyId, sku);
     } catch (error) {

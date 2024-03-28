@@ -9,7 +9,7 @@ export class BannerService {
     private readonly bannerReaderRepository: BannerReaderRepository
   ) {}
 
-  banners = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
+  list = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
     try {
       return await this.bannerReaderRepository.banners(tokenKeyData, input);
     } catch (error) {

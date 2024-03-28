@@ -17,7 +17,7 @@ export class ListPaymentUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ): Promise<OrderPayments[] | null> {
-    const order = await this.orderService.findOrderByNumber(
+    const order = await this.orderService.viewOrderByNumber(
       orderNumber,
       tokenKeyData,
       tokenJwtData

@@ -21,7 +21,7 @@ export class ViewApiTfaUseCase {
       return null;
     }
 
-    const findUserId = await this.clientService.findClientByEmailPhone({
+    const findUserId = await this.clientService.viewClientByEmailPhone({
       email: findTfa.destiny,
       phone: findTfa.destiny,
     });

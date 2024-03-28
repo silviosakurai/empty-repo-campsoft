@@ -16,10 +16,7 @@ export class ClientUpdaterUseCase {
     input: UpdateClientRequestDto,
     tokenKeyData: ITokenKeyData
   ): Promise<boolean | null> {
-    const userFounded = await this.clientService.viewClient(
-      tokenKeyData,
-      clientId
-    );
+    const userFounded = await this.clientService.view(tokenKeyData, clientId);
 
     if (!userFounded) {
       return null;
