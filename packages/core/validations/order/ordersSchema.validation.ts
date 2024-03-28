@@ -109,7 +109,7 @@ const ListOrderResponseSchema = Schema.object()
   .prop("created_at", Schema.string().format("date-time"))
   .prop("updated_at", Schema.string().format("date-time"));
 
-const ListOrderResponseDtoSchema = Schema.object()
+export const ListOrderResponseDtoSchema = Schema.object()
   .prop("results", Schema.array().items(ListOrderResponseSchema))
   .extend(pagingResponseSchema);
 

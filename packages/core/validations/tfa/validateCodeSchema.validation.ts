@@ -2,15 +2,14 @@ import Schema from "fluent-json-schema";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
-export const userDeleteSchema = {
-  description: "Deleta o usuário",
-  tags: [TagSwagger.user],
+export const validateCodeSchema = {
+  description:
+    "Valida código enviado ao usuário e gera token de autenticação TFA",
+  tags: [TagSwagger.tfa],
   produces: ["application/json"],
   security: [
     {
       authenticateKeyApi: [],
-      authenticateJwt: [],
-      authenticateTfa: [],
     },
   ],
   headers: Schema.object().prop(
@@ -20,19 +19,17 @@ export const userDeleteSchema = {
       .enum(Object.values(Language))
       .default(Language.pt)
   ),
+  body: Schema.object()
+    .prop("login", Schema.string().required())
+    .prop("code", Schema.string().required()),
   response: {
     200: Schema.object()
       .description("Successful")
       .prop("status", Schema.boolean())
       .prop("message", Schema.string())
-      .prop("data", Schema.null()),
+      .prop("data", Schema.object().prop("token", Schema.string())),
     401: Schema.object()
       .description("Unauthorized")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    404: Schema.object()
-      .description("Not Found")
       .prop("status", Schema.boolean().default(false))
       .prop("message", Schema.string())
       .prop("data", Schema.null()),
