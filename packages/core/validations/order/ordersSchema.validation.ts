@@ -32,8 +32,8 @@ const OrderPaymentsSchema = Schema.object()
   .prop("boleto", BoletoSchema)
   .prop("pix", PixSchema)
   .prop("cycle", Schema.string())
-  .prop("created_at", Schema.string())
-  .prop("updated_at", Schema.string());
+  .prop("created_at", Schema.string().format("date-time"))
+  .prop("updated_at", Schema.string().format("date-time"));
 
 const PricesSchema = Schema.object()
   .prop("price", Schema.number())
@@ -45,6 +45,7 @@ const TotalsOrderSchema = Schema.object()
   .prop("subtotal_price", Schema.number())
   .prop("discount_item_value", Schema.number())
   .prop("discount_coupon_value", Schema.number())
+  .prop("discount_product_value", Schema.number())
   .prop("discount_percentage", Schema.number())
   .prop("total", Schema.number());
 
@@ -77,7 +78,7 @@ const AvailableProductsWithProductsSchema = Schema.object()
   .prop("product_group_id", Schema.number())
   .prop("name", Schema.string())
   .prop("quantity", Schema.number())
-  .prop("available_products", Schema.array().items(ProductDetailSchema));
+  .prop("selected_products", Schema.array().items(ProductDetailSchema));
 
 const PlanDetailsWithProductsSchema = Schema.object()
   .prop("plan_id", Schema.number())
@@ -105,8 +106,8 @@ const ListOrderResponseSchema = Schema.object()
   .prop("payments", Schema.array().items(OrderPaymentsSchema))
   .prop("products", Schema.array().items(ProductDetailSchema))
   .prop("plans", Schema.array().items(PlanDetailsWithProductsSchema))
-  .prop("created_at", Schema.string())
-  .prop("updated_at", Schema.string());
+  .prop("created_at", Schema.string().format("date-time"))
+  .prop("updated_at", Schema.string().format("date-time"));
 
 const ListOrderResponseDtoSchema = Schema.object()
   .prop("results", Schema.array().items(ListOrderResponseSchema))

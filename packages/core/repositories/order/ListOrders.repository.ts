@@ -66,6 +66,11 @@ export class ListOrdersRepository {
               THEN SUM(${orderItem.valor_cupom}) 
             ELSE 0
           END`.mapWith(Number),
+          discount_product_value: sql<number>`CASE
+            WHEN ${orderItem.desconto_produto} IS NOT NULL 
+              THEN SUM(${orderItem.desconto_produto}) 
+            ELSE 0
+          END`.mapWith(Number),
           discount_percentage: sql<number>`CASE 
             WHEN ${order.valor_total} > 0 
               THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
@@ -428,7 +433,7 @@ export class ListOrdersRepository {
     const enrichProductGroupsPromises = result.map(
       async (productGroups: AvailableProducts) => ({
         ...productGroups,
-        available_products:
+        selected_products:
           await this.fetchPlanProductGroupsProductsByProductGroupId(
             productGroups.product_group_id
           ),
