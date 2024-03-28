@@ -1,4 +1,6 @@
 import { Status } from "@core/common/enums/Status";
+import { FindOrderByNumberPlans } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
+import { PlanDetailsWithProducts } from "@core/useCases/order/dtos/ListOrderResponse.dto";
 
 export interface ListOrder {
   order_id: string;
@@ -31,10 +33,10 @@ export interface OrderPayments {
 }
 
 export interface Prices {
-  price: number;
-  discount_value: number;
+  price: number | null;
+  discount_value: number | null;
   discount_percentage: number | null;
-  price_with_discount: number;
+  price_with_discount: number | null;
 }
 
 export interface TotalsOrder {
@@ -42,6 +44,7 @@ export interface TotalsOrder {
   discount_item_value: number;
   discount_coupon_value: number;
   discount_percentage: number;
+  discount_product_value: number | null;
   total: number;
 }
 
@@ -65,4 +68,16 @@ interface Pix {
   url: string;
   code: string;
   expire_at: string;
+}
+
+export interface OrderByNumberResponse {
+  order_id: string;
+  client_id: string;
+  seller_id: string;
+  status: string;
+  totals: TotalsOrder & Installments;
+  payments: OrderPayments[];
+  plans: FindOrderByNumberPlans[];
+  created_at: string;
+  updated_at: string;
 }
