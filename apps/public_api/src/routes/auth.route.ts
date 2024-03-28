@@ -8,13 +8,13 @@ export default async function authRoutes(server: FastifyInstance) {
 
   server.post('/authentication/login', {
     schema: loginSchema,
-    preHandler: server.authenticateKeyApi,
+    preHandler: [server.authenticateKeyApi],
     handler: authController.login,
   });
 
   server.post('/authentication/token', {
     schema: loginTokenSchema,
-    preHandler: server.authenticateKeyApi,
+    preHandler: [server.authenticateKeyApi],
     handler: authController.token,
   });
 }

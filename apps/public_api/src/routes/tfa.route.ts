@@ -8,13 +8,13 @@ export default async function authRoutes(server: FastifyInstance) {
 
   server.post('/tfa/send-code', {
     schema: sendCode,
-    preHandler: server.authenticateKeyApi,
+    preHandler: [server.authenticateKeyApi],
     handler: tfaController.sendCode,
   });
 
   server.post('/tfa/validate-code', {
     schema: validateCode,
-    preHandler: server.authenticateKeyApi,
+    preHandler: [server.authenticateKeyApi],
     handler: tfaController.validateCode,
   });
 }
