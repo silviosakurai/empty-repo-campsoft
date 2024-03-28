@@ -5,6 +5,10 @@ const ordersSchema = {
   querystring: Schema.object().extend(paginationReaderSchema),
 };
 
+const getPayments = {
+  params: Schema.object().prop("orderNumber", Schema.string().required()),
+};
+
 const ordersByNumberParamSchema = {
   params: Schema.object().prop(
     "orderNumber",
@@ -12,4 +16,8 @@ const ordersByNumberParamSchema = {
   ),
 };
 
-export { ordersSchema, ordersByNumberParamSchema };
+export {
+  ordersSchema,
+  getPayments,
+  ordersByNumberParamSchema
+};

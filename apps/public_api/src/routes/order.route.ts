@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
   ordersSchema,
+  getPayments,
   ordersByNumberParamSchema,
 } from '@core/validations/order/order.validation';
 
@@ -16,8 +17,14 @@ export default async function orderRoutes(server: FastifyInstance) {
   });
 
   server.get('/orders/:orderNumber', {
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-    handler: orderController.findByNumber,
     schema: ordersByNumberParamSchema,
+    handler: orderController.findByNumber,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+  });
+
+  server.get('/orders/:orderNumber/payments', {
+    schema: getPayments,
+    handler: orderController.listPayments,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
   });
 }
