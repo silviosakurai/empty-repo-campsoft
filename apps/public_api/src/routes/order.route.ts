@@ -12,8 +12,8 @@ export default async function orderRoutes(server: FastifyInstance) {
 
   server.get('/orders', {
     schema: ordersSchema,
-    handler: orderController.list,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: orderController.list,
   });
 
   server.get('/orders/:orderNumber', {
@@ -24,7 +24,7 @@ export default async function orderRoutes(server: FastifyInstance) {
 
   server.get('/orders/:orderNumber/payments', {
     schema: getPaymentsSchema,
-    handler: orderController.listPayments,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: orderController.listPayments,
   });
 }

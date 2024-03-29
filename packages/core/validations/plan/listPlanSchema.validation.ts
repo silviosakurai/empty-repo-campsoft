@@ -1,80 +1,11 @@
-import Schema from "fluent-json-schema";
 import { Language } from "@core/common/enums/Language";
-import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { Status } from "@core/common/enums/Status";
-import { PlanFieldsToOrder } from "@core/common/enums/models/plan";
-import {
-  paginationReaderSchema,
-  pagingResponseSchema,
-} from "@core/common/validations/pagination.validation";
+import { PlanFields } from "@core/common/enums/models/plan";
 import { SortOrder } from "@core/common/enums/SortOrder";
-
-const PlanPriceSchema = Schema.object()
-  .prop("months", Schema.number())
-  .prop("price", Schema.number())
-  .prop("discount_value", Schema.number())
-  .prop("discount_percentage", Schema.number())
-  .prop("price_with_discount", Schema.number());
-
-const ProductResponseSchema = Schema.object()
-  .prop("product_id", Schema.string())
-  .prop("status", Schema.string().enum(Object.values(Status)))
-  .prop("name", Schema.string())
-  .prop("long_description", Schema.string())
-  .prop("short_description", Schema.string())
-  .prop("marketing_phrases", Schema.string())
-  .prop("content_provider_name", Schema.string())
-  .prop("slug", Schema.string())
-  .prop(
-    "images",
-    Schema.object()
-      .prop("main_image", Schema.string())
-      .prop("icon", Schema.string())
-      .prop("logo", Schema.string())
-      .prop("background_image", Schema.string())
-  )
-  .prop(
-    "how_to_access",
-    Schema.object()
-      .prop("desktop", Schema.string())
-      .prop("mobile", Schema.string())
-      .prop("url_web", Schema.string())
-      .prop("url_ios", Schema.string())
-      .prop("url_android", Schema.string())
-  )
-  .prop(
-    "product_type",
-    Schema.object()
-      .prop("product_type_id", Schema.number())
-      .prop("product_type_name", Schema.string())
-  )
-  .prop("created_at", Schema.string().format("date-time"))
-  .prop("updated_at", Schema.string().format("date-time"));
-
-const ProductsGroupsSchema = Schema.object()
-  .prop("product_group_id", Schema.number())
-  .prop("name", Schema.string())
-  .prop("quantity", Schema.number())
-  .prop("available_products", Schema.array().items(ProductResponseSchema));
-
-const PlanSchema = Schema.object()
-  .prop("plan_id", Schema.number())
-  .prop("status", Schema.string().enum(Object.values(Status)))
-  .prop("visible_site", Schema.boolean())
-  .prop("business_id", Schema.number())
-  .prop("plan", Schema.string())
-  .prop("image", Schema.string())
-  .prop("description", Schema.string())
-  .prop("short_description", Schema.string())
-  .prop("created_at", Schema.string().format("date-time"))
-  .prop("updated_at", Schema.string().format("date-time"))
-  .prop("prices", Schema.array().items(PlanPriceSchema))
-  .prop("products", Schema.array().items(ProductResponseSchema))
-  .prop("product_groups", Schema.array().items(ProductsGroupsSchema));
-
-const ListPlanResponseSchema = Schema.object()
-  .prop("results", Schema.array().items(PlanSchema))
-  .extend(pagingResponseSchema);
+import { Status } from "@core/common/enums/Status";
+import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
+import { planListResponseSchema } from "@core/schema/plan/planListResponseSchema";
+import { Type } from "@sinclair/typebox";
 
 export const listPlanSchema = {
   description: "Seleciona todos os planos",
@@ -85,44 +16,68 @@ export const listPlanSchema = {
       authenticateKeyApi: [],
     },
   ],
-  headers: Schema.object().prop(
-    "Accept-Language",
-    Schema.string()
-      .description("Idioma preferencial para a resposta")
-      .enum(Object.values(Language))
-      .default(Language.pt)
-  ),
-  querystring: Schema.object()
-    .prop("id", Schema.string())
-    .prop(
-      "status",
-      Schema.string().enum(Object.values(Status)).default(Status.ACTIVE)
-    )
-    .prop("plan", Schema.string())
-    .prop("description", Schema.string())
-    .prop("sort_by", Schema.string().enum(Object.keys(PlanFieldsToOrder)))
-    .prop("sort_order", Schema.string().enum(Object.values(SortOrder)))
-    .extend(paginationReaderSchema),
+  headers: Type.Object({
+    "Accept-Language": Type.Optional(
+      Type.String({
+        description: "Idioma preferencial para a resposta",
+        enum: Object.values(Language),
+        default: Language.pt,
+      })
+    ),
+  }),
+  querystring: Type.Object({
+    ...pagingRequestSchema.properties,
+    id: Type.Optional(Type.String()),
+    status: Type.Optional(
+      Type.String({
+        enum: Object.values(Status),
+        default: Status.ACTIVE,
+      })
+    ),
+    plan: Type.Optional(Type.String()),
+    description: Type.Optional(Type.String()),
+    sort_by: Type.Optional(
+      Type.String({
+        enum: Object.values(PlanFields),
+        default: PlanFields.plan_id,
+      })
+    ),
+    sort_order: Type.Optional(
+      Type.String({ enum: Object.values(SortOrder), default: SortOrder.DESC })
+    ),
+  }),
   response: {
-    200: Schema.object()
-      .description("Successful")
-      .prop("status", Schema.boolean())
-      .prop("message", Schema.string())
-      .prop("data", ListPlanResponseSchema),
-    401: Schema.object()
-      .description("Unauthorized")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    404: Schema.object()
-      .description("Not Found")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    500: Schema.object()
-      .description("Internal Server Error")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
+    200: Type.Object(
+      {
+        status: Type.Boolean(),
+        message: Type.String(),
+        data: planListResponseSchema,
+      },
+      { description: "Successful" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
+    ),
+    500: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Internal Server Error" }
+    ),
   },
 };
