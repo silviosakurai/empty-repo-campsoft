@@ -3,7 +3,7 @@ import { productDetailPlanProductsSchema } from "./productDetailPlanProductsSche
 
 export const productsSelectedSchema = Type.Object({
   product_group_id: Type.Number(),
-  name: Type.String(),
+  name: Type.Union([Type.String(), Type.Null()]),
   quantity: Type.Number(),
   selected_products: Type.Array(productDetailPlanProductsSchema),
 });

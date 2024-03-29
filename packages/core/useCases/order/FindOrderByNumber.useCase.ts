@@ -1,7 +1,6 @@
 import { OrderService } from "@core/services/order.service";
 import { injectable } from "tsyringe";
 import { FindOrderByNumberResponse } from "./dtos/FindOrderByNumberResponse.dto";
-import { OrderByNumberResponse } from "@core/interfaces/repositories/order";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 

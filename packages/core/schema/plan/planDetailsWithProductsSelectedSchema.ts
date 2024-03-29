@@ -12,10 +12,7 @@ export const planDetailsWithProductsSelectedSchema = Type.Object({
   image: Type.Union([Type.String(), Type.Null()]),
   description: Type.Union([Type.String(), Type.Null()]),
   short_description: Type.Union([Type.String(), Type.Null()]),
-  status: Type.Union([
-    Type.String({ enum: Object.values(ProductVoucherStatus) }),
-    Type.Null(),
-  ]),
+  status: Type.Union([Type.String(), Type.Null()]),
   prices: Type.Array(pricesSchema),
   plan_products: Type.Array(productDetailPlanProductsSchema),
   product_groups: Type.Array(productsSelectedSchema),
