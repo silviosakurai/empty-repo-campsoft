@@ -13,11 +13,13 @@ export const userPasswordRecoveryUpdaterSchema = {
     },
   ],
   headers: Type.Object({
-    "Accept-Language": Type.String({
-      description: "Idioma preferencial para a resposta",
-      enum: Object.values(Language),
-      default: Language.pt,
-    }),
+    "Accept-Language": Type.Optional(
+      Type.String({
+        description: "Idioma preferencial para a resposta",
+        enum: Object.values(Language),
+        default: Language.pt,
+      })
+    ),
   }),
   body: Type.Object({
     new_password: Type.String(),
