@@ -10,6 +10,8 @@ import {
   PlanProducts,
   ProductDetail,
 } from "@core/interfaces/repositories/voucher";
+import { orderListResponseSchema } from "@core/schema/order/orderListResponseSchema";
+import { Static } from "@sinclair/typebox";
 
 export interface AvailableProductsWithProducts extends AvailableProducts {
   selected_products: ProductDetail[];
@@ -35,6 +37,4 @@ export interface ListOrderResponse {
   updated_at: string;
 }
 
-export interface ListOrderResponseDto {
-  results: ListOrderResponse[];
-}
+export type ListOrderResponseDto = Static<typeof orderListResponseSchema>;
