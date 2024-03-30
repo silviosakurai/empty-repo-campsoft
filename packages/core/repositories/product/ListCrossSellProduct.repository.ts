@@ -5,13 +5,13 @@ import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSe
 import { product, productType, productCrossSell } from "@core/models";
 import { SQLWrapper, and, asc, desc, eq, like, ne, sql } from "drizzle-orm";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
-import { ListProductResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
+import { ListProductResponseCrossSell } from "@core/useCases/product/dtos/ListProductResponse.dto";
 import {
   ProductFields,
   ProductFieldsToOrder,
 } from "@core/common/enums/models/product";
 import { SortOrder } from "@core/common/enums/SortOrder";
+import { ProductResponseCrossSell } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
 export class ListCrossSellProductRepository {
@@ -25,7 +25,7 @@ export class ListCrossSellProductRepository {
 
   async list(
     input: CrossSellProductRequest
-  ): Promise<ListProductResponse | null> {
+  ): Promise<ListProductResponseCrossSell | null> {
     const filters = this.setFilters(input);
 
     const allQuery = this.db
@@ -87,7 +87,7 @@ export class ListCrossSellProductRepository {
 
     return {
       paging,
-      results: records as unknown as ProductResponse[],
+      results: records as unknown as ProductResponseCrossSell[],
     };
   }
 

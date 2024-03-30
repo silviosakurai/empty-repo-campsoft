@@ -6,7 +6,10 @@ import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
-import { ProductFields, ProductFieldsToOrder } from "@core/common/enums/models/product";
+import {
+  ProductFields,
+  ProductFieldsToOrder,
+} from "@core/common/enums/models/product";
 import { ListProductResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 
@@ -24,7 +27,6 @@ export class ListProductRepository {
     companyId: number,
     query: ListProductRequest
   ): Promise<ListProductResponse | null> {
-
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -58,38 +60,45 @@ export class ListProductRepository {
         updated_at: product.updated_at,
       })
       .from(product)
-      .innerJoin(productCompany, eq(product.id_produto, productCompany.id_produto))
-      .innerJoin(productType, eq(product.id_produto_tipo, productType.id_produto_tipo))
+      .innerJoin(
+        productCompany,
+        eq(product.id_produto, productCompany.id_produto)
+      )
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(
-        and(
-          eq(productCompany.id_empresa, companyId),
-          ...filters
-        ),
-      );
+      .where(and(eq(productCompany.id_empresa, companyId), ...filters));
 
     const totalResult = await allQuery.execute();
-      
-    const paginatedQuery = allQuery.limit(query.per_page).offset((query.current_page - 1) * query.per_page);
+
+    const paginatedQuery = allQuery
+      .limit(query.per_page)
+      .offset((query.current_page - 1) * query.per_page);
     const totalPaginated = await paginatedQuery.execute();
 
     if (!totalPaginated.length) {
       return null;
     }
 
-    const paging = setPaginationData(totalPaginated.length, totalResult.length, query.per_page, query.current_page);
+    const paging = setPaginationData(
+      totalPaginated.length,
+      totalResult.length,
+      query.per_page,
+      query.current_page
+    );
 
     return {
       paging,
-      results: totalPaginated as unknown as ProductResponse[]
-    }
+      results: totalPaginated as unknown as ProductResponse[],
+    };
   }
 
   async listByIds(
     companyId: number,
-    productIds: string[],
+    productIds: string[]
   ): Promise<ProductResponse[]> {
-
     const products = await this.db
       .select({
         product_id: product.id_produto,
@@ -121,13 +130,19 @@ export class ListProductRepository {
         updated_at: product.updated_at,
       })
       .from(product)
-      .innerJoin(productCompany, eq(product.id_produto, productCompany.id_produto))
-      .innerJoin(productType, eq(product.id_produto_tipo, productType.id_produto_tipo))
+      .innerJoin(
+        productCompany,
+        eq(product.id_produto, productCompany.id_produto)
+      )
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
       .where(
         and(
           eq(productCompany.id_empresa, companyId),
-          inArray(product.id_produto, productIds),
-        ),
+          inArray(product.id_produto, productIds)
+        )
       )
       .execute();
 
@@ -165,12 +180,14 @@ export class ListProductRepository {
   }
 
   private setOrderBy(sortBy?: ProductFields, sortOrder?: SortOrder) {
-    const defaultOrderBy = asc(product[ProductFieldsToOrder[ProductFields.name]]);
+    const defaultOrderBy = asc(
+      product[ProductFieldsToOrder[ProductFields.name]]
+    );
 
     if (!sortBy) {
       return defaultOrderBy;
     }
-    
+
     const fieldToOrder = ProductFieldsToOrder[sortBy];
 
     if (sortOrder === SortOrder.ASC) {

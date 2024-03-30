@@ -2,8 +2,11 @@ import { injectable } from "tsyringe";
 import { CrossSellProductRequest } from "./dtos/ListCrossSellProductRequest.dto";
 import { ProductService } from "@core/services";
 import { SignatureService } from "@core/services/signature.service";
-import { ListProductResponse } from "./dtos/ListProductResponse.dto";
-import { ProductResponse } from "./dtos/ProductResponse.dto";
+import { ListProductResponseCrossSell } from "./dtos/ListProductResponse.dto";
+import {
+  ProductResponse,
+  ProductResponseCrossSell,
+} from "./dtos/ProductResponse.dto";
 
 @injectable()
 export class ListCrossSellProductUseCase {
@@ -11,10 +14,10 @@ export class ListCrossSellProductUseCase {
     private productService: ProductService,
     private signatureService: SignatureService
   ) {}
-
+  /*  */
   async list(
     input: CrossSellProductRequest
-  ): Promise<ListProductResponse | null> {
+  ): Promise<ListProductResponseCrossSell | null> {
     const records = await this.productService.listCrossSell(input);
 
     if (!records) return null;
@@ -23,9 +26,8 @@ export class ListCrossSellProductUseCase {
       input.client_id
     );
 
-    const recordsWithDiscounts: ProductResponse[] = records.results.map(
-      (item) => this.generateDiscountValues(item)
-    );
+    const recordsWithDiscounts: ProductResponseCrossSell[] =
+      records.results.map((item) => this.generateDiscountValues(item));
 
     if (!signatures)
       return {
@@ -46,9 +48,9 @@ export class ListCrossSellProductUseCase {
     };
   }
 
-  private generateDiscountValues(item: ProductResponse) {
-    const price = +item.prices.price;
-    const price_with_discount = +item.prices.price_with_discount;
+  private generateDiscountValues(item: ProductResponseCrossSell) {
+    const price = Number(item.prices.price) || 0;
+    const price_with_discount = Number(item.prices.price_with_discount) || 0;
 
     return {
       ...item,
