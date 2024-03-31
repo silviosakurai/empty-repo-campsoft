@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import { productsAvailableSchema } from "../product/productsAvailableSchema";
+import { productsAvailableHowToAccessSchema } from "../product/productsAvailableHowToAccessSchema";
 import { pricesMonthSchema } from "../price/pricesMonthSchema";
 import { productDetailPlanProductsHowToAccessSchema } from "../product/productDetailPlanProductsHowToAccessSchema";
 
@@ -14,7 +14,7 @@ export const planDetailsWithProductsAvailableSchema = Type.Object({
   short_description: Type.Union([Type.String(), Type.Null()]),
   prices: Type.Array(pricesMonthSchema),
   products: Type.Array(productDetailPlanProductsHowToAccessSchema),
-  product_groups: Type.Array(productsAvailableSchema),
+  product_groups: Type.Array(productsAvailableHowToAccessSchema),
   created_at: Type.String({ format: "date-time" }),
   updated_at: Type.String({ format: "date-time" }),
 });

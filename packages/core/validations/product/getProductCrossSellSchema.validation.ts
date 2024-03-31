@@ -28,7 +28,7 @@ export const getProductCrossSellSchema = {
   }),
   querystring: Type.Object({
     ...pagingRequestSchema.properties,
-    plan_id: Type.Integer(),
+    plan_id: Type.Optional(Type.Integer()),
     id: Type.Optional(Type.String()),
     name: Type.Optional(Type.String()),
     description: Type.Optional(Type.String()),

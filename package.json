@@ -63,7 +63,6 @@
     "drizzle-orm": "^0.30.4",
     "fastify": "^4.26.2",
     "fastify-plugin": "^4.5.1",
-    "fluent-json-schema": "^4.2.1",
     "i18next": "^23.10.1",
     "i18next-fs-backend": "^2.3.1",
     "i18next-http-middleware": "^3.5.0",
