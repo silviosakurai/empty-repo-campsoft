@@ -19,29 +19,21 @@ export class OrderService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    try {
-      return await this.ordersListerRepository.list(
-        input,
-        tokenKeyData,
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.ordersListerRepository.list(
+      input,
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   countTotal = async (
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    try {
-      return await this.ordersListerRepository.countTotal(
-        tokenKeyData,
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.ordersListerRepository.countTotal(
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   viewOrderByNumber = async (
@@ -49,22 +41,14 @@ export class OrderService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    try {
-      return await this.orderByNumberViewerRepository.view(
-        orderNumber,
-        tokenKeyData,
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.orderByNumberViewerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   listPayment = async (orderId: string) => {
-    try {
-      return this.paymentListerRepository.list(orderId);
-    } catch (error) {
-      throw error;
-    }
+    return this.paymentListerRepository.list(orderId);
   };
 }

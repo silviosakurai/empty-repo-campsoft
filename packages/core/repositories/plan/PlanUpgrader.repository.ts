@@ -72,7 +72,14 @@ export class PlanUpgraderRepository {
     const plans =
       await this.planListerRepository.listWithoutPagination(companyId);
 
-    const actualPlan = plans.find((plan) => plan.plan_id === planId) as Plan;
+    const actualPlan = plans.find((plan) => plan.plan_id === planId);
+
+    if (!actualPlan) {
+      return {
+        plans: [],
+        planItems: [],
+      };
+    }
 
     const planItems = await this.planItemListerRepository.listByPlanId(
       actualPlan.plan_id

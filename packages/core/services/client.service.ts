@@ -38,100 +38,57 @@ export class ClientService {
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    try {
-      return await this.clientViewerRepository.view(tokenKeyData, userId);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientViewerRepository.view(tokenKeyData, userId);
   };
 
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
-    try {
-      return await this.clientByCpfEmailPhoneRepository.find(input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientByCpfEmailPhoneRepository.find(input);
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
-    try {
-      return await this.clientByEmailPhoneRepository.find(input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientByEmailPhoneRepository.find(input);
   };
 
   create = async (input: CreateClientRequestDto) => {
-    try {
-      return await this.clientCreatorRepository.create(input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientCreatorRepository.create(input);
   };
 
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
-    try {
-      return await this.clientAccessCreatorRepository.create(input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientAccessCreatorRepository.create(input);
   };
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
-    try {
-      return await this.clientUpdaterRepository.update(clientId, input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientUpdaterRepository.update(clientId, input);
   };
 
   updatePhone = async (
     clientId: string,
     input: UpdatePhoneClientRequestDto
   ) => {
-    try {
-      return await this.clientPhoneUpdaterRepository.update(clientId, input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientPhoneUpdaterRepository.update(clientId, input);
   };
 
   updatePassword = async (tokenTfaData: ITokenTfaData, newPass: string) => {
-    try {
-      return await this.clientPasswordUpdaterRepository.update(
-        tokenTfaData,
-        newPass
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientPasswordUpdaterRepository.update(
+      tokenTfaData,
+      newPass
+    );
   };
 
   passwordRecoveryMethods = async (
     tokenKeyData: ITokenKeyData,
     login: string
   ) => {
-    try {
-      return await this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
-        tokenKeyData,
-        login
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
+      tokenKeyData,
+      login
+    );
   };
 
   delete = async (
     tokenJwtData: ITokenJwtData,
     userFounded: ViewClientResponse
   ) => {
-    try {
-      return await this.clientEraserRepository.delete(
-        tokenJwtData,
-        userFounded
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.clientEraserRepository.delete(tokenJwtData, userFounded);
   };
 }

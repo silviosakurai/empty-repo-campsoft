@@ -16,15 +16,11 @@ export class AuthService {
     login: string,
     password: string
   ) => {
-    try {
-      return await this.authRepository.authenticate(
-        tokenKeyData,
-        login,
-        password
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.authRepository.authenticate(
+      tokenKeyData,
+      login,
+      password
+    );
   };
 
   authenticateByClientId = async (
@@ -32,29 +28,21 @@ export class AuthService {
     clientId: string,
     password: string
   ) => {
-    try {
-      return await this.authRepository.authenticateByClientId(
-        tokenKeyData,
-        clientId,
-        password
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.authRepository.authenticateByClientId(
+      tokenKeyData,
+      clientId,
+      password
+    );
   };
 
   authenticateByMagicToken = async (
     tokenKeyData: ITokenKeyData,
     magicToken: string
   ) => {
-    try {
-      return await this.authRepository.authenticateByMagicToken(
-        tokenKeyData,
-        magicToken
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.authRepository.authenticateByMagicToken(
+      tokenKeyData,
+      magicToken
+    );
   };
 
   async generateAndVerifyMagicToken(): Promise<string> {
