@@ -20,34 +20,30 @@ export class WhatsAppTFASenderUserCase {
     type,
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
-    try {
-      const code = await this.tfaService.generateAndVerifyToken();
-      const { template, templateId } = await this.getTemplateWhatsapp(
-        tokenKeyData,
-        code
+    const code = await this.tfaService.generateAndVerifyToken();
+    const { template, templateId } = await this.getTemplateWhatsapp(
+      tokenKeyData,
+      code
+    );
+
+    const payload = {
+      target_phone: loginUserTFA.login,
+      message: template,
+    } as IWhatsappServiceInput;
+
+    const sendWA = await this.whatsappService.send(payload);
+
+    if (sendWA) {
+      await this.tfaService.insertWhatsAppHistory(
+        templateId,
+        loginUserTFA,
+        sendWA
       );
-
-      const payload = {
-        target_phone: loginUserTFA.login,
-        message: template,
-      } as IWhatsappServiceInput;
-
-      const sendWA = await this.whatsappService.send(payload);
-
-      if (sendWA) {
-        await this.tfaService.insertWhatsAppHistory(
-          templateId,
-          loginUserTFA,
-          sendWA
-        );
-      }
-
-      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
-
-      return true;
-    } catch (error) {
-      throw error;
     }
+
+    await this.tfaService.insertCodeUser(type, loginUserTFA, code);
+
+    return true;
   }
 
   async getTemplateWhatsapp(

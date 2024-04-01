@@ -13,19 +13,11 @@ export class PlanService {
   ) {}
 
   list = async (companyId: number, query: ListPlanRequest) => {
-    try {
-      return await this.planListerRepository.list(companyId, query);
-    } catch (error) {
-      throw error;
-    }
+    return await this.planListerRepository.list(companyId, query);
   };
 
   view = async (companyId: number, planId: number) => {
-    try {
-      return await this.planViewerRepository.get(companyId, planId);
-    } catch (error) {
-      throw error;
-    }
+    return await this.planViewerRepository.get(companyId, planId);
   };
 
   upgrade = async (
@@ -33,14 +25,10 @@ export class PlanService {
     clientId: string,
     productIds: string[]
   ) => {
-    try {
-      return await this.planUpgraderRepository.get(
-        companyId,
-        clientId,
-        productIds
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.planUpgraderRepository.get(
+      companyId,
+      clientId,
+      productIds
+    );
   };
 }

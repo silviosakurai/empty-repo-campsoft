@@ -14,33 +14,29 @@ export class VoucherViewerUseCase {
     tokenKeyData: ITokenKeyData,
     voucher: string
   ): Promise<VoucherViewRequestDto> => {
-    try {
-      const isEligibility = await this.voucherService.verifyEligibilityUser(
+    const isEligibility = await this.voucherService.verifyEligibilityUser(
+      tokenKeyData,
+      voucher
+    );
+
+    if (!isEligibility) {
+      throw new VoucherError(t("voucher_not_eligible"));
+    }
+
+    const [listProductsUserResult, listPlansUserResult] = await Promise.all([
+      this.voucherService.listVoucherEligibleProductsNotSignatureUser(
         tokenKeyData,
         voucher
-      );
+      ),
+      this.voucherService.listVoucherEligiblePlansNotSignatureUser(
+        tokenKeyData,
+        voucher
+      ),
+    ]);
 
-      if (!isEligibility) {
-        throw new VoucherError(t("voucher_not_eligible"));
-      }
-
-      const [listProductsUserResult, listPlansUserResult] = await Promise.all([
-        this.voucherService.listVoucherEligibleProductsNotSignatureUser(
-          tokenKeyData,
-          voucher
-        ),
-        this.voucherService.listVoucherEligiblePlansNotSignatureUser(
-          tokenKeyData,
-          voucher
-        ),
-      ]);
-
-      return {
-        products: listProductsUserResult,
-        plans: listPlansUserResult,
-      } as VoucherViewRequestDto;
-    } catch (error) {
-      throw error;
-    }
+    return {
+      products: listProductsUserResult,
+      plans: listPlansUserResult,
+    } as VoucherViewRequestDto;
   };
 }

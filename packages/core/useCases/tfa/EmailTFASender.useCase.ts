@@ -20,35 +20,31 @@ export class EmailTFASenderUserCase {
     type,
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
-    try {
-      const code = await this.tfaService.generateAndVerifyToken();
-      const { template, templateId, subject, sender } =
-        await this.getTemplateEmail(tokenKeyData, code);
+    const code = await this.tfaService.generateAndVerifyToken();
+    const { template, templateId, subject, sender } =
+      await this.getTemplateEmail(tokenKeyData, code);
 
-      const payload = {
-        html: template,
-        subject: subject,
-        to: loginUserTFA.login,
-        from: sender,
-      } as IEmailSendService;
+    const payload = {
+      html: template,
+      subject: subject,
+      to: loginUserTFA.login,
+      from: sender,
+    } as IEmailSendService;
 
-      const sendEmail = await this.emailService.send(payload);
+    const sendEmail = await this.emailService.send(payload);
 
-      if (sendEmail) {
-        await this.tfaService.insertEmailHistory(
-          templateId,
-          loginUserTFA,
-          sender,
-          sendEmail
-        );
-      }
-
-      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
-
-      return true;
-    } catch (error) {
-      throw error;
+    if (sendEmail) {
+      await this.tfaService.insertEmailHistory(
+        templateId,
+        loginUserTFA,
+        sender,
+        sendEmail
+      );
     }
+
+    await this.tfaService.insertCodeUser(type, loginUserTFA, code);
+
+    return true;
   }
 
   async getTemplateEmail(

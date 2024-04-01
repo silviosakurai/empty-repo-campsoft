@@ -1,5 +1,4 @@
-import { boolean } from 'drizzle-orm/mysql-core';
-import { IHeaderTransactionRequest } from './IHeaderTransactionRequest';
+import { IHeaderTransactionRequest } from "./IHeaderTransactionRequest";
 
 export interface ITransactionCardRequest extends IHeaderTransactionRequest {
   cardNumber: string;

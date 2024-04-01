@@ -20,34 +20,26 @@ export class SmsTFAUserSenderCase {
     type,
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
-    try {
-      const code = await this.tfaService.generateAndVerifyToken();
-      const { template, templateId } = await this.getTemplateSMS(
-        tokenKeyData,
-        code
-      );
+    const code = await this.tfaService.generateAndVerifyToken();
+    const { template, templateId } = await this.getTemplateSMS(
+      tokenKeyData,
+      code
+    );
 
-      const payload = {
-        phone: loginUserTFA.login,
-        message: template,
-      } as ISmsServiceSendInput;
+    const payload = {
+      phone: loginUserTFA.login,
+      message: template,
+    } as ISmsServiceSendInput;
 
-      const sendSms = await this.smsService.send(payload);
+    const sendSms = await this.smsService.send(payload);
 
-      if (sendSms) {
-        await this.tfaService.insertSmsHistory(
-          templateId,
-          loginUserTFA,
-          sendSms
-        );
-      }
-
-      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
-
-      return true;
-    } catch (error) {
-      throw error;
+    if (sendSms) {
+      await this.tfaService.insertSmsHistory(templateId, loginUserTFA, sendSms);
     }
+
+    await this.tfaService.insertCodeUser(type, loginUserTFA, code);
+
+    return true;
   }
 
   async getTemplateSMS(

@@ -14,26 +14,14 @@ export class ProductService {
   ) {}
 
   list = async (companyId: number, query: ListProductRequest) => {
-    try {
-      return await this.productListerRepository.list(companyId, query);
-    } catch (error) {
-      throw error;
-    }
+    return await this.productListerRepository.list(companyId, query);
   };
 
   view = async (companyId: number, sku: string) => {
-    try {
-      return await this.productViewerRepository.get(companyId, sku);
-    } catch (error) {
-      throw error;
-    }
+    return await this.productViewerRepository.get(companyId, sku);
   };
 
   listCrossSell = async (input: CrossSellProductRequest) => {
-    try {
-      return await this.crossSellProductListerRepository.list(input);
-    } catch (error) {
-      throw error;
-    }
+    return await this.crossSellProductListerRepository.list(input);
   };
 }

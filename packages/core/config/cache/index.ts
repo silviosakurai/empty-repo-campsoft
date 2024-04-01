@@ -3,18 +3,10 @@ import { cacheEnvironment } from "@core/config/environments";
 import fp from "fastify-plugin";
 import FastifyRedis from "@fastify/redis";
 import FastifyCaching from "@fastify/caching";
-
-interface config {
-  host: string;
-  port: number;
-  password?: string;
-  connectTimeout: number;
-  lazyConnect: boolean;
-  keepAlive: number;
-}
+import { IConfigRedis } from "@core/common/interfaces/IConfigRedis";
 
 async function cacheRedisConnection(fastify: FastifyInstance) {
-  let config: config = {
+  let config: IConfigRedis = {
     host: cacheEnvironment.cacheHost,
     port: cacheEnvironment.cachePort,
     connectTimeout: 10000,

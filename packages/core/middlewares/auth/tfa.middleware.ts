@@ -90,9 +90,7 @@ function checkClientIdsAndAuthorize(
 ): boolean {
   if (
     tokenTfaData.clientId &&
-    tokenJwtData &&
-    tokenJwtData.clientId &&
-    tokenTfaData.clientId !== tokenJwtData.clientId
+    tokenTfaData.clientId !== tokenJwtData?.clientId
   ) {
     return true;
   }

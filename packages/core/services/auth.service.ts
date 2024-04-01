@@ -1,4 +1,4 @@
-import { generateRandomHashChars } from "@core/common/functions/generateRandomHashChars";
+import { generateRandomString } from "@core/common/functions/generateRandomString";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AuthRepository } from "@core/repositories/client/Auth.repository";
 import { ClientMagicTokenRepository } from "@core/repositories/client/ClientMagicToken.repository";
@@ -16,15 +16,11 @@ export class AuthService {
     login: string,
     password: string
   ) => {
-    try {
-      return await this.authRepository.authenticate(
-        tokenKeyData,
-        login,
-        password
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.authRepository.authenticate(
+      tokenKeyData,
+      login,
+      password
+    );
   };
 
   authenticateByClientId = async (
@@ -32,29 +28,21 @@ export class AuthService {
     clientId: string,
     password: string
   ) => {
-    try {
-      return await this.authRepository.authenticateByClientId(
-        tokenKeyData,
-        clientId,
-        password
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.authRepository.authenticateByClientId(
+      tokenKeyData,
+      clientId,
+      password
+    );
   };
 
   authenticateByMagicToken = async (
     tokenKeyData: ITokenKeyData,
     magicToken: string
   ) => {
-    try {
-      return await this.authRepository.authenticateByMagicToken(
-        tokenKeyData,
-        magicToken
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.authRepository.authenticateByMagicToken(
+      tokenKeyData,
+      magicToken
+    );
   };
 
   async generateAndVerifyMagicToken(): Promise<string> {
@@ -62,7 +50,7 @@ export class AuthService {
     let isUnique = false;
 
     do {
-      token = generateRandomHashChars();
+      token = generateRandomString();
 
       isUnique = await this.clientMagicTokenRepository.magicTokenIsUsed(token);
     } while (!isUnique);

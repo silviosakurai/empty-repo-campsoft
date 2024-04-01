@@ -8,10 +8,6 @@ export class SignatureService {
   ) {}
 
   findByClientId = async (client_id: string) => {
-    try {
-      return await this.signatureViewerByClientId.find(client_id);
-    } catch (error) {
-      throw error;
-    }
+    return await this.signatureViewerByClientId.find(client_id);
   };
 }

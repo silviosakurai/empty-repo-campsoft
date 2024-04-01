@@ -15,7 +15,7 @@ export const errorHook = (
   error: FastifyError,
   done: HookHandlerDoneFunction
 ) => {
-  if (request.raw && request.raw.url && request.raw.url.startsWith("/docs")) {
+  if (request.raw?.url?.startsWith("/docs")) {
     return done();
   }
 
