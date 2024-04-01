@@ -16,9 +16,11 @@
     "lint": "turbo run lint",
     "lint:partner": "turbo run lint --filter=partner",
     "lint:public": "turbo run lint --filter=public",
+    "lint:core": "turbo run lint --filter=core",
     "sonar": "turbo run sonar",
     "sonar:partner": "turbo run sonar --filter=partner",
     "sonar:public": "turbo run sonar --filter=public",
+    "sonar:core": "turbo run sonar --filter=core",
     "prepare": "[ \"$NODE_ENV\" != 'production' ] && husky install || echo 'In production'",
     "docker:public": "docker build -f apps/public_api/Dockerfile -t mania-public .",
     "docker:partner": "docker build -f apps/partner_api/Dockerfile -t mania-partner ."

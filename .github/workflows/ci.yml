@@ -70,10 +70,22 @@ jobs:
 
       - name: Check Quality Gate (Public)
         run: |
-          ENCODED_TOKEN=$(echo -n 'sqp_95245917aa19a69fc343dc5f854d846e9c13a4db:' | base64)
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
+
+      - name: Check Maintainability (Public)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=sqale_index" | jq -r '.component.measures[0].value')
+          echo "Technical Debt: $response minutes"
+          if [ "$response" != "0" ]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
 
       - name: SonarQube Scan (Partner)
         uses: SonarSource/sonarqube-scan-action@master
@@ -91,10 +103,22 @@ jobs:
 
       - name: Check Quality Gate (Partner)
         run: |
-          ENCODED_TOKEN=$(echo -n 'sqp_3444075491e5fb1d429c67e368f4a85298c8268a:' | base64)
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
+
+      - name: Check Maintainability (Partner)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=sqale_index" | jq -r '.component.measures[0].value')
+          echo "Technical Debt: $response minutes"
+          if [ "$response" != "0" ]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
@@ -118,7 +142,19 @@ jobs:
 
       - name: Check Quality Gate (Core)
         run: |
-          ENCODED_TOKEN=$(echo -n 'sqp_3615eb40bceddd7dbce5837431b24d71e0497475:' | base64)
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
+
+      - name: Check Maintainability (Core)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=sqale_index" | jq -r '.component.measures[0].value')
+          echo "Technical Debt: $response minutes"
+          if [ "$response" != "0" ]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
