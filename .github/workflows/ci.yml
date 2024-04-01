@@ -47,16 +47,10 @@ jobs:
       - name: SonarQube Scan (Public)
         uses: SonarSource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: "sqp_95245917aa19a69fc343dc5f854d846e9c13a4db"
-          SONAR_HOST_URL: "http://data.tocalivros.com:9000/"
+          SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
         with:
-          args: >
-            -Dsonar.projectKey="mania-public"
-            -Dsonar.projectName="Mania de APP (Public API)"
-            -Dsonar.projectVersion="1.0"
-            -Dsonar.sources="src"
-            -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"
-            -Dsonar.typescript.lcov.reportPaths="coverage/lcov.info"
+          args: -Dsonar.projectKey=mania-public -Dsonar.projectName="Mania de APP (Public API)" -Dsonar.projectVersion=1.0 -Dsonar.sources=src -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
