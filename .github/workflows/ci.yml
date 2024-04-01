@@ -100,10 +100,10 @@ jobs:
             -D"sonar.coverage.exclusions=**"
             -D"sonar.cpd.exclusions=**"
 
-      - name: Wait for 10 seconds
+      - name: Wait for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: "10s"
+          time: "30s"
 
       - name: Check Quality Gate (Public)
         run: |
