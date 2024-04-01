@@ -5,11 +5,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ApiService {
-  private apiRepository: ApiRepository;
-
-  constructor(apiRepository: ApiRepository) {
-    this.apiRepository = apiRepository;
-  }
+  constructor(private readonly apiRepository: ApiRepository) {}
 
   findApiByKey = async (
     keyApi: string,

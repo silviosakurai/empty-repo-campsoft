@@ -10,11 +10,7 @@ import { LoggerService } from "@core/services/logger.service";
 
 @injectable()
 export class WhatsappService implements IWhatsappService {
-  private logger: LoggerService;
-
-  constructor(logger: LoggerService) {
-    this.logger = logger;
-  }
+  constructor(private readonly logger: LoggerService) {}
 
   async send(input: IWhatsappServiceInput): Promise<MessageInstance> {
     const client = await this.connection();

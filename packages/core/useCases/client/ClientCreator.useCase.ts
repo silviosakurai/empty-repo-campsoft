@@ -12,13 +12,10 @@ import { CreateClientResponse } from "@core/useCases/client/dtos/CreateClientRes
 
 @injectable()
 export class ClientCreatorUseCase {
-  private clientService: ClientService;
-  private accessService: AccessService;
-
-  constructor(clientService: ClientService, accessService: AccessService) {
-    this.clientService = clientService;
-    this.accessService = accessService;
-  }
+  constructor(
+    private readonly clientService: ClientService,
+    private readonly accessService: AccessService
+  ) {}
 
   async create(
     companyId: number,
@@ -89,7 +86,7 @@ export class ClientCreatorUseCase {
   }
 
   private async confirmIfRegisteredPreviously(input: IUserExistsFunction) {
-    const response = await this.clientService.readClientByCpfEmailPhone(input);
+    const response = await this.clientService.listClientByCpfEmailPhone(input);
 
     if (response) return true;
 
