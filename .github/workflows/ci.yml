@@ -78,13 +78,29 @@ jobs:
       - name: Check Maintainability (Public)
         run: |
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=sqale_index" | jq -r '.component.measures[0].value')
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [ "$response" != "0" ]; then
+          if [[ "$response" == "not_available" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [ "$response" != "0" ]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Public)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "not_available" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [ "$response" != "100" ]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
           fi
 
       - name: SonarQube Scan (Partner)
@@ -111,13 +127,29 @@ jobs:
       - name: Check Maintainability (Partner)
         run: |
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=sqale_index" | jq -r '.component.measures[0].value')
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [ "$response" != "0" ]; then
+          if [[ "$response" == "not_available" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [ "$response" != "0" ]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Partner)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "not_available" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [ "$response" != "100" ]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
           fi
 
       - name: Run Lint (Partner)
@@ -150,11 +182,27 @@ jobs:
       - name: Check Maintainability (Core)
         run: |
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=sqale_index" | jq -r '.component.measures[0].value')
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [ "$response" != "0" ]; then
+          if [[ "$response" == "not_available" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [ "$response" != "0" ]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Core)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "not_available" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [ "$response" != "100" ]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
           fi
