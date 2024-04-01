@@ -14,6 +14,9 @@ export class GeneralEnvironment {
   private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
   private readonly BASE_URL_CAMPSOFT_API: string | undefined;
   private readonly API_KEY_CAMPSOFT: string | undefined;
+  private readonly ZOOP_BASE_URL: string | undefined;
+  private readonly ZOOP_API_KEY: string | undefined;
+  private readonly ZOOP_MARKETPLACE_KEY: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
@@ -24,6 +27,9 @@ export class GeneralEnvironment {
     this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
     this.API_KEY_CAMPSOFT = process.env.API_KEY_CAMPSOFT;
     this.BASE_URL_CAMPSOFT_API = process.env.BASE_URL_CAMPSOFT_API;
+    this.ZOOP_BASE_URL = process.env.ZOOP_BASE_URL;
+    this.ZOOP_API_KEY = process.env.ZOOP_API_KEY;
+    this.ZOOP_MARKETPLACE_KEY = process.env.ZOOP_MARKETPLACE_KEY;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -93,5 +99,35 @@ export class GeneralEnvironment {
     }
 
     return this.BASE_URL_CAMPSOFT_API;
+  }
+
+  public get zoopBaseUrl(): string {
+    if (!this.ZOOP_BASE_URL) {
+      throw new InvalidConfigurationError(
+        "ZOOP_BASE_URL is not defined."
+      );
+    }
+
+    return this.ZOOP_BASE_URL;
+  }
+
+  public get zoopApiKey(): string {
+    if (!this.ZOOP_API_KEY) {
+      throw new InvalidConfigurationError(
+        "ZOOP_API_KEY is not defined."
+      );
+    }
+
+    return this.ZOOP_API_KEY;
+  }
+
+  public get zoopMarketPlace(): string {
+    if (!this.ZOOP_MARKETPLACE_KEY) {
+      throw new InvalidConfigurationError(
+        "ZOOP_MARKETPLACE_KEY is not defined."
+      );
+    }
+
+    return this.ZOOP_MARKETPLACE_KEY;
   }
 }
