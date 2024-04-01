@@ -50,7 +50,7 @@ jobs:
       - name: Run Build (Partner)
         run: pnpm run build:partner
 
-      - name: SonarQube Scan
+      - name: SonarQube Scan (Public)
         uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
