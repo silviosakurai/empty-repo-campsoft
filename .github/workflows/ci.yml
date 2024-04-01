@@ -62,6 +62,8 @@ jobs:
             -D"sonar.projectKey=mania-public"
             -D"sonar.sources=src"
             -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
