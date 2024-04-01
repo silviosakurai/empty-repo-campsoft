@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: read-all
     strategy:
       matrix:
         node-version: ["20.11.1"]
@@ -56,9 +57,9 @@ jobs:
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
         with:
           args: >
-            -Dsonar.projectKey=mania-public
-            -Dsonar.projectName="Mania de APP (Public API)"
-            -Dsonar.projectVersion=1.0
-            -Dsonar.sources=src
-            -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.projectKey='mania-public' 
+            -Dsonar.projectName='Mania de APP (Public API)' 
+            -Dsonar.projectVersion='1.0' 
+            -Dsonar.sources='src' 
+            -Dsonar.exclusions='**/node_modules/**,**/*.spec.ts' 
+            -Dsonar.typescript.lcov.reportPaths='coverage/lcov.info'
