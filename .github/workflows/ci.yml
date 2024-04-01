@@ -70,14 +70,9 @@ jobs:
 
       - name: Check Quality Gate (Public)
         run: |
-          response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public&token=sqp_95245917aa19a69fc343dc5f854d846e9c13a4db")
-          echo "API Response: $response"
-          status=$(echo "$response" | jq -r '.projectStatus.status')
+          status=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public&token=sqp_95245917aa19a69fc343dc5f854d846e9c13a4db" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
-          if [ "$status" != "OK" ]; then
-            echo "Quality Gate failed."
-            exit 1
-          fi
+          [[ "$status" == "OK" ]] || exit 1
 
       - name: SonarQube Scan (Partner)
         uses: SonarSource/sonarqube-scan-action@master
@@ -95,13 +90,9 @@ jobs:
 
       - name: Check Quality Gate (Partner)
         run: |
-          response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner&token=sqp_3444075491e5fb1d429c67e368f4a85298c8268a")
-          status=$(echo "$response" | jq -r '.projectStatus.status')
+          status=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner&token=sqp_3444075491e5fb1d429c67e368f4a85298c8268a" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
-          if [ "$status" != "OK" ]; then
-            echo "Quality Gate failed."
-            exit 1
-          fi
+          [[ "$status" == "OK" ]] || exit 1
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
@@ -125,10 +116,6 @@ jobs:
 
       - name: Check Quality Gate (Core)
         run: |
-          response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core&token=sqp_3615eb40bceddd7dbce5837431b24d71e0497475")
-          status=$(echo "$response" | jq -r '.projectStatus.status')
+          status=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core&token=sqp_3615eb40bceddd7dbce5837431b24d71e0497475" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
-          if [ "$status" != "OK" ]; then
-            echo "Quality Gate failed."
-            exit 1
-          fi
+          [[ "$status" == "OK" ]] || exit 1
