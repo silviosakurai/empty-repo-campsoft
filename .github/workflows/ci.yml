@@ -5,7 +5,7 @@ on:
     branches: [dev, main]
 
 env:
-  SHARED_USER_TOKEN: sqp_23a970a10d0dddff6d8e7ceb28788f780149a2be
+  SHARED_USER_TOKEN: squ_23a970a10d0dddff6d8e7ceb28788f780149a2be
   SONAR_HOST_URL: http://data.tocalivros.com:9000/
   SONAR_TOKEN_PUBLIC: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
   SONAR_TOKEN_PARTNER: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
