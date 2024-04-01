@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["20.11.1"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Run Lint (Public)
+        run: pnpm run lint:public
+
+      - name: Run Build (Public)
+        run: pnpm run build:public
+
+      - name: Run Lint (Partner)
+        run: pnpm run lint:partner
+
+      - name: Run Build (Partner)
+        run: pnpm run build:partner
