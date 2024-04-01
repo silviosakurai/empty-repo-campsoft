@@ -49,14 +49,15 @@ jobs:
         env:
           SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        projectBaseDir: apps/public_api/src
         with:
           args: >
-            -D sonar.projectKey="mania-public"
-            -D sonar.projectName="Mania de APP (Public API)"
-            -D sonar.projectVersion="1.0"
-            -D sonar.sources="src"
-            -D sonar.exclusions="**/node_modules/**,**/*.spec.ts"
-            -D sonar.typescript.lcov.reportPaths="coverage/lcov.info"
+            -Dsonar.projectKey="mania-public"
+            -Dsonar.projectName="Mania de APP (Public API)"
+            -Dsonar.projectVersion="1.0"
+            -Dsonar.sources="src"
+            -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"
+            -Dsonar.typescript.lcov.reportPaths="coverage/lcov.info"
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
