@@ -80,7 +80,7 @@ jobs:
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "not_available" ]]; then
+          if [[ "$response" == "\"not_available"\" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
@@ -94,7 +94,7 @@ jobs:
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "not_available" ]]; then
+          if [[ "$response" == "\"not_available"\" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
@@ -129,7 +129,7 @@ jobs:
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "not_available" ]]; then
+          if [[ "$response" == "\"not_available"\" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
@@ -143,7 +143,7 @@ jobs:
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "not_available" ]]; then
+          if [[ "$response" == "\"not_available"\" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
@@ -184,7 +184,7 @@ jobs:
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "not_available" ]]; then
+          if [[ "$response" == "\"not_available"\" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
@@ -198,7 +198,7 @@ jobs:
           ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "not_available" ]]; then
+          if [[ "$response" == "\"not_available"\" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
