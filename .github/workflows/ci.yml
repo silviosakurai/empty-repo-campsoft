@@ -52,12 +52,13 @@ jobs:
         with:
           projectBaseDir: apps/public_api/src
           args: >
-            -Dsonar.projectKey="mania-public"
+            -X
+            -Dsonar.projectKey=mania-public
             -Dsonar.projectName="Mania de APP (Public API)"
-            -Dsonar.projectVersion="1.0"
-            -Dsonar.sources="src"
-            -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"
-            -Dsonar.typescript.lcov.reportPaths="coverage/lcov.info"
+            -Dsonar.projectVersion=1.0
+            -Dsonar.sources=src
+            -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
