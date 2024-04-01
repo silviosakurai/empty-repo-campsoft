@@ -5,12 +5,8 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
-export class ListPaymentUseCase {
-  private orderService: OrderService;
-
-  constructor(orderService: OrderService) {
-    this.orderService = orderService;
-  }
+export class PaymentListerUseCase {
+  constructor(private readonly orderService: OrderService) {}
 
   async execute(
     orderNumber: string,

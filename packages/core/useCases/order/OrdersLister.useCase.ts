@@ -7,12 +7,8 @@ import { IPaginationResponse } from "@core/common/interfaces/IPaginationResponse
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 
 @injectable()
-export class ListOrdersUseCase {
-  private orderService: OrderService;
-
-  constructor(orderService: OrderService) {
-    this.orderService = orderService;
-  }
+export class OrdersListerUseCase {
+  constructor(private readonly orderService: OrderService) {}
 
   async execute(
     input: ListOrderRequestDto,

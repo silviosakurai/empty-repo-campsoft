@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ViewProductUseCase } from '@core/useCases/product/ViewProduct.useCase';
+import { ProductViewerUseCase } from '@core/useCases/product/ProductViewer.useCase';
 import { container } from 'tsyringe';
 import { ViewProductRequest } from '@core/useCases/product/dtos/ViewProductRequest.dto';
 
@@ -11,7 +11,7 @@ export const viewProduct = async (
   }>,
   reply: FastifyReply
 ) => {
-  const viewProductUseCase = container.resolve(ViewProductUseCase);
+  const viewProductUseCase = container.resolve(ProductViewerUseCase);
   const { t, tokenKeyData } = request;
 
   try {

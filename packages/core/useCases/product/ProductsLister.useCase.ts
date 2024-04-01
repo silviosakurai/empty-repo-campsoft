@@ -4,12 +4,8 @@ import { ListProductRequest } from "@core/useCases/product/dtos/ListProductReque
 import { ListProductResponse } from "./dtos/ListProductResponse.dto";
 
 @injectable()
-export class ListProductUseCase {
-  private productService: ProductService;
-
-  constructor(productService: ProductService) {
-    this.productService = productService;
-  }
+export class ProductsListerUseCase {
+  constructor(private readonly productService: ProductService) {}
 
   async execute(
     companyId: number,

@@ -3,12 +3,8 @@ import { injectable } from "tsyringe";
 import { ListPlanRequest } from "./dtos/ListPlanRequest.dto";
 
 @injectable()
-export class ListPlanUseCase {
-  private planService: PlanService;
-
-  constructor(planService: PlanService) {
-    this.planService = planService;
-  }
+export class PlansListerUseCase {
+  constructor(private readonly planService: PlanService) {}
 
   async execute(
     companyId: number,

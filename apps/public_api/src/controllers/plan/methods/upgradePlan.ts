@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { UpgradeUseCase } from '@core/useCases/plan/UpgradePlan.useCase';
+import { PlanUpgraderUseCase } from '@core/useCases/plan/PlanUpgrader.useCase';
 import { container } from 'tsyringe';
 import { UpgradePlanRequest } from '@core/useCases/plan/dtos/UpgradePlanRequest.dto';
 
@@ -11,7 +11,7 @@ export const upgradePlan = async (
   }>,
   reply: FastifyReply
 ) => {
-  const upgradePlanUseCase = container.resolve(UpgradeUseCase);
+  const upgradePlanUseCase = container.resolve(PlanUpgraderUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
 
   const productIds = request.query.products

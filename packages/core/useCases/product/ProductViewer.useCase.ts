@@ -3,12 +3,8 @@ import { injectable } from "tsyringe";
 import { ProductResponse } from "./dtos/ProductResponse.dto";
 
 @injectable()
-export class ViewProductUseCase {
-  private productService: ProductService;
-
-  constructor(productService: ProductService) {
-    this.productService = productService;
-  }
+export class ProductViewerUseCase {
+  constructor(private readonly productService: ProductService) {}
 
   async execute(
     companyId: number,

@@ -3,12 +3,8 @@ import { injectable } from "tsyringe";
 import { Plan } from "@core/common/enums/models/plan";
 
 @injectable()
-export class ViewPlanUseCase {
-  private planService: PlanService;
-
-  constructor(planService: PlanService) {
-    this.planService = planService;
-  }
+export class PlanViewerUseCase {
+  constructor(private readonly planService: PlanService) {}
 
   async execute(companyId: number, planId: number): Promise<Plan | null> {
     return await this.planService.view(companyId, planId);

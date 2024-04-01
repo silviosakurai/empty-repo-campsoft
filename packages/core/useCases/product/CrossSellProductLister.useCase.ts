@@ -6,10 +6,10 @@ import { ListProductResponse } from "./dtos/ListProductResponse.dto";
 import { ProductResponse } from "./dtos/ProductResponse.dto";
 
 @injectable()
-export class ListCrossSellProductUseCase {
+export class CrossSellProductListerUseCase {
   constructor(
-    private productService: ProductService,
-    private signatureService: SignatureService
+    private readonly productService: ProductService,
+    private readonly signatureService: SignatureService
   ) {}
 
   async list(

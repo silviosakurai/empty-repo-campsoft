@@ -3,12 +3,8 @@ import { injectable } from "tsyringe";
 import { Plan, PlanItem } from "@core/common/enums/models/plan";
 
 @injectable()
-export class UpgradeUseCase {
-  private planService: PlanService;
-
-  constructor(planService: PlanService) {
-    this.planService = planService;
-  }
+export class PlanUpgraderUseCase {
+  constructor(private readonly planService: PlanService) {}
 
   async execute(
     companyId: number,
