@@ -20,11 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          include:
-            - branch: dev
-              sonar_token: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
-            - branch: main
-              sonar_token: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
 
       - name: Cache pnpm modules
         uses: actions/cache@v4
@@ -57,7 +52,7 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: ${{ matrix.sonar_token }}
+          SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
         with:
           args: >
