@@ -1,4 +1,4 @@
-name: Test Lint and Build
+name: Test Application
 
 on:
   pull_request:
@@ -48,3 +48,15 @@ jobs:
 
       - name: Run Build (Partner)
         run: pnpm run build:partner
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        with:
+          host: http://data.tocalivros.com:9000/
+          login: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
+          projectKey: mania-public
+          projectName: "Mania de APP (Public API)"
+          projectVersion: 1.0
+          sources: src
+          exclusions: "**/node_modules/**,**/*.spec.ts"
+          coverageReportPaths: coverage/lcov.info
