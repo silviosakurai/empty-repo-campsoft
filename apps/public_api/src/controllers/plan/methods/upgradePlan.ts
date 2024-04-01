@@ -11,7 +11,7 @@ export const upgradePlan = async (
   }>,
   reply: FastifyReply
 ) => {
-  const upgradePlanUseCase = container.resolve(PlanUpgraderUseCase);
+  const planUpgraderUseCase = container.resolve(PlanUpgraderUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
 
   const productIds = request.query.products
@@ -19,7 +19,7 @@ export const upgradePlan = async (
     : [];
 
   try {
-    const response = await upgradePlanUseCase.execute(
+    const response = await planUpgraderUseCase.execute(
       tokenKeyData.company_id,
       tokenJwtData.clientId,
       productIds

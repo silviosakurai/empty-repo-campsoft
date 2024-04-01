@@ -11,12 +11,12 @@ export const listPayment = async (
   }>,
   reply: FastifyReply
 ) => {
-  const listPaymentUseCase = container.resolve(PaymentListerUseCase);
+  const paymentListerUseCase = container.resolve(PaymentListerUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
   const { orderNumber } = request.params;
 
   try {
-    const response = await listPaymentUseCase.execute(
+    const response = await paymentListerUseCase.execute(
       orderNumber,
       tokenKeyData,
       tokenJwtData

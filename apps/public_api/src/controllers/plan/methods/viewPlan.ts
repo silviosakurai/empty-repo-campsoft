@@ -11,11 +11,11 @@ export const viewPlan = async (
   }>,
   reply: FastifyReply
 ) => {
-  const viewPlanUseCase = container.resolve(PlanViewerUseCase);
+  const planViewerUseCase = container.resolve(PlanViewerUseCase);
   const { t, tokenKeyData } = request;
 
   try {
-    const response = await viewPlanUseCase.execute(
+    const response = await planViewerUseCase.execute(
       tokenKeyData.company_id,
       request.params.planId
     );

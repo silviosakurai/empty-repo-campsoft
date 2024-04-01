@@ -14,10 +14,10 @@ export const viewVoucher = async (
 ) => {
   const { t, tokenKeyData } = request;
   const { voucherCode } = request.params;
-  const voucherViewUseCase = container.resolve(VoucherViewerUseCase);
+  const voucherViewerUseCase = container.resolve(VoucherViewerUseCase);
 
   try {
-    const response = await voucherViewUseCase.view(
+    const response = await voucherViewerUseCase.view(
       t,
       tokenKeyData,
       voucherCode
