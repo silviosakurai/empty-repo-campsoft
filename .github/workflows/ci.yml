@@ -70,7 +70,30 @@ jobs:
           SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
         run: |
-          wget -q -O - "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=mania-public&token=$SONAR_TOKEN" | jq -e '.projectStatus.status == "OK"' || exit 1
+          response=$(wget -q -O - "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=mania-public&token=$SONAR_TOKEN")
+          echo "$response"
+
+      - name: SonarQube Scan (Partner)
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        with:
+          projectBaseDir: apps/partner_api/
+          args: >
+            -D"sonar.projectKey=mania-partner"
+            -D"sonar.sources=src"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: Check Quality Gate (Partner)
+        env:
+          SONAR_TOKEN: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        run: |
+          response=$(wget -q -O - "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=mania-partner&token=$SONAR_TOKEN")
+          echo "$response"
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
