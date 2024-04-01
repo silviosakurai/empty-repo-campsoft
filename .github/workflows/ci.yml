@@ -57,9 +57,13 @@ jobs:
           SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
         with:
-          projectBaseDir: apps/public_api/src
+          projectBaseDir: apps/public_api/
           args: >
             -D"sonar.projectKey=mania-public"
+            -D"sonar.projectName=Mania de APP (Public API)"
+            -D"sonar.projectVersion=1.0"
+            -D"sonar.sources=src"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
             -X
 
       - name: Run Lint (Partner)
