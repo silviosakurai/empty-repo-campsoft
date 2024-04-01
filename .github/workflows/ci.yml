@@ -66,11 +66,8 @@ jobs:
             -D"sonar.cpd.exclusions=**"
 
       - name: Check Quality Gate (Public)
-        env:
-          SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
-          SONAR_HOST_URL: http://data.tocalivros.com:9000/
         run: |
-          response=$(wget -q -O - "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=mania-public&token=$SONAR_TOKEN")
+          response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public&token=sqp_95245917aa19a69fc343dc5f854d846e9c13a4db")
           echo "$response"
 
       - name: SonarQube Scan (Partner)
@@ -88,11 +85,8 @@ jobs:
             -D"sonar.cpd.exclusions=**"
 
       - name: Check Quality Gate (Partner)
-        env:
-          SONAR_TOKEN: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
-          SONAR_HOST_URL: http://data.tocalivros.com:9000/
         run: |
-          response=$(wget -q -O - "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=mania-partner&token=$SONAR_TOKEN")
+          response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner&token=sqp_3444075491e5fb1d429c67e368f4a85298c8268a")
           echo "$response"
 
       - name: Run Lint (Partner)
