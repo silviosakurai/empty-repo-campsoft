@@ -20,10 +20,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: "npm"
 
       - name: Install pnpm
-        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: npm install -g pnpm
 
       - name: Install Dependencies
         run: pnpm install
