@@ -1,11 +1,16 @@
-import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
-import { ResponseService } from '@core/common/interfaces/IResponseServices';
-import { generalEnvironment } from '@core/config/environments';
-import { IZoopError } from '@core/interfaces/services/zoop/IZoopError';
-import { ISaveCardTokenRequest, ISaveCardTokenResponse } from '@core/interfaces/services/zoop/IsaveCardToken';
-import axios from 'axios';
+import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
+import { ResponseService } from "@core/common/interfaces/IResponseServices";
+import { generalEnvironment } from "@core/config/environments";
+import { IZoopError } from "@core/interfaces/services/zoop/IZoopError";
+import {
+  ISaveCardTokenRequest,
+  ISaveCardTokenResponse,
+} from "@core/interfaces/services/zoop/ISaveCardToken";
+import axios from "axios";
 
-export async function saveCardToken(input: ISaveCardTokenRequest): Promise<ResponseService<ISaveCardTokenResponse>> {
+export async function saveCardToken(
+  input: ISaveCardTokenRequest
+): Promise<ResponseService<ISaveCardTokenResponse>> {
   try {
     const response = await axios.post<ISaveCardTokenResponse & IZoopError>(
       `${generalEnvironment.zoopBaseUrl}/marketplaces/${generalEnvironment.zoopMarketPlace}}/transactions`,
@@ -15,7 +20,7 @@ export async function saveCardToken(input: ISaveCardTokenRequest): Promise<Respo
         expiration_year: input.expirationYear,
         card_number: input.cardNumber,
         security_code: input.securityCode,
-      },
+      }
     );
 
     if (response.status === HTTPStatusCode.CREATED) {
