@@ -82,7 +82,7 @@ jobs:
           echo "Technical Debt: $response minutes"
           if [[ "$response" == "not_available" ]]; then
             echo "Technical debt data not available. Continuing with the build."
-          elif [ "$response" != "0" ]; then
+          elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
@@ -131,7 +131,7 @@ jobs:
           echo "Technical Debt: $response minutes"
           if [[ "$response" == "not_available" ]]; then
             echo "Technical debt data not available. Continuing with the build."
-          elif [ "$response" != "0" ]; then
+          elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
@@ -186,7 +186,7 @@ jobs:
           echo "Technical Debt: $response minutes"
           if [[ "$response" == "not_available" ]]; then
             echo "Technical debt data not available. Continuing with the build."
-          elif [ "$response" != "0" ]; then
+          elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
