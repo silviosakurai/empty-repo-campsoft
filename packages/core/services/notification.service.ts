@@ -47,7 +47,7 @@ class NotificationService {
     }
 
     if (options.type === TFAType.EMAIL) {
-      if (validateEmail(options.loginUserTFA.login)) {
+      if (!validateEmail(options.loginUserTFA.login)) {
         throw new TFAVerificationError(t("email_is_not_valid"));
       }
 
