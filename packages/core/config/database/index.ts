@@ -2,10 +2,9 @@ import fp from "fastify-plugin";
 import { Pool, createPool } from "mysql2/promise";
 import { databaseEnvironment } from "@core/config/environments";
 import DatabaseConnectionError from "@core/common/exceptions/DatabaseConnectionError";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle, MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
 import { container } from "tsyringe";
-import { MySql2Database } from "drizzle-orm/mysql2";
 
 async function dbConnector() {
   const pool: Pool = createPool({
