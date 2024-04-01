@@ -20,10 +20,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pnpm-store
+            **/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Install pnpm
-        if: steps.cache-node.outputs.cache-hit != 'true'
         run: npm install -g pnpm
 
       - name: Install Dependencies
