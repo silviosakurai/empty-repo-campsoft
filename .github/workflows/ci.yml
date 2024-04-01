@@ -60,8 +60,6 @@ jobs:
           projectBaseDir: apps/public_api/
           args: >
             -D"sonar.projectKey=mania-public"
-            -D"sonar.projectName=Mania de APP (Public API)"
-            -D"sonar.projectVersion=1.0"
             -D"sonar.sources=src"
             -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
             -X
