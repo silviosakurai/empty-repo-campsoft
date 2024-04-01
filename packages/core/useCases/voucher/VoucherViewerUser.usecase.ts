@@ -7,12 +7,8 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { VoucherViewRequestDto } from "@core/useCases/voucher/dtos/VoucherViewResponse.dto";
 
 @injectable()
-export class VoucherViewUserUseCase {
-  private voucherService: VoucherService;
-
-  constructor(voucherService: VoucherService) {
-    this.voucherService = voucherService;
-  }
+export class VoucherViewerUserUseCase {
+  constructor(private readonly voucherService: VoucherService) {}
 
   view = async (
     t: TFunction<"translation", undefined>,

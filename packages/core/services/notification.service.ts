@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
-import { SendWhatsAppTFAUserCase } from "@core/useCases/tfa/SendWhatsAppTFA.useCase";
-import { SendSmsTFAUserCase } from "@core/useCases/tfa/SendSmsTFA.useCase";
-import { SendEmailTFAUserCase } from "@core/useCases/tfa/SendEmailTFA.useCase";
+import { WhatsAppTFASenderUserCase } from "@core/useCases/tfa/WhatsAppTFASender.useCase";
+import { SmsTFAUserSenderCase } from "@core/useCases/tfa/SmsTFASender.useCase";
+import { EmailTFASenderUserCase } from "@core/useCases/tfa/EmailTFASender.useCase";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { phoneNumberValidator } from "@core/common/functions/phoneNumberValidator";
@@ -13,9 +13,9 @@ import { TFunction } from "i18next";
 @injectable()
 class NotificationService {
   constructor(
-    private readonly whatsAppTFASenderUseCase: SendWhatsAppTFAUserCase,
-    private readonly smsTFASenderUseCase: SendSmsTFAUserCase,
-    private readonly emailTFASenderUseCase: SendEmailTFAUserCase
+    private readonly whatsAppTFASenderUseCase: WhatsAppTFASenderUserCase,
+    private readonly smsTFASenderUseCase: SmsTFAUserSenderCase,
+    private readonly emailTFASenderUseCase: EmailTFASenderUserCase
   ) {}
 
   public async executeTfa(

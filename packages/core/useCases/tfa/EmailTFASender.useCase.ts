@@ -1,22 +1,19 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
-import { ITemplateSMS } from "@core/interfaces/repositories/tfa";
-import { SmsService } from "@core/services/sms.service";
-import { ISmsServiceSendInput } from "@core/interfaces/services/ISms.service";
+import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
+import { EmailService } from "@core/services/email.service";
 import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
+import { IEmailSendService } from "@core/interfaces/services/IEmail.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
-export class SendSmsTFAUserCase {
-  private tfaService: TfaService;
-  private smsService: SmsService;
-
-  constructor(tfaService: TfaService, smsService: SmsService) {
-    this.tfaService = tfaService;
-    this.smsService = smsService;
-  }
+export class EmailTFASenderUserCase {
+  constructor(
+    private readonly tfaService: TfaService,
+    private readonly emailService: EmailService
+  ) {}
 
   async execute({
     tokenKeyData,
@@ -25,23 +22,24 @@ export class SendSmsTFAUserCase {
   }: SendCodeLoginTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
-      const { template, templateId } = await this.getTemplateSMS(
-        tokenKeyData,
-        code
-      );
+      const { template, templateId, subject, sender } =
+        await this.getTemplateEmail(tokenKeyData, code);
 
       const payload = {
-        phone: loginUserTFA.login,
-        message: template,
-      } as ISmsServiceSendInput;
+        html: template,
+        subject: subject,
+        to: loginUserTFA.login,
+        from: sender,
+      } as IEmailSendService;
 
-      const sendSms = await this.smsService.send(payload);
+      const sendEmail = await this.emailService.send(payload);
 
-      if (sendSms) {
-        await this.tfaService.insertSmsHistory(
+      if (sendEmail) {
+        await this.tfaService.insertEmailHistory(
           templateId,
           loginUserTFA,
-          sendSms
+          sender,
+          sendEmail
         );
       }
 
@@ -53,11 +51,11 @@ export class SendSmsTFAUserCase {
     }
   }
 
-  async getTemplateSMS(
+  async getTemplateEmail(
     tokenKeyData: ITokenKeyData,
     code: string
-  ): Promise<ITemplateSMS> {
-    const template = await this.tfaService.getTemplateSms(tokenKeyData);
+  ): Promise<ITemplateEmail> {
+    const template = await this.tfaService.getTemplateEmail(tokenKeyData);
 
     template.template = replaceTemplate(template.template, {
       code,

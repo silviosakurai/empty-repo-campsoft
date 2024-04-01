@@ -4,8 +4,8 @@ import { SendCodeTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.d
 import { TFAType } from "@core/common/enums/models/tfa";
 
 @injectable()
-export class SendUserIdTFAUserCase {
-  constructor(private clientService: ClientService) {}
+export class UserIdTFASenderUserCase {
+  constructor(private readonly clientService: ClientService) {}
 
   async execute({
     tokenKeyData,

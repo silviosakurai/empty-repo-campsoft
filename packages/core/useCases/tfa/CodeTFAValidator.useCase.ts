@@ -5,12 +5,8 @@ import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";
 import { isUuid } from "@core/common/functions/isUuid";
 
 @injectable()
-export class ValidateCodeTFAUserCase {
-  private tfaService: TfaService;
-
-  constructor(tfaService: TfaService) {
-    this.tfaService = tfaService;
-  }
+export class CodeTFAValidatorUserCase {
+  constructor(private readonly tfaService: TfaService) {}
 
   async execute({
     login,

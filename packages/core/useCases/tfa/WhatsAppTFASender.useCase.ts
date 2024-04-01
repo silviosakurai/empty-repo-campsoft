@@ -1,22 +1,19 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
-import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
-import { EmailService } from "@core/services/email.service";
+import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
+import { IWhatsappServiceInput } from "@core/interfaces/services/IWhatsapp.service";
+import { WhatsappService } from "@core/services/whatsapp.service";
 import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
-import { IEmailSendService } from "@core/interfaces/services/IEmail.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
-export class SendEmailTFAUserCase {
-  private tfaService: TfaService;
-  private emailService: EmailService;
-
-  constructor(tfaService: TfaService, emailService: EmailService) {
-    this.tfaService = tfaService;
-    this.emailService = emailService;
-  }
+export class WhatsAppTFASenderUserCase {
+  constructor(
+    private readonly tfaService: TfaService,
+    private readonly whatsappService: WhatsappService
+  ) {}
 
   async execute({
     tokenKeyData,
@@ -25,24 +22,23 @@ export class SendEmailTFAUserCase {
   }: SendCodeLoginTFARequest): Promise<boolean> {
     try {
       const code = await this.tfaService.generateAndVerifyToken();
-      const { template, templateId, subject, sender } =
-        await this.getTemplateEmail(tokenKeyData, code);
+      const { template, templateId } = await this.getTemplateWhatsapp(
+        tokenKeyData,
+        code
+      );
 
       const payload = {
-        html: template,
-        subject: subject,
-        to: loginUserTFA.login,
-        from: sender,
-      } as IEmailSendService;
+        target_phone: loginUserTFA.login,
+        message: template,
+      } as IWhatsappServiceInput;
 
-      const sendEmail = await this.emailService.send(payload);
+      const sendWA = await this.whatsappService.send(payload);
 
-      if (sendEmail) {
-        await this.tfaService.insertEmailHistory(
+      if (sendWA) {
+        await this.tfaService.insertWhatsAppHistory(
           templateId,
           loginUserTFA,
-          sender,
-          sendEmail
+          sendWA
         );
       }
 
@@ -54,11 +50,11 @@ export class SendEmailTFAUserCase {
     }
   }
 
-  async getTemplateEmail(
+  async getTemplateWhatsapp(
     tokenKeyData: ITokenKeyData,
     code: string
-  ): Promise<ITemplateEmail> {
-    const template = await this.tfaService.getTemplateEmail(tokenKeyData);
+  ): Promise<ITemplateWhatsapp> {
+    const template = await this.tfaService.getTemplateWhatsapp(tokenKeyData);
 
     template.template = replaceTemplate(template.template, {
       code,
