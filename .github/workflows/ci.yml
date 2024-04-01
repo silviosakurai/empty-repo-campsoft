@@ -51,12 +51,12 @@ jobs:
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
         with:
           args: >
-            -sonar.projectKey="mania-public"
-            -sonar.projectName="Mania de APP (Public API)"
-            -sonar.projectVersion="1.0"
-            -sonar.sources="src"
-            -sonar.exclusions="**/node_modules/**,**/*.spec.ts"
-            -sonar.typescript.lcov.reportPaths="coverage/lcov.info"
+            -D sonar.projectKey="mania-public"
+            -D sonar.projectName="Mania de APP (Public API)"
+            -D sonar.projectVersion="1.0"
+            -D sonar.sources="src"
+            -D sonar.exclusions="**/node_modules/**,**/*.spec.ts"
+            -D sonar.typescript.lcov.reportPaths="coverage/lcov.info"
 
       - name: Run Lint (Partner)
         run: pnpm run lint:partner
