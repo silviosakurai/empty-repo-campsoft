@@ -42,6 +42,9 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Install JQ
+        run: sudo apt-get install jq
+
       - name: Install Dependencies
         run: pnpm install
 
@@ -50,9 +53,6 @@ jobs:
 
       - name: Run Build (Public)
         run: pnpm run build:public
-
-      - name: Install jq
-        run: sudo apt-get install jq
 
       - name: SonarQube Scan (Public)
         uses: SonarSource/sonarqube-scan-action@master
@@ -71,6 +71,7 @@ jobs:
       - name: Check Quality Gate (Public)
         run: |
           response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public&token=sqp_95245917aa19a69fc343dc5f854d846e9c13a4db")
+          echo "API Response: $response"
           status=$(echo "$response" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           if [ "$status" != "OK" ]; then
@@ -107,3 +108,27 @@ jobs:
 
       - name: Run Build (Partner)
         run: pnpm run build:partner
+
+      - name: SonarQube Scan (Core)
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: sqp_3615eb40bceddd7dbce5837431b24d71e0497475
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        with:
+          projectBaseDir: packages/
+          args: >
+            -D"sonar.projectKey=mania-core"
+            -D"sonar.sources=core"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: Check Quality Gate (Core)
+        run: |
+          response=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core&token=sqp_3615eb40bceddd7dbce5837431b24d71e0497475")
+          status=$(echo "$response" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          if [ "$status" != "OK" ]; then
+            echo "Quality Gate failed."
+            exit 1
+          fi
