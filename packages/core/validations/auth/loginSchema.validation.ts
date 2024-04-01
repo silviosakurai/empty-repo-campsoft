@@ -1,19 +1,7 @@
-import Schema from "fluent-json-schema";
+import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
-
-const LoginResponseSchema = Schema.object()
-  .prop("client_id", Schema.string().format("uuid"))
-  .prop("status", Schema.string().enum(Object.values(ClientStatus)))
-  .prop("facebook_id", Schema.integer())
-  .prop("name", Schema.string())
-  .prop("surname", Schema.string())
-  .prop("birth_date", Schema.string().format("date-time"))
-  .prop("email", Schema.string().format("email"))
-  .prop("phone", Schema.string().required())
-  .prop("cpf", Schema.string())
-  .prop("gender", Schema.string().enum(Object.values(ClientGender)));
+import { loginResponseSchema } from "@core/schema/login/loginResponseSchema";
 
 export const loginSchema = {
   description: "Autentica o usuário e gera um token de acesso JWT",
@@ -24,36 +12,46 @@ export const loginSchema = {
       authenticateKeyApi: [],
     },
   ],
-  headers: Schema.object().prop(
-    "Accept-Language",
-    Schema.string()
-      .description("Idioma preferencial para a resposta")
-      .enum(Object.values(Language))
-      .default(Language.pt)
-  ),
-  body: Schema.object()
-    .prop("login", Schema.string().required())
-    .prop("password", Schema.string().minLength(6).required()),
+  headers: Type.Object({
+    "Accept-Language": Type.Optional(
+      Type.String({
+        description: "Idioma preferencial para a resposta",
+        enum: Object.values(Language),
+        default: Language.pt,
+      })
+    ),
+  }),
+  body: Type.Object({
+    login: Type.String(),
+    password: Type.String({ minLength: 6 }),
+  }),
   response: {
-    200: Schema.object()
-      .description("Successful")
-      .prop("message", Schema.string())
-      .prop("status", Schema.boolean().const(true))
-      .prop(
-        "data",
-        Schema.object()
-          .prop("result", LoginResponseSchema)
-          .prop("token", Schema.string())
-      ),
-    401: Schema.object()
-      .description("Unauthorized")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    500: Schema.object()
-      .description("Internal Server Error")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
+    200: Type.Object(
+      {
+        status: Type.Boolean({ const: true }),
+        message: Type.String(),
+        data: Type.Object({
+          result: loginResponseSchema,
+          token: Type.String(),
+        }),
+      },
+      { description: "Successful" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
+    ),
+    500: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Internal Server Error" }
+    ),
   },
 };

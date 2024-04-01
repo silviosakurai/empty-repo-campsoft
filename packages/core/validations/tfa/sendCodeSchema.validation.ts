@@ -1,4 +1,4 @@
-import Schema from "fluent-json-schema";
+import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { TFAType } from "@core/common/enums/models/tfa";
@@ -12,36 +12,55 @@ export const sendCodeSchema = {
       authenticateKeyApi: [],
     },
   ],
-  headers: Schema.object().prop(
-    "Accept-Language",
-    Schema.string()
-      .description("Idioma preferencial para a resposta")
-      .enum(Object.values(Language))
-      .default(Language.pt)
-  ),
-  body: Schema.object()
-    .prop("type", Schema.string().required().enum(Object.values(TFAType)))
-    .prop("login", Schema.string().required()),
+  headers: Type.Object({
+    "Accept-Language": Type.Optional(
+      Type.String({
+        description: "Idioma preferencial para a resposta",
+        enum: Object.values(Language),
+        default: Language.pt,
+      })
+    ),
+  }),
+  body: Type.Object({
+    type: Type.String({
+      enum: Object.values(TFAType),
+      description: "Tipo de autenticação TFA",
+      examples: [Object.values(TFAType)],
+    }),
+    login: Type.String(),
+  }),
   response: {
-    200: Schema.object()
-      .description("Successful")
-      .prop("status", Schema.boolean())
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    400: Schema.object()
-      .description("Bad Request")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    401: Schema.object()
-      .description("Unauthorized")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    500: Schema.object()
-      .description("Internal Server Error")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
+    200: Type.Object(
+      {
+        status: Type.Boolean(),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Successful" }
+    ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
+    ),
+    500: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Internal Server Error" }
+    ),
   },
 };

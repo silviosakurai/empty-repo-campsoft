@@ -10,6 +10,7 @@ import fp from 'fastify-plugin';
 import { generalEnvironment } from '@core/config/environments';
 import routes from '@/routes';
 import { TagSwagger } from '@core/common/enums/TagSwagger';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 const swaggerPlugin = async (fastify: FastifyInstance) => {
   await fastify.register(fastifySwagger, {
@@ -113,6 +114,7 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
     },
   });
 
+  fastify.withTypeProvider<TypeBoxTypeProvider>();
   fastify.register(routes);
 };
 

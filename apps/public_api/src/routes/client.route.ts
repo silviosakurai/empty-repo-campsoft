@@ -30,50 +30,50 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.put('/user', {
     schema: userUpdaterSchema,
-    handler: clientController.update,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.update,
   });
 
   server.delete('/user', {
     schema: userDeleteSchema,
-    handler: clientController.delete,
     preHandler: [
       server.authenticateKeyApi,
       server.authenticateJwt,
       server.authenticateTfa,
     ],
+    handler: clientController.delete,
   });
 
   server.patch('/user/phone', {
     schema: userPhoneUpdaterSchema,
-    handler: clientController.updatePhone,
     preHandler: [
       server.authenticateKeyApi,
       server.authenticateJwt,
       server.authenticateTfa,
     ],
+    handler: clientController.updatePhone,
   });
 
   server.patch('/user/password', {
     schema: userPasswordUpdaterSchema,
-    handler: clientController.updatePassword,
     preHandler: [
       server.authenticateKeyApi,
       server.authenticateJwt,
       server.authenticateTfa,
     ],
+    handler: clientController.updatePassword,
   });
 
   server.get('/user/recovery-password/:login', {
     schema: userPasswordRecoveryMethodsSchema,
-    handler: clientController.passwordRecoveryMethods,
     preHandler: [server.authenticateKeyApi],
+    handler: clientController.passwordRecoveryMethods,
   });
 
   server.patch('/user/recovery-password', {
     schema: userPasswordRecoveryUpdaterSchema,
-    handler: clientController.updatePasswordRecovery,
     preHandler: [server.authenticateKeyApi, server.authenticateTfa],
+    handler: clientController.updatePasswordRecovery,
   });
 
   server.get('/user/vouchers/:voucherCode', {

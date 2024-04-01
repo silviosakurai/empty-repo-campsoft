@@ -1,8 +1,9 @@
-import { IPaginationResponse } from "@core/common/interfaces/IPaginationResponse";
 import { Plan } from "@core/common/enums/models/plan";
+import { Static } from "@sinclair/typebox";
+import { planListResponseSchema } from "@core/schema/plan/planListResponseSchema";
 
 export interface ListPlanResult {
   results: Plan[];
 }
 
-export type ListPlanResponse = IPaginationResponse & ListPlanResult;
+export type ListPlanResponse = Static<typeof planListResponseSchema>;

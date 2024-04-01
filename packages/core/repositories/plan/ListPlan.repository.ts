@@ -170,12 +170,11 @@ export class ListPlanRepository {
         groupedProducts[groupId] = {
           product_group_id: groupId,
           name: product.name,
-          quantity: 0,
+          quantity: product.quantity,
           available_products: [],
         };
       }
 
-      groupedProducts[groupId].quantity++;
       groupedProducts[groupId].available_products.push(
         ...product.available_products
       );

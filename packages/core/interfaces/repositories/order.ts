@@ -1,5 +1,7 @@
 import { Status } from "@core/common/enums/Status";
+import { orderPaymentsSchema } from "@core/schema/order/orderPaymentsSchema";
 import { FindOrderByNumberPlans } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
+import { Static } from "@sinclair/typebox";
 
 export interface ListOrder {
   order_id: string;
@@ -17,18 +19,6 @@ export interface PlanDetails {
   image: string | null;
   description: string | null;
   short_description: string | null;
-}
-
-export interface OrderPayments {
-  type: string;
-  status: string;
-  credit_card: CreditCard;
-  voucher: string;
-  boleto: Boleto;
-  pix: Pix;
-  cycle: string | null;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface Prices {
@@ -81,3 +71,5 @@ export interface OrderByNumberResponse {
   created_at: string;
   updated_at: string;
 }
+
+export type OrderPayments = Static<typeof orderPaymentsSchema>;
