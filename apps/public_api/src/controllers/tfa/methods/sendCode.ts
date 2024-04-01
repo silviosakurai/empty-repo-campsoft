@@ -5,7 +5,7 @@ import {
   SendCodeTFARequest,
 } from '@core/useCases/tfa/dtos/SendCodeTFARequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { SendUserIdTFAUserCase } from '@core/useCases/tfa/SendUserIdTFA.useCase';
+import { UserIdTFASenderUserCase } from '@core/useCases/tfa/UserIdTFASender.useCase';
 import { container } from 'tsyringe';
 import { TFAType } from '@core/common/enums/models/tfa';
 import { isUuid } from '@core/common/functions/isUuid';
@@ -38,7 +38,7 @@ const loginUserId = async (
 ): Promise<LoginUserTFA> => {
   const isUuidValid = isUuid(login);
 
-  const sendUserIdTFAUserCase = container.resolve(SendUserIdTFAUserCase);
+  const sendUserIdTFAUserCase = container.resolve(UserIdTFASenderUserCase);
 
   if (isUuidValid) {
     const userIdTFA = await sendUserIdTFAUserCase.execute({

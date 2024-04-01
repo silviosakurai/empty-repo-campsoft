@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FindOrderByNumberRequest } from '@core/useCases/order/dtos/FindOrderByNumberRequest.dto';
 import { container } from 'tsyringe';
-import { FindOrderByNumberUseCase } from '@core/useCases/order/FindOrderByNumber.useCase';
+import { OrderByNumberViewerUseCase } from '@core/useCases/order/OrderByNumberViewer.useCase';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 
@@ -9,7 +9,7 @@ export const findOrderByNumber = async (
   request: FastifyRequest<{ Params: FindOrderByNumberRequest }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(FindOrderByNumberUseCase);
+  const service = container.resolve(OrderByNumberViewerUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
 
   try {

@@ -7,21 +7,17 @@ import { encodePassword } from "@core/common/functions/encodePassword";
 
 @injectable()
 export class ClientPasswordUpdaterUseCase {
-  private clientService: ClientService;
-  private authService: AuthService;
-
-  constructor(clientService: ClientService, authService: AuthService) {
-    this.clientService = clientService;
-    this.authService = authService;
-  }
+  constructor(
+    private readonly clientService: ClientService,
+    private readonly authService: AuthService
+  ) {}
 
   async update(
     clientId: string,
     input: UpdatePasswordClientRequestDto,
     tokenKeyData: ITokenKeyData,
-    tokenTfaData: ITokenTfaData,
+    tokenTfaData: ITokenTfaData
   ): Promise<boolean | null> {
-
     const userLogged = await this.authService.authenticateByClientId(
       tokenKeyData,
       clientId,

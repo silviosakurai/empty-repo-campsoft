@@ -11,11 +11,7 @@ import { LoggerService } from "@core/services/logger.service";
 
 @injectable()
 export class SmsService implements ISmsService {
-  private logger: LoggerService;
-
-  constructor(logger: LoggerService) {
-    this.logger = logger;
-  }
+  constructor(private readonly logger: LoggerService) {}
 
   async send(input: ISmsServiceSendInput) {
     try {

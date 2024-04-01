@@ -5,11 +5,7 @@ import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 
 @injectable()
 export class LoginAuthUseCase {
-  private authService: AuthService;
-
-  constructor(authService: AuthService) {
-    this.authService = authService;
-  }
+  constructor(private readonly authService: AuthService) {}
 
   async execute({
     tokenKeyData,

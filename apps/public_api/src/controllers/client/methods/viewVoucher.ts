@@ -2,7 +2,7 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { VoucherViewUserUseCase } from '@core/useCases/voucher/VoucherViewUser.usecase';
+import { VoucherViewerUserUseCase } from '@core/useCases/voucher/VoucherViewerUser.usecase';
 import { VoucherViewRequestDto } from '@core/useCases/voucher/dtos/VoucherViewRequest.dto';
 import { VoucherError } from '@core/common/exceptions/VoucherError';
 
@@ -14,7 +14,7 @@ export const viewVoucher = async (
 ) => {
   const { t, tokenKeyData, tokenJwtData } = request;
   const { voucherCode } = request.params;
-  const voucherViewUserUseCase = container.resolve(VoucherViewUserUseCase);
+  const voucherViewUserUseCase = container.resolve(VoucherViewerUserUseCase);
 
   try {
     const response = await voucherViewUserUseCase.view(

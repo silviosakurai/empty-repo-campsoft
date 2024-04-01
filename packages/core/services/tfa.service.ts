@@ -22,22 +22,12 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaService {
-  private tfaCodesRepository: TfaCodesRepository;
-  private tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository;
-  private tfaCodesSms: TfaCodesSms;
-  private tfaCodesEmail: TfaCodesEmail;
-
   constructor(
-    tfaCodesRepository: TfaCodesRepository,
-    tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
-    tfaCodesSms: TfaCodesSms,
-    tfaCodesEmail: TfaCodesEmail
-  ) {
-    this.tfaCodesRepository = tfaCodesRepository;
-    this.tfaCodesWhatsAppRepository = tfaCodesWhatsAppRepository;
-    this.tfaCodesSms = tfaCodesSms;
-    this.tfaCodesEmail = tfaCodesEmail;
-  }
+    private readonly tfaCodesRepository: TfaCodesRepository,
+    private readonly tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
+    private readonly tfaCodesSms: TfaCodesSms,
+    private readonly tfaCodesEmail: TfaCodesEmail
+  ) {}
 
   async generateAndVerifyToken(): Promise<string> {
     let token;

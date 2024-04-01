@@ -2,7 +2,7 @@ import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { sendResponse } from "@core/common/functions/sendResponse";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
-import { ViewApiJwtUseCase } from "@core/useCases/api/ViewApiJwt.useCase";
+import { ApiJwtViewerUseCase } from "@core/useCases/api/ApiJwtViewer.useCase";
 import { container } from "tsyringe";
 import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto";
 import { createCacheKey } from "@core/common/functions/createCacheKey";
@@ -19,7 +19,7 @@ async function authenticateJwt(
   const routeModule = request.module;
 
   try {
-    const viewApiJwtUseCase = container.resolve(ViewApiJwtUseCase);
+    const apiJwtViewerUseCase = container.resolve(ApiJwtViewerUseCase);
     const decoded = (await request.jwtVerify()) as { clientId: string };
 
     if (!decoded) {
@@ -45,7 +45,7 @@ async function authenticateJwt(
       return;
     }
 
-    const responseAuth = await viewApiJwtUseCase.execute({
+    const responseAuth = await apiJwtViewerUseCase.execute({
       clientId: decoded.clientId,
       tokenKeyData,
       routePath,
