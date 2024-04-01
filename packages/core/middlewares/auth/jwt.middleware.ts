@@ -20,7 +20,7 @@ async function authenticateJwt(
 
   try {
     const viewApiJwtUseCase = container.resolve(ViewApiJwtUseCase);
-    const decoded = (await request.jwtVerify()) as { clientId: string };
+    const decoded: { clientId: string } = await request.jwtVerify();
 
     if (!decoded) {
       return sendResponse(reply, {
