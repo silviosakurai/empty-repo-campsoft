@@ -51,6 +51,9 @@ jobs:
       - name: Run Build (Public)
         run: pnpm run build:public
 
+      - name: Install jq
+        run: sudo apt-get install jq
+
       - name: SonarQube Scan (Public)
         uses: SonarSource/sonarqube-scan-action@master
         env:
