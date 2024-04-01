@@ -22,20 +22,17 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Install Dependencies
-        run: pnpm install
+        run: npx pnpm install
 
       - name: Run Lint (Public)
-        run: pnpm run lint:public
+        run: npx pnpm run lint:public
 
       - name: Run Build (Public)
-        run: pnpm run build:public
+        run: npx pnpm run build:public
 
       - name: Run Lint (Partner)
-        run: pnpm run lint:partner
+        run: npx pnpm run lint:partner
 
       - name: Run Build (Partner)
-        run: pnpm run build:partner
+        run: npx pnpm run build:partner
