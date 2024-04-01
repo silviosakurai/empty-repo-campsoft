@@ -70,7 +70,8 @@ jobs:
 
       - name: Check Quality Gate (Public)
         run: |
-          status=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public&token=sqp_95245917aa19a69fc343dc5f854d846e9c13a4db" | jq -r '.projectStatus.status')
+          ENCODED_TOKEN=$(echo -n 'sqp_95245917aa19a69fc343dc5f854d846e9c13a4db:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
 
@@ -90,7 +91,8 @@ jobs:
 
       - name: Check Quality Gate (Partner)
         run: |
-          status=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner&token=sqp_3444075491e5fb1d429c67e368f4a85298c8268a" | jq -r '.projectStatus.status')
+          ENCODED_TOKEN=$(echo -n 'sqp_3444075491e5fb1d429c67e368f4a85298c8268a:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
 
@@ -116,6 +118,7 @@ jobs:
 
       - name: Check Quality Gate (Core)
         run: |
-          status=$(wget -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core&token=sqp_3615eb40bceddd7dbce5837431b24d71e0497475" | jq -r '.projectStatus.status')
+          ENCODED_TOKEN=$(echo -n 'sqp_3615eb40bceddd7dbce5837431b24d71e0497475:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
