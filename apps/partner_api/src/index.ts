@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import fastify from 'fastify';
 import dbConnector from '@core/config/database';
 import cacheRedisConnector from '@core/config/cache';
 import { requestHook, responseHook, errorHook } from '@core/hooks';
@@ -21,10 +21,6 @@ server.decorateRequest('module', RouteModule.PARTNER);
 server.register(dbConnector);
 server.register(cacheRedisConnector);
 server.register(loggerServicePlugin);
-
-server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-  return { hello: 'world' };
-});
 
 const start = async () => {
   try {

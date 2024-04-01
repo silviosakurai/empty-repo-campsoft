@@ -3,7 +3,6 @@ import { injectable } from "tsyringe";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderResponseDto } from "@core/useCases/order/dtos/ListOrderResponse.dto";
-import { IPaginationResponse } from "@core/common/interfaces/IPaginationResponse";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 
 @injectable()
@@ -14,7 +13,7 @@ export class OrdersListerUseCase {
     input: ListOrderRequestDto,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
-  ): Promise<ListOrderResponseDto & IPaginationResponse> {
+  ): Promise<ListOrderResponseDto> {
     const [results, count] = await Promise.all([
       this.orderService.list(input, tokenKeyData, tokenJwtData),
       this.orderService.countTotal(tokenKeyData, tokenJwtData),

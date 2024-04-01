@@ -8,6 +8,7 @@ import { InternalServerError } from "@core/common/exceptions/InternalServerError
 import { TFAType } from "@core/common/enums/models/tfa";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
+import { CreateClientResponse } from "@core/useCases/client/dtos/CreateClientResponse.dto";
 
 @injectable()
 export class ClientCreatorUseCase {
@@ -19,7 +20,7 @@ export class ClientCreatorUseCase {
   async create(
     companyId: number,
     input: CreateClientRequestDto
-  ): Promise<{ user_id: string } | null> {
+  ): Promise<CreateClientResponse | null> {
     const response = await this.confirmIfRegisteredPreviously({
       cpf: input.cpf,
       email: input.email,

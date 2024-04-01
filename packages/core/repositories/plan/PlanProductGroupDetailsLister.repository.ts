@@ -28,7 +28,7 @@ export class PlanProductGroupDetailsListerRepository {
       .select({
         product_group_id: productGroup.id_produto_grupo,
         name: productGroup.produto_grupo,
-        quantity: sql<number>`COUNT(${productGroupProduct.id_produto_grupo})`,
+        quantity: productGroup.qtd_produtos_selecionaveis,
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))

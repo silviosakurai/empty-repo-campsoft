@@ -1,4 +1,4 @@
-import Schema from "fluent-json-schema";
+import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
@@ -13,33 +13,47 @@ export const userDeleteSchema = {
       authenticateTfa: [],
     },
   ],
-  headers: Schema.object().prop(
-    "Accept-Language",
-    Schema.string()
-      .description("Idioma preferencial para a resposta")
-      .enum(Object.values(Language))
-      .default(Language.pt)
-  ),
+  headers: Type.Object({
+    "Accept-Language": Type.Optional(
+      Type.String({
+        description: "Idioma preferencial para a resposta",
+        enum: Object.values(Language),
+        default: Language.pt,
+      })
+    ),
+  }),
   response: {
-    200: Schema.object()
-      .description("Successful")
-      .prop("status", Schema.boolean())
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    401: Schema.object()
-      .description("Unauthorized")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    404: Schema.object()
-      .description("Not Found")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
-    500: Schema.object()
-      .description("Internal Server Error")
-      .prop("status", Schema.boolean().default(false))
-      .prop("message", Schema.string())
-      .prop("data", Schema.null()),
+    200: Type.Object(
+      {
+        status: Type.Boolean(),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Successful" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
+    ),
+    500: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Internal Server Error" }
+    ),
   },
 };

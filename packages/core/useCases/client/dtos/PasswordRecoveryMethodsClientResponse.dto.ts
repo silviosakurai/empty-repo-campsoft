@@ -1,8 +1,6 @@
-import { TFAType } from "@core/common/enums/models/tfa";
+import { userPasswordRecoveryMethodsResponseSchema } from "@core/schema/user/userPasswordRecoveryMethodsSchema";
+import { Static } from "@sinclair/typebox";
 
-export interface PasswordRecoveryMethodsClientResponse {
-  client_id: string;
-  name: string;
-  profile_image: string;
-  recovery_types: TFAType[];
-}
+export type PasswordRecoveryMethodsClientResponse = Static<
+  typeof userPasswordRecoveryMethodsResponseSchema
+>;
