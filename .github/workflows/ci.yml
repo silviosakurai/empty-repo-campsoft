@@ -1,4 +1,4 @@
-name: CI
+name: Test Lint and Build
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache pnpm modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.pnpm-store
