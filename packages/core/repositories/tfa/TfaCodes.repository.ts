@@ -87,7 +87,7 @@ export class TfaCodesRepository {
       .where(eq(tfaCodes.id_code_enviado, id))
       .execute();
 
-    return update ? true : false;
+    return !!update;
   }
 
   async insertCodeUser(

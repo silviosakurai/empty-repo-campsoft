@@ -129,7 +129,7 @@ jobs:
       - name: SonarQube Scan (Core)
         uses: SonarSource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: sqp_3615eb40bceddd7dbce5837431b24d71e0497475
+          SONAR_TOKEN: sqp_c9ab534fde48953a50fd239678a4840bcdf5dc09
           SONAR_HOST_URL: http://data.tocalivros.com:9000/
         with:
           projectBaseDir: packages/

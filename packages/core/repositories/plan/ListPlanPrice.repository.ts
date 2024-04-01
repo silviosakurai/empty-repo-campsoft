@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import * as schema from "@core/models";
 import { planPrice } from "@core/models";
 import { inject, injectable } from "tsyringe";

@@ -2,7 +2,6 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { eq, and, sql } from "drizzle-orm";
-import { Plan } from "@core/common/enums/models/plan";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { OrderPayments } from "@core/interfaces/repositories/order";
 import {

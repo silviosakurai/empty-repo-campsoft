@@ -7,7 +7,7 @@ import {
   productGroup,
   planItem,
 } from "@core/models";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AvailableProducts } from "@core/interfaces/repositories/voucher";
 import { ListPlanProductGroupsProductsByProductGroupIdRepository } from "./ListPlanProductGroupsProductsByProductGroupId.repository";

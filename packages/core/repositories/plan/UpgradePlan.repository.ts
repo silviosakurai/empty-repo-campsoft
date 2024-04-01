@@ -3,11 +3,14 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { clientSignature, clientProductSignature } from "@core/models";
 import { eq, and, sql } from "drizzle-orm";
-import { Plan, PlanItem } from "@core/common/enums/models/plan";
+import { Plan } from "@core/common/enums/models/plan";
 import { ListPlanRepository } from "./ListPlan.repository";
 import { ListPlanItemRepository } from "./ListPlanItem.repository";
 import { SignatureStatus } from "@core/common/enums/models/signature";
-import { UpgradePlanRepositoryDTO, UpgradePlanRepositoryResponse } from "@core/interfaces/repositories/plan";
+import {
+  UpgradePlanRepositoryDTO,
+  UpgradePlanRepositoryResponse,
+} from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class UpgradePlanRepository {
@@ -28,51 +31,76 @@ export class UpgradePlanRepository {
     clientId: string,
     productIds: string[]
   ): Promise<UpgradePlanRepositoryResponse | null> {
-
     const result: UpgradePlanRepositoryDTO[] = await this.db
-      .select(
-        {
-          client_id: sql`BIN_TO_UUID(${clientSignature.id_cliente})`,
-          client_signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
-          status: clientSignature.id_assinatura_status,
-          plan_id: clientSignature.id_plano,
-        }
-      )
+      .select({
+        client_id: sql`BIN_TO_UUID(${clientSignature.id_cliente})`,
+        client_signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
+        status: clientSignature.id_assinatura_status,
+        plan_id: clientSignature.id_plano,
+      })
       .from(clientSignature)
-      .innerJoin(clientProductSignature, eq(clientProductSignature.id_assinatura_cliente, clientSignature.id_assinatura_cliente))
+      .innerJoin(
+        clientProductSignature,
+        eq(
+          clientProductSignature.id_assinatura_cliente,
+          clientSignature.id_assinatura_cliente
+        )
+      )
       .where(
         and(
           eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
-          eq(clientSignature.id_empresa, companyId),
-        ),
+          eq(clientSignature.id_empresa, companyId)
+        )
       )
       .execute();
-      
+
     if (!result.length) {
       return null;
     }
 
-    const uniquePlans = [...new Set(result.map((item) => item.plan_id))].map(planId => ({ plan_id: planId }));
+    const uniquePlans = [...new Set(result.map((item) => item.plan_id))].map(
+      (planId) => ({ plan_id: planId })
+    );
 
-    return this.getPlansToUpgrade(uniquePlans[0].plan_id, companyId, productIds);
+    return this.getPlansToUpgrade(
+      uniquePlans[0].plan_id,
+      companyId,
+      productIds
+    );
   }
 
-  private getPlansToUpgrade = async (planId: number, companyId: number, productIdsToFilter: string[]) => {
-    const plans = await this.listPlanRepository.listWithoutPagination(companyId);
-    
-    const actualPlan = plans.find(plan => plan.plan_id === planId) as Plan;
+  private getPlansToUpgrade = async (
+    planId: number,
+    companyId: number,
+    productIdsToFilter: string[]
+  ) => {
+    const plans =
+      await this.listPlanRepository.listWithoutPagination(companyId);
 
-    const planItems = await this.listPlanItemRepository.listByPlanId(actualPlan.plan_id);
-    
-    const plansToUpgrade = plans.filter(plan => plan.plan_id !== planId);
+    const actualPlan = plans.find((plan) => plan.plan_id === planId);
+
+    if (!actualPlan) {
+      return {
+        plans: [],
+        planItems: [],
+      };
+    }
+
+    const planItems = await this.listPlanItemRepository.listByPlanId(
+      actualPlan.plan_id
+    );
+
+    const plansToUpgrade = plans.filter((plan) => plan.plan_id !== planId);
 
     let plansToUpgradeWithProductsToFilter: Plan[] = plansToUpgrade;
 
     if (productIdsToFilter.length > 0) {
-      plansToUpgradeWithProductsToFilter = plansToUpgrade.filter(plan => {
-        const plansWithProductsFiltered = plan.products.filter(product => productIdsToFilter.includes(product.product_id));
-  
+      plansToUpgradeWithProductsToFilter = plansToUpgrade.filter((plan) => {
+        const plansWithProductsFiltered = plan.products.filter((product) =>
+          productIdsToFilter.includes(product.product_id)
+        );
+
         if (plansWithProductsFiltered.length > 0) {
           return plan;
         }
@@ -83,5 +111,5 @@ export class UpgradePlanRepository {
       plans: plansToUpgradeWithProductsToFilter,
       planItems,
     };
-  }
+  };
 }
