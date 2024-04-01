@@ -96,7 +96,7 @@ jobs:
           echo "Security Hotspots Reviewed: $response"
           if [[ "$response" == "not_available" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
-          elif [ "$response" != "100" ]; then
+          elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
             exit 1
           else
@@ -145,7 +145,7 @@ jobs:
           echo "Security Hotspots Reviewed: $response"
           if [[ "$response" == "not_available" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
-          elif [ "$response" != "100" ]; then
+          elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
             exit 1
           else
@@ -200,7 +200,7 @@ jobs:
           echo "Security Hotspots Reviewed: $response"
           if [[ "$response" == "not_available" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
-          elif [ "$response" != "100" ]; then
+          elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
             exit 1
           else
