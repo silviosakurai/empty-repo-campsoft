@@ -1,4 +1,4 @@
-import { generateRandomHashChars } from "@core/common/functions/generateRandomHashChars";
+import { generateRandomString } from "@core/common/functions/generateRandomString";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AuthRepository } from "@core/repositories/client/Auth.repository";
 import { ClientMagicTokenRepository } from "@core/repositories/client/ClientMagicToken.repository";
@@ -50,7 +50,7 @@ export class AuthService {
     let isUnique = false;
 
     do {
-      token = generateRandomHashChars();
+      token = generateRandomString();
 
       isUnique = await this.clientMagicTokenRepository.magicTokenIsUsed(token);
     } while (!isUnique);

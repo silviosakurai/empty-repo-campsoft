@@ -1,11 +1,8 @@
-export const generateRandomString = (length: number = 10): string => {
-  let randomString: string = "";
-  const characters: string =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  for (let i = 0; i < length; i++) {
-    randomString += characters.charAt(
-      Math.floor(Math.random() * characters.length)
-    );
-  }
-  return randomString;
-};
+import { generate } from "randomstring";
+
+export function generateRandomString(hashLength: number = 256) {
+  return generate({
+    length: hashLength,
+    charset: "alphanumeric",
+  });
+}
