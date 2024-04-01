@@ -3,10 +3,7 @@ import { CrossSellProductRequest } from "./dtos/ListCrossSellProductRequest.dto"
 import { ProductService } from "@core/services";
 import { SignatureService } from "@core/services/signature.service";
 import { ListProductResponseCrossSell } from "./dtos/ListProductResponse.dto";
-import {
-  ProductResponse,
-  ProductResponseCrossSell,
-} from "./dtos/ProductResponse.dto";
+import { ProductResponseCrossSell } from "./dtos/ProductResponse.dto";
 
 @injectable()
 export class CrossSellProductListerUseCase {

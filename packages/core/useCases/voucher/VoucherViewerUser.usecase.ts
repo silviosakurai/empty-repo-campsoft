@@ -16,51 +16,47 @@ export class VoucherViewerUserUseCase {
     tokenJwtData: ITokenJwtData,
     voucher: string
   ): Promise<VoucherViewRequestDto> => {
-    try {
-      const isEligibility = await this.voucherService.verifyEligibilityUser(
-        tokenKeyData,
-        voucher
-      );
+    const isEligibility = await this.voucherService.verifyEligibilityUser(
+      tokenKeyData,
+      voucher
+    );
 
-      if (!isEligibility) {
-        throw new VoucherError(t("voucher_not_eligible"));
-      }
+    if (!isEligibility) {
+      throw new VoucherError(t("voucher_not_eligible"));
+    }
 
-      const isRedemption = await this.voucherService.verifyRedemptionUser(
+    const isRedemption = await this.voucherService.verifyRedemptionUser(
+      tokenKeyData,
+      tokenJwtData,
+      isEligibility,
+      voucher
+    );
+
+    if (!isRedemption) {
+      throw new VoucherError(t("voucher_not_redeemable"));
+    }
+
+    const isClientSignatureActive =
+      await this.voucherService.isClientSignatureActive(tokenJwtData);
+
+    const [listProductsUserResult, listPlansUserResult] = await Promise.all([
+      this.voucherService.listVoucherEligibleProductsUser(
         tokenKeyData,
         tokenJwtData,
-        isEligibility,
-        voucher
-      );
+        voucher,
+        isClientSignatureActive
+      ),
+      this.voucherService.listVoucherEligiblePlansUser(
+        tokenKeyData,
+        tokenJwtData,
+        voucher,
+        isClientSignatureActive
+      ),
+    ]);
 
-      if (!isRedemption) {
-        throw new VoucherError(t("voucher_not_redeemable"));
-      }
-
-      const isClientSignatureActive =
-        await this.voucherService.isClientSignatureActive(tokenJwtData);
-
-      const [listProductsUserResult, listPlansUserResult] = await Promise.all([
-        this.voucherService.listVoucherEligibleProductsUser(
-          tokenKeyData,
-          tokenJwtData,
-          voucher,
-          isClientSignatureActive
-        ),
-        this.voucherService.listVoucherEligiblePlansUser(
-          tokenKeyData,
-          tokenJwtData,
-          voucher,
-          isClientSignatureActive
-        ),
-      ]);
-
-      return {
-        products: listProductsUserResult,
-        plans: listPlansUserResult,
-      } as VoucherViewRequestDto;
-    } catch (error) {
-      throw error;
-    }
+    return {
+      products: listProductsUserResult,
+      plans: listPlansUserResult,
+    } as VoucherViewRequestDto;
   };
 }

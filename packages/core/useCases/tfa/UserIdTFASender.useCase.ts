@@ -12,27 +12,23 @@ export class UserIdTFASenderUserCase {
     type,
     login,
   }: SendCodeTFARequest): Promise<SendCodeTFARequest | null> {
-    try {
-      const viewClient = await this.clientService.view(tokenKeyData, login);
+    const viewClient = await this.clientService.view(tokenKeyData, login);
 
-      if (!viewClient) {
-        return null;
-      }
-
-      const loginUserId = this.getLoginUserId(type, viewClient);
-
-      if (!loginUserId) {
-        return null;
-      }
-
-      return {
-        tokenKeyData,
-        type,
-        login: loginUserId,
-      } as SendCodeTFARequest;
-    } catch (error) {
-      throw error;
+    if (!viewClient) {
+      return null;
     }
+
+    const loginUserId = this.getLoginUserId(type, viewClient);
+
+    if (!loginUserId) {
+      return null;
+    }
+
+    return {
+      tokenKeyData,
+      type,
+      login: loginUserId,
+    } as SendCodeTFARequest;
   }
 
   async findClientByEmailPhone(login: string): Promise<string | null> {
