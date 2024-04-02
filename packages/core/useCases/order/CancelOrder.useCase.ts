@@ -47,7 +47,7 @@ export class CancelOrderUseCase {
 
     if (!isProductsCanceled) { return null }
 
-    const products = await this.productService.listProductsByIds(tokenKeyData.company_id, onlyProducts);
+    const products = await this.productService.listByIds(tokenKeyData.company_id, onlyProducts);
 
     return {
       status: 'canceled',
