@@ -20,11 +20,7 @@ export class SignatureService {
   };
 
   findByOrderNumber = async (orderNumber: string) => {
-    try {
-      return this.findSignatureByOrderNumber.find(orderNumber);
-    } catch (error) {
-      throw error;
-    }
+    return this.findSignatureByOrderNumber.find(orderNumber);
   };
 
   cancelByOrderNumber = async (
@@ -32,21 +28,13 @@ export class SignatureService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
   ) => {
-    try {
-      return this.cancelSignatureRepository.cancel(orderNumber, tokenKeyData, tokenJwtData);
-    } catch (error) {
-      throw error;
-    }
+    return this.cancelSignatureRepository.cancel(orderNumber, tokenKeyData, tokenJwtData);
   };
 
   cancelProducts = async (
     signatureId: string,
     productsIds: string[],
   ) => {
-    try {
-      return this.cancelProductSignatureRepository.cancel(signatureId, productsIds);
-    } catch (error) {
-      throw error;
-    } 
+    return this.cancelProductSignatureRepository.cancel(signatureId, productsIds);
   }
 }

@@ -1,12 +1,9 @@
 import { injectable } from "tsyringe";
 import { OrderService } from "@core/services/order.service";
 import { ProductService } from "@core/services/product.service";
-import { OrderPayments } from "@core/interfaces/repositories/order";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { SignatureService } from "@core/services/signature.service";
-import { product } from "@core/models";
-import { ProductResponse } from "../product/dtos/ProductResponse.dto";
 import { CancelOrderResponse } from "./dtos/CancelOrderResponse.dto";
 
 @injectable()

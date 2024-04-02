@@ -18,11 +18,7 @@ export class ProductService {
   };
 
   listByIds = async (companyId: number, productIds: string[]) => {
-    try {
-      return this.productListerRepository.listByIds(companyId, productIds);
-    } catch (error) {
-      throw error;
-    }
+    return this.productListerRepository.listByIds(companyId, productIds);
   };
 
   view = async (companyId: number, sku: string) => {
