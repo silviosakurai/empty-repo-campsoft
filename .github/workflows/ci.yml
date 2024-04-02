@@ -33,7 +33,7 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
@@ -139,7 +139,7 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
@@ -240,7 +240,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
