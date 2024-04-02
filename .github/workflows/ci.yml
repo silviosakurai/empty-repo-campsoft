@@ -3,30 +3,39 @@ name: Test Application
 on:
   pull_request:
     branches: [dev, main]
-  push:
-    branches: [dev, main]
+
+env:
+  SHARED_USER_TOKEN: squ_23a970a10d0dddff6d8e7ceb28788f780149a2be
+  SONAR_HOST_URL: http://data.tocalivros.com:9000/
+  SONAR_TOKEN_PUBLIC: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
+  SONAR_TOKEN_PARTNER: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
+  SONAR_TOKEN_CORE: sqp_c9ab534fde48953a50fd239678a4840bcdf5dc09
+  SONAR_PUBLIC_PROJECT_KEY: mania-public
+  SONAR_PARTNER_PROJECT_KEY: mania-partner
+  SONAR_CORE_PROJECT_KEY: mania-core
+  TIME_AWAIT: 30s
+  VERSION_NODE: 20.11.1
+  VERSION_JAVA: 17
 
 jobs:
-  build:
+  build_public:
     runs-on: ubuntu-latest
     permissions: read-all
-    strategy:
-      matrix:
-        node-version: ["20.11.1"]
-        java-version: ["17"]
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.VERSION_NODE }}
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java-version }}
+          java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
 
       - name: Cache pnpm modules
@@ -36,8 +45,6 @@ jobs:
             ~/.pnpm-store
             **/node_modules
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -54,75 +61,45 @@ jobs:
       - name: Run Build (Public)
         run: pnpm run build:public
 
-      - name: Run Lint (Partner)
-        run: pnpm run lint:partner
-
-      - name: Run Build (Partner)
-        run: pnpm run build:partner
-
-      - name: SonarQube Scan (Public)
-        uses: SonarSource/sonarqube-scan-action@master
+      - uses: SonarSource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
-          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN_PUBLIC }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
         with:
           projectBaseDir: apps/public_api/
           args: >
-            -D"sonar.projectKey=mania-public"
+            -D"sonar.projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}"
             -D"sonar.sources=src"
             -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
             -D"sonar.coverage.exclusions=**"
             -D"sonar.cpd.exclusions=**"
 
-      - name: SonarQube Scan (Partner)
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
-          SONAR_HOST_URL: http://data.tocalivros.com:9000/
-        with:
-          projectBaseDir: apps/partner_api/
-          args: >
-            -D"sonar.projectKey=mania-partner"
-            -D"sonar.sources=src"
-            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
-            -D"sonar.coverage.exclusions=**"
-            -D"sonar.cpd.exclusions=**"
-
-      - name: SonarQube Scan (Core)
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: sqp_c9ab534fde48953a50fd239678a4840bcdf5dc09
-          SONAR_HOST_URL: http://data.tocalivros.com:9000/
-        with:
-          projectBaseDir: packages/
-          args: >
-            -D"sonar.projectKey=mania-core"
-            -D"sonar.sources=core"
-            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
-            -D"sonar.coverage.exclusions=**"
-            -D"sonar.cpd.exclusions=**"
-
-      - name: Wait for 10 seconds
+      - name: Wait for ${{ env.TIME_AWAIT }}
         uses: jakejarvis/wait-action@master
         with:
-          time: "10s"
+          time: "${{ env.TIME_AWAIT }}"
 
       - name: Check Quality Gate (Public)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public" | jq -r '.projectStatus.status')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
 
       - name: Check Maintainability (Public)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PUBLIC_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "\"not_available"\" ]]; then
+          if [[ "$response" == "\"not_available\"" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
@@ -130,34 +107,105 @@ jobs:
 
       - name: Check Security Hotspots (Public)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PUBLIC_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "\"not_available"\" ]]; then
+          if [[ "$response" == "\"not_available\"" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
           fi
 
+  build_partner:
+    runs-on: ubuntu-latest
+    permissions: read-all
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.VERSION_NODE }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.VERSION_JAVA }}
+          distribution: "temurin"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            **/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install JQ
+        run: sudo apt-get install jq
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Run Lint (Partner)
+        run: pnpm run lint:partner
+
+      - name: Run Build (Partner)
+        run: pnpm run build:partner
+
+      - uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN_PARTNER }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: apps/partner_api/
+          args: >
+            -D"sonar.projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}"
+            -D"sonar.sources=src"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: Wait for ${{ env.TIME_AWAIT }}
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "${{ env.TIME_AWAIT }}"
+
       - name: Check Quality Gate (Partner)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner" | jq -r '.projectStatus.status')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
 
       - name: Check Maintainability (Partner)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PARTNER_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "\"not_available"\" ]]; then
+          if [[ "$response" == "\"not_available\"" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
@@ -165,34 +213,80 @@ jobs:
 
       - name: Check Security Hotspots (Partner)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PARTNER_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "\"not_available"\" ]]; then
+          if [[ "$response" == "\"not_available\"" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
           fi
 
+  build_core:
+    runs-on: ubuntu-latest
+    permissions: read-all
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.VERSION_JAVA }}
+          distribution: "temurin"
+
+      - name: Install JQ
+        run: sudo apt-get install jq
+
+      - uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN_CORE }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: packages/
+          args: >
+            -D"sonar.projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}"
+            -D"sonar.sources=core"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: Wait for ${{ env.TIME_AWAIT }}
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "${{ env.TIME_AWAIT }}"
+
       - name: Check Quality Gate (Core)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core" | jq -r '.projectStatus.status')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           [[ "$status" == "OK" ]] || exit 1
 
       - name: Check Maintainability (Core)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_CORE_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "\"not_available"\" ]]; then
+          if [[ "$response" == "\"not_available\"" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_CORE_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
@@ -200,13 +294,18 @@ jobs:
 
       - name: Check Security Hotspots (Core)
         run: |
-          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_CORE_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "\"not_available"\" ]]; then
+          if [[ "$response" == "\"not_available\"" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
