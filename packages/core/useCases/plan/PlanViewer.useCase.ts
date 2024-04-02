@@ -7,6 +7,6 @@ export class PlanViewerUseCase {
   constructor(private readonly planService: PlanService) {}
 
   async execute(companyId: number, planId: number): Promise<Plan | null> {
-    return await this.planService.view(companyId, planId);
+    return this.planService.view(companyId, planId);
   }
 }

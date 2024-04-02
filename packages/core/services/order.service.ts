@@ -19,7 +19,7 @@ export class OrderService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    return await this.ordersListerRepository.list(
+    return this.ordersListerRepository.list(
       input,
       tokenKeyData,
       tokenJwtData
@@ -30,7 +30,7 @@ export class OrderService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    return await this.ordersListerRepository.countTotal(
+    return this.ordersListerRepository.countTotal(
       tokenKeyData,
       tokenJwtData
     );
@@ -41,7 +41,7 @@ export class OrderService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    return await this.orderByNumberViewerRepository.view(
+    return this.orderByNumberViewerRepository.view(
       orderNumber,
       tokenKeyData,
       tokenJwtData

@@ -37,7 +37,7 @@ export class TfaCodesRepository {
   async validateCodeByCode(login: string, code: string) {
     const validUntil = adjustCurrentTimeByMinutes();
 
-    return await this.db
+    return this.db
       .select({
         id: tfaCodes.id_code_enviado,
         token: sql`BIN_TO_UUID(${tfaCodes.token})`,
@@ -58,7 +58,7 @@ export class TfaCodesRepository {
   async validateCodeByClientId(clientId: string, code: string) {
     const validUntil = adjustCurrentTimeByMinutes();
 
-    return await this.db
+    return this.db
       .select({
         id: tfaCodes.id_code_enviado,
         token: sql`BIN_TO_UUID(${tfaCodes.token})`,

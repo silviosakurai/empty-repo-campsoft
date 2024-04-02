@@ -14,7 +14,7 @@ export class ApiJwtViewerUseCase {
     routeMethod,
     routeModule,
   }: ViewApiJwtRequest): Promise<ITokenJwtData | null> {
-    return await this.apiService.findApiByJwt(
+    return this.apiService.findApiByJwt(
       clientId,
       tokenKeyData,
       routePath,

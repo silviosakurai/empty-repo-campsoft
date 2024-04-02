@@ -13,7 +13,7 @@ export class ApiService {
     routeMethod: RouteMethod,
     routeModule: RouteModule
   ) => {
-    return await this.apiRepository.findApiByKey(
+    return this.apiRepository.findApiByKey(
       keyApi,
       routePath,
       routeMethod,
@@ -28,7 +28,7 @@ export class ApiService {
     routeMethod: RouteMethod,
     routeModule: RouteModule
   ) => {
-    return await this.apiRepository.findApiByJwt(
+    return this.apiRepository.findApiByJwt(
       clientId,
       tokenKeyData,
       routePath,
@@ -38,6 +38,6 @@ export class ApiService {
   };
 
   findApiByTfa = async (token: string) => {
-    return await this.apiRepository.findApiByTfa(token);
+    return this.apiRepository.findApiByTfa(token);
   };
 }

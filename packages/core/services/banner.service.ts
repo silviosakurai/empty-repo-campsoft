@@ -10,13 +10,13 @@ export class BannerService {
   ) {}
 
   list = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
-    return await this.bannerReaderRepository.banners(tokenKeyData, input);
+    return this.bannerReaderRepository.banners(tokenKeyData, input);
   };
 
   countTotal = async (
     tokenKeyData: ITokenKeyData,
     input: IBannerReaderInput
   ) => {
-    return await this.bannerReaderRepository.countTotal(tokenKeyData, input);
+    return this.bannerReaderRepository.countTotal(tokenKeyData, input);
   };
 }

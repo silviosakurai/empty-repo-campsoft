@@ -16,7 +16,7 @@ export class SignatureService {
   ) {}
 
   findByClientId = async (client_id: string) => {
-    return await this.signatureViewerByClientId.find(client_id);
+    return this.signatureViewerByClientId.find(client_id);
   };
 
   findByOrderNumber = async (orderNumber: string) => {

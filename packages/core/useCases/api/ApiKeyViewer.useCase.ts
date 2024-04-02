@@ -13,7 +13,7 @@ export class ApiKeyViewerUseCase {
     routeMethod,
     routeModule,
   }: ViewApiKeyRequest): Promise<ITokenKeyData | null> {
-    return await this.apiService.findApiByKey(
+    return this.apiService.findApiByKey(
       keyApi,
       routePath,
       routeMethod,

@@ -10,6 +10,6 @@ export class ProductViewerUseCase {
     companyId: number,
     sku: string
   ): Promise<ProductResponse | null> {
-    return await this.productService.view(companyId, sku);
+    return this.productService.view(companyId, sku);
   }
 }
