@@ -79,12 +79,21 @@ jobs:
         with:
           time: "${{ env.TIME_AWAIT }}"
 
-      - name: Check Quality Gate (Public)
+      - name: Check Quality Gate (Partner)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
-          [[ "$status" == "OK" ]] || exit 1
+          if [[ "$status" == "OK" ]]; then
+            echo "Quality Gate is OK. Proceeding with the build."
+          else
+            echo "Quality Gate Status is not OK. Fetching details on failed conditions..."
+            # Fetch details on failed Quality Gate conditions
+            conditions_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq '.projectStatus.conditions[] | select(.status != "OK") | {metricKey, comparator, errorThreshold, actualValue}')
+            echo "Failed Quality Gate Conditions Details:"
+            echo "$conditions_response"
+            exit 1
+          fi
 
       - name: Check Maintainability (Public)
         run: |
@@ -190,7 +199,16 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
-          [[ "$status" == "OK" ]] || exit 1
+          if [[ "$status" == "OK" ]]; then
+            echo "Quality Gate is OK. Proceeding with the build."
+          else
+            echo "Quality Gate Status is not OK. Fetching details on failed conditions..."
+            # Fetch details on failed Quality Gate conditions
+            conditions_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq '.projectStatus.conditions[] | select(.status != "OK") | {metricKey, comparator, errorThreshold, actualValue}')
+            echo "Failed Quality Gate Conditions Details:"
+            echo "$conditions_response"
+            exit 1
+          fi
 
       - name: Check Maintainability (Partner)
         run: |
@@ -266,12 +284,21 @@ jobs:
         with:
           time: "${{ env.TIME_AWAIT }}"
 
-      - name: Check Quality Gate (Core)
+      - name: Check Quality Gate (Partner)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
-          [[ "$status" == "OK" ]] || exit 1
+          if [[ "$status" == "OK" ]]; then
+            echo "Quality Gate is OK. Proceeding with the build."
+          else
+            echo "Quality Gate Status is not OK. Fetching details on failed conditions..."
+            # Fetch details on failed Quality Gate conditions
+            conditions_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}" | jq '.projectStatus.conditions[] | select(.status != "OK") | {metricKey, comparator, errorThreshold, actualValue}')
+            echo "Failed Quality Gate Conditions Details:"
+            echo "$conditions_response"
+            exit 1
+          fi
 
       - name: Check Maintainability (Core)
         run: |
