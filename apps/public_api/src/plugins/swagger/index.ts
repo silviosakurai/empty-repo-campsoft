@@ -22,7 +22,7 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
         version: '1.0.0',
       },
       host: generalEnvironment.appUrlPublic,
-      schemes: ['http'],
+      schemes: [generalEnvironment.protocol],
       consumes: ['application/json'],
       securityDefinitions: {
         authenticateJwt: {

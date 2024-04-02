@@ -1,4 +1,3 @@
-import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { Type } from "@sinclair/typebox";
 import { pricesSchema } from "../price/pricesSchema";
 import { productsSelectedSchema } from "../product/productsSelectedSchema copy";

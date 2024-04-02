@@ -5,11 +5,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class ApiService {
-  private apiRepository: ApiRepository;
-
-  constructor(apiRepository: ApiRepository) {
-    this.apiRepository = apiRepository;
-  }
+  constructor(private readonly apiRepository: ApiRepository) {}
 
   findApiByKey = async (
     keyApi: string,
@@ -17,16 +13,12 @@ export class ApiService {
     routeMethod: RouteMethod,
     routeModule: RouteModule
   ) => {
-    try {
-      return await this.apiRepository.findApiByKey(
-        keyApi,
-        routePath,
-        routeMethod,
-        routeModule
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.apiRepository.findApiByKey(
+      keyApi,
+      routePath,
+      routeMethod,
+      routeModule
+    );
   };
 
   findApiByJwt = async (
@@ -36,24 +28,16 @@ export class ApiService {
     routeMethod: RouteMethod,
     routeModule: RouteModule
   ) => {
-    try {
-      return await this.apiRepository.findApiByJwt(
-        clientId,
-        tokenKeyData,
-        routePath,
-        routeMethod,
-        routeModule
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.apiRepository.findApiByJwt(
+      clientId,
+      tokenKeyData,
+      routePath,
+      routeMethod,
+      routeModule
+    );
   };
 
   findApiByTfa = async (token: string) => {
-    try {
-      return await this.apiRepository.findApiByTfa(token);
-    } catch (error) {
-      throw error;
-    }
+    return await this.apiRepository.findApiByTfa(token);
   };
 }

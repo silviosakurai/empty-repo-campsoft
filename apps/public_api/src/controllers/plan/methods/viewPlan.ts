@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ViewPlanUseCase } from '@core/useCases/plan/ViewPlan.useCase';
+import { PlanViewerUseCase } from '@core/useCases/plan/PlanViewer.useCase';
 import { container } from 'tsyringe';
 import { ViewPlanRequest } from '@core/useCases/plan/dtos/ViewPlanRequest.dto';
 
@@ -11,11 +11,11 @@ export const viewPlan = async (
   }>,
   reply: FastifyReply
 ) => {
-  const viewPlanUseCase = container.resolve(ViewPlanUseCase);
+  const planViewerUseCase = container.resolve(PlanViewerUseCase);
   const { t, tokenKeyData } = request;
 
   try {
-    const response = await viewPlanUseCase.execute(
+    const response = await planViewerUseCase.execute(
       tokenKeyData.company_id,
       request.params.planId
     );

@@ -3,7 +3,6 @@ import {
   datetime,
   varchar,
   mysqlEnum,
-  date,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 import {

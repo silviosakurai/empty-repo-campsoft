@@ -103,9 +103,7 @@ export class GeneralEnvironment {
 
   public get zoopBaseUrl(): string {
     if (!this.ZOOP_BASE_URL) {
-      throw new InvalidConfigurationError(
-        "ZOOP_BASE_URL is not defined."
-      );
+      throw new InvalidConfigurationError("ZOOP_BASE_URL is not defined.");
     }
 
     return this.ZOOP_BASE_URL;
@@ -113,9 +111,7 @@ export class GeneralEnvironment {
 
   public get zoopApiKey(): string {
     if (!this.ZOOP_API_KEY) {
-      throw new InvalidConfigurationError(
-        "ZOOP_API_KEY is not defined."
-      );
+      throw new InvalidConfigurationError("ZOOP_API_KEY is not defined.");
     }
 
     return this.ZOOP_API_KEY;
@@ -129,5 +125,9 @@ export class GeneralEnvironment {
     }
 
     return this.ZOOP_MARKETPLACE_KEY;
+  }
+
+  public get protocol(): string {
+    return this.appEnvironment === AppEnvironment.LOCAL ? "http" : "https";
   }
 }

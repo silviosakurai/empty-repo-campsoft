@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ListPaymentUseCase } from '@core/useCases/order/ListPayment.useCase';
+import { PaymentListerUseCase } from '@core/useCases/order/PaymentLister.useCase';
 import { ListPaymentRequestDto } from '@core/useCases/order/dtos/ListPaymentRequest.dto';
 import { container } from 'tsyringe';
 
@@ -11,12 +11,12 @@ export const listPayment = async (
   }>,
   reply: FastifyReply
 ) => {
-  const listPaymentUseCase = container.resolve(ListPaymentUseCase);
+  const paymentListerUseCase = container.resolve(PaymentListerUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
   const { orderNumber } = request.params;
 
   try {
-    const response = await listPaymentUseCase.execute(
+    const response = await paymentListerUseCase.execute(
       orderNumber,
       tokenKeyData,
       tokenJwtData

@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
-import { SendWhatsAppTFAUserCase } from "@core/useCases/tfa/SendWhatsAppTFA.useCase";
-import { SendSmsTFAUserCase } from "@core/useCases/tfa/SendSmsTFA.useCase";
-import { SendEmailTFAUserCase } from "@core/useCases/tfa/SendEmailTFA.useCase";
+import { WhatsAppTFASenderUserCase } from "@core/useCases/tfa/WhatsAppTFASender.useCase";
+import { SmsTFAUserSenderCase } from "@core/useCases/tfa/SmsTFASender.useCase";
+import { EmailTFASenderUserCase } from "@core/useCases/tfa/EmailTFASender.useCase";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { phoneNumberValidator } from "@core/common/functions/phoneNumberValidator";
@@ -12,19 +12,11 @@ import { TFunction } from "i18next";
 
 @injectable()
 class NotificationService {
-  private sendWhatsAppTFAUserCase: SendWhatsAppTFAUserCase;
-  private sendSmsTFAUserCase: SendSmsTFAUserCase;
-  private sendEmailTFAUserCase: SendEmailTFAUserCase;
-
   constructor(
-    sendWhatsAppTFAUserCase: SendWhatsAppTFAUserCase,
-    sendSmsTFAUserCase: SendSmsTFAUserCase,
-    sendEmailTFAUserCase: SendEmailTFAUserCase
-  ) {
-    this.sendWhatsAppTFAUserCase = sendWhatsAppTFAUserCase;
-    this.sendSmsTFAUserCase = sendSmsTFAUserCase;
-    this.sendEmailTFAUserCase = sendEmailTFAUserCase;
-  }
+    private readonly whatsAppTFASenderUseCase: WhatsAppTFASenderUserCase,
+    private readonly smsTFASenderUseCase: SmsTFAUserSenderCase,
+    private readonly emailTFASenderUseCase: EmailTFASenderUserCase
+  ) {}
 
   public async executeTfa(
     t: TFunction<"translation", undefined>,
@@ -35,7 +27,7 @@ class NotificationService {
         throw new TFAVerificationError(t("phone_is_not_valid"));
       }
 
-      return await this.sendWhatsAppTFAUserCase.execute(options);
+      return await this.whatsAppTFASenderUseCase.execute(options);
     }
 
     if (options.type === TFAType.SMS) {
@@ -43,15 +35,15 @@ class NotificationService {
         throw new TFAVerificationError(t("phone_is_not_valid"));
       }
 
-      return await this.sendSmsTFAUserCase.execute(options);
+      return await this.smsTFASenderUseCase.execute(options);
     }
 
     if (options.type === TFAType.EMAIL) {
-      if (validateEmail(options.loginUserTFA.login)) {
+      if (!validateEmail(options.loginUserTFA.login)) {
         throw new TFAVerificationError(t("email_is_not_valid"));
       }
 
-      return await this.sendEmailTFAUserCase.execute(options);
+      return await this.emailTFASenderUseCase.execute(options);
     }
 
     return false;

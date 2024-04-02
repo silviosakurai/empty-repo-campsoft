@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ListCrossSellProductUseCase } from '@core/useCases/product/ListCrossSellProduct.useCase';
+import { CrossSellProductListerUseCase } from '@core/useCases/product/CrossSellProductLister.useCase';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { CrossSellProductRequest } from '@core/useCases/product/dtos/ListCrossSellProductRequest.dto';
@@ -11,7 +11,7 @@ export const listCrossSellProduct = async (
   }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(ListCrossSellProductUseCase);
+  const service = container.resolve(CrossSellProductListerUseCase);
   const { t, tokenJwtData } = request;
 
   try {

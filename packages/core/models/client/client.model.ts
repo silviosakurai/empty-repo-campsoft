@@ -5,7 +5,6 @@ import {
 } from "@core/common/enums/models/client";
 import {
   mysqlTable,
-  int,
   varchar,
   mysqlEnum,
   date,

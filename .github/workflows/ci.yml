@@ -1,4 +1,4 @@
-name: CI
+name: Test Application
 
 on:
   pull_request:
@@ -9,9 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: read-all
     strategy:
       matrix:
         node-version: ["20.11.1"]
+        java-version: ["17"]
 
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +23,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: "temurin"
+
       - name: Cache pnpm modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.pnpm-store
@@ -33,6 +41,9 @@ jobs:
 
       - name: Install pnpm
         run: npm install -g pnpm
+
+      - name: Install JQ
+        run: sudo apt-get install jq
 
       - name: Install Dependencies
         run: pnpm install
@@ -48,3 +59,155 @@ jobs:
 
       - name: Run Build (Partner)
         run: pnpm run build:partner
+
+      - name: SonarQube Scan (Public)
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        with:
+          projectBaseDir: apps/public_api/
+          args: >
+            -D"sonar.projectKey=mania-public"
+            -D"sonar.sources=src"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: SonarQube Scan (Partner)
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        with:
+          projectBaseDir: apps/partner_api/
+          args: >
+            -D"sonar.projectKey=mania-partner"
+            -D"sonar.sources=src"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: SonarQube Scan (Core)
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: sqp_c9ab534fde48953a50fd239678a4840bcdf5dc09
+          SONAR_HOST_URL: http://data.tocalivros.com:9000/
+        with:
+          projectBaseDir: packages/
+          args: >
+            -D"sonar.projectKey=mania-core"
+            -D"sonar.sources=core"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: Wait for 10 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "10s"
+
+      - name: Check Quality Gate (Public)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-public" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          [[ "$status" == "OK" ]] || exit 1
+
+      - name: Check Maintainability (Public)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          echo "Technical Debt: $response minutes"
+          if [[ "$response" == "\"not_available"\" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [[ "$response" != "\"0\"" ]]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Public)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-public&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "\"not_available"\" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [[ "$response" != "\"100\"" ]]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
+
+      - name: Check Quality Gate (Partner)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-partner" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          [[ "$status" == "OK" ]] || exit 1
+
+      - name: Check Maintainability (Partner)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          echo "Technical Debt: $response minutes"
+          if [[ "$response" == "\"not_available"\" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [[ "$response" != "\"0\"" ]]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Partner)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-partner&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "\"not_available"\" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [[ "$response" != "\"100\"" ]]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
+
+      - name: Check Quality Gate (Core)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/qualitygates/project_status?projectKey=mania-core" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          [[ "$status" == "OK" ]] || exit 1
+
+      - name: Check Maintainability (Core)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          echo "Technical Debt: $response minutes"
+          if [[ "$response" == "\"not_available"\" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [[ "$response" != "\"0\"" ]]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Core)
+        run: |
+          ENCODED_TOKEN=$(echo -n 'squ_23a970a10d0dddff6d8e7ceb28788f780149a2be:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "http://data.tocalivros.com:9000/api/measures/component?component=mania-core&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "\"not_available"\" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [[ "$response" != "\"100\"" ]]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
