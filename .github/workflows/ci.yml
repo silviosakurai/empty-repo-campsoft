@@ -63,6 +63,7 @@ jobs:
 
       - uses: SonarSource/sonarqube-scan-action@master
         env:
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ env.SONAR_TOKEN_PUBLIC }}
         with:
           projectBaseDir: apps/public_api/
@@ -156,6 +157,7 @@ jobs:
 
       - uses: SonarSource/sonarqube-scan-action@master
         env:
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ env.SONAR_TOKEN_PARTNER }}
         with:
           projectBaseDir: apps/partner_api/
@@ -224,6 +226,7 @@ jobs:
 
       - uses: SonarSource/sonarqube-scan-action@master
         env:
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ env.SONAR_TOKEN_CORE }}
         with:
           projectBaseDir: packages/
