@@ -11,5 +11,9 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "tocalivros",
+    "projectKey": "mania-core"
   }
 }
