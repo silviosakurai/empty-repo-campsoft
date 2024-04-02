@@ -90,9 +90,9 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PUBLIC_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "\"not_available\"" ]]; then
+          if [[ "$response" == "not_available" ]]; then
             echo "Technical debt data not available. Continuing with the build."
-          elif [[ "$response" != "\"0\"" ]]; then
+          elif [[ "$response" != 0 ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
@@ -103,9 +103,9 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PUBLIC_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "\"not_available\"" ]]; then
+          if [[ "$response" == "not_available" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
-          elif [[ "$response" != "\"100\"" ]]; then
+          elif [[ "$response" != 100 ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
             exit 1
           else
@@ -183,9 +183,9 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PARTNER_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "\"not_available\"" ]]; then
+          if [[ "$response" == "not_available" ]]; then
             echo "Technical debt data not available. Continuing with the build."
-          elif [[ "$response" != "\"0\"" ]]; then
+          elif [[ "$response" != 0 ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
@@ -196,9 +196,9 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PARTNER_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "\"not_available\"" ]]; then
+          if [[ "$response" == "not_available" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
-          elif [[ "$response" != "\"100\"" ]]; then
+          elif [[ "$response" != 100 ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
             exit 1
           else
@@ -251,9 +251,9 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_CORE_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
-          if [[ "$response" == "\"not_available\"" ]]; then
+          if [[ "$response" == "not_available" ]]; then
             echo "Technical debt data not available. Continuing with the build."
-          elif [[ "$response" != "\"0\"" ]]; then
+          elif [[ "$response" != 0 ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
             exit 1
           else
@@ -264,9 +264,9 @@ jobs:
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_CORE_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
-          if [[ "$response" == "\"not_available\"" ]]; then
+          if [[ "$response" == "not_available" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
-          elif [[ "$response" != "\"100\"" ]]; then
+          elif [[ "$response" != 100 ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
             exit 1
           else
