@@ -23,7 +23,15 @@ export class ProductService {
 
   listProduct = async (companyId: number, query: ListProductRequest) => {
     try {
-      return await this.listProductRepository.list(companyId, query);
+      return this.listProductRepository.list(companyId, query);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  listProductsByIds = async (companyId: number, productIds: string[]) => {
+    try {
+      return this.listProductRepository.listByIds(companyId, productIds);
     } catch (error) {
       throw error;
     }
@@ -31,7 +39,7 @@ export class ProductService {
 
   viewProduct = async (companyId: number, sku: string) => {
     try {
-      return await this.viewProductRepository.get(companyId, sku);
+      return this.viewProductRepository.get(companyId, sku);
     } catch (error) {
       throw error;
     }
@@ -39,7 +47,7 @@ export class ProductService {
 
   listCrossSell = async (input: CrossSellProductRequest) => {
     try {
-      return await this.listCrossSellProductRepository.list(input);
+      return this.listCrossSellProductRepository.list(input);
     } catch (error) {
       throw error;
     }
