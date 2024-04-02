@@ -33,7 +33,7 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
@@ -98,6 +98,7 @@ jobs:
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
+          fi
 
       - name: Check Security Hotspots (Public)
         run: |
@@ -111,6 +112,7 @@ jobs:
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
 
   build_partner:
     runs-on: ubuntu-latest
@@ -127,7 +129,7 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
@@ -192,6 +194,7 @@ jobs:
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
+          fi
 
       - name: Check Security Hotspots (Partner)
         run: |
@@ -205,6 +208,7 @@ jobs:
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
 
   build_core:
     runs-on: ubuntu-latest
@@ -216,7 +220,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.VERSION_JAVA }}
           distribution: "temurin"
@@ -261,6 +265,7 @@ jobs:
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
+          fi
 
       - name: Check Security Hotspots (Core)
         run: |
@@ -274,3 +279,4 @@ jobs:
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
