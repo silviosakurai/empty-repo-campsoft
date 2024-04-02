@@ -99,7 +99,7 @@ jobs:
             issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
             echo "Issues details:"
             echo "$issues_response"
-            
+
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
@@ -114,6 +114,11 @@ jobs:
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
@@ -215,6 +220,11 @@ jobs:
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
@@ -291,6 +301,11 @@ jobs:
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
             exit 1
           else
             echo "All security hotspots have been reviewed. Proceeding with the build."
