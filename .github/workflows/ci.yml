@@ -95,6 +95,11 @@ jobs:
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+            
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
@@ -191,6 +196,11 @@ jobs:
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
@@ -262,6 +272,11 @@ jobs:
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_CORE_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+
             exit 1
           else
             echo "Technical debt is zero. Proceeding with the build."
