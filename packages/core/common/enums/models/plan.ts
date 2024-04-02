@@ -1,5 +1,6 @@
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
-import { Status } from "../Status";
+import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
+import { Static } from "@sinclair/typebox";
 
 export enum PlanVisivelSite {
   YES = "Y",
@@ -46,18 +47,4 @@ export type GroupProductGroupMapper = {
   [key: number]: ProductsGroups;
 };
 
-export type Plan = {
-  plan_id: number;
-  status: Status | null;
-  visible_site: boolean;
-  business_id: number | null;
-  plan: string | null;
-  image: string | null;
-  description: string | null;
-  short_description: string | null;
-  created_at: string;
-  updated_at: string;
-  prices: PlanPrice[];
-  products: ProductResponse[];
-  product_groups: ProductsGroups[];
-};
+export type Plan = Static<typeof planDetailsWithProductsAvailableSchema>;

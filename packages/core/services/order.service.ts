@@ -1,60 +1,54 @@
 import { injectable } from "tsyringe";
-import { ListOrdersRepository } from "@core/repositories/order/ListOrders.repository";
+import { OrdersListerRepository } from "@core/repositories/order/OrdersLister.repository";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
-import { FindOrderByNumberRepository } from "@core/repositories/order/FindOrderByNumber.repository";
+import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
+import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
 
 @injectable()
 export class OrderService {
   constructor(
-    private readonly listOrdersRepository: ListOrdersRepository,
-    private readonly findOrderByNumberRepository: FindOrderByNumberRepository
+    private readonly ordersListerRepository: OrdersListerRepository,
+    private readonly paymentListerRepository: PaymentListerRepository,
+    private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository
   ) {}
 
-  listOrder = async (
+  list = async (
     input: ListOrderRequestDto,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    try {
-      return await this.listOrdersRepository.list(
-        input,
-        tokenKeyData,
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  findOrderByNumber = async (
-    orderNumber: string,
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData
-  ) => {
-    try {
-      return await this.findOrderByNumberRepository.find(
-        orderNumber,
-        tokenKeyData,
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.ordersListerRepository.list(
+      input,
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   countTotal = async (
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {
-    try {
-      return await this.listOrdersRepository.countTotal(
-        tokenKeyData,
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
+    return await this.ordersListerRepository.countTotal(
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
+  viewOrderByNumber = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return await this.orderByNumberViewerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
+  listPayment = async (orderId: string) => {
+    return this.paymentListerRepository.list(orderId);
   };
 }

@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ListProductUseCase } from '@core/useCases/product/ListProduct.useCase';
+import { ProductsListerUseCase } from '@core/useCases/product/ProductsLister.useCase';
 import { container } from 'tsyringe';
 import { ListProductRequest } from '@core/useCases/product/dtos/ListProductRequest.dto';
 
@@ -11,11 +11,11 @@ export const listProduct = async (
   }>,
   reply: FastifyReply
 ) => {
-  const listProductUseCase = container.resolve(ListProductUseCase);
+  const productListerUseCase = container.resolve(ProductsListerUseCase);
   const { t, tokenKeyData } = request;
 
   try {
-    const response = await listProductUseCase.execute(
+    const response = await productListerUseCase.execute(
       tokenKeyData.company_id,
       request.query
     );

@@ -1,28 +1,13 @@
-import { IPaginationResponse } from "@core/common/interfaces/IPaginationResponse";
+import { IBannerItem } from "@core/interfaces/repositories/banner";
+import { bannerReaderResponseSchema } from "@core/schema/banner/bannerReaderResponseSchema";
+import { Static } from "@fastify/type-provider-typebox";
 
-export type BannerReaderResponseDto = IPaginationResponse &
-  BannerReaderResponse;
-
-export type BannerReaderResponse = {
-  results: BannerReaderResponseItem[];
-};
+export type BannerReaderResponseDto = Static<typeof bannerReaderResponseSchema>;
 
 export type BannerReaderResponseItem = {
-  location: string;
-  type: number;
+  banner_id: number;
+  location: string | null;
+  type: number | null;
   banner_name: string | null;
-  items: Array<{
-    item_name: string | null;
-    description: string | null;
-    sort: number | null;
-    format: string | null;
-    images: {
-      desktop: string | null;
-      mobile: string | null;
-    };
-    html: string | null;
-    link: string | null;
-    start_date: string;
-    end_date: string;
-  }>;
+  items: IBannerItem[];
 };

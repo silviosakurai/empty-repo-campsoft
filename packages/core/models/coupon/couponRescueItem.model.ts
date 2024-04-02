@@ -9,7 +9,6 @@ import {
   timestamp,
   varchar,
   mysqlEnum,
-  date,
   datetime,
 } from "drizzle-orm/mysql-core";
 

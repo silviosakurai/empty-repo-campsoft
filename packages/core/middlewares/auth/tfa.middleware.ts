@@ -2,7 +2,7 @@ import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { sendResponse } from "@core/common/functions/sendResponse";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
-import { ViewApiTfaUseCase } from "@core/useCases/api/ViewApiTfa.useCase";
+import { ApiTfaViewerUseCase } from "@core/useCases/api/ApiTfaViewer.useCase";
 import { container } from "tsyringe";
 import { ViewApiTfaRequest } from "@core/useCases/api/dtos/ViewApiTfaRequest.dto";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
@@ -51,9 +51,9 @@ async function authenticateTfa(
       return;
     }
 
-    const viewApiTfaUseCase = container.resolve(ViewApiTfaUseCase);
+    const apiTfaViewerUseCase = container.resolve(ApiTfaViewerUseCase);
 
-    const responseAuth = await viewApiTfaUseCase.execute({
+    const responseAuth = await apiTfaViewerUseCase.execute({
       token: decoded.token,
     } as ViewApiTfaRequest);
 
@@ -90,9 +90,7 @@ function checkClientIdsAndAuthorize(
 ): boolean {
   if (
     tokenTfaData.clientId &&
-    tokenJwtData &&
-    tokenJwtData.clientId &&
-    tokenTfaData.clientId !== tokenJwtData.clientId
+    tokenTfaData.clientId !== tokenJwtData?.clientId
   ) {
     return true;
   }

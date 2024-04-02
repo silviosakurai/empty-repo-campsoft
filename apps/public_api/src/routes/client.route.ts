@@ -2,19 +2,22 @@ import ClientController from '@/controllers/client';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
+  getUserSchema,
   userCreatorSchema,
   userUpdaterSchema,
+  userDeleteSchema,
   userPhoneUpdaterSchema,
   userPasswordUpdaterSchema,
-  userPasswordRecoveryMethods,
+  userPasswordRecoveryMethodsSchema,
   userPasswordRecoveryUpdaterSchema,
-} from '@core/validations/user/user.validation';
-import { voucherSchema } from '@core/validations/voucher/voucher.validation';
+  getUserVoucherSchema,
+} from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
   server.get('/user', {
+    schema: getUserSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
   });
@@ -27,53 +30,54 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.put('/user', {
     schema: userUpdaterSchema,
-    handler: clientController.update,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.update,
   });
 
   server.delete('/user', {
-    handler: clientController.delete,
+    schema: userDeleteSchema,
     preHandler: [
       server.authenticateKeyApi,
       server.authenticateJwt,
       server.authenticateTfa,
     ],
+    handler: clientController.delete,
   });
 
   server.patch('/user/phone', {
     schema: userPhoneUpdaterSchema,
-    handler: clientController.updatePhone,
     preHandler: [
       server.authenticateKeyApi,
       server.authenticateJwt,
       server.authenticateTfa,
     ],
+    handler: clientController.updatePhone,
   });
 
   server.patch('/user/password', {
     schema: userPasswordUpdaterSchema,
-    handler: clientController.updatePassword,
     preHandler: [
       server.authenticateKeyApi,
       server.authenticateJwt,
       server.authenticateTfa,
     ],
+    handler: clientController.updatePassword,
   });
 
   server.get('/user/recovery-password/:login', {
-    schema: userPasswordRecoveryMethods,
-    handler: clientController.passwordRecoveryMethods,
+    schema: userPasswordRecoveryMethodsSchema,
     preHandler: [server.authenticateKeyApi],
+    handler: clientController.passwordRecoveryMethods,
   });
 
   server.patch('/user/recovery-password', {
     schema: userPasswordRecoveryUpdaterSchema,
-    handler: clientController.updatePasswordRecovery,
     preHandler: [server.authenticateKeyApi, server.authenticateTfa],
+    handler: clientController.updatePasswordRecovery,
   });
 
   server.get('/user/vouchers/:voucherCode', {
-    schema: voucherSchema,
+    schema: getUserVoucherSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.viewVoucher,
   });

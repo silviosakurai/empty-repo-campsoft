@@ -26,7 +26,7 @@ export const updateClient = async (
 
       return sendResponse(reply, {
         message: t('client_not_found'),
-        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 

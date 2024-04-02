@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { createCacheKey } from "@core/common/functions/createCacheKey";
 import { sendResponse } from "@core/common/functions/sendResponse";
-import { ViewApiKeyUseCase } from "@core/useCases/api/ViewApiKey.useCase";
+import { ApiKeyViewerUseCase } from "@core/useCases/api/ApiKeyViewer.useCase";
 import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
@@ -27,7 +27,7 @@ async function authenticateKeyApi(
   }
 
   try {
-    const viewApiKeyUseCase = container.resolve(ViewApiKeyUseCase);
+    const apiKeyViewerUseCase = container.resolve(ApiKeyViewerUseCase);
 
     const cacheKey = createCacheKey(
       "keyCache",
@@ -45,7 +45,7 @@ async function authenticateKeyApi(
       return;
     }
 
-    const responseAuth = await viewApiKeyUseCase.execute({
+    const responseAuth = await apiKeyViewerUseCase.execute({
       keyApi: keyapi,
       routePath,
       routeMethod,

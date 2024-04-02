@@ -15,6 +15,10 @@ export const errorHook = (
   error: FastifyError,
   done: HookHandlerDoneFunction
 ) => {
+  if (request.raw?.url?.startsWith("/docs")) {
+    return done();
+  }
+
   const responseBody = typeof error === "string" ? JSON.parse(error) : error;
   const { keyapi } = request.headers;
 

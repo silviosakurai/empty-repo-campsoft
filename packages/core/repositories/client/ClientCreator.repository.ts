@@ -3,20 +3,14 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { client } from "@core/models";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
-import { ClientByCPFFinderRepository } from "./ClientByCPFFinder.repository";
+import { ClientByCPFViewerRepository } from "./ClientByCPFViewer.repository";
 
 @injectable()
 export class ClientCreatorRepository {
-  private db: MySql2Database<typeof schema>;
-  private findClientByCPF: ClientByCPFFinderRepository;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>,
-    findClientByCPF: ClientByCPFFinderRepository
-  ) {
-    this.db = mySql2Database;
-    this.findClientByCPF = findClientByCPF;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>,
+    private readonly findClientByCPF: ClientByCPFViewerRepository
+  ) {}
 
   async create(
     input: CreateClientRequestDto
@@ -41,7 +35,7 @@ export class ClientCreatorRepository {
       return null;
     }
 
-    const clientFounded = await this.findClientByCPF.find(input.cpf);
+    const clientFounded = await this.findClientByCPF.view(input.cpf);
 
     if (!clientFounded) {
       return null;

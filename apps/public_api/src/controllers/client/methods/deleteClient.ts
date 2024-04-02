@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ClientDeleteUseCase } from '@core/useCases/client/ClientDelete.useCase';
+import { ClientEraserUseCase } from '@core/useCases/client/ClientEraser.useCase';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 
@@ -8,7 +8,7 @@ export const deleteClient = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const clientDeleteUseCase = container.resolve(ClientDeleteUseCase);
+  const clientEraserUseCase = container.resolve(ClientEraserUseCase);
   const { t, tokenKeyData, tokenJwtData, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
@@ -16,12 +16,12 @@ export const deleteClient = async (
 
     return sendResponse(reply, {
       message: t('client_not_found'),
-      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      httpStatusCode: HTTPStatusCode.NOT_FOUND,
     });
   }
 
   try {
-    const response = await clientDeleteUseCase.delete(
+    const response = await clientEraserUseCase.delete(
       tokenJwtData,
       tokenKeyData
     );
@@ -31,7 +31,7 @@ export const deleteClient = async (
 
       return sendResponse(reply, {
         message: t('client_not_found'),
-        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 
