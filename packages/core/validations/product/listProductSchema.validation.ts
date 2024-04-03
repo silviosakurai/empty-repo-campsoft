@@ -53,7 +53,7 @@ export const listProductSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Array(productListResponseSchema),
+        data: productListResponseSchema,
       },
       { description: "Successful" }
     ),

@@ -1,9 +1,9 @@
 import { Type } from "@sinclair/typebox";
 
 export const productHowToAccess = Type.Object({
-  desktop: Type.String(),
-  mobile: Type.String(),
-  url_web: Type.String(),
-  url_ios: Type.String(),
-  url_android: Type.String(),
+  desktop: Type.Optional(Type.String()),
+  mobile: Type.Optional(Type.String()),
+  url_web: Type.Optional(Type.String()),
+  url_ios: Type.Optional(Type.String()),
+  url_android: Type.Optional(Type.String()),
 });
