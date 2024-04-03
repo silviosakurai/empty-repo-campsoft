@@ -8,6 +8,7 @@ import planRoutes from '@/routes/plan.route';
 import orderRoutes from '@/routes/order.route';
 import vouchersRoutes from '@/routes/voucher.route';
 import healthRoutes from '@/routes/health.route';
+import reviewRoutes from './review.route';
 
 export default async function (server: FastifyInstance) {
   await server.register(authRoutes);
@@ -19,4 +20,5 @@ export default async function (server: FastifyInstance) {
   await server.register(orderRoutes);
   await server.register(vouchersRoutes);
   await server.register(healthRoutes);
+  await server.register(reviewRoutes);
 }
