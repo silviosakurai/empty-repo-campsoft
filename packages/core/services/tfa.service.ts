@@ -22,22 +22,12 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class TfaService {
-  private tfaCodesRepository: TfaCodesRepository;
-  private tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository;
-  private tfaCodesSms: TfaCodesSms;
-  private tfaCodesEmail: TfaCodesEmail;
-
   constructor(
-    tfaCodesRepository: TfaCodesRepository,
-    tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
-    tfaCodesSms: TfaCodesSms,
-    tfaCodesEmail: TfaCodesEmail
-  ) {
-    this.tfaCodesRepository = tfaCodesRepository;
-    this.tfaCodesWhatsAppRepository = tfaCodesWhatsAppRepository;
-    this.tfaCodesSms = tfaCodesSms;
-    this.tfaCodesEmail = tfaCodesEmail;
-  }
+    private readonly tfaCodesRepository: TfaCodesRepository,
+    private readonly tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
+    private readonly tfaCodesSms: TfaCodesSms,
+    private readonly tfaCodesEmail: TfaCodesEmail
+  ) {}
 
   async generateAndVerifyToken(): Promise<string> {
     let token;
@@ -56,7 +46,7 @@ export class TfaService {
   public async getTemplateWhatsapp(
     tokenKeyData: ITokenKeyData
   ): Promise<ITemplateWhatsapp> {
-    return await this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(
+    return this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(
       tokenKeyData
     );
   }
@@ -64,13 +54,13 @@ export class TfaService {
   public async getTemplateSms(
     tokenKeyData: ITokenKeyData
   ): Promise<ITemplateSMS> {
-    return await this.tfaCodesSms.getTemplateSms(tokenKeyData);
+    return this.tfaCodesSms.getTemplateSms(tokenKeyData);
   }
 
   public async getTemplateEmail(
     tokenKeyData: ITokenKeyData
   ): Promise<ITemplateEmail> {
-    return await this.tfaCodesEmail.getTemplateEmail(tokenKeyData);
+    return this.tfaCodesEmail.getTemplateEmail(tokenKeyData);
   }
 
   public async insertCodeUser(
@@ -78,7 +68,7 @@ export class TfaService {
     loginUserTFA: LoginUserTFA,
     code: string
   ): Promise<boolean> {
-    return await this.tfaCodesRepository.insertCodeUser(
+    return this.tfaCodesRepository.insertCodeUser(
       type,
       loginUserTFA,
       code
@@ -94,7 +84,7 @@ export class TfaService {
     const whatsappToken = sendWA.sid;
     const sendDate = formatDateToString(sendWA.dateCreated);
 
-    return await this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
+    return this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
       templateId,
       loginUserTFA,
       sender,
@@ -111,7 +101,7 @@ export class TfaService {
     const smsToken = sendSms.smsEnvios[0].smsId;
     const sendDate = currentTime();
 
-    return await this.tfaCodesSms.insertSmsHistory(
+    return this.tfaCodesSms.insertSmsHistory(
       templateId,
       loginUserTFA,
       smsToken,
@@ -128,7 +118,7 @@ export class TfaService {
     const emailToken = sendEmail.MessageId ?? "";
     const sendDate = currentTime();
 
-    return await this.tfaCodesEmail.insertEmailHistory(
+    return this.tfaCodesEmail.insertEmailHistory(
       templateId,
       loginUserTFA,
       sender,
@@ -142,6 +132,6 @@ export class TfaService {
     code: string,
     isUuidValid: boolean
   ): Promise<IValidateCodeTFA | null> {
-    return await this.tfaCodesRepository.validateCode(login, code, isUuidValid);
+    return this.tfaCodesRepository.validateCode(login, code, isUuidValid);
   }
 }

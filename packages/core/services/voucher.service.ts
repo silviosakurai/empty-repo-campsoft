@@ -1,5 +1,5 @@
-import { VerifyVoucherEligibilityRepository } from "@core/repositories/voucher/VerifyVoucherEligibility.repository";
-import { VerifyCustomerVoucherRedemptionRepository } from "@core/repositories/voucher/VerifyCustomerVoucherRedemption.repository";
+import { VoucherEligibilityVerifierRepository } from "@core/repositories/voucher/VoucherEligibilityVerifier.repository";
+import { CustomerVoucherRedemptionVerifierRepository } from "@core/repositories/voucher/CustomerVoucherRedemptionVerifier.repository";
 import { AvailableVoucherProductsRepository } from "@core/repositories/voucher/AvailableVoucherProducts.repository";
 import { ClientSignatureRepository } from "@core/repositories/signature/ClientSignature.repository";
 import { AvailableVoucherPlansRepository } from "@core/repositories/voucher/AvailableVoucherPlans.repository";
@@ -10,41 +10,22 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class VoucherService {
-  private verifyVoucherEligibilityRepository: VerifyVoucherEligibilityRepository;
-  private verifyCustomerVoucherRedemptionRepository: VerifyCustomerVoucherRedemptionRepository;
-  private availableVoucherProductsRepository: AvailableVoucherProductsRepository;
-  private clientSignatureRepository: ClientSignatureRepository;
-  private availableVoucherPlansRepository: AvailableVoucherPlansRepository;
-
   constructor(
-    verifyVoucherEligibilityRepository: VerifyVoucherEligibilityRepository,
-    verifyCustomerVoucherRedemptionRepository: VerifyCustomerVoucherRedemptionRepository,
-    availableVoucherProductsRepository: AvailableVoucherProductsRepository,
-    clientSignatureRepository: ClientSignatureRepository,
-    availableVoucherPlansRepository: AvailableVoucherPlansRepository
-  ) {
-    this.verifyVoucherEligibilityRepository =
-      verifyVoucherEligibilityRepository;
-    this.verifyCustomerVoucherRedemptionRepository =
-      verifyCustomerVoucherRedemptionRepository;
-    this.availableVoucherProductsRepository =
-      availableVoucherProductsRepository;
-    this.clientSignatureRepository = clientSignatureRepository;
-    this.availableVoucherPlansRepository = availableVoucherPlansRepository;
-  }
+    private readonly voucherEligibilityVerifierRepository: VoucherEligibilityVerifierRepository,
+    private readonly customerVoucherRedemptionVerifierRepository: CustomerVoucherRedemptionVerifierRepository,
+    private readonly availableVoucherProductsRepository: AvailableVoucherProductsRepository,
+    private readonly clientSignatureRepository: ClientSignatureRepository,
+    private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository
+  ) {}
 
   verifyEligibilityUser = async (
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
-    try {
-      return await this.verifyVoucherEligibilityRepository.verifyEligibilityUser(
-        tokenKeyData,
-        voucher
-      );
-    } catch (error) {
-      throw error;
-    }
+    return this.voucherEligibilityVerifierRepository.verifyEligibilityUser(
+      tokenKeyData,
+      voucher
+    );
   };
 
   verifyRedemptionUser = async (
@@ -53,26 +34,18 @@ export class VoucherService {
     isEligibility: IVerifyEligibilityUser,
     voucher: string
   ) => {
-    try {
-      return await this.verifyCustomerVoucherRedemptionRepository.verifyRedemptionUser(
-        tokenKeyData,
-        tokenJwtData,
-        isEligibility,
-        voucher
-      );
-    } catch (error) {
-      throw error;
-    }
+    return this.customerVoucherRedemptionVerifierRepository.verifyRedemptionUser(
+      tokenKeyData,
+      tokenJwtData,
+      isEligibility,
+      voucher
+    );
   };
 
   isClientSignatureActive = async (tokenJwtData: ITokenJwtData) => {
-    try {
-      return await this.clientSignatureRepository.isClientSignatureActive(
-        tokenJwtData
-      );
-    } catch (error) {
-      throw error;
-    }
+    return this.clientSignatureRepository.isClientSignatureActive(
+      tokenJwtData
+    );
   };
 
   listVoucherEligibleProductsUser = async (
@@ -81,36 +54,28 @@ export class VoucherService {
     voucher: string,
     isClientSignatureActive: boolean
   ) => {
-    try {
-      if (isClientSignatureActive) {
-        return await this.availableVoucherProductsRepository.listVoucherEligibleProductsSignatureUser(
-          tokenKeyData,
-          tokenJwtData,
-          voucher
-        );
-      }
-
-      return await this.listVoucherEligibleProductsNotSignatureUser(
+    if (isClientSignatureActive) {
+      return this.availableVoucherProductsRepository.listVoucherEligibleProductsSignatureUser(
         tokenKeyData,
+        tokenJwtData,
         voucher
       );
-    } catch (error) {
-      throw error;
     }
+
+    return this.listVoucherEligibleProductsNotSignatureUser(
+      tokenKeyData,
+      voucher
+    );
   };
 
   listVoucherEligibleProductsNotSignatureUser = async (
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
-    try {
-      return await this.availableVoucherProductsRepository.listVoucherEligibleProductsNotSignatureUser(
-        tokenKeyData,
-        voucher
-      );
-    } catch (error) {
-      throw error;
-    }
+    return this.availableVoucherProductsRepository.listVoucherEligibleProductsNotSignatureUser(
+      tokenKeyData,
+      voucher
+    );
   };
 
   listVoucherEligiblePlansUser = async (
@@ -119,35 +84,27 @@ export class VoucherService {
     voucher: string,
     isClientSignatureActive: boolean
   ) => {
-    try {
-      if (isClientSignatureActive) {
-        return await this.availableVoucherPlansRepository.listVoucherEligiblePlansSignatureUser(
-          tokenKeyData,
-          tokenJwtData,
-          voucher
-        );
-      }
-
-      return await this.listVoucherEligiblePlansNotSignatureUser(
+    if (isClientSignatureActive) {
+      return this.availableVoucherPlansRepository.listVoucherEligiblePlansSignatureUser(
         tokenKeyData,
+        tokenJwtData,
         voucher
       );
-    } catch (error) {
-      throw error;
     }
+
+    return this.listVoucherEligiblePlansNotSignatureUser(
+      tokenKeyData,
+      voucher
+    );
   };
 
   listVoucherEligiblePlansNotSignatureUser = async (
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
-    try {
-      return await this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
-        tokenKeyData,
-        voucher
-      );
-    } catch (error) {
-      throw error;
-    }
+    return this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
+      tokenKeyData,
+      voucher
+    );
   };
 }

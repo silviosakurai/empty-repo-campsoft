@@ -7,13 +7,9 @@ import { FindClientByCpfEmailPhoneInput } from "@core/interfaces/repositories/cl
 
 @injectable()
 export class ClientByCpfEmailPhoneReaderRepository {
-  private db: MySql2Database<typeof schema>;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async find(
     input: FindClientByCpfEmailPhoneInput

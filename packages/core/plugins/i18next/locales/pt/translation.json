@@ -17,7 +17,9 @@
   "cross_sell_product_empty": "A lista de Cross Sell Product está vazia.",
   "phone_is_not_valid": "Telefone não é válido",
   "email_is_not_valid": "E-mail não é válido",
+  "order_not_found": "Pedido não encontrado",
   "voucher_not_eligible": "Voucher não é elegível",
   "voucher_not_redeemable": "Voucher não é resgatável",
-  "order_not_found": "Ordem não encontrada"
+  "order_not_found": "Ordem não encontrada",
+  "payment_not_found": "Pagamento não encontrado"
 }

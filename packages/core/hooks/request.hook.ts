@@ -9,6 +9,10 @@ export const requestHook = (
   reply: FastifyReply,
   done: HookHandlerDoneFunction
 ) => {
+  if (request.raw?.url?.startsWith("/docs")) {
+    return done();
+  }
+
   const allParams = {
     params: request.params,
     query: request.query,

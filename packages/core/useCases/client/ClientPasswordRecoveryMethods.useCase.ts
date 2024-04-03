@@ -6,11 +6,7 @@ import { TFAType } from "@core/common/enums/models/tfa";
 
 @injectable()
 export class ClientPasswordRecoveryMethodsUseCase {
-  private clientService: ClientService;
-
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
-  }
+  constructor(private readonly clientService: ClientService) {}
 
   async execute({
     tokenKeyData,

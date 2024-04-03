@@ -15,6 +15,10 @@ export const responseHook = (
   payload: RequestPayload,
   done: HookHandlerDoneFunction
 ) => {
+  if (request.raw?.url?.startsWith("/docs")) {
+    return done();
+  }
+
   const responseBody =
     typeof payload === "string" ? JSON.parse(payload) : payload;
 

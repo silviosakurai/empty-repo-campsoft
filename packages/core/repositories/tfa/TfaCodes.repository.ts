@@ -10,13 +10,9 @@ import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class TfaCodesRepository {
-  private db: MySql2Database<typeof schema>;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async validateCode(
     login: string,
@@ -41,7 +37,7 @@ export class TfaCodesRepository {
   async validateCodeByCode(login: string, code: string) {
     const validUntil = adjustCurrentTimeByMinutes();
 
-    return await this.db
+    return this.db
       .select({
         id: tfaCodes.id_code_enviado,
         token: sql`BIN_TO_UUID(${tfaCodes.token})`,
@@ -62,7 +58,7 @@ export class TfaCodesRepository {
   async validateCodeByClientId(clientId: string, code: string) {
     const validUntil = adjustCurrentTimeByMinutes();
 
-    return await this.db
+    return this.db
       .select({
         id: tfaCodes.id_code_enviado,
         token: sql`BIN_TO_UUID(${tfaCodes.token})`,
@@ -87,7 +83,7 @@ export class TfaCodesRepository {
       .where(eq(tfaCodes.id_code_enviado, id))
       .execute();
 
-    return update ? true : false;
+    return !!update;
   }
 
   async insertCodeUser(

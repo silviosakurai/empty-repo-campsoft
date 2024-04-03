@@ -5,36 +5,18 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class BannerService {
-  private bannerReaderRepository: BannerReaderRepository;
+  constructor(
+    private readonly bannerReaderRepository: BannerReaderRepository
+  ) {}
 
-  constructor(bannerReaderRepository: BannerReaderRepository) {
-    this.bannerReaderRepository = bannerReaderRepository;
-  }
-
-  banners = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
-    try {
-      return await this.bannerReaderRepository.banners(tokenKeyData, input);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  bannerItens = async (bannerIds: number[]) => {
-    try {
-      return await this.bannerReaderRepository.bannerItens(bannerIds);
-    } catch (error) {
-      throw error;
-    }
+  list = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
+    return this.bannerReaderRepository.banners(tokenKeyData, input);
   };
 
   countTotal = async (
     tokenKeyData: ITokenKeyData,
     input: IBannerReaderInput
   ) => {
-    try {
-      return await this.bannerReaderRepository.countTotal(tokenKeyData, input);
-    } catch (error) {
-      throw error;
-    }
+    return this.bannerReaderRepository.countTotal(tokenKeyData, input);
   };
 }
