@@ -22,7 +22,7 @@ export class VoucherService {
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
-    return await this.voucherEligibilityVerifierRepository.verifyEligibilityUser(
+    return this.voucherEligibilityVerifierRepository.verifyEligibilityUser(
       tokenKeyData,
       voucher
     );
@@ -34,7 +34,7 @@ export class VoucherService {
     isEligibility: IVerifyEligibilityUser,
     voucher: string
   ) => {
-    return await this.customerVoucherRedemptionVerifierRepository.verifyRedemptionUser(
+    return this.customerVoucherRedemptionVerifierRepository.verifyRedemptionUser(
       tokenKeyData,
       tokenJwtData,
       isEligibility,
@@ -43,7 +43,7 @@ export class VoucherService {
   };
 
   isClientSignatureActive = async (tokenJwtData: ITokenJwtData) => {
-    return await this.clientSignatureRepository.isClientSignatureActive(
+    return this.clientSignatureRepository.isClientSignatureActive(
       tokenJwtData
     );
   };
@@ -55,14 +55,14 @@ export class VoucherService {
     isClientSignatureActive: boolean
   ) => {
     if (isClientSignatureActive) {
-      return await this.availableVoucherProductsRepository.listVoucherEligibleProductsSignatureUser(
+      return this.availableVoucherProductsRepository.listVoucherEligibleProductsSignatureUser(
         tokenKeyData,
         tokenJwtData,
         voucher
       );
     }
 
-    return await this.listVoucherEligibleProductsNotSignatureUser(
+    return this.listVoucherEligibleProductsNotSignatureUser(
       tokenKeyData,
       voucher
     );
@@ -72,7 +72,7 @@ export class VoucherService {
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
-    return await this.availableVoucherProductsRepository.listVoucherEligibleProductsNotSignatureUser(
+    return this.availableVoucherProductsRepository.listVoucherEligibleProductsNotSignatureUser(
       tokenKeyData,
       voucher
     );
@@ -85,14 +85,14 @@ export class VoucherService {
     isClientSignatureActive: boolean
   ) => {
     if (isClientSignatureActive) {
-      return await this.availableVoucherPlansRepository.listVoucherEligiblePlansSignatureUser(
+      return this.availableVoucherPlansRepository.listVoucherEligiblePlansSignatureUser(
         tokenKeyData,
         tokenJwtData,
         voucher
       );
     }
 
-    return await this.listVoucherEligiblePlansNotSignatureUser(
+    return this.listVoucherEligiblePlansNotSignatureUser(
       tokenKeyData,
       voucher
     );
@@ -102,7 +102,7 @@ export class VoucherService {
     tokenKeyData: ITokenKeyData,
     voucher: string
   ) => {
-    return await this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
+    return this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
       tokenKeyData,
       voucher
     );

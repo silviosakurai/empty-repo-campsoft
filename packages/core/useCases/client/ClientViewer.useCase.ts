@@ -11,6 +11,6 @@ export class ClientViewerUseCase {
     tokenKeyData,
     userId,
   }: ViewClientRequest): Promise<ViewClientResponse | null> {
-    return await this.clientService.view(tokenKeyData, userId);
+    return this.clientService.view(tokenKeyData, userId);
   }
 }

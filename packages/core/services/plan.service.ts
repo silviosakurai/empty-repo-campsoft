@@ -13,11 +13,11 @@ export class PlanService {
   ) {}
 
   list = async (companyId: number, query: ListPlanRequest) => {
-    return await this.planListerRepository.list(companyId, query);
+    return this.planListerRepository.list(companyId, query);
   };
 
   view = async (companyId: number, planId: number) => {
-    return await this.planViewerRepository.get(companyId, planId);
+    return this.planViewerRepository.get(companyId, planId);
   };
 
   upgrade = async (
@@ -25,7 +25,7 @@ export class PlanService {
     clientId: string,
     productIds: string[]
   ) => {
-    return await this.planUpgraderRepository.get(
+    return this.planUpgraderRepository.get(
       companyId,
       clientId,
       productIds

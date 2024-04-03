@@ -11,6 +11,6 @@ export class ProductsListerUseCase {
     companyId: number,
     query: ListProductRequest
   ): Promise<ListProductResponse | null> {
-    return await this.productService.list(companyId, query);
+    return this.productService.list(companyId, query);
   }
 }

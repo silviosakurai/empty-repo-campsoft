@@ -14,14 +14,18 @@ export class ProductService {
   ) {}
 
   list = async (companyId: number, query: ListProductRequest) => {
-    return await this.productListerRepository.list(companyId, query);
+    return this.productListerRepository.list(companyId, query);
+  };
+
+  listByIds = async (companyId: number, productIds: string[]) => {
+    return this.productListerRepository.listByIds(companyId, productIds);
   };
 
   view = async (companyId: number, sku: string) => {
-    return await this.productViewerRepository.get(companyId, sku);
+    return this.productViewerRepository.get(companyId, sku);
   };
 
   listCrossSell = async (input: CrossSellProductRequest) => {
-    return await this.crossSellProductListerRepository.list(input);
+    return this.crossSellProductListerRepository.list(input);
   };
 }

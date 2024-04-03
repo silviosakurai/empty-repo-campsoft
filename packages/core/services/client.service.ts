@@ -38,38 +38,38 @@ export class ClientService {
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    return await this.clientViewerRepository.view(tokenKeyData, userId);
+    return this.clientViewerRepository.view(tokenKeyData, userId);
   };
 
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
-    return await this.clientByCpfEmailPhoneRepository.find(input);
+    return this.clientByCpfEmailPhoneRepository.find(input);
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
-    return await this.clientByEmailPhoneRepository.find(input);
+    return this.clientByEmailPhoneRepository.find(input);
   };
 
   create = async (input: CreateClientRequestDto) => {
-    return await this.clientCreatorRepository.create(input);
+    return this.clientCreatorRepository.create(input);
   };
 
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
-    return await this.clientAccessCreatorRepository.create(input);
+    return this.clientAccessCreatorRepository.create(input);
   };
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
-    return await this.clientUpdaterRepository.update(clientId, input);
+    return this.clientUpdaterRepository.update(clientId, input);
   };
 
   updatePhone = async (
     clientId: string,
     input: UpdatePhoneClientRequestDto
   ) => {
-    return await this.clientPhoneUpdaterRepository.update(clientId, input);
+    return this.clientPhoneUpdaterRepository.update(clientId, input);
   };
 
   updatePassword = async (tokenTfaData: ITokenTfaData, newPass: string) => {
-    return await this.clientPasswordUpdaterRepository.update(
+    return this.clientPasswordUpdaterRepository.update(
       tokenTfaData,
       newPass
     );
@@ -79,7 +79,7 @@ export class ClientService {
     tokenKeyData: ITokenKeyData,
     login: string
   ) => {
-    return await this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
+    return this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
       tokenKeyData,
       login
     );
@@ -89,6 +89,6 @@ export class ClientService {
     tokenJwtData: ITokenJwtData,
     userFounded: ViewClientResponse
   ) => {
-    return await this.clientEraserRepository.delete(tokenJwtData, userFounded);
+    return this.clientEraserRepository.delete(tokenJwtData, userFounded);
   };
 }

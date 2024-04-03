@@ -27,7 +27,7 @@ class NotificationService {
         throw new TFAVerificationError(t("phone_is_not_valid"));
       }
 
-      return await this.whatsAppTFASenderUseCase.execute(options);
+      return this.whatsAppTFASenderUseCase.execute(options);
     }
 
     if (options.type === TFAType.SMS) {
@@ -35,7 +35,7 @@ class NotificationService {
         throw new TFAVerificationError(t("phone_is_not_valid"));
       }
 
-      return await this.smsTFASenderUseCase.execute(options);
+      return this.smsTFASenderUseCase.execute(options);
     }
 
     if (options.type === TFAType.EMAIL) {
@@ -43,7 +43,7 @@ class NotificationService {
         throw new TFAVerificationError(t("email_is_not_valid"));
       }
 
-      return await this.emailTFASenderUseCase.execute(options);
+      return this.emailTFASenderUseCase.execute(options);
     }
 
     return false;

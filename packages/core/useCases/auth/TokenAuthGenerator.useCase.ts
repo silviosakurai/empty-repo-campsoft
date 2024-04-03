@@ -23,7 +23,7 @@ export class TokenAuthGeneratorUseCase {
     const generateToken = await this.authService.generateAndVerifyMagicToken();
 
     if (generateToken) {
-      return await this.authService.createMagicToken(clientId, generateToken);
+      return this.authService.createMagicToken(clientId, generateToken);
     }
 
     return false;

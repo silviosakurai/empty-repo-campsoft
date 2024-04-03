@@ -14,6 +14,6 @@ export class CodeTFAValidatorUserCase {
   }: ValidateCodeTFARequest): Promise<IValidateCodeTFA | null> {
     const isUuidValid = isUuid(login);
 
-    return await this.tfaService.validateCode(login, code, isUuidValid);
+    return this.tfaService.validateCode(login, code, isUuidValid);
   }
 }

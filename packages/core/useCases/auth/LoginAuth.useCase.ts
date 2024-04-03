@@ -12,6 +12,6 @@ export class LoginAuthUseCase {
     login,
     password,
   }: LoginRequest): Promise<LoginResponse | null> {
-    return await this.authService.authenticate(tokenKeyData, login, password);
+    return this.authService.authenticate(tokenKeyData, login, password);
   }
 }

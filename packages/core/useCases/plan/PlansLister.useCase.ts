@@ -10,6 +10,6 @@ export class PlansListerUseCase {
     companyId: number,
     query: ListPlanRequest
   ): Promise<object | null> {
-    return await this.planService.list(companyId, query);
+    return this.planService.list(companyId, query);
   }
 }

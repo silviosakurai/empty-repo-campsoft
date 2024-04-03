@@ -7,6 +7,6 @@ export class AccessService {
   constructor(private readonly accessCreator: AccessCreator) {}
 
   create = async (input: IAccessCreate) => {
-    return await this.accessCreator.create(input);
+    return this.accessCreator.create(input);
   };
 }

@@ -16,7 +16,7 @@ export class AuthService {
     login: string,
     password: string
   ) => {
-    return await this.authRepository.authenticate(
+    return this.authRepository.authenticate(
       tokenKeyData,
       login,
       password
@@ -28,7 +28,7 @@ export class AuthService {
     clientId: string,
     password: string
   ) => {
-    return await this.authRepository.authenticateByClientId(
+    return this.authRepository.authenticateByClientId(
       tokenKeyData,
       clientId,
       password
@@ -39,7 +39,7 @@ export class AuthService {
     tokenKeyData: ITokenKeyData,
     magicToken: string
   ) => {
-    return await this.authRepository.authenticateByMagicToken(
+    return this.authRepository.authenticateByMagicToken(
       tokenKeyData,
       magicToken
     );
@@ -59,10 +59,10 @@ export class AuthService {
   }
 
   async createMagicToken(clientId: string, token: string): Promise<boolean> {
-    return await this.clientMagicTokenRepository.create(clientId, token);
+    return this.clientMagicTokenRepository.create(clientId, token);
   }
 
   async updateMagicToken(token: string) {
-    return await this.clientMagicTokenRepository.update(token);
+    return this.clientMagicTokenRepository.update(token);
   }
 }

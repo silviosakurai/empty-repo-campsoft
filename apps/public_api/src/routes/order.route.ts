@@ -2,9 +2,10 @@ import OrderController from '@/controllers/order';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
-  ordersByNumberParamSchema,
   ordersSchema,
   getPaymentsSchema,
+  postCancelOrderSchema,
+  ordersByNumberParamSchema,
 } from '@core/validations/order';
 
 export default async function orderRoutes(server: FastifyInstance) {
@@ -26,5 +27,11 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: getPaymentsSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.listPayments,
+  });
+
+  server.post('/orders/:orderNumber/cancel', {
+    schema: postCancelOrderSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: orderController.cancelOrder,
   });
 }
