@@ -1,5 +1,6 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { cartCreatorResponseSchema } from "@core/schema/cart/cartCreatorResponseSchema";
 import { Type } from "@sinclair/typebox";
 
 export const cartCreatorSchemaValidation = {
@@ -20,7 +21,7 @@ export const cartCreatorSchemaValidation = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Null(),
+        data: cartCreatorResponseSchema,
       },
       { description: "Successful" }
     ),

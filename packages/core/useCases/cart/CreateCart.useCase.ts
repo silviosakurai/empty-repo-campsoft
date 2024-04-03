@@ -3,8 +3,8 @@ import { PlanService, ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { CartOrder, CreateCartResponse } from "./dtos/CreateCartResponse.dto";
-import { Plan, PlanPrice } from "@core/common/enums/models/plan";
-import { UpgradeUseCase } from "../plan/UpgradePlan.useCase";
+import { Plan } from "@core/common/enums/models/plan";
+import { PlanUpgraderUseCase } from "../plan/PlanUpgrader.useCase";
 import OpenSearchService from "@core/services/openSearch.service";
 import { ProductResponse } from "../product/dtos/ProductResponse.dto";
 
@@ -12,7 +12,7 @@ import { ProductResponse } from "../product/dtos/ProductResponse.dto";
 export class CreateCartUseCase {
   constructor(
     private planService: PlanService,
-    private upgradeUseCase: UpgradeUseCase,
+    private planUpgraderUseCase: PlanUpgraderUseCase,
     private productService: ProductService,
     private openSearchService: OpenSearchService
   ) {}
@@ -33,7 +33,7 @@ export class CreateCartUseCase {
 
     const plans = await Promise.all(
       input.plans_id.map(
-        (item) => this.planService.viewPlan(companyId, item) as Promise<Plan>
+        (item) => this.planService.view(companyId, item) as Promise<Plan>
       )
     );
 
@@ -112,10 +112,12 @@ export class CreateCartUseCase {
             discount_percentage,
             discount_item_value,
             discount_products_value,
-            installments: new Array(+price.months).fill({}).map((_, index) => ({
-              installment: index + 1,
-              value: +(subtotal_price / price.months).toFixed(2),
-            })),
+            installments: price.months
+              ? new Array(+price.months).fill({}).map((_, index) => ({
+                  installment: index + 1,
+                  value: +(subtotal_price / +(price.months ?? 0)).toFixed(2),
+                }))
+              : [],
             total: parseFloat(
               (
                 subtotal_price -
@@ -135,7 +137,7 @@ export class CreateCartUseCase {
     clientId: string,
     productsId: string[]
   ) {
-    const results = await this.upgradeUseCase.execute(
+    const results = await this.planUpgraderUseCase.execute(
       companyId,
       clientId,
       productsId

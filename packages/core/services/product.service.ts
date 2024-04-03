@@ -26,11 +26,7 @@ export class ProductService {
   };
 
   findProductsByIds = async (companyId: number, productIds: string[]) => {
-    try {
-      return await this.listProductRepository.listByIds(companyId, productIds);
-    } catch (error) {
-      throw error;
-    }
+    return this.productListerRepository.listByIds(companyId, productIds);
   };
 
   listCrossSell = async (input: CrossSellProductRequest) => {
