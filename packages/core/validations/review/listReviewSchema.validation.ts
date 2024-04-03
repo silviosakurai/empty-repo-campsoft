@@ -1,5 +1,6 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { reviewListResponseSchema } from "@core/schema/review/previewListResponseSchema";
 import { Type } from "@sinclair/typebox";
 
 export const listReviewSchema = {
@@ -17,7 +18,7 @@ export const listReviewSchema = {
         description: "Idioma preferencial para a resposta",
         enum: Object.values(Language),
         default: Language.pt,
-      })
+      }),
     ),
   }),
   response: {
@@ -25,9 +26,9 @@ export const listReviewSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        // data: Type.Array(productListResponseSchema),
+        data: reviewListResponseSchema,
       },
-      { description: "Successful" }
+      { description: "Successful" },
     ),
     401: Type.Object(
       {
@@ -35,7 +36,7 @@ export const listReviewSchema = {
         message: Type.String(),
         data: Type.Null(),
       },
-      { description: "Unauthorized" }
+      { description: "Unauthorized" },
     ),
     500: Type.Object(
       {
@@ -43,7 +44,7 @@ export const listReviewSchema = {
         message: Type.String(),
         data: Type.Null(),
       },
-      { description: "Internal Server Error" }
+      { description: "Internal Server Error" },
     ),
   },
 };
