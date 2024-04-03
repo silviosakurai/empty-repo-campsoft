@@ -9,4 +9,5 @@ export enum TagSwagger {
   voucher = "voucher",
   health = "health",
   cart = "cart",
+  review = "review",
 }
