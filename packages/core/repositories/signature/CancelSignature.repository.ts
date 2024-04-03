@@ -26,6 +26,8 @@ export class CancelSignatureRepository {
       .update(clientSignature)
       .set({
         id_assinatura_status: SignatureStatus.CANCELED,
+        data_proxima_cobranca: null,
+        data_cancelamento: sql`CURRENT_DATE()`,
       })
       .where(
         and(
