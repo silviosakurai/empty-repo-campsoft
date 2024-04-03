@@ -49,8 +49,8 @@ export class OrderByNumberViewerRepository {
           total: sql`${order.valor_total}`.mapWith(Number),
         },
         installments: {
-          installment: order.pedido_parcelas_vezes,
-          value: order.pedido_parcelas_valor,
+          installment: sql`${order.pedido_parcelas_vezes}`.mapWith(Number),
+          value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
         },
         created_at: order.created_at,
         updated_at: order.updated_at,
