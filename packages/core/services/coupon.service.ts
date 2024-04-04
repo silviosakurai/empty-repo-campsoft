@@ -12,11 +12,15 @@ export class CouponService {
 
   verifyEligibilityCoupon = async (
     tokenKeyData: ITokenKeyData,
-    couponCode: string
-  ) => {
+    couponCode: string,
+    planId: number,
+    selectedProducts: string[] | null
+  ): Promise<ICouponVerifyEligibilityUser | null> => {
     return this.couponListerRepository.verifyEligibilityCoupon(
       tokenKeyData,
-      couponCode
+      couponCode,
+      planId,
+      selectedProducts
     );
   };
 

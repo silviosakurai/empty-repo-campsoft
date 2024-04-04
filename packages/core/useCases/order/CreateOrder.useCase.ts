@@ -10,6 +10,7 @@ import { PlanPrice } from "@core/common/enums/models/plan";
 import { PlanPriceCrossSellOrder } from "@core/interfaces/repositories/plan";
 import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
 import { CouponService } from "@core/services/coupon.service";
+import { ICouponVerifyEligibilityUser } from "@core/interfaces/repositories/coupon";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -66,7 +67,7 @@ export class CreateOrderUseCase {
       throw new Error(t("installments_not_calculated"));
     }
 
-    /* const order = await this.orderService.create(
+    const order = await this.orderService.create(
       tokenKeyData,
       tokenJwtData,
       payload,
@@ -79,7 +80,7 @@ export class CreateOrderUseCase {
       return null;
     }
 
-    return order; */
+    return order;
   }
 
   private async totalPricesOrder(
@@ -88,18 +89,17 @@ export class CreateOrderUseCase {
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
   ): Promise<PlanPrice | null> {
-    const [planPrice, planPriceCrossSell, coupon] = await Promise.all([
-      this.findPriceByPlanIdAndMonth(payload),
-      this.findPriceByProductsIdAndMonth(tokenKeyData, payload),
-      this.applyAndValidateDiscountCoupon(
-        t,
-        tokenKeyData,
-        tokenJwtData,
-        payload
-      ),
-    ]);
+    const coupon = await this.applyAndValidateDiscountCoupon(
+      t,
+      tokenKeyData,
+      tokenJwtData,
+      payload
+    );
 
-    console.log("coupon", coupon);
+    const [planPrice, planPriceCrossSell] = await Promise.all([
+      this.findPriceByPlanIdAndMonth(payload, coupon),
+      this.findPriceByProductsIdAndMonth(tokenKeyData, payload, coupon),
+    ]);
 
     if (!planPrice) {
       return null;
@@ -130,7 +130,8 @@ export class CreateOrderUseCase {
 
   private async findPriceByProductsIdAndMonth(
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    coupon: ICouponVerifyEligibilityUser
   ): Promise<PlanPriceCrossSellOrder | null> {
     const selectedProducts = payload.products ?? [];
 
@@ -153,7 +154,11 @@ export class CreateOrderUseCase {
     let finalPrice = 0;
 
     planPriceCrossSell.forEach((item) => {
-      const discountPercentage = item.price_discount;
+      let discountPercentage = item.price_discount;
+
+      if (coupon.id_produto && coupon.id_produto === item.product_id) {
+        discountPercentage = discountPercentage * coupon.desconto_percentual;
+      }
 
       finalPrice = finalPrice + discountPercentage;
     });
@@ -165,7 +170,8 @@ export class CreateOrderUseCase {
   }
 
   private async findPriceByPlanIdAndMonth(
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    coupon: ICouponVerifyEligibilityUser
   ): Promise<PlanPrice | null> {
     let finalPrice = 0;
 
@@ -183,7 +189,7 @@ export class CreateOrderUseCase {
     const selectedProducts = payload.plan.selected_products ?? [];
 
     if (selectedProducts.length === 0) {
-      return planPrice;
+      return this.applyDiscountCoupon(coupon, planPrice, payload, finalPrice);
     }
 
     const planPriceNotProducts =
@@ -199,16 +205,7 @@ export class CreateOrderUseCase {
       finalPrice -= finalPrice * discountPercentage;
     });
 
-    const discountValue = Number(planPrice.price) - finalPrice;
-    const discountPercentage = (discountValue / Number(planPrice.price)) * 100;
-
-    return {
-      months: planPrice.months,
-      price: planPrice.price,
-      discount_value: Number(discountValue.toFixed(2)),
-      discount_percentage: Number(discountPercentage.toFixed(2)),
-      price_with_discount: Number(finalPrice.toFixed(2)),
-    };
+    return this.applyDiscountCoupon(coupon, planPrice, payload, finalPrice);
   }
 
   private async isPlanProductAndProductGroups(
@@ -279,34 +276,21 @@ export class CreateOrderUseCase {
     return allProductsSelected;
   }
 
-  private calculatePriceInstallments(
-    payload: CreateOrderRequestDto,
-    totalPrices: PlanPrice
-  ): OrderCreatePaymentsCard | null {
-    const installments = payload.payment?.credit_card?.installments ?? 1;
-
-    const price = Number(totalPrices.price_with_discount);
-    const priceInstallments = price / installments;
-
-    return {
-      installments,
-      value: Number(priceInstallments.toFixed(2)),
-    };
-  }
-
   private async applyAndValidateDiscountCoupon(
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
-  ) {
+  ): Promise<ICouponVerifyEligibilityUser> {
     if (!payload.coupon_code) {
-      return null;
+      return [] as unknown as ICouponVerifyEligibilityUser;
     }
 
     const isEligibility = await this.couponService.verifyEligibilityCoupon(
       tokenKeyData,
-      payload.coupon_code
+      payload.coupon_code,
+      payload.plan.plan_id,
+      payload.products
     );
 
     if (!isEligibility) {
@@ -325,5 +309,42 @@ export class CreateOrderUseCase {
     }
 
     return isEligibility;
+  }
+
+  private calculatePriceInstallments(
+    payload: CreateOrderRequestDto,
+    totalPrices: PlanPrice
+  ): OrderCreatePaymentsCard | null {
+    const installments = payload.payment?.credit_card?.installments ?? 1;
+
+    const price = Number(totalPrices.price_with_discount);
+    const priceInstallments = price / installments;
+
+    return {
+      installments,
+      value: Number(priceInstallments.toFixed(2)),
+    };
+  }
+
+  private applyDiscountCoupon(
+    coupon: ICouponVerifyEligibilityUser,
+    planPrice: PlanPrice,
+    payload: CreateOrderRequestDto,
+    finalPrice: number
+  ): PlanPrice {
+    if (coupon.id_plano && coupon.id_plano === payload.plan.plan_id) {
+      finalPrice -= finalPrice * coupon.desconto_percentual;
+    }
+
+    const discountValue = Number(planPrice.price) - finalPrice;
+    const discountPercentage = (discountValue / Number(planPrice.price)) * 100;
+
+    return {
+      months: planPrice.months,
+      price: planPrice.price,
+      discount_value: Number(discountValue.toFixed(2)),
+      discount_percentage: Number(discountPercentage.toFixed(2)),
+      price_with_discount: Number(finalPrice.toFixed(2)),
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, or, sql } from "drizzle-orm";
 import * as schema from "@core/models";
 import {
   clientSignature,
@@ -24,15 +24,23 @@ export class CouponListerRepository {
 
   async verifyEligibilityCoupon(
     tokenKeyData: ITokenKeyData,
-    couponCode: string
+    couponCode: string,
+    planId: number,
+    selectedProducts: string[] | null
   ): Promise<ICouponVerifyEligibilityUser | null> {
     const validUntil = currentTime();
+
+    if (!selectedProducts) {
+      selectedProducts = [];
+    }
 
     const result = await this.db
       .select({
         cupom_carrinho_codigo: couponCartCode.cupom_carrinho_codigo,
         qnt_uso_por_cli: couponCartCode.qnt_uso_por_cli,
         desconto_percentual: couponCartCode.desconto_percentual,
+        id_produto: couponCartValidItems.id_produto,
+        id_plano: couponCartValidItems.id_plano,
       })
       .from(couponCartCode)
       .innerJoin(
@@ -49,7 +57,11 @@ export class CouponListerRepository {
           eq(couponCart.status, CouponRescueStatus.ACTIVE),
           eq(couponCart.id_empresa, tokenKeyData.company_id),
           gte(couponCartCode.qnt_uso_faltante, 1),
-          gte(couponCart.validade, validUntil)
+          gte(couponCart.validade, validUntil),
+          or(
+            eq(couponCartValidItems.id_plano, planId),
+            inArray(couponCartValidItems.id_produto, selectedProducts)
+          )
         )
       )
       .execute();

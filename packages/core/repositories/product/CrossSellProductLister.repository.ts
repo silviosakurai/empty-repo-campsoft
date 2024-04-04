@@ -209,6 +209,6 @@ export class CrossSellProductListerRepository {
       return [] as PlanPriceCrossSellOrder[];
     }
 
-    return result as unknown as PlanPriceCrossSellOrder[];
+    return result as PlanPriceCrossSellOrder[];
   }
 }
