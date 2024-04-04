@@ -3,7 +3,6 @@ import {
   int,
   timestamp,
   varchar,
-  mysqlEnum,
   varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";

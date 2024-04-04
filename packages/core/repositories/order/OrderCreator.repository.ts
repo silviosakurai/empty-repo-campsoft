@@ -15,7 +15,7 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
 
 @injectable()
-export class OrderCreaterRepository {
+export class OrderCreatorRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}

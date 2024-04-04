@@ -5,6 +5,8 @@ import { CancelProductSignatureRepository } from "@core/repositories/signature/C
 import { CancelSignatureRepository } from "@core/repositories/signature/CancelSignature.repository";
 import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import { injectable } from "tsyringe";
+import { SignatureCreatorRepository } from "@core/repositories/signature/SignatureCreator.repository";
+import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 
 @injectable()
 export class SignatureService {
@@ -12,7 +14,8 @@ export class SignatureService {
     private readonly signatureViewerByClientId: SignatureByClientIdViewer,
     private findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private cancelSignatureRepository: CancelSignatureRepository,
-    private cancelProductSignatureRepository: CancelProductSignatureRepository
+    private cancelProductSignatureRepository: CancelProductSignatureRepository,
+    private signatureCreatorRepository: SignatureCreatorRepository
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -44,6 +47,27 @@ export class SignatureService {
       signatureId,
       productCancelDate,
       productsIds
+    );
+  };
+
+  create = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: CreateOrderRequestDto,
+    orderId: string
+  ) => {
+    return this.signatureCreatorRepository.create(
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      orderId
+    );
+  };
+
+  createSignatureProducts = async (products: string[], signatureId: string) => {
+    return this.signatureCreatorRepository.createSignatureProducts(
+      products,
+      signatureId
     );
   };
 }

@@ -4,13 +4,14 @@ import { PlanService } from "@core/services/plan.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
-import { t, TFunction } from "i18next";
+import { TFunction } from "i18next";
 import { ClientService, ProductService } from "@core/services";
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { PlanPriceCrossSellOrder } from "@core/interfaces/repositories/plan";
 import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
 import { CouponService } from "@core/services/coupon.service";
 import { ICouponVerifyEligibilityUser } from "@core/interfaces/repositories/coupon";
+import { SignatureService } from "@core/services/signature.service";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -19,7 +20,8 @@ export class CreateOrderUseCase {
     private readonly planService: PlanService,
     private readonly productService: ProductService,
     private readonly clientService: ClientService,
-    private readonly couponService: CouponService
+    private readonly couponService: CouponService,
+    private readonly signatureService: SignatureService
   ) {}
 
   async execute(
@@ -67,7 +69,7 @@ export class CreateOrderUseCase {
       throw new Error(t("installments_not_calculated"));
     }
 
-    const order = await this.orderService.create(
+    const createOrder = await this.orderService.create(
       tokenKeyData,
       tokenJwtData,
       payload,
@@ -76,11 +78,22 @@ export class CreateOrderUseCase {
       totalPricesInstallments
     );
 
-    if (!order) {
-      return null;
+    if (!createOrder) {
+      throw new Error(t("error_create_order"));
     }
 
-    return order;
+    const createSignature = await this.signatureService.create(
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      createOrder.order_id
+    );
+
+    if (!createSignature) {
+      throw new Error(t("error_create_signature"));
+    }
+
+    return createSignature;
   }
 
   private async totalPricesOrder(

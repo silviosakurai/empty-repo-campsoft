@@ -25,5 +25,7 @@
   "plan_price_not_found": "Plan price not found!",
   "installments_not_calculated": "Installments not calculated!",
   "coupon_not_eligible": "Coupon not eligible!",
-  "coupon_not_redeemable": "Coupon not redeemable!"
+  "coupon_not_redeemable": "Coupon not redeemable!",
+  "error_create_order": "Error create order!",
+  "error_create_signature": "Error create signature!"
 }

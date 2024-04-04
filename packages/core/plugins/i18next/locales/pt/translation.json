@@ -25,5 +25,7 @@
   "plan_price_not_found": "Preço do plano não encontrado",
   "installments_not_calculated": "Parcelas não calculadas",
   "coupon_not_eligible": "Cupom não é elegível",
-  "coupon_not_redeemable": "Cupom não é resgatável"
+  "coupon_not_redeemable": "Cupom não é resgatável",
+  "error_create_order": "Erro ao criar o pedido",
+  "error_create_signature": "Erro ao criar a assinatura"
 }

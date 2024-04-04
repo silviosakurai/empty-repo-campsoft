@@ -5,7 +5,7 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
 import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
-import { OrderCreaterRepository } from "@core/repositories/order/OrderCreater.repository";
+import { OrderCreatorRepository } from "@core/repositories/order/OrderCreator.repository";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
@@ -17,7 +17,7 @@ export class OrderService {
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
-    private readonly orderCreaterRepository: OrderCreaterRepository
+    private readonly orderCreatorRepository: OrderCreatorRepository
   ) {}
 
   list = async (
@@ -59,7 +59,7 @@ export class OrderService {
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard
   ) => {
-    return this.orderCreaterRepository.create(
+    return this.orderCreatorRepository.create(
       tokenKeyData,
       tokenJwtData,
       payload,

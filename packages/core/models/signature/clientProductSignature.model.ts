@@ -35,7 +35,7 @@ export const clientProductSignature = mysqlTable("assinatura_cliente_produto", {
     .notNull()
     .default(ClientProductSignatureUpdateCampsoft.NO),
   data_ativacao: datetime("data_ativacao", { mode: "string" }),
-  data_agendamento: datetime("data_agendamento", { mode: "string" }).notNull(),
+  data_agendamento: datetime("data_agendamento", { mode: "string" }),
   data_expiracao: datetime("data_expiracao", { mode: "string" }),
   created_at: datetime("created_at", { mode: "string" })
     .notNull()
