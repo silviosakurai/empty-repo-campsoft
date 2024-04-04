@@ -72,4 +72,9 @@ export interface OrderByNumberResponse {
   updated_at: string;
 }
 
+export interface OrderCreatePaymentsCard {
+  installments: number;
+  value: number;
+}
+
 export type OrderPayments = Static<typeof orderPaymentsSchema>;

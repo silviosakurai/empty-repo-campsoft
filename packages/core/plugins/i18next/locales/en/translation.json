@@ -20,6 +20,10 @@
   "order_not_found": "Order not found.",
   "voucher_not_eligible": "Voucher not eligible!",
   "voucher_not_redeemable": "Voucher not redeemable!",
-  "order_not_found": "Order not found!",
-  "payment_not_found": "Payment not found!"
+  "payment_not_found": "Payment not found!",
+  "product_not_eligible_for_plan": "Product not eligible for plan!",
+  "plan_price_not_found": "Plan price not found!",
+  "installments_not_calculated": "Installments not calculated!",
+  "coupon_not_eligible": "Coupon not eligible!",
+  "coupon_not_redeemable": "Coupon not redeemable!"
 }

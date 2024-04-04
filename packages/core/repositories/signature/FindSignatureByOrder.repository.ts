@@ -8,22 +8,24 @@ import {
 } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
 import { ISignatureFindByOrder } from "@core/interfaces/repositories/signature";
+import { OrderRecorrencia } from "@core/common/enums/models/order";
 
 @injectable()
 export class FindSignatureByOrderNumber {
-  private db: MySql2Database<typeof schema>;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async find(orderNumber: string): Promise<ISignatureFindByOrder[] | null> {
     const records = await this.db
       .select({
         signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
         product_id: clientProductSignature.id_produto,
+        product_cancel_date: sql`CASE 
+          WHEN ${clientSignature.recorrencia} = ${OrderRecorrencia.YES} 
+            THEN DATE_SUB(${clientSignature.data_proxima_cobranca}, INTERVAL 1 DAY)
+          ELSE DATE_SUB(${clientSignature.data_assinatura_ate}, INTERVAL 1 DAY)
+        END`,
       })
       .from(clientSignature)
       .innerJoin(

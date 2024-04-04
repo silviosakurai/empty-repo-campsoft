@@ -20,6 +20,10 @@
   "order_not_found": "Pedido não encontrado",
   "voucher_not_eligible": "Voucher não é elegível",
   "voucher_not_redeemable": "Voucher não é resgatável",
-  "order_not_found": "Ordem não encontrada",
-  "payment_not_found": "Pagamento não encontrado"
+  "payment_not_found": "Pagamento não encontrado",
+  "product_not_eligible_for_plan": "Produto não é elegível para o plano",
+  "plan_price_not_found": "Preço do plano não encontrado",
+  "installments_not_calculated": "Parcelas não calculadas",
+  "coupon_not_eligible": "Cupom não é elegível",
+  "coupon_not_redeemable": "Cupom não é resgatável"
 }

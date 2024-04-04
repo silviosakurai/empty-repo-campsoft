@@ -1,6 +1,4 @@
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { cancelOrderSchema } from "@core/schema/order/cancelOrderSchema";
+import { Static } from "@sinclair/typebox";
 
-export interface CancelOrderResponse {
-  status: string;
-  products: ProductResponse[];
-}
+export type CancelOrderResponse = Static<typeof cancelOrderSchema>;

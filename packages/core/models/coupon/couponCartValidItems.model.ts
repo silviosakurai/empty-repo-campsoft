@@ -20,5 +20,4 @@ export const couponCartValidItems = mysqlTable("cupom_carrinho_item_validos", {
   id_plano: int("id_plano"),
   created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
-  deleted: mysqlEnum("deleted", ["Y", "N"]).notNull().default("N"),
 });

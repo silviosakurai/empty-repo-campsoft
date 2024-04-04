@@ -4,6 +4,7 @@ import { ProductListerRepository } from "@core/repositories/product/ProductListe
 import { ProductViewerRepository } from "@core/repositories/product/ProductViewer.repository";
 import { CrossSellProductListerRepository } from "@core/repositories/product/CrossSellProductLister.repository";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ProductService {
@@ -27,5 +28,33 @@ export class ProductService {
 
   listCrossSell = async (input: CrossSellProductRequest) => {
     return this.crossSellProductListerRepository.list(input);
+  };
+
+  findPlanProductCrossSell = async (
+    tokenKeyData: ITokenKeyData,
+    planId: number,
+    months: number,
+    selectedProducts: string[]
+  ) => {
+    return this.crossSellProductListerRepository.findPlanProductCrossSell(
+      tokenKeyData,
+      planId,
+      months,
+      selectedProducts
+    );
+  };
+
+  findPlanPriceProductCrossSell = async (
+    tokenKeyData: ITokenKeyData,
+    planId: number,
+    months: number,
+    selectedProducts: string[]
+  ) => {
+    return this.crossSellProductListerRepository.findPlanPriceProductCrossSell(
+      tokenKeyData,
+      planId,
+      months,
+      selectedProducts
+    );
   };
 }

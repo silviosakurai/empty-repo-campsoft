@@ -12,7 +12,7 @@ export class SignatureService {
     private readonly signatureViewerByClientId: SignatureByClientIdViewer,
     private findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private cancelSignatureRepository: CancelSignatureRepository,
-    private cancelProductSignatureRepository: CancelProductSignatureRepository,
+    private cancelProductSignatureRepository: CancelProductSignatureRepository
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -26,15 +26,24 @@ export class SignatureService {
   cancelByOrderNumber = async (
     orderNumber: string,
     tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
+    tokenJwtData: ITokenJwtData
   ) => {
-    return this.cancelSignatureRepository.cancel(orderNumber, tokenKeyData, tokenJwtData);
+    return this.cancelSignatureRepository.cancel(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   cancelProducts = async (
     signatureId: string,
-    productsIds: string[],
+    productCancelDate: string,
+    productsIds: string[]
   ) => {
-    return this.cancelProductSignatureRepository.cancel(signatureId, productsIds);
-  }
+    return this.cancelProductSignatureRepository.cancel(
+      signatureId,
+      productCancelDate,
+      productsIds
+    );
+  };
 }

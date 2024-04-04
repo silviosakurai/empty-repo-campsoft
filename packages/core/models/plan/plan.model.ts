@@ -17,7 +17,6 @@ export const plan = mysqlTable("plano", {
     PlanVisivelSite.YES,
     PlanVisivelSite.NO,
   ]).default(PlanVisivelSite.YES),
-  ordem: int("ordem"),
   id_empresa: int("id_empresa"),
   plano: varchar("plano", { length: 50 }),
   intervalo: int("intervalo"),

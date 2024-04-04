@@ -7,11 +7,12 @@ import {
   productGroup,
   planItem,
 } from "@core/models";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AvailableProducts } from "@core/interfaces/repositories/voucher";
 import { PlanProductGroupsProductsByProductGroupIdListerRepository } from "./PlanProductGroupsProductsByProductGroupIdLister.repository";
 import { FindOrderByNumberAvailableProducts } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
+import { PlanProduct } from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class PlanProductGroupDetailsListerRepository {
@@ -74,5 +75,50 @@ export class PlanProductGroupDetailsListerRepository {
     const productGroups = await Promise.all(productGroupsAsPromise);
 
     return productGroups;
+  }
+
+  async findPlanProductAndProductGroups(
+    tokenKeyData: ITokenKeyData,
+    planId: number,
+    selectedProducts: string[]
+  ): Promise<PlanProduct[]> {
+    const result = await this.db
+      .selectDistinct({
+        plan_id: plan.id_plano,
+        product_id: sql`IFNULL(${productGroupProduct.id_produto}, ${planItem.id_produto})`,
+        name: plan.plano,
+      })
+      .from(plan)
+      .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .leftJoin(
+        productGroup,
+        eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
+      )
+      .leftJoin(
+        productGroupProduct,
+        eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
+      )
+      .where(
+        or(
+          and(
+            eq(plan.id_plano, planId),
+            eq(plan.id_empresa, tokenKeyData.company_id),
+            inArray(planItem.id_produto, selectedProducts)
+          ),
+          and(
+            eq(plan.id_plano, planId),
+            eq(plan.id_empresa, tokenKeyData.company_id),
+            inArray(productGroupProduct.id_produto, selectedProducts)
+          )
+        )
+      )
+      .groupBy(productGroupProduct.id_produto, planItem.id_produto)
+      .execute();
+
+    if (result.length === 0) {
+      return [] as PlanProduct[];
+    }
+
+    return result as PlanProduct[];
   }
 }

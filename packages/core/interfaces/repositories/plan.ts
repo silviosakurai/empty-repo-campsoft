@@ -25,3 +25,18 @@ export interface UpgradePlanRepositoryResponse {
   plans: Plan[];
   planItems: PlanItem[];
 }
+
+export interface PlanProduct {
+  plan_id: number;
+  product_id: number;
+}
+
+export interface PlanPriceOrder {
+  id_produt: number;
+  plan_percentage: number;
+}
+
+export interface PlanPriceCrossSellOrder {
+  product_id: number | null;
+  price_discount: number;
+}

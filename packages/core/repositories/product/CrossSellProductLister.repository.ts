@@ -2,8 +2,18 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
-import { product, productType, productCrossSell } from "@core/models";
-import { SQLWrapper, and, asc, desc, eq, like, ne, sql } from "drizzle-orm";
+import { plan, product, productType, productCrossSell } from "@core/models";
+import {
+  SQLWrapper,
+  and,
+  asc,
+  desc,
+  eq,
+  inArray,
+  like,
+  ne,
+  sql,
+} from "drizzle-orm";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { ListProductResponseCrossSell } from "@core/useCases/product/dtos/ListProductResponse.dto";
 import {
@@ -12,6 +22,11 @@ import {
 } from "@core/common/enums/models/product";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { ProductResponseCrossSell } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import {
+  PlanPriceCrossSellOrder,
+  PlanProduct,
+} from "@core/interfaces/repositories/plan";
 
 @injectable()
 export class CrossSellProductListerRepository {
@@ -131,5 +146,69 @@ export class CrossSellProductListerRepository {
     }
 
     return defaultOrderBy;
+  }
+
+  async findPlanProductCrossSell(
+    tokenKeyData: ITokenKeyData,
+    planId: number,
+    months: number,
+    selectedProducts: string[]
+  ): Promise<PlanProduct[]> {
+    const result = await this.db
+      .selectDistinct({
+        plan_id: productCrossSell.id_plano,
+        product_id: productCrossSell.id_produto,
+        name: plan.plano,
+      })
+      .from(productCrossSell)
+      .innerJoin(plan, eq(productCrossSell.id_plano, plan.id_plano))
+      .where(
+        and(
+          eq(productCrossSell.id_plano, planId),
+          eq(productCrossSell.meses, months),
+          inArray(productCrossSell.id_produto, selectedProducts),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
+      .groupBy(productCrossSell.id_produto)
+      .execute();
+
+    if (result.length === 0) {
+      return [] as PlanProduct[];
+    }
+
+    return result as unknown as PlanProduct[];
+  }
+
+  async findPlanPriceProductCrossSell(
+    tokenKeyData: ITokenKeyData,
+    planId: number,
+    months: number,
+    selectedProducts: string[]
+  ): Promise<PlanPriceCrossSellOrder[]> {
+    const result = await this.db
+      .selectDistinct({
+        product_id: productCrossSell.id_produto,
+        price_discount: sql`IFNULL(${productCrossSell.preco_desconto}, ${product.preco})`,
+      })
+      .from(productCrossSell)
+      .innerJoin(plan, eq(productCrossSell.id_plano, plan.id_plano))
+      .innerJoin(product, eq(productCrossSell.id_produto, product.id_produto))
+      .where(
+        and(
+          eq(productCrossSell.id_plano, planId),
+          eq(productCrossSell.meses, months),
+          inArray(productCrossSell.id_produto, selectedProducts),
+          eq(plan.id_empresa, tokenKeyData.company_id)
+        )
+      )
+      .groupBy(productCrossSell.id_produto)
+      .execute();
+
+    if (result.length === 0) {
+      return [] as PlanPriceCrossSellOrder[];
+    }
+
+    return result as unknown as PlanPriceCrossSellOrder[];
   }
 }

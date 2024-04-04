@@ -30,7 +30,7 @@ export const postCancelOrderSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Array(cancelOrderSchema),
+        data: cancelOrderSchema,
       },
       { description: "Successful" }
     ),

@@ -7,27 +7,28 @@ import { clientProductSignature } from "@core/models";
 
 @injectable()
 export class CancelProductSignatureRepository {
-  private db: MySql2Database<typeof schema>;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async cancel(
     signatureId: string,
-    productIds: string[],
+    productCancelDate: string,
+    productIds: string[]
   ): Promise<boolean> {
     const result = await this.db
       .update(clientProductSignature)
       .set({
         status: ClientProductSignatureStatus.INACTIVE,
+        data_expiracao: productCancelDate,
       })
       .where(
         and(
-          eq(clientProductSignature.id_assinatura_cliente, sql`UUID_TO_BIN(${signatureId})`),
-          inArray(clientProductSignature.id_produto, productIds),
+          eq(
+            clientProductSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signatureId})`
+          ),
+          inArray(clientProductSignature.id_produto, productIds)
         )
       )
       .execute();
