@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { ClientService } from "@core/services/client.service";
 import { ClientAddress, ClientShippingAddress } from "@core/common/enums/models/client";
-import { ViewClientAddressDTO, ViewClientBaseAddressResponse, ViewClientBillingAddressResponse } from "./dtos/ViewClientAddressResponse.dto";
+import { ViewClientBaseAddressResponse, ViewClientBillingAddressResponse } from "./dtos/ViewClientAddressResponse.dto";
 
 @injectable()
 export class ClientAddressViewerUseCase {
