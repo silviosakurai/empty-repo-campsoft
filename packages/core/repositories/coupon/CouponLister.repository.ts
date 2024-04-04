@@ -27,11 +27,16 @@ export class CouponListerRepository {
     couponCode: string,
     planId: number,
     selectedProducts: string[] | null
-  ): Promise<ICouponVerifyEligibilityUser | null> {
+  ): Promise<ICouponVerifyEligibilityUser[]> {
     const validUntil = currentTime();
 
-    if (!selectedProducts) {
-      selectedProducts = [];
+    let wherePlansOrProducts = or(eq(couponCartValidItems.id_plano, planId));
+
+    if (selectedProducts) {
+      wherePlansOrProducts = or(
+        eq(couponCartValidItems.id_plano, planId),
+        inArray(couponCartValidItems.id_produto, selectedProducts)
+      );
     }
 
     const result = await this.db
@@ -58,25 +63,22 @@ export class CouponListerRepository {
           eq(couponCart.id_empresa, tokenKeyData.company_id),
           gte(couponCartCode.qnt_uso_faltante, 1),
           gte(couponCart.validade, validUntil),
-          or(
-            eq(couponCartValidItems.id_plano, planId),
-            inArray(couponCartValidItems.id_produto, selectedProducts)
-          )
+          or(wherePlansOrProducts)
         )
       )
       .execute();
 
     if (!result.length) {
-      return null;
+      return [] as ICouponVerifyEligibilityUser[];
     }
 
-    return result[0] as ICouponVerifyEligibilityUser;
+    return result as ICouponVerifyEligibilityUser[];
   }
 
   async verifyRedemptionCouponByUser(
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    isEligibility: ICouponVerifyEligibilityUser,
+    isEligibility: ICouponVerifyEligibilityUser[],
     couponCode: string
   ): Promise<boolean> {
     const result = await this.db
@@ -104,7 +106,7 @@ export class CouponListerRepository {
       return false;
     }
 
-    if (result[0].total > isEligibility.qnt_uso_por_cli) {
+    if (result[0].total > isEligibility[0].qnt_uso_por_cli) {
       return false;
     }
 

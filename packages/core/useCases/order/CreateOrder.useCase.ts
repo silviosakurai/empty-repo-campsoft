@@ -131,7 +131,7 @@ export class CreateOrderUseCase {
   private async findPriceByProductsIdAndMonth(
     tokenKeyData: ITokenKeyData,
     payload: CreateOrderRequestDto,
-    coupon: ICouponVerifyEligibilityUser
+    coupon: ICouponVerifyEligibilityUser[]
   ): Promise<PlanPriceCrossSellOrder | null> {
     const selectedProducts = payload.products ?? [];
 
@@ -156,8 +156,13 @@ export class CreateOrderUseCase {
     planPriceCrossSell.forEach((item) => {
       let discountPercentage = item.price_discount;
 
-      if (coupon.id_produto && coupon.id_produto === item.product_id) {
-        discountPercentage = discountPercentage * coupon.desconto_percentual;
+      const findProduct = coupon.find(
+        (itemProduct) => itemProduct.id_produto === item.product_id
+      );
+
+      if (findProduct) {
+        discountPercentage =
+          discountPercentage * findProduct.desconto_percentual;
       }
 
       finalPrice = finalPrice + discountPercentage;
@@ -171,7 +176,7 @@ export class CreateOrderUseCase {
 
   private async findPriceByPlanIdAndMonth(
     payload: CreateOrderRequestDto,
-    coupon: ICouponVerifyEligibilityUser
+    coupon: ICouponVerifyEligibilityUser[]
   ): Promise<PlanPrice | null> {
     let finalPrice = 0;
 
@@ -281,9 +286,9 @@ export class CreateOrderUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
-  ): Promise<ICouponVerifyEligibilityUser> {
+  ): Promise<ICouponVerifyEligibilityUser[]> {
     if (!payload.coupon_code) {
-      return [] as unknown as ICouponVerifyEligibilityUser;
+      return [] as ICouponVerifyEligibilityUser[];
     }
 
     const isEligibility = await this.couponService.verifyEligibilityCoupon(
@@ -293,7 +298,7 @@ export class CreateOrderUseCase {
       payload.products
     );
 
-    if (!isEligibility) {
+    if (!isEligibility || isEligibility.length === 0) {
       throw new Error(t("coupon_not_eligible"));
     }
 
@@ -327,13 +332,17 @@ export class CreateOrderUseCase {
   }
 
   private applyDiscountCoupon(
-    coupon: ICouponVerifyEligibilityUser,
+    coupon: ICouponVerifyEligibilityUser[],
     planPrice: PlanPrice,
     payload: CreateOrderRequestDto,
     finalPrice: number
   ): PlanPrice {
-    if (coupon.id_plano && coupon.id_plano === payload.plan.plan_id) {
-      finalPrice -= finalPrice * coupon.desconto_percentual;
+    const findPlan = coupon.find(
+      (item) => item.id_plano === payload.plan.plan_id
+    );
+
+    if (findPlan) {
+      finalPrice -= finalPrice * findPlan.desconto_percentual;
     }
 
     const discountValue = Number(planPrice.price) - finalPrice;

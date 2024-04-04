@@ -15,7 +15,7 @@ export class CouponService {
     couponCode: string,
     planId: number,
     selectedProducts: string[] | null
-  ): Promise<ICouponVerifyEligibilityUser | null> => {
+  ): Promise<ICouponVerifyEligibilityUser[] | null> => {
     return this.couponListerRepository.verifyEligibilityCoupon(
       tokenKeyData,
       couponCode,
@@ -27,7 +27,7 @@ export class CouponService {
   verifyRedemptionCouponByUser = async (
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    isEligibility: ICouponVerifyEligibilityUser,
+    isEligibility: ICouponVerifyEligibilityUser[],
     couponCode: string
   ) => {
     return this.couponListerRepository.verifyRedemptionCouponByUser(
