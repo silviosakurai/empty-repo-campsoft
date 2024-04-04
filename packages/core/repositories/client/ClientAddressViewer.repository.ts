@@ -18,7 +18,7 @@ export class ClientAddressViewerRepository {
   ): Promise<ViewClientAddressDTO | null> {
     const result = await this.db
       .select({
-        shipping_address_enum: clientAddress.endereco_envio,
+        shipping_address: clientAddress.endereco_envio,
         zip_code: clientAddress.cep,
         street: clientAddress.rua,
         number: clientAddress.numero,

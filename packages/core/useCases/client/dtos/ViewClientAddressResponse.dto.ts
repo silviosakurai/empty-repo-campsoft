@@ -1,7 +1,6 @@
 import { ClientShippingAddress } from "@core/common/enums/models/client";
 
-export interface ViewClientAddressDTO {
-  shipping_address_enum: ClientShippingAddress;
+export interface ViewClientBaseAddressResponse {
   zip_code: string;
   street: string;
   number: string;
@@ -13,8 +12,10 @@ export interface ViewClientAddressDTO {
   created_at: string;
   updated_at: string;
 }
+export interface ViewClientAddressDTO extends ViewClientBaseAddressResponse{
+  shipping_address: ClientShippingAddress;
+}
 
-export interface ViewClientBillingAddressResponse extends ViewClientAddressDTO {
+export interface ViewClientBillingAddressResponse extends ViewClientBaseAddressResponse {
   shipping_address: boolean;
 }
-  

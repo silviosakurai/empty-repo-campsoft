@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { ClientService } from "@core/services/client.service";
 import { ClientAddress, ClientShippingAddress } from "@core/common/enums/models/client";
-import { ViewClientAddressDTO, ViewClientBillingAddressResponse } from "./dtos/ViewClientAddressResponse.dto";
+import { ViewClientAddressDTO, ViewClientBaseAddressResponse, ViewClientBillingAddressResponse } from "./dtos/ViewClientAddressResponse.dto";
 
 @injectable()
 export class ClientAddressViewerUseCase {
@@ -16,21 +16,22 @@ export class ClientAddressViewerUseCase {
 
     return {
       ...response,
-      shipping_address: response.shipping_address_enum === ClientShippingAddress.YES,
+      shipping_address: response.shipping_address === ClientShippingAddress.YES,
     }
   }
 
-  async viewShipping(clientId: string): Promise<ViewClientAddressDTO | null> {
+  async viewShipping(clientId: string): Promise<ViewClientBaseAddressResponse | null> {
     const billingResponse = await this.clientService.viewAddress(clientId, ClientAddress.BILLING);
 
     if (!billingResponse) {
       return null;
     }
     
-    const billingIsShipping = billingResponse.shipping_address_enum === ClientShippingAddress.YES;
+    const billingIsShipping = billingResponse.shipping_address === ClientShippingAddress.YES;
 
     if (billingIsShipping) {
-      return billingResponse;
+      const { shipping_address, ...billingWithoutShipping } = billingResponse;
+      return billingWithoutShipping;
     }
 
     const shippingResponse = await this.clientService.viewAddress(clientId, ClientAddress.SHIPPING);
@@ -39,6 +40,8 @@ export class ClientAddressViewerUseCase {
       return null;
     }
 
-    return shippingResponse;
+    const { shipping_address, ...shippingWithoutShipping } = shippingResponse;
+
+    return shippingWithoutShipping;
   }
 }
