@@ -2,7 +2,7 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ClientAddressViewerUseCase } from '@core/useCases/client/ClientAddressViewer.usecase';
+import { ClientAddressViewerUseCase } from '@core/useCases/client/ClientAddressViewer.useCase';
 
 export const getShippingAddress = async (
   request: FastifyRequest,
