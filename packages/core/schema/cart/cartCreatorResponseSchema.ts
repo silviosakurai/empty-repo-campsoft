@@ -1,6 +1,6 @@
 import { Type } from "@sinclair/typebox";
-import { productDetailsWithPricesAndDatesSchema } from "../product/productDetailsWithPricesAndDatesSchema";
-import { planDetailsWithProductsSelectedSchema } from "../plan/planDetailsWithProductsSelectedSchema";
+import { productDetailPlanProductsSchema } from "../product/productDetailPlanProductsSchema";
+import { planDetailsWithProductsAvailableSchema } from "../plan/planDetailsWithProductsAvailableSchema";
 
 export const cartCreatorResponseSchema = Type.Object({
   totals: Type.Array(
@@ -19,6 +19,12 @@ export const cartCreatorResponseSchema = Type.Object({
       ),
     })
   ),
-  products: Type.Array(productDetailsWithPricesAndDatesSchema),
-  plans: Type.Array(planDetailsWithProductsSelectedSchema),
+  products: Type.Array(
+    Type.Object({
+      ...productDetailPlanProductsSchema.properties,
+      created_at: Type.String({ format: "date-time" }),
+      updated_at: Type.String({ format: "date-time" }),
+    })
+  ),
+  plans: Type.Array(planDetailsWithProductsAvailableSchema),
 });

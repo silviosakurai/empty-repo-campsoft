@@ -16,6 +16,12 @@ export const cartCreatorSchemaValidation = {
       })
     ),
   }),
+  body: Type.Object({
+    discount_coupon: Type.Number(),
+    months: Type.Number(),
+    plans_id: Type.Array(Type.Number()),
+    products_id: Type.Array(Type.Optional(Type.Number())),
+  }),
   response: {
     200: Type.Object(
       {
@@ -24,6 +30,14 @@ export const cartCreatorSchemaValidation = {
         data: cartCreatorResponseSchema,
       },
       { description: "Successful" }
+    ),
+    500: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Internal Server Error" }
     ),
   },
 };

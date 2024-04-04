@@ -7,14 +7,16 @@ import { Plan } from "@core/common/enums/models/plan";
 import { PlanUpgraderUseCase } from "../plan/PlanUpgrader.useCase";
 import OpenSearchService from "@core/services/openSearch.service";
 import { ProductResponse } from "../product/dtos/ProductResponse.dto";
+import { CouponService } from "@core/services/coupon.service";
 
 @injectable()
 export class CreateCartUseCase {
   constructor(
-    private planService: PlanService,
-    private planUpgraderUseCase: PlanUpgraderUseCase,
-    private productService: ProductService,
-    private openSearchService: OpenSearchService
+    private readonly planService: PlanService,
+    private readonly couponService: CouponService,
+    private readonly productService: ProductService,
+    private readonly openSearchService: OpenSearchService,
+    private readonly planUpgraderUseCase: PlanUpgraderUseCase
   ) {}
 
   async create(input: CreateCartRequest, companyId: number, clientId: string) {
@@ -48,8 +50,13 @@ export class CreateCartUseCase {
       productsIdToDiscount
     );
 
+    const discountCouponValue = input.discount_coupon
+      ? (await this.couponService.view(input.discount_coupon, companyId))[0]
+          .discount_coupon_value ?? 0
+      : 0;
+
     if (!allPlansWithDiscounts.length) {
-      const totals = this.generateOrders(plans);
+      const totals = this.generateOrders(plans, discountCouponValue);
 
       const cart = await this.createCart(totals, products, plans);
 
@@ -61,17 +68,16 @@ export class CreateCartUseCase {
       input.plans_id
     );
 
-    const plansAsMarketInterface = this.formatPlanValuesToCart(
+    const plansAsCartInterface = this.formatPlanValuesToCart(
       selectedPlansWithDiscount
     );
 
-    const totals = this.generateOrders(plansAsMarketInterface);
-
-    const cart = await this.createCart(
-      totals,
-      products,
-      plansAsMarketInterface
+    const totals = this.generateOrders(
+      plansAsCartInterface,
+      discountCouponValue
     );
+
+    const cart = await this.createCart(totals, products, plansAsCartInterface);
 
     return cart;
   }
@@ -93,13 +99,16 @@ export class CreateCartUseCase {
     return cart;
   }
 
-  private generateOrders(plans: Plan[]): CartOrder[] {
+  private generateOrders(
+    plans: Plan[],
+    discountCouponValue: number
+  ): CartOrder[] {
     const totals: CartOrder[] = [];
     for (const plan of plans) {
       if (plan.prices.length) {
         for (const price of plan.prices) {
           const discount_percentage = price.discount_percentage ?? 0;
-          const discount_coupon_value = 0; // valor do desconto que o cupom está dando para o cliente, caso o mesmo esteja com um cupom
+          const discount_coupon_value = discountCouponValue;
           const subtotal_price = price.price ?? 0;
           const discount_item_value = price.discount_value ?? 0;
           const discount_products_value = parseFloat(
@@ -179,8 +188,3 @@ export class CreateCartUseCase {
     );
   }
 }
-
-// pelo jwt, logar em todas as assinaturas que o usuário já tem
-// vou bater na tabela assinatura que com ela eu bato nos pedidos(ativos) por ela e
-// depois em pedidos itens, que ai vou saber todos os produtos que ele tem
-// e ai verifico se os produtos que ele quer adicionar tem já

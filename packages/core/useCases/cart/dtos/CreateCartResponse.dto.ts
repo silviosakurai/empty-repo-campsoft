@@ -1,5 +1,7 @@
 import { Plan } from "@core/common/enums/models/plan";
+import { planDetailsWithProductsSelectedSchema } from "@core/schema/plan/planDetailsWithProductsSelectedSchema";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { Static } from "@sinclair/typebox";
 
 export interface CreateCartResponse {
   id: string;
@@ -22,3 +24,7 @@ interface Installment {
   installment: number;
   value: number;
 }
+
+export type PlanDetailsWithSelectedProducts = Static<
+  typeof planDetailsWithProductsSelectedSchema
+>;
