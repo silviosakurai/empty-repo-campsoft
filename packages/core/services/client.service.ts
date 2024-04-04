@@ -21,16 +21,24 @@ import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientBy
 import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
+import { ClientAddressViewerRepository } from "@core/repositories/client/ClientAddressViewer.repository";
+import { ClientAddress, ClientShippingAddress } from "@core/common/enums/models/client";
+import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
+import { ClientAddressCreatorRepository } from "@core/repositories/client/ClientAddressCreator.repository";
+import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 
 @injectable()
 export class ClientService {
   constructor(
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     private readonly clientViewerRepository: ClientViewerRepository,
+    private readonly clientAddressViewerRepository: ClientAddressViewerRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
     private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
+    private readonly clientAddressCreatorRepository: ClientAddressCreatorRepository,
     private readonly clientUpdaterRepository: ClientUpdaterRepository,
     private readonly clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
+    private readonly clientAddressUpdaterRepository: ClientAddressUpdaterRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
     private readonly clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
@@ -39,6 +47,10 @@ export class ClientService {
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
     return this.clientViewerRepository.view(tokenKeyData, userId);
+  };
+
+  viewAddress = async (userId: string, type: ClientAddress) => {
+    return this.clientAddressViewerRepository.view(userId, type);
   };
 
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
@@ -51,6 +63,10 @@ export class ClientService {
 
   create = async (input: CreateClientRequestDto) => {
     return this.clientCreatorRepository.create(input);
+  };
+
+  createAddress = async (userId: string, type: ClientAddress, data: UpdateClientAddressRequest) => {
+    return this.clientAddressCreatorRepository.create(userId, type, data);
   };
 
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
@@ -73,6 +89,14 @@ export class ClientService {
       tokenTfaData,
       newPass
     );
+  };
+
+  updateAddress = async (userId: string, data: UpdateClientAddressRequest) => {
+    return this.clientAddressUpdaterRepository.update(userId, data);
+  };
+
+  updateShippingAddress = async (userId: string, type: ClientAddress, shippingAddress: ClientShippingAddress) => {
+    return this.clientAddressUpdaterRepository.updateShippingAddress(userId, type, shippingAddress);
   };
 
   passwordRecoveryMethods = async (
