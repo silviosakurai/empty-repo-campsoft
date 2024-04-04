@@ -14,6 +14,7 @@
     "build:partner": "turbo run build --filter=partner",
     "build:public": "turbo run build --filter=public",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
     "lint:partner": "turbo run lint --filter=partner",
     "lint:public": "turbo run lint --filter=public",
     "lint:core": "turbo run lint --filter=core",

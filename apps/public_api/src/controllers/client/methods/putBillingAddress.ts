@@ -12,12 +12,14 @@ export const putBillingAddress = async (
   reply: FastifyReply
 ) => {
   const { t, tokenJwtData } = request;
-  const clientAddressUpdaterUseCase = container.resolve(ClientAddressUpdaterUseCase);
+  const clientAddressUpdaterUseCase = container.resolve(
+    ClientAddressUpdaterUseCase
+  );
 
   try {
     await clientAddressUpdaterUseCase.updateBilling(
       tokenJwtData.clientId,
-      request.body,
+      request.body
     );
 
     return sendResponse(reply, {

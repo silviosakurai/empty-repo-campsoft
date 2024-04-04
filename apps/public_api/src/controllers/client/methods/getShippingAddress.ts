@@ -9,11 +9,13 @@ export const getShippingAddress = async (
   reply: FastifyReply
 ) => {
   const { t, tokenJwtData } = request;
-  const clientAddressViewerUseCase = container.resolve(ClientAddressViewerUseCase);
+  const clientAddressViewerUseCase = container.resolve(
+    ClientAddressViewerUseCase
+  );
 
   try {
     const response = await clientAddressViewerUseCase.viewShipping(
-      tokenJwtData.clientId,
+      tokenJwtData.clientId
     );
 
     if (!response) {
