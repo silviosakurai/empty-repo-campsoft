@@ -28,3 +28,13 @@ export enum ClientMagicTokenStatus {
   YES = "Y",
   NO = "N",
 }
+
+export enum ClientAddress {
+  BILLING = "Cobranca",
+  SHIPPING = "Envio",
+}
+
+export enum ClientShippingAddress {
+  YES = "Y",
+  NO = "N",
+}
