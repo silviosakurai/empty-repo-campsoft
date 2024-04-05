@@ -28,7 +28,7 @@ export class CreateCartUseCase {
       : [];
 
     if (!input.plans_id?.length) {
-      const cart = await this.createCart([], products, []);
+      const cart = await this.createCart([], products, [], clientId);
 
       return cart;
     }
@@ -58,7 +58,7 @@ export class CreateCartUseCase {
     if (!allPlansWithDiscounts.length) {
       const totals = this.generateOrders(plans, discountCouponValue);
 
-      const cart = await this.createCart(totals, products, plans);
+      const cart = await this.createCart(totals, products, plans, clientId);
 
       return cart;
     }
@@ -77,7 +77,12 @@ export class CreateCartUseCase {
       discountCouponValue
     );
 
-    const cart = await this.createCart(totals, products, plansAsCartInterface);
+    const cart = await this.createCart(
+      totals,
+      products,
+      plansAsCartInterface,
+      clientId
+    );
 
     return cart;
   }
@@ -85,16 +90,17 @@ export class CreateCartUseCase {
   private async createCart(
     totals: CartOrder[],
     products: ProductResponse[],
-    plans: Plan[]
+    plans: Plan[],
+    clientId: string
   ) {
     const cart: CreateCartResponse = {
       id: uuidv4(),
       totals: totals,
       products,
-      plans: plans,
+      plans,
     };
 
-    await this.openSearchService.indexCart(cart);
+    await this.openSearchService.indexCart(clientId, cart);
 
     return cart;
   }

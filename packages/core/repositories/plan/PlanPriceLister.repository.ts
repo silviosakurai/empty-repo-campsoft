@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import * as schema from "@core/models";
 import { planPrice } from "@core/models";
 import { inject, injectable } from "tsyringe";
@@ -16,7 +16,10 @@ export class PlanPriceListerRepository {
       .select({
         months: planPrice.meses,
         price: planPrice.preco,
-        discount_value: planPrice.desconto_valor,
+        discount_value:
+          sql<number>`CAST(${planPrice.desconto_valor} AS DECIMAL(10,2))`.mapWith(
+            Number
+          ),
         discount_percentage: planPrice.desconto_porcentagem,
         price_with_discount: planPrice.preco_desconto,
       })

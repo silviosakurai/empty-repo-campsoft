@@ -90,14 +90,15 @@ class OpenSearchService {
     }
   }
 
-  async indexCart(cart: CreateCartResponse) {
+  async indexCart(clientId: string, cart: CreateCartResponse) {
     try {
       await this.client.index({
         index: "cart",
-        body: cart,
+        body: { ...cart, client_id: clientId },
       });
     } catch (error) {
       console.error(`Error indexing cart: ${error}`);
+      throw error;
     }
   }
 }
