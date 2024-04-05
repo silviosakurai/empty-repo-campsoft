@@ -19,8 +19,6 @@ export const plan = mysqlTable("plano", {
   ]).default(PlanVisivelSite.YES),
   id_empresa: int("id_empresa"),
   plano: varchar("plano", { length: 50 }),
-  intervalo: int("intervalo"),
-  intervalo_tipo: mysqlEnum("intervalo_tipo", ["day", "month", "year"]),
   imagem: varchar("imagem", { length: 200 }),
   icon: varchar("icon", { length: 200 }),
   descricao: varchar("descricao", { length: 1000 }),

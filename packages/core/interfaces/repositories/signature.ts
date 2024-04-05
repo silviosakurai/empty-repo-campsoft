@@ -7,3 +7,14 @@ export interface ISignatureFindByOrder {
   product_id: string;
   product_cancel_date: string;
 }
+
+export interface ISignatureByOrder {
+  signature_id: string;
+  plan_id: number;
+  recurrence: number;
+  recurrence_period: number;
+  cycle: number;
+  start_date: string;
+  signature_date: string;
+  next_billing_date: string;
+}

@@ -7,7 +7,10 @@ import {
   clientSignature,
 } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
-import { ISignatureFindByOrder } from "@core/interfaces/repositories/signature";
+import {
+  ISignatureByOrder,
+  ISignatureFindByOrder,
+} from "@core/interfaces/repositories/signature";
 import { OrderRecorrencia } from "@core/common/enums/models/order";
 
 @injectable()
@@ -17,7 +20,7 @@ export class FindSignatureByOrderNumber {
   ) {}
 
   async find(orderNumber: string): Promise<ISignatureFindByOrder[] | null> {
-    const records = await this.db
+    const response = await this.db
       .select({
         signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
         product_id: clientProductSignature.id_produto,
@@ -49,8 +52,34 @@ export class FindSignatureByOrderNumber {
         )
       );
 
-    if (!records.length) return null;
+    if (response.length === 0) {
+      return null;
+    }
 
-    return records as unknown as ISignatureFindByOrder[];
+    return response as ISignatureFindByOrder[];
+  }
+
+  async findByOrder(orderNumber: string): Promise<ISignatureByOrder | null> {
+    const response = await this.db
+      .select({
+        signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
+        plan_id: clientSignature.id_plano,
+        recurrence: clientSignature.recorrencia,
+        recurrence_period: clientSignature.recorrencia_periodo,
+        cycle: clientSignature.ciclo,
+        start_date: clientSignature.data_inicio,
+        signature_date: clientSignature.data_assinatura_ate,
+        next_billing_date: clientSignature.data_proxima_cobranca,
+      })
+      .from(clientSignature)
+      .where(
+        and(eq(clientSignature.id_pedido, sql`UUID_TO_BIN(${orderNumber})`))
+      );
+
+    if (response.length === 0) {
+      return null;
+    }
+
+    return response[0] as unknown as ISignatureByOrder;
   }
 }

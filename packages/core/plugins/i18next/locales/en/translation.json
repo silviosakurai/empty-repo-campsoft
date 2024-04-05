@@ -30,5 +30,6 @@
   "error_create_signature": "Error create signature!",
   "error_list_products_order": "Error list products order!",
   "error_create_signature_products": "Error create signature products!",
-  "payment_method_not_card": "Payment method not card!"
+  "payment_method_not_card": "Payment method not card!",
+  "payment_method_invalid": "Payment method invalid!"
 }

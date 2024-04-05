@@ -88,6 +88,12 @@ export class CreateOrderUseCase {
       createOrder
     );
 
+    await this.signatureService.activePaidSignature(
+      createOrder.order_id,
+      payload.previous_order_id,
+      payload.activate_now
+    );
+
     return createOrder;
   }
 
@@ -100,6 +106,15 @@ export class CreateOrderUseCase {
       payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.CARD
     ) {
       throw new Error(t("payment_method_not_card"));
+    }
+
+    if (
+      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.BOLETO &&
+      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.PIX &&
+      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.CARD &&
+      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.VOUCHER
+    ) {
+      throw new Error(t("payment_method_invalid"));
     }
   }
 

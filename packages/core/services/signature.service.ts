@@ -7,6 +7,9 @@ import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSig
 import { injectable } from "tsyringe";
 import { SignatureCreatorRepository } from "@core/repositories/signature/SignatureCreator.repository";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import { SignaturePaidActiveRepository } from "@core/repositories/signature/SignaturePaidActive.repository";
+import { SignatureUpgradedRepository } from "@core/repositories/signature/SignatureUpgraded.repository";
+import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 
 @injectable()
 export class SignatureService {
@@ -15,7 +18,9 @@ export class SignatureService {
     private findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private cancelSignatureRepository: CancelSignatureRepository,
     private cancelProductSignatureRepository: CancelProductSignatureRepository,
-    private signatureCreatorRepository: SignatureCreatorRepository
+    private signatureCreatorRepository: SignatureCreatorRepository,
+    private signaturePaidActiveRepository: SignaturePaidActiveRepository,
+    private signatureUpgradedRepository: SignatureUpgradedRepository
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -69,5 +74,74 @@ export class SignatureService {
       products,
       signatureId
     );
+  };
+
+  activePaidSignature = async (
+    orderNumber: string,
+    previousOrderId: string | null = null,
+    activateNow: boolean = true
+  ) => {
+    const signature =
+      await this.findSignatureByOrderNumber.findByOrder(orderNumber);
+
+    if (!signature) {
+      return false;
+    }
+
+    const previousOrder = await this.previousOrderUpgrade(
+      previousOrderId,
+      activateNow
+    );
+
+    const updateSignaturePaid =
+      await this.signaturePaidActiveRepository.updateSignaturePaid(
+        signature,
+        previousOrder
+      );
+
+    if (!updateSignaturePaid) {
+      return false;
+    }
+
+    return this.signaturePaidActiveRepository.updateSignatureProductsPaid(
+      signature,
+      previousOrder
+    );
+  };
+
+  private previousOrderUpgrade = async (
+    previousOrderId: string | null = null,
+    activateNow: boolean = true
+  ): Promise<ISignatureByOrder | null> => {
+    if (previousOrderId && !activateNow) {
+      const previousSignature =
+        await this.findSignatureByOrderNumber.findByOrder(previousOrderId);
+
+      if (!previousSignature) {
+        return null;
+      }
+
+      const upgradeSignature =
+        await this.signatureUpgradedRepository.updateSignaturePrevious(
+          previousSignature
+        );
+
+      if (!upgradeSignature) {
+        return null;
+      }
+
+      const upgradeSignatureProducts =
+        await this.signatureUpgradedRepository.updateSignatureProductsPrevious(
+          previousSignature
+        );
+
+      if (!upgradeSignatureProducts) {
+        return null;
+      }
+
+      return previousSignature;
+    }
+
+    return null;
   };
 }
