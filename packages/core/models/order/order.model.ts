@@ -8,6 +8,7 @@ import {
   mysqlEnum,
   double,
   varbinary,
+  boolean,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
@@ -16,6 +17,7 @@ export const order = mysqlTable("pedido", {
     .notNull()
     .primaryKey()
     .default(sql`uuid_to_bin(uuid())`),
+  id_pedido_anterior: varbinary("id_cliente", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
   id_vendedor: varbinary("id_vendedor", { length: 16 }),
   id_empresa: int("id_empresa").notNull(),
@@ -32,6 +34,7 @@ export const order = mysqlTable("pedido", {
   pedido_parcelas_vezes: int("pedido_parcelas_vezes"),
   cupom_carrinho_codigo: varchar("cupom_carrinho_codigo", { length: 12 }),
   cupom_resgatar_codigo: varchar("cupom_resgatar_codigo", { length: 12 }),
+  ativacao_imediata: boolean("ativacao_imediata").default(true),
   cliente_email: varchar("cliente_email", { length: 100 }),
   cliente_primeiro_nome: varchar("cliente_primeiro_nome", { length: 50 }),
   cliente_ultimo_nome: varchar("cliente_ultimo_nome", { length: 50 }),

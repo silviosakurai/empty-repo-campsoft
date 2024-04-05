@@ -90,8 +90,8 @@ export class CreateOrderUseCase {
 
     await this.signatureService.activePaidSignature(
       createOrder.order_id,
-      payload.previous_order_id,
-      payload.activate_now
+      createOrder.order_id_previous,
+      createOrder.active_now
     );
 
     return createOrder;

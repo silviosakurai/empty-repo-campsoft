@@ -45,12 +45,18 @@ export class OrderCreatorRepository {
       valor_total: Number(planPrice.price_with_discount ?? 0),
       pedido_parcelas_valor: totalPricesInstallments.value,
       pedido_parcelas_vezes: totalPricesInstallments.installments,
+      ativacao_imediata: payload.activate_now,
       cliente_email: user.email,
       cliente_primeiro_nome: user.first_name,
       cliente_ultimo_nome: user.last_name,
       cliente_cpf: user.cpf,
       cliente_telefone: user.phone,
     };
+
+    if (payload.previous_order_id) {
+      valuesObject.id_pedido_anterior =
+        sql`UUID_TO_BIN(${payload.previous_order_id})` as unknown as string;
+    }
 
     if (payload.coupon_code) {
       valuesObject.cupom_carrinho_codigo = payload.coupon_code;
@@ -75,16 +81,18 @@ export class OrderCreatorRepository {
       return null;
     }
 
-    return { order_id: orderFounded.id_pedido } as CreateOrder;
+    return orderFounded;
   }
 
   async findLastOrderByIdClient(
     clientId: string,
     companyId: number
-  ): Promise<{ id_pedido: string } | null> {
+  ): Promise<CreateOrder | null> {
     const result = await this.db
       .select({
-        id_pedido: sql`BIN_TO_UUID(${order.id_pedido})`,
+        order_id: sql`BIN_TO_UUID(${order.id_pedido})`,
+        order_id_previous: sql`BIN_TO_UUID(${order.id_pedido_anterior})`,
+        active_now: order.ativacao_imediata,
       })
       .from(order)
       .where(
@@ -100,6 +108,6 @@ export class OrderCreatorRepository {
       return null;
     }
 
-    return result[0] as { id_pedido: string };
+    return result[0] as CreateOrder;
   }
 }

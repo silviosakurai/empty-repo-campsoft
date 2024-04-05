@@ -79,6 +79,8 @@ export interface OrderCreatePaymentsCard {
 
 export interface CreateOrder {
   order_id: string;
+  order_id_previous: string | null;
+  active_now: boolean;
 }
 
 export type OrderPayments = Static<typeof orderPaymentsSchema>;
