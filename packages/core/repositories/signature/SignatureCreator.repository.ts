@@ -67,7 +67,7 @@ export class SignatureCreatorRepository {
     const insertProducts = products.map((product) => {
       return {
         id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
-        id_produto: sql`UUID_TO_BIN(${product})`,
+        id_produto: product,
         processar: ClientProductSignatureProcess.NO,
         status: ClientProductSignatureStatus.INACTIVE,
       };

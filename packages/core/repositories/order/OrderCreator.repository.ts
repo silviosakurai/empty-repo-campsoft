@@ -12,7 +12,10 @@ import {
 } from "@core/common/enums/models/order";
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
+import {
+  CreateOrder,
+  OrderCreatePaymentsCard,
+} from "@core/interfaces/repositories/order";
 
 @injectable()
 export class OrderCreatorRepository {
@@ -27,7 +30,7 @@ export class OrderCreatorRepository {
     planPrice: PlanPrice,
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard
-  ): Promise<{ order_id: string } | null> {
+  ): Promise<CreateOrder | null> {
     const valuesObject: typeof schema.order.$inferInsert = {
       id_cliente:
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
@@ -72,7 +75,7 @@ export class OrderCreatorRepository {
       return null;
     }
 
-    return { order_id: orderFounded.id_pedido } as { order_id: string };
+    return { order_id: orderFounded.id_pedido } as CreateOrder;
   }
 
   async findLastOrderByIdClient(

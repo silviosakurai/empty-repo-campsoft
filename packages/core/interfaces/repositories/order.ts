@@ -77,4 +77,8 @@ export interface OrderCreatePaymentsCard {
   value: number;
 }
 
+export interface CreateOrder {
+  order_id: string;
+}
+
 export type OrderPayments = Static<typeof orderPaymentsSchema>;

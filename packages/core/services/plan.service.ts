@@ -10,6 +10,8 @@ import {
   PlanPriceOrder,
   PlanProduct,
 } from "@core/interfaces/repositories/plan";
+import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrder.repository";
+import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 
 @injectable()
 export class PlanService {
@@ -18,7 +20,8 @@ export class PlanService {
     private readonly planViewerRepository: PlanViewerRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
-    private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository
+    private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
+    private readonly planListerOrderRepository: PlanListerOrderRepository
   ) {}
 
   list = async (companyId: number, query: ListPlanRequest) => {
@@ -66,5 +69,75 @@ export class PlanService {
       month,
       selectedProducts
     );
+  };
+
+  listByPlanOrder = async (
+    tokenKeyData: ITokenKeyData,
+    payload: CreateOrderRequestDto
+  ) => {
+    return this.planListerOrderRepository.listByPlanOrder(
+      tokenKeyData,
+      payload
+    );
+  };
+
+  isPlanProductAndProductGroups = async (
+    tokenKeyData: ITokenKeyData,
+    payload: CreateOrderRequestDto
+  ): Promise<boolean> => {
+    const selectedProducts = payload.plan.selected_products ?? [];
+
+    if (selectedProducts.length === 0) {
+      return true;
+    }
+
+    const planProductAndProductGroups =
+      await this.findPlanProductAndProductGroups(
+        tokenKeyData,
+        payload.plan.plan_id,
+        selectedProducts
+      );
+
+    if (
+      !planProductAndProductGroups ||
+      planProductAndProductGroups.length === 0
+    ) {
+      return false;
+    }
+
+    const productIds = planProductAndProductGroups.map((item) =>
+      item.product_id.toString()
+    );
+
+    const allProductsSelected = selectedProducts.every((selected) =>
+      productIds.includes(selected.toString())
+    );
+
+    return allProductsSelected;
+  };
+
+  listPlanByOrderComplete = async (
+    tokenKeyData: ITokenKeyData,
+    payload: CreateOrderRequestDto
+  ): Promise<string[] | null> => {
+    const productsOrderSet = new Set<string>();
+
+    payload.plan.selected_products?.forEach((product) =>
+      productsOrderSet.add(product)
+    );
+
+    if (productsOrderSet.size === 0) {
+      const planList = await this.listByPlanOrder(tokenKeyData, payload);
+
+      if (!planList || planList.length === 0) {
+        return null;
+      }
+
+      planList.forEach((item) => productsOrderSet.add(item.product_id));
+    }
+
+    payload.products?.forEach((product) => productsOrderSet.add(product));
+
+    return Array.from(productsOrderSet);
   };
 }

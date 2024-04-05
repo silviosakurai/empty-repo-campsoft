@@ -9,7 +9,10 @@ import { OrderCreatorRepository } from "@core/repositories/order/OrderCreator.re
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
+import {
+  CreateOrder,
+  OrderCreatePaymentsCard,
+} from "@core/interfaces/repositories/order";
 
 @injectable()
 export class OrderService {
@@ -58,7 +61,7 @@ export class OrderService {
     planPrice: PlanPrice,
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard
-  ) => {
+  ): Promise<CreateOrder | null> => {
     return this.orderCreatorRepository.create(
       tokenKeyData,
       tokenJwtData,

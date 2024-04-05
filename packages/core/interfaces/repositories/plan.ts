@@ -40,3 +40,7 @@ export interface PlanPriceCrossSellOrder {
   product_id: string | null;
   price_discount: number;
 }
+
+export interface PlanListerOrderResponse {
+  product_id: string;
+}

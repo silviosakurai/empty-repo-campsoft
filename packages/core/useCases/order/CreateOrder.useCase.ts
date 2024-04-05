@@ -6,12 +6,10 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { ClientService, ProductService } from "@core/services";
-import { PlanPrice } from "@core/common/enums/models/plan";
-import { PlanPriceCrossSellOrder } from "@core/interfaces/repositories/plan";
-import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
-import { CouponService } from "@core/services/coupon.service";
-import { ICouponVerifyEligibilityUser } from "@core/interfaces/repositories/coupon";
+import { CreateOrder } from "@core/interfaces/repositories/order";
 import { SignatureService } from "@core/services/signature.service";
+import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
+import { PriceService } from "@core/services/price.service";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -20,8 +18,8 @@ export class CreateOrderUseCase {
     private readonly planService: PlanService,
     private readonly productService: ProductService,
     private readonly clientService: ClientService,
-    private readonly couponService: CouponService,
-    private readonly signatureService: SignatureService
+    private readonly signatureService: SignatureService,
+    private readonly priceService: PriceService
   ) {}
 
   async execute(
@@ -30,6 +28,8 @@ export class CreateOrderUseCase {
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
   ) {
+    this.validatePaymentMethod(payload, t);
+
     const userFounded = await this.clientService.view(
       tokenKeyData,
       tokenJwtData.clientId
@@ -41,15 +41,15 @@ export class CreateOrderUseCase {
 
     const [isPlanProductAndProductGroups, isPlanProductCrossSell] =
       await Promise.all([
-        this.isPlanProductAndProductGroups(tokenKeyData, payload),
-        this.isPlanProductCrossSell(tokenKeyData, payload),
+        this.planService.isPlanProductAndProductGroups(tokenKeyData, payload),
+        this.productService.isPlanProductCrossSell(tokenKeyData, payload),
       ]);
 
     if (!isPlanProductCrossSell || !isPlanProductAndProductGroups) {
       throw new Error(t("product_not_eligible_for_plan"));
     }
 
-    const totalPrices = await this.totalPricesOrder(
+    const totalPrices = await this.priceService.totalPricesOrder(
       t,
       tokenKeyData,
       tokenJwtData,
@@ -60,10 +60,8 @@ export class CreateOrderUseCase {
       throw new Error(t("plan_price_not_found"));
     }
 
-    const totalPricesInstallments = this.calculatePriceInstallments(
-      payload,
-      totalPrices
-    );
+    const totalPricesInstallments =
+      this.priceService.calculatePriceInstallments(payload, totalPrices);
 
     if (!totalPricesInstallments) {
       throw new Error(t("installments_not_calculated"));
@@ -82,6 +80,36 @@ export class CreateOrderUseCase {
       throw new Error(t("error_create_order"));
     }
 
+    await this.createSignature(
+      t,
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      createOrder
+    );
+
+    return createOrder;
+  }
+
+  private validatePaymentMethod(
+    payload: CreateOrderRequestDto,
+    t: TFunction<"translation", undefined>
+  ) {
+    if (
+      payload.subscribe &&
+      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.CARD
+    ) {
+      throw new Error(t("payment_method_not_card"));
+    }
+  }
+
+  private async createSignature(
+    t: TFunction<"translation", undefined>,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: CreateOrderRequestDto,
+    createOrder: CreateOrder
+  ) {
     const createSignature = await this.signatureService.create(
       tokenKeyData,
       tokenJwtData,
@@ -93,280 +121,25 @@ export class CreateOrderUseCase {
       throw new Error(t("error_create_signature"));
     }
 
-    return createSignature;
-  }
-
-  private async totalPricesOrder(
-    t: TFunction<"translation", undefined>,
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
-  ): Promise<PlanPrice | null> {
-    const coupon = await this.applyAndValidateDiscountCoupon(
-      t,
+    const productsOrder = await this.planService.listPlanByOrderComplete(
       tokenKeyData,
-      tokenJwtData,
       payload
     );
 
-    const [planPrice, planPriceCrossSell] = await Promise.all([
-      this.findPriceByPlanIdAndMonth(payload, coupon),
-      this.findPriceByProductsIdAndMonth(tokenKeyData, payload, coupon),
-    ]);
-
-    if (!planPrice) {
-      return null;
+    if (!productsOrder) {
+      throw new Error(t("error_list_products_order"));
     }
 
-    if (!planPriceCrossSell) {
-      return planPrice;
-    }
-
-    const finalPrice =
-      Number(planPrice.price) + Number(planPriceCrossSell.price_discount);
-
-    const finalPriceDiscount =
-      Number(planPrice.price_with_discount) +
-      Number(planPriceCrossSell.price_discount);
-
-    const discountValue = finalPrice - finalPriceDiscount;
-    const discountPercentage = (discountValue / finalPrice) * 100;
-
-    return {
-      months: planPrice.months,
-      price: Number(finalPrice.toFixed(2)),
-      discount_value: Number(discountValue.toFixed(2)),
-      discount_percentage: Number(discountPercentage.toFixed(2)),
-      price_with_discount: Number(finalPriceDiscount.toFixed(2)),
-    };
-  }
-
-  private async findPriceByProductsIdAndMonth(
-    tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto,
-    coupon: ICouponVerifyEligibilityUser[]
-  ): Promise<PlanPriceCrossSellOrder | null> {
-    const selectedProducts = payload.products ?? [];
-
-    if (selectedProducts.length === 0) {
-      return null;
-    }
-
-    const planPriceCrossSell =
-      await this.productService.findPlanPriceProductCrossSell(
-        tokenKeyData,
-        payload.plan.plan_id,
-        payload.months,
-        selectedProducts
+    const createSignatureProducts =
+      await this.signatureService.createSignatureProducts(
+        productsOrder,
+        createSignature.id_assinatura_cliente
       );
 
-    if (!planPriceCrossSell || planPriceCrossSell.length === 0) {
-      return null;
+    if (!createSignatureProducts) {
+      throw new Error(t("error_create_signature_products"));
     }
 
-    let finalPrice = 0;
-
-    planPriceCrossSell.forEach((item) => {
-      let discountPercentage = item.price_discount;
-
-      const findProduct = coupon.find(
-        (itemProduct) => itemProduct.id_produto === item.product_id
-      );
-
-      if (findProduct) {
-        discountPercentage =
-          discountPercentage * findProduct.desconto_percentual;
-      }
-
-      finalPrice = finalPrice + discountPercentage;
-    });
-
-    return {
-      product_id: null,
-      price_discount: Number(finalPrice.toFixed(2)),
-    };
-  }
-
-  private async findPriceByPlanIdAndMonth(
-    payload: CreateOrderRequestDto,
-    coupon: ICouponVerifyEligibilityUser[]
-  ): Promise<PlanPrice | null> {
-    let finalPrice = 0;
-
-    const planPrice = await this.planService.findPriceByPlanIdAndMonth(
-      payload.plan.plan_id,
-      payload.months
-    );
-
-    if (!planPrice || (!planPrice.price_with_discount && !planPrice.price)) {
-      return null;
-    }
-
-    finalPrice = Number(planPrice.price_with_discount ?? planPrice.price);
-
-    const selectedProducts = payload.plan.selected_products ?? [];
-
-    if (selectedProducts.length === 0) {
-      return this.applyDiscountCoupon(coupon, planPrice, payload, finalPrice);
-    }
-
-    const planPriceNotProducts =
-      await this.planService.findPriceByPlanIdAndMonthNotProducts(
-        payload.plan.plan_id,
-        payload.months,
-        selectedProducts
-      );
-
-    planPriceNotProducts.forEach((item) => {
-      const discountPercentage = item.plan_percentage;
-
-      finalPrice -= finalPrice * discountPercentage;
-    });
-
-    return this.applyDiscountCoupon(coupon, planPrice, payload, finalPrice);
-  }
-
-  private async isPlanProductAndProductGroups(
-    tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
-  ): Promise<boolean> {
-    const selectedProducts = payload.plan.selected_products ?? [];
-
-    if (selectedProducts.length === 0) {
-      return true;
-    }
-
-    const planProductAndProductGroups =
-      await this.planService.findPlanProductAndProductGroups(
-        tokenKeyData,
-        payload.plan.plan_id,
-        selectedProducts
-      );
-
-    if (
-      !planProductAndProductGroups ||
-      planProductAndProductGroups.length === 0
-    ) {
-      return false;
-    }
-
-    const productIds = planProductAndProductGroups.map((item) =>
-      item.product_id.toString()
-    );
-
-    const allProductsSelected = selectedProducts.every((selected) =>
-      productIds.includes(selected.toString())
-    );
-
-    return allProductsSelected;
-  }
-
-  private async isPlanProductCrossSell(
-    tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
-  ): Promise<boolean> {
-    const selectedProducts = payload.products ?? [];
-
-    if (selectedProducts.length === 0) {
-      return true;
-    }
-
-    const planProductCrossSell =
-      await this.productService.findPlanProductCrossSell(
-        tokenKeyData,
-        payload.plan.plan_id,
-        payload.months,
-        selectedProducts
-      );
-
-    if (!planProductCrossSell || planProductCrossSell.length === 0) {
-      return false;
-    }
-
-    const productIds = planProductCrossSell.map((item) =>
-      item.product_id.toString()
-    );
-
-    const allProductsSelected = selectedProducts.every((selected) =>
-      productIds.includes(selected.toString())
-    );
-
-    return allProductsSelected;
-  }
-
-  private async applyAndValidateDiscountCoupon(
-    t: TFunction<"translation", undefined>,
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
-  ): Promise<ICouponVerifyEligibilityUser[]> {
-    if (!payload.coupon_code) {
-      return [] as ICouponVerifyEligibilityUser[];
-    }
-
-    const isEligibility = await this.couponService.verifyEligibilityCoupon(
-      tokenKeyData,
-      payload.coupon_code,
-      payload.plan.plan_id,
-      payload.products
-    );
-
-    if (!isEligibility || isEligibility.length === 0) {
-      throw new Error(t("coupon_not_eligible"));
-    }
-
-    const isRedemption = await this.couponService.verifyRedemptionCouponByUser(
-      tokenKeyData,
-      tokenJwtData,
-      isEligibility,
-      payload.coupon_code
-    );
-
-    if (!isRedemption) {
-      throw new Error(t("coupon_not_redeemable"));
-    }
-
-    return isEligibility;
-  }
-
-  private calculatePriceInstallments(
-    payload: CreateOrderRequestDto,
-    totalPrices: PlanPrice
-  ): OrderCreatePaymentsCard | null {
-    const installments = payload.payment?.credit_card?.installments ?? 1;
-
-    const price = Number(totalPrices.price_with_discount);
-    const priceInstallments = price / installments;
-
-    return {
-      installments,
-      value: Number(priceInstallments.toFixed(2)),
-    };
-  }
-
-  private applyDiscountCoupon(
-    coupon: ICouponVerifyEligibilityUser[],
-    planPrice: PlanPrice,
-    payload: CreateOrderRequestDto,
-    finalPrice: number
-  ): PlanPrice {
-    const findPlan = coupon.find(
-      (item) => item.id_plano === payload.plan.plan_id
-    );
-
-    if (findPlan) {
-      finalPrice -= finalPrice * findPlan.desconto_percentual;
-    }
-
-    const discountValue = Number(planPrice.price) - finalPrice;
-    const discountPercentage = (discountValue / Number(planPrice.price)) * 100;
-
-    return {
-      months: planPrice.months,
-      price: planPrice.price,
-      discount_value: Number(discountValue.toFixed(2)),
-      discount_percentage: Number(discountPercentage.toFixed(2)),
-      price_with_discount: Number(finalPrice.toFixed(2)),
-    };
+    return createSignature;
   }
 }

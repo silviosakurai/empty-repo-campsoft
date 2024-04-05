@@ -27,5 +27,8 @@
   "coupon_not_eligible": "Coupon not eligible!",
   "coupon_not_redeemable": "Coupon not redeemable!",
   "error_create_order": "Error create order!",
-  "error_create_signature": "Error create signature!"
+  "error_create_signature": "Error create signature!",
+  "error_list_products_order": "Error list products order!",
+  "error_create_signature_products": "Error create signature products!",
+  "payment_method_not_card": "Payment method not card!"
 }
