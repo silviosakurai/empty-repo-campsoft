@@ -11,6 +11,7 @@ import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientR
 import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import {
+  ClientEmailCreatorInput,
   FindClientByCpfEmailPhoneInput,
   FindClientByEmailPhoneInput,
 } from "@core/interfaces/repositories/client";
@@ -21,20 +22,26 @@ import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientBy
 import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
+import { ClientEmailNewsletterCreatorRepository } from "@core/repositories/client/ClientEmailNewsletterCreator.repository";
+import { ClientEmailViewerByEmailRepository } from "@core/repositories/client/ClientEmailViewerByEmail.repository";
+import { ClientEmailCreatorRepository } from "@core/repositories/client/ClientEmailCreator.repository";
 
 @injectable()
 export class ClientService {
   constructor(
-    private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
+    private readonly clientEraserRepository: ClientEraserRepository,
     private readonly clientViewerRepository: ClientViewerRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
-    private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
     private readonly clientUpdaterRepository: ClientUpdaterRepository,
-    private readonly clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
-    private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
-    private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
+    private readonly emailCreatorRepository: ClientEmailCreatorRepository,
     private readonly clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
-    private readonly clientEraserRepository: ClientEraserRepository
+    private readonly clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
+    private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
+    private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
+    private readonly clientEmailViewerByEmailRepository: ClientEmailViewerByEmailRepository,
+    private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
+    private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
+    private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
@@ -69,10 +76,7 @@ export class ClientService {
   };
 
   updatePassword = async (tokenTfaData: ITokenTfaData, newPass: string) => {
-    return this.clientPasswordUpdaterRepository.update(
-      tokenTfaData,
-      newPass
-    );
+    return this.clientPasswordUpdaterRepository.update(tokenTfaData, newPass);
   };
 
   passwordRecoveryMethods = async (
@@ -90,5 +94,23 @@ export class ClientService {
     userFounded: ViewClientResponse
   ) => {
     return this.clientEraserRepository.delete(tokenJwtData, userFounded);
+  };
+
+  createEmailNewsletter = async (
+    clientId: string,
+    clientEmailTypeId: number
+  ) => {
+    return this.emailNewsletterCreatorRepository.create(
+      clientId,
+      clientEmailTypeId
+    );
+  };
+
+  clientEmailViewByEmail = async (email: string) => {
+    return this.clientEmailViewerByEmailRepository.view(email);
+  };
+
+  createEmail = async (input: ClientEmailCreatorInput) => {
+    return this.emailCreatorRepository.create(input);
   };
 }

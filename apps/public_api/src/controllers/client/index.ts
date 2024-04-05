@@ -8,6 +8,7 @@ import { passwordRecoveryMethodsClient } from './methods/passwordRecoveryMethods
 import { updatePasswordRecoveryClient } from './methods/updatePasswordRecoveryClient';
 import { deleteClient } from './methods/deleteClient';
 import { viewVoucher } from './methods/viewVoucher';
+import { createClientNewsletter } from './methods/createClientNewsletter';
 
 @injectable()
 class ClientController {
@@ -20,6 +21,7 @@ class ClientController {
   public passwordRecoveryMethods = passwordRecoveryMethodsClient;
   public updatePasswordRecovery = updatePasswordRecoveryClient;
   public viewVoucher = viewVoucher;
+  public createClientNewsletter = createClientNewsletter;
 }
 
 export default ClientController;

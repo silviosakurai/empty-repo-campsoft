@@ -11,6 +11,7 @@ import {
   userPasswordRecoveryMethodsSchema,
   userPasswordRecoveryUpdaterSchema,
   getUserVoucherSchema,
+  createUserNewsletterSchema,
 } from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -80,5 +81,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: getUserVoucherSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.viewVoucher,
+  });
+
+  server.post('/user/newsletter', {
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.createClientNewsletter,
+    schema: createUserNewsletterSchema,
   });
 }
