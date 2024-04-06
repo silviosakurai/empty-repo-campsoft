@@ -49,11 +49,21 @@ export class CreateOrderUseCase {
       throw new Error(t("product_not_eligible_for_plan"));
     }
 
+    const productsOrder = await this.planService.listPlanByOrderComplete(
+      tokenKeyData,
+      payload
+    );
+
+    if (!productsOrder) {
+      throw new Error(t("error_list_products_order"));
+    }
+
     const totalPrices = await this.priceService.totalPricesOrder(
       t,
       tokenKeyData,
       tokenJwtData,
-      payload
+      payload,
+      productsOrder
     );
 
     if (!totalPrices) {
@@ -85,7 +95,8 @@ export class CreateOrderUseCase {
       tokenKeyData,
       tokenJwtData,
       payload,
-      createOrder
+      createOrder,
+      productsOrder
     );
 
     await this.signatureService.activePaidSignature(
@@ -133,7 +144,8 @@ export class CreateOrderUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
-    createOrder: CreateOrder
+    createOrder: CreateOrder,
+    productsOrder: string[]
   ) {
     const createSignature = await this.signatureService.create(
       tokenKeyData,
@@ -144,15 +156,6 @@ export class CreateOrderUseCase {
 
     if (!createSignature) {
       throw new Error(t("error_create_signature"));
-    }
-
-    const productsOrder = await this.planService.listPlanByOrderComplete(
-      tokenKeyData,
-      payload
-    );
-
-    if (!productsOrder) {
-      throw new Error(t("error_list_products_order"));
     }
 
     const createSignatureProducts =

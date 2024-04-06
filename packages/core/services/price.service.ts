@@ -11,6 +11,7 @@ import { ProductService } from "./product.service";
 import { CouponService } from "./coupon.service";
 import { PlanService } from "./plan.service";
 import { OrderService } from "./order.service";
+import { SignatureService } from "./signature.service";
 
 @injectable()
 export class PriceService {
@@ -18,7 +19,8 @@ export class PriceService {
     private readonly productService: ProductService,
     private readonly couponService: CouponService,
     private readonly planService: PlanService,
-    private readonly orderService: OrderService
+    private readonly orderService: OrderService,
+    private readonly signatureService: SignatureService
   ) {}
 
   calculatePriceInstallments = (
@@ -131,7 +133,8 @@ export class PriceService {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    productsOrder: string[]
   ): Promise<PlanPrice | null> => {
     const coupon = await this.couponService.applyAndValidateDiscountCoupon(
       t,
@@ -149,13 +152,21 @@ export class PriceService {
       return null;
     }
 
-    return this.applyDiscountPrice(planPrice, planPriceCrossSell, payload);
+    return this.applyDiscountPrice(
+      planPrice,
+      planPriceCrossSell,
+      payload,
+      tokenJwtData,
+      productsOrder
+    );
   };
 
   private applyDiscountPrice = async (
     planPrice: PlanPrice,
     planPriceCrossSell: PlanPriceCrossSellOrder | null,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    tokenJwtData: ITokenJwtData,
+    productsOrder: string[]
   ) => {
     const finalPrice = Number(planPrice.price);
 
@@ -163,6 +174,19 @@ export class PriceService {
     if (planPriceCrossSell) {
       finalPriceDiscount =
         finalPriceDiscount + Number(planPriceCrossSell.price_discount);
+    }
+
+    const findSignatureActiveByClientId =
+      await this.signatureService.findSignatureActiveByClientId(
+        tokenJwtData.clientId,
+        payload.plan.plan_id,
+        productsOrder
+      );
+
+    if (findSignatureActiveByClientId.length) {
+      findSignatureActiveByClientId.forEach((item) => {
+        finalPriceDiscount -= finalPriceDiscount * item.discount_percentage;
+      });
     }
 
     let finalPriceDiscountOrderPrevious = 0;

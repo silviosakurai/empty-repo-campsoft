@@ -18,3 +18,8 @@ export interface ISignatureByOrder {
   signature_date: string;
   next_billing_date: string;
 }
+
+export interface ISignatureActiveByClient {
+  product_id: string;
+  discount_percentage: number;
+}

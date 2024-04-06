@@ -157,4 +157,16 @@ export class SignatureService {
 
     return null;
   };
+
+  findSignatureActiveByClientId = async (
+    clientId: string,
+    planId: number,
+    productsIds: string[]
+  ) => {
+    return this.findSignatureByOrderNumber.findSignatureActiveByClientId(
+      clientId,
+      planId,
+      productsIds
+    );
+  };
 }

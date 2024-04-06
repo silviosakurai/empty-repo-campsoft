@@ -5,13 +5,20 @@ import {
   signatureStatus,
   clientProductSignature,
   clientSignature,
+  planItem,
 } from "@core/models";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import {
+  ISignatureActiveByClient,
   ISignatureByOrder,
   ISignatureFindByOrder,
 } from "@core/interfaces/repositories/signature";
 import { OrderRecorrencia } from "@core/common/enums/models/order";
+import {
+  ClientProductSignatureStatus,
+  ClientSignatureRecorrencia,
+  SignatureStatus,
+} from "@core/common/enums/models/signature";
 
 @injectable()
 export class FindSignatureByOrderNumber {
@@ -81,5 +88,50 @@ export class FindSignatureByOrderNumber {
     }
 
     return response[0] as unknown as ISignatureByOrder;
+  }
+
+  async findSignatureActiveByClientId(
+    clientId: string,
+    planId: number,
+    productsIds: string[]
+  ): Promise<ISignatureActiveByClient[]> {
+    const response = await this.db
+      .select({
+        product_id: clientProductSignature.id_produto,
+        discount_percentage: sql`IFNULL(${planItem.percentual_do_plano}, 0)`,
+      })
+      .from(clientSignature)
+      .innerJoin(
+        clientProductSignature,
+        eq(
+          clientProductSignature.id_assinatura_cliente,
+          clientSignature.id_assinatura_cliente
+        )
+      )
+      .innerJoin(
+        planItem,
+        and(
+          eq(planItem.id_plano, planId),
+          eq(planItem.id_produto, clientProductSignature.id_produto)
+        )
+      )
+      .where(
+        and(
+          eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
+          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
+          eq(clientSignature.recorrencia, ClientSignatureRecorrencia.YES),
+          eq(
+            clientProductSignature.status,
+            ClientProductSignatureStatus.ACTIVE
+          ),
+          inArray(clientProductSignature.id_produto, productsIds)
+        )
+      );
+
+    if (response.length === 0) {
+      return [] as ISignatureActiveByClient[];
+    }
+
+    return response as ISignatureActiveByClient[];
   }
 }
