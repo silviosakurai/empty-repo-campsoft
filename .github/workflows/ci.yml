@@ -49,6 +49,9 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Setup pnpm
+        run: pnpm setup
+
       - name: Install pnpx
         run: pnpm install -g pnpx
 
@@ -166,6 +169,9 @@ jobs:
 
       - name: Install pnpm
         run: npm install -g pnpm
+
+      - name: Setup pnpm
+        run: pnpm setup
 
       - name: Install pnpx
         run: pnpm install -g pnpx
