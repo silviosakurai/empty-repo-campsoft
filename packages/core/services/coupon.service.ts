@@ -63,7 +63,7 @@ export class CouponService {
       price: planPrice.price,
       discount_value: Number(discountValue.toFixed(2)),
       discount_percentage: Number(discountPercentage.toFixed(2)),
-      price_with_discount: Number(finalPrice.toFixed(2)),
+      price_with_discount: Math.max(0, Number(finalPrice.toFixed(2))),
     };
   };
 

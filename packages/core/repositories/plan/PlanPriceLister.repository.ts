@@ -59,7 +59,7 @@ export class PlanPriceListerRepository {
     return result[0] as PlanPrice;
   }
 
-  async findPriceByPlanIdAndMonthNotProducts(
+  /* async findPriceByPlanIdAndMonthNotProducts(
     planId: number,
     month: number,
     selectedProducts: string[]
@@ -87,5 +87,5 @@ export class PlanPriceListerRepository {
     }
 
     return result as unknown as PlanPriceOrder[];
-  }
+  } */
 }

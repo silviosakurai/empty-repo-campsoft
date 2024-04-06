@@ -6,10 +6,7 @@ import { PlanUpgraderRepository } from "@core/repositories/plan/PlanUpgrader.rep
 import { PlanPriceListerRepository } from "@core/repositories/plan/PlanPriceLister.repository";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PlanProductGroupDetailsListerRepository } from "@core/repositories/plan/PlanProductGroupDetailsLister.repository";
-import {
-  PlanPriceOrder,
-  PlanProduct,
-} from "@core/interfaces/repositories/plan";
+import { PlanProduct } from "@core/interfaces/repositories/plan";
 import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrder.repository";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 
@@ -55,18 +52,6 @@ export class PlanService {
     return this.planProductGroupDetailsListerRepository.findPlanProductAndProductGroups(
       tokenKeyData,
       planId,
-      selectedProducts
-    );
-  };
-
-  findPriceByPlanIdAndMonthNotProducts = async (
-    planId: number,
-    month: number,
-    selectedProducts: string[]
-  ): Promise<PlanPriceOrder[]> => {
-    return this.planPriceListerRepository.findPriceByPlanIdAndMonthNotProducts(
-      planId,
-      month,
       selectedProducts
     );
   };

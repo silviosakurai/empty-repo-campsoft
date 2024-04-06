@@ -21,6 +21,7 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { and, count, eq, sql } from "drizzle-orm";
 import {
   ListOrder,
+  ListOrderById,
   OrderPayments,
   PlanDetails,
 } from "@core/interfaces/repositories/order";
@@ -441,5 +442,33 @@ export class OrdersListerRepository {
     );
 
     return enrichedProductGroups;
+  }
+
+  async listOrderById(orderId: string): Promise<ListOrderById | null> {
+    const result = await this.db
+      .select({
+        order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
+        order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
+        client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+        company_id: order.id_empresa,
+        status_id: order.id_pedido_status,
+        recurrence: order.recorrencia,
+        recurrence_period: order.recorrencia_periodo,
+        total_price: order.valor_preco,
+        total_discount: order.valor_desconto,
+        total_price_with_discount: order.valor_total,
+        total_installments: order.pedido_parcelas_vezes,
+        total_installments_value: order.pedido_parcelas_valor,
+        activation_immediate: order.ativacao_imediata,
+      })
+      .from(order)
+      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result[0] as unknown as ListOrderById;
   }
 }

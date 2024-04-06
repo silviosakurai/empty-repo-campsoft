@@ -10,13 +10,15 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ProductService } from "./product.service";
 import { CouponService } from "./coupon.service";
 import { PlanService } from "./plan.service";
+import { OrderService } from "./order.service";
 
 @injectable()
 export class PriceService {
   constructor(
     private readonly productService: ProductService,
     private readonly couponService: CouponService,
-    private readonly planService: PlanService
+    private readonly planService: PlanService,
+    private readonly orderService: OrderService
   ) {}
 
   calculatePriceInstallments = (
@@ -97,36 +99,32 @@ export class PriceService {
 
     finalPrice = Number(planPrice.price_with_discount ?? planPrice.price);
 
-    const selectedProducts = payload.plan.selected_products ?? [];
-
-    if (selectedProducts.length === 0) {
-      return this.couponService.applyDiscountCoupon(
-        coupon,
-        planPrice,
-        payload,
-        finalPrice
-      );
-    }
-
-    const planPriceNotProducts =
-      await this.planService.findPriceByPlanIdAndMonthNotProducts(
-        payload.plan.plan_id,
-        payload.months,
-        selectedProducts
-      );
-
-    planPriceNotProducts.forEach((item) => {
-      const discountPercentage = item.plan_percentage;
-
-      finalPrice -= finalPrice * discountPercentage;
-    });
-
     return this.couponService.applyDiscountCoupon(
       coupon,
       planPrice,
       payload,
       finalPrice
     );
+  };
+
+  applyDiscountPreviousOrderByActivateNow = async (
+    payload: CreateOrderRequestDto
+  ): Promise<number> => {
+    if (payload.activate_now && payload.previous_order_id) {
+      const orderPrevious = await this.orderService.listOrderById(
+        payload.previous_order_id
+      );
+
+      if (!orderPrevious) {
+        return 0;
+      }
+
+      return (
+        orderPrevious.total_price_with_discount ?? orderPrevious.total_price
+      );
+    }
+
+    return 0;
   };
 
   totalPricesOrder = async (
@@ -151,16 +149,30 @@ export class PriceService {
       return null;
     }
 
-    if (!planPriceCrossSell) {
-      return planPrice;
+    return this.applyDiscountPrice(planPrice, planPriceCrossSell, payload);
+  };
+
+  private applyDiscountPrice = async (
+    planPrice: PlanPrice,
+    planPriceCrossSell: PlanPriceCrossSellOrder | null,
+    payload: CreateOrderRequestDto
+  ) => {
+    const finalPrice = Number(planPrice.price);
+
+    let finalPriceDiscount = Number(planPrice.price_with_discount);
+    if (planPriceCrossSell) {
+      finalPriceDiscount =
+        finalPriceDiscount + Number(planPriceCrossSell.price_discount);
     }
 
-    const finalPrice =
-      Number(planPrice.price) + Number(planPriceCrossSell.price_discount);
+    let finalPriceDiscountOrderPrevious = 0;
+    if (payload.activate_now && payload.previous_order_id) {
+      const priceDiscountOrderPrevious =
+        await this.applyDiscountPreviousOrderByActivateNow(payload);
 
-    const finalPriceDiscount =
-      Number(planPrice.price_with_discount) +
-      Number(planPriceCrossSell.price_discount);
+      finalPriceDiscountOrderPrevious =
+        finalPriceDiscount - priceDiscountOrderPrevious;
+    }
 
     const discountValue = finalPrice - finalPriceDiscount;
     const discountPercentage = (discountValue / finalPrice) * 100;
@@ -170,7 +182,11 @@ export class PriceService {
       price: Number(finalPrice.toFixed(2)),
       discount_value: Number(discountValue.toFixed(2)),
       discount_percentage: Number(discountPercentage.toFixed(2)),
-      price_with_discount: Number(finalPriceDiscount.toFixed(2)),
+      price_with_discount: Math.max(0, Number(finalPriceDiscount.toFixed(2))),
+      price_with_discount_order_previous: Math.max(
+        0,
+        Number(finalPriceDiscountOrderPrevious.toFixed(2))
+      ),
     };
   };
 }

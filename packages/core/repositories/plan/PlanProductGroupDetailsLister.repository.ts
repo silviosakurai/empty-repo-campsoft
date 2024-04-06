@@ -7,7 +7,7 @@ import {
   productGroup,
   planItem,
 } from "@core/models";
-import { and, eq, inArray, or, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AvailableProducts } from "@core/interfaces/repositories/voucher";
 import { PlanProductGroupsProductsByProductGroupIdListerRepository } from "./PlanProductGroupsProductsByProductGroupIdLister.repository";
@@ -82,6 +82,21 @@ export class PlanProductGroupDetailsListerRepository {
     planId: number,
     selectedProducts: string[]
   ): Promise<PlanProduct[]> {
+    let whereFind = and(
+      eq(plan.id_plano, planId),
+      eq(plan.id_empresa, tokenKeyData.company_id),
+      inArray(planItem.id_produto, selectedProducts)
+    );
+
+    if (selectedProducts.length > 0) {
+      whereFind = and(
+        eq(plan.id_plano, planId),
+        eq(plan.id_empresa, tokenKeyData.company_id),
+        inArray(productGroupProduct.id_produto, selectedProducts),
+        gte(productGroup.qtd_produtos_selecionaveis, selectedProducts.length)
+      );
+    }
+
     const result = await this.db
       .selectDistinct({
         plan_id: plan.id_plano,
@@ -98,20 +113,7 @@ export class PlanProductGroupDetailsListerRepository {
         productGroupProduct,
         eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
       )
-      .where(
-        or(
-          and(
-            eq(plan.id_plano, planId),
-            eq(plan.id_empresa, tokenKeyData.company_id),
-            inArray(planItem.id_produto, selectedProducts)
-          ),
-          and(
-            eq(plan.id_plano, planId),
-            eq(plan.id_empresa, tokenKeyData.company_id),
-            inArray(productGroupProduct.id_produto, selectedProducts)
-          )
-        )
-      )
+      .where(whereFind)
       .groupBy(productGroupProduct.id_produto, planItem.id_produto)
       .execute();
 

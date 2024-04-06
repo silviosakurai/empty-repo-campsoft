@@ -17,7 +17,7 @@ export const order = mysqlTable("pedido", {
     .notNull()
     .primaryKey()
     .default(sql`uuid_to_bin(uuid())`),
-  id_pedido_anterior: varbinary("id_cliente", { length: 16 }),
+  id_pedido_anterior: varbinary("id_pedido_anterior", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
   id_vendedor: varbinary("id_vendedor", { length: 16 }),
   id_empresa: int("id_empresa").notNull(),
@@ -29,6 +29,9 @@ export const order = mysqlTable("pedido", {
   recorrencia_periodo: int("recorrencia_periodo").notNull().default(1),
   valor_preco: double("valor_preco").notNull().default(0.0),
   valor_desconto: double("valor_desconto").notNull().default(0.0),
+  valor_desconto_ordem_anterior: double("valor_desconto_ordem_anterior")
+    .notNull()
+    .default(0.0),
   valor_total: double("valor_total").notNull().default(0.0),
   pedido_parcelas_valor: double("pedido_parcelas_valor"),
   pedido_parcelas_vezes: int("pedido_parcelas_vezes"),

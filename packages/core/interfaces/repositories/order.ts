@@ -83,4 +83,20 @@ export interface CreateOrder {
   active_now: boolean;
 }
 
+export interface ListOrderById {
+  order_id: string;
+  order_id_previous: string;
+  client_id: string;
+  company_id: number;
+  status_id: number;
+  recurrence: number;
+  recurrence_period: number;
+  total_price: number;
+  total_discount: number;
+  total_price_with_discount: number;
+  total_installments: number;
+  total_installments_value: number;
+  activation_immediate: boolean;
+}
+
 export type OrderPayments = Static<typeof orderPaymentsSchema>;

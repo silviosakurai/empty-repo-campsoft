@@ -54,6 +54,10 @@ export class OrderService {
     return this.paymentListerRepository.list(orderId);
   };
 
+  listOrderById = async (orderId: string) => {
+    return this.ordersListerRepository.listOrderById(orderId);
+  };
+
   create = async (
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,

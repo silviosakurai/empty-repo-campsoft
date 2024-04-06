@@ -28,6 +28,7 @@ export type PlanPrice = {
   discount_value: number | null;
   discount_percentage: number | null;
   price_with_discount: number | null;
+  price_with_discount_order_previous?: number | null;
 };
 
 export type PlanItem = {
