@@ -471,4 +471,16 @@ export class OrdersListerRepository {
 
     return result[0] as unknown as ListOrderById;
   }
+
+  async orderIsExists(orderId: string): Promise<boolean> {
+    const result = await this.db
+      .select({
+        count: count(),
+      })
+      .from(order)
+      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .execute();
+
+    return result[0].count > 0;
+  }
 }

@@ -31,5 +31,6 @@
   "error_list_products_order": "Erro ao listar os produtos do pedido",
   "error_create_signature_products": "Erro ao criar a assinatura dos produtos",
   "payment_method_not_card": "Método de pagamento não é cartão",
-  "payment_method_invalid": "Método de pagamento inválido"
+  "payment_method_invalid": "Método de pagamento inválido",
+  "previous_order_not_found": "Pedido anterior não encontrado"
 }

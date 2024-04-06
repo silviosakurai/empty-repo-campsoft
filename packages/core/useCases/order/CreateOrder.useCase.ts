@@ -28,7 +28,7 @@ export class CreateOrderUseCase {
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
   ) {
-    this.validatePaymentMethod(payload, t);
+    await this.validatePaymentMethod(payload, t);
 
     const userFounded = await this.clientService.view(
       tokenKeyData,
@@ -97,7 +97,7 @@ export class CreateOrderUseCase {
     return createOrder;
   }
 
-  private validatePaymentMethod(
+  private async validatePaymentMethod(
     payload: CreateOrderRequestDto,
     t: TFunction<"translation", undefined>
   ) {
@@ -115,6 +115,16 @@ export class CreateOrderUseCase {
       payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.VOUCHER
     ) {
       throw new Error(t("payment_method_invalid"));
+    }
+
+    if (payload.previous_order_id) {
+      const orderIsExists = await this.orderService.orderIsExists(
+        payload.previous_order_id
+      );
+
+      if (!orderIsExists) {
+        throw new Error(t("previous_order_not_found"));
+      }
     }
   }
 

@@ -58,6 +58,10 @@ export class OrderService {
     return this.ordersListerRepository.listOrderById(orderId);
   };
 
+  orderIsExists = async (orderId: string) => {
+    return this.ordersListerRepository.orderIsExists(orderId);
+  };
+
   create = async (
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
