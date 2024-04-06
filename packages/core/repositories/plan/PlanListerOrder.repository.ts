@@ -7,6 +7,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { Status } from "@core/common/enums/Status";
 import { PlanListerOrderResponse } from "@core/interfaces/repositories/plan";
+import { isNotNull } from "drizzle-orm";
 
 @injectable()
 export class PlanListerOrderRepository {
@@ -28,7 +29,8 @@ export class PlanListerOrderRepository {
         and(
           eq(plan.id_plano, payload.plan.plan_id),
           eq(plan.status, Status.ACTIVE),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(plan.id_empresa, tokenKeyData.company_id),
+          isNotNull(planItem.id_produto)
         )
       )
       .execute();

@@ -10,6 +10,8 @@ import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequ
 import { SignaturePaidActiveRepository } from "@core/repositories/signature/SignaturePaidActive.repository";
 import { SignatureUpgradedRepository } from "@core/repositories/signature/SignatureUpgraded.repository";
 import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
+import { OrdersUpdaterRepository } from "@core/repositories/order/OrdersUpdater.repository";
+import { OrderStatusEnum } from "@core/common/enums/models/order";
 
 @injectable()
 export class SignatureService {
@@ -20,7 +22,8 @@ export class SignatureService {
     private cancelProductSignatureRepository: CancelProductSignatureRepository,
     private signatureCreatorRepository: SignatureCreatorRepository,
     private signaturePaidActiveRepository: SignaturePaidActiveRepository,
-    private signatureUpgradedRepository: SignatureUpgradedRepository
+    private signatureUpgradedRepository: SignatureUpgradedRepository,
+    private ordersUpdaterRepository: OrdersUpdaterRepository
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -103,9 +106,19 @@ export class SignatureService {
       return false;
     }
 
-    return this.signaturePaidActiveRepository.updateSignatureProductsPaid(
-      signature,
-      previousOrder
+    const updateSignatureProductsPaid =
+      await this.signaturePaidActiveRepository.updateSignatureProductsPaid(
+        signature,
+        previousOrder
+      );
+
+    if (!updateSignatureProductsPaid) {
+      return false;
+    }
+
+    return this.ordersUpdaterRepository.updateOrderStatus(
+      orderNumber,
+      OrderStatusEnum.APPROVED
     );
   };
 
