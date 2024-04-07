@@ -30,7 +30,7 @@ export class CreateOrderUseCase {
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
   ) {
-    await this.validatePaymentMethod(payload, t);
+    await this.validatePaymentMethod(t, tokenJwtData, payload);
 
     const userFounded = await this.clientService.view(
       tokenKeyData,
@@ -131,8 +131,9 @@ export class CreateOrderUseCase {
   }
 
   private async validatePaymentMethod(
-    payload: CreateOrderRequestDto,
-    t: TFunction<"translation", undefined>
+    t: TFunction<"translation", undefined>,
+    tokenJwtData: ITokenJwtData,
+    payload: CreateOrderRequestDto
   ) {
     if (
       payload.subscribe &&
@@ -157,6 +158,18 @@ export class CreateOrderUseCase {
 
       if (!orderIsExists) {
         throw new Error(t("previous_order_not_found"));
+      }
+    }
+
+    if (payload.subscribe) {
+      const isSignaturePlanActiveByClientId =
+        await this.signatureService.isSignaturePlanActiveByClientId(
+          tokenJwtData.clientId,
+          payload.plan.plan_id
+        );
+
+      if (isSignaturePlanActiveByClientId) {
+        throw new Error(t("plan_already_active"));
       }
     }
   }

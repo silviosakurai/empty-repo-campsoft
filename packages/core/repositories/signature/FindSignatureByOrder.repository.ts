@@ -7,7 +7,7 @@ import {
   clientSignature,
   planItem,
 } from "@core/models";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, count, eq, inArray, sql } from "drizzle-orm";
 import {
   ISignatureActiveByClient,
   ISignatureByOrder,
@@ -16,6 +16,7 @@ import {
 import { OrderRecorrencia } from "@core/common/enums/models/order";
 import {
   ClientProductSignatureStatus,
+  ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
 
@@ -134,5 +135,26 @@ export class FindSignatureByOrderNumber {
     }
 
     return response as ISignatureActiveByClient[];
+  }
+
+  async isSignaturePlanActiveByClientId(
+    clientId: string,
+    planId: number
+  ): Promise<boolean> {
+    const response = await this.db
+      .select({
+        total: count(),
+      })
+      .from(clientSignature)
+      .where(
+        and(
+          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
+          eq(clientSignature.recorrencia, ClientSignatureRecorrencia.YES),
+          eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
+          eq(clientSignature.id_plano, planId)
+        )
+      );
+
+    return response[0].total > 0;
   }
 }

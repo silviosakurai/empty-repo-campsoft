@@ -32,5 +32,6 @@
   "error_create_signature_products": "Error create signature products!",
   "payment_method_not_card": "Payment method not card!",
   "payment_method_invalid": "Payment method invalid!",
-  "previous_order_not_found": "Previous order not found!"
+  "previous_order_not_found": "Previous order not found!",
+  "plan_already_active": "Plan already active!"
 }

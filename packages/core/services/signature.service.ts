@@ -177,4 +177,14 @@ export class SignatureService {
       productsIds
     );
   };
+
+  isSignaturePlanActiveByClientId = async (
+    clientId: string,
+    planId: number
+  ) => {
+    return this.findSignatureByOrderNumber.isSignaturePlanActiveByClientId(
+      clientId,
+      planId
+    );
+  };
 }

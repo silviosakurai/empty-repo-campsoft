@@ -2,7 +2,16 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { clientSignature, clientProductSignature } from "@core/models";
-import { and, eq, SQL, sql, notInArray, isNotNull, inArray } from "drizzle-orm";
+import {
+  and,
+  eq,
+  SQL,
+  sql,
+  notInArray,
+  isNotNull,
+  inArray,
+  ne,
+} from "drizzle-orm";
 import {
   ClientProductSignatureProcess,
   ClientProductSignatureStatus,
@@ -61,6 +70,8 @@ export class SignaturePaidActiveRepository {
       return null;
     }
 
+    await this.updateSignaturePlanOld(signature, validUntil);
+
     return true;
   }
 
@@ -68,13 +79,6 @@ export class SignaturePaidActiveRepository {
     signature: ISignatureByOrder,
     validUntil: string
   ): Promise<IUpdateAndSelectProductExpirationDates[]> {
-    const isRecurrenceNo =
-      signature.recurrence.toString() === ClientSignatureRecorrencia.NO;
-
-    if (!isRecurrenceNo) {
-      return [] as IUpdateAndSelectProductExpirationDates[];
-    }
-
     const result = await this.db
       .select({
         signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
@@ -116,7 +120,10 @@ export class SignaturePaidActiveRepository {
           processar: ClientProductSignatureProcess.YES,
           status: ClientProductSignatureStatus.ACTIVE,
           data_agendamento: validUntil,
-          data_expiracao: newExpirationDate,
+          data_expiracao:
+            signature.recurrence.toString() === ClientSignatureRecorrencia.YES
+              ? null
+              : newExpirationDate,
         })
         .where(
           and(
@@ -255,6 +262,37 @@ export class SignaturePaidActiveRepository {
     }
 
     return whereUpdate;
+  }
+
+  async updateSignaturePlanOld(
+    signature: ISignatureByOrder,
+    validUntil: string
+  ): Promise<boolean> {
+    const result = await this.db
+      .update(clientSignature)
+      .set({
+        id_assinatura_status: SignatureStatus.UPGRADED,
+        data_assinatura_ate: null,
+        data_proxima_cobranca: null,
+        data_cancelamento: validUntil,
+      })
+      .where(
+        and(
+          eq(clientSignature.id_plano, signature.plan_id),
+          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${signature.client_id})`
+          ),
+          ne(
+            clientSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signature.signature_id})`
+          )
+        )
+      )
+      .execute();
+
+    return result[0].affectedRows > 0;
   }
 
   async updateSignatureProductsPaid(
