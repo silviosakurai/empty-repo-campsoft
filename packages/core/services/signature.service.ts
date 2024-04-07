@@ -9,7 +9,10 @@ import { SignatureCreatorRepository } from "@core/repositories/signature/Signatu
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { SignaturePaidActiveRepository } from "@core/repositories/signature/SignaturePaidActive.repository";
 import { SignatureUpgradedRepository } from "@core/repositories/signature/SignatureUpgraded.repository";
-import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
+import {
+  ISignatureActiveByClient,
+  ISignatureByOrder,
+} from "@core/interfaces/repositories/signature";
 import { OrdersUpdaterRepository } from "@core/repositories/order/OrdersUpdater.repository";
 import { OrderStatusEnum } from "@core/common/enums/models/order";
 
@@ -72,10 +75,15 @@ export class SignatureService {
     );
   };
 
-  createSignatureProducts = async (products: string[], signatureId: string) => {
+  createSignatureProducts = async (
+    products: string[],
+    signatureId: string,
+    findSignatureActiveByClientId: ISignatureActiveByClient[]
+  ) => {
     return this.signatureCreatorRepository.createSignatureProducts(
       products,
-      signatureId
+      signatureId,
+      findSignatureActiveByClientId
     );
   };
 

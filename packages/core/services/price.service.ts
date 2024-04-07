@@ -12,6 +12,8 @@ import { CouponService } from "./coupon.service";
 import { PlanService } from "./plan.service";
 import { OrderService } from "./order.service";
 import { SignatureService } from "./signature.service";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
+import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
 
 @injectable()
 export class PriceService {
@@ -134,7 +136,7 @@ export class PriceService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
-    productsOrder: string[]
+    findSignatureActiveByClientId: ISignatureActiveByClient[]
   ): Promise<PlanPrice | null> => {
     const coupon = await this.couponService.applyAndValidateDiscountCoupon(
       t,
@@ -156,8 +158,7 @@ export class PriceService {
       planPrice,
       planPriceCrossSell,
       payload,
-      tokenJwtData,
-      productsOrder
+      findSignatureActiveByClientId
     );
   };
 
@@ -165,8 +166,7 @@ export class PriceService {
     planPrice: PlanPrice,
     planPriceCrossSell: PlanPriceCrossSellOrder | null,
     payload: CreateOrderRequestDto,
-    tokenJwtData: ITokenJwtData,
-    productsOrder: string[]
+    findSignatureActiveByClientId: ISignatureActiveByClient[]
   ) => {
     const finalPrice = Number(planPrice.price);
 
@@ -176,16 +176,11 @@ export class PriceService {
         finalPriceDiscount + Number(planPriceCrossSell.price_discount);
     }
 
-    const findSignatureActiveByClientId =
-      await this.signatureService.findSignatureActiveByClientId(
-        tokenJwtData.clientId,
-        payload.plan.plan_id,
-        productsOrder
-      );
-
     if (findSignatureActiveByClientId.length) {
       findSignatureActiveByClientId.forEach((item) => {
-        finalPriceDiscount -= finalPriceDiscount * item.discount_percentage;
+        if (item.recurrence === ClientSignatureRecorrencia.YES) {
+          finalPriceDiscount -= finalPriceDiscount * item.discount_percentage;
+        }
       });
     }
 

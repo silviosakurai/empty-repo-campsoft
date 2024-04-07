@@ -10,6 +10,8 @@ import { CreateOrder } from "@core/interfaces/repositories/order";
 import { SignatureService } from "@core/services/signature.service";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PriceService } from "@core/services/price.service";
+import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -49,7 +51,7 @@ export class CreateOrderUseCase {
       throw new Error(t("product_not_eligible_for_plan"));
     }
 
-    const productsOrder = await this.planService.listPlanByOrderComplete(
+    let productsOrder = await this.planService.listPlanByOrderComplete(
       tokenKeyData,
       payload
     );
@@ -58,12 +60,31 @@ export class CreateOrderUseCase {
       throw new Error(t("error_list_products_order"));
     }
 
+    const findSignatureActiveByClientId =
+      await this.signatureService.findSignatureActiveByClientId(
+        tokenJwtData.clientId,
+        payload.plan.plan_id,
+        productsOrder
+      );
+
+    if (findSignatureActiveByClientId.length > 0) {
+      const idsProductsToRemove = findSignatureActiveByClientId
+        .filter(
+          (signature) => signature.recurrence === ClientSignatureRecorrencia.YES
+        )
+        .map((signature) => signature.product_id);
+
+      productsOrder = productsOrder.filter(
+        (product) => !idsProductsToRemove.includes(product)
+      );
+    }
+
     const totalPrices = await this.priceService.totalPricesOrder(
       t,
       tokenKeyData,
       tokenJwtData,
       payload,
-      productsOrder
+      findSignatureActiveByClientId
     );
 
     if (!totalPrices) {
@@ -96,7 +117,8 @@ export class CreateOrderUseCase {
       tokenJwtData,
       payload,
       createOrder,
-      productsOrder
+      productsOrder,
+      findSignatureActiveByClientId
     );
 
     await this.signatureService.activePaidSignature(
@@ -145,7 +167,8 @@ export class CreateOrderUseCase {
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
     createOrder: CreateOrder,
-    productsOrder: string[]
+    productsOrder: string[],
+    findSignatureActiveByClientId: ISignatureActiveByClient[]
   ) {
     const createSignature = await this.signatureService.create(
       tokenKeyData,
@@ -161,7 +184,8 @@ export class CreateOrderUseCase {
     const createSignatureProducts =
       await this.signatureService.createSignatureProducts(
         productsOrder,
-        createSignature.id_assinatura_cliente
+        createSignature.id_assinatura_cliente,
+        findSignatureActiveByClientId
       );
 
     if (!createSignatureProducts) {

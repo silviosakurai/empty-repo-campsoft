@@ -16,7 +16,6 @@ import {
 import { OrderRecorrencia } from "@core/common/enums/models/order";
 import {
   ClientProductSignatureStatus,
-  ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
 
@@ -70,6 +69,7 @@ export class FindSignatureByOrderNumber {
     const response = await this.db
       .select({
         signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
+        client_id: sql`BIN_TO_UUID(${clientSignature.id_cliente})`,
         plan_id: clientSignature.id_plano,
         recurrence: clientSignature.recorrencia,
         recurrence_period: clientSignature.recorrencia_periodo,
@@ -99,6 +99,8 @@ export class FindSignatureByOrderNumber {
       .select({
         product_id: clientProductSignature.id_produto,
         discount_percentage: sql`IFNULL(${planItem.percentual_do_plano}, 0)`,
+        recurrence: clientSignature.recorrencia,
+        expiration_date: clientProductSignature.data_expiracao,
       })
       .from(clientSignature)
       .innerJoin(
@@ -119,7 +121,6 @@ export class FindSignatureByOrderNumber {
         and(
           eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
-          eq(clientSignature.recorrencia, ClientSignatureRecorrencia.YES),
           eq(
             clientProductSignature.status,
             ClientProductSignatureStatus.ACTIVE

@@ -1,3 +1,5 @@
+import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
+
 export interface ISignatureFindByClientId {
   product_id: string;
 }
@@ -10,6 +12,7 @@ export interface ISignatureFindByOrder {
 
 export interface ISignatureByOrder {
   signature_id: string;
+  client_id: string;
   plan_id: number;
   recurrence: number;
   recurrence_period: number;
@@ -22,4 +25,17 @@ export interface ISignatureByOrder {
 export interface ISignatureActiveByClient {
   product_id: string;
   discount_percentage: number;
+  recurrence: ClientSignatureRecorrencia;
+  expiration_date: string;
+}
+
+export interface IUpdateAndSelectProductExpirationDates {
+  signature_id: string;
+  product_id: string;
+  expiration_date: string;
+}
+
+export interface ISelectSignatureProductsActive {
+  signature_id: string;
+  product_id: string;
 }

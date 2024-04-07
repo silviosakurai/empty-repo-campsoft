@@ -2,7 +2,7 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { clientSignature, clientProductSignature } from "@core/models";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, SQL, sql, notInArray, isNotNull, inArray } from "drizzle-orm";
 import {
   ClientProductSignatureProcess,
   ClientProductSignatureStatus,
@@ -11,7 +11,11 @@ import {
 } from "@core/common/enums/models/signature";
 import { currentTime } from "@core/common/functions/currentTime";
 import { addMonthsToCurrentDate } from "@core/common/functions/addMonthsToCurrentDate";
-import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
+import {
+  ISelectSignatureProductsActive,
+  ISignatureByOrder,
+  IUpdateAndSelectProductExpirationDates,
+} from "@core/interfaces/repositories/signature";
 
 @injectable()
 export class SignaturePaidActiveRepository {
@@ -60,6 +64,199 @@ export class SignaturePaidActiveRepository {
     return true;
   }
 
+  private async updateAndSelectProductExpirationDates(
+    signature: ISignatureByOrder,
+    validUntil: string
+  ): Promise<IUpdateAndSelectProductExpirationDates[]> {
+    const isRecurrenceNo =
+      signature.recurrence.toString() === ClientSignatureRecorrencia.NO;
+
+    if (!isRecurrenceNo) {
+      return [] as IUpdateAndSelectProductExpirationDates[];
+    }
+
+    const result = await this.db
+      .select({
+        signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
+        product_id: clientProductSignature.id_produto,
+        expiration_date: clientProductSignature.data_expiracao,
+      })
+      .from(clientProductSignature)
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          clientProductSignature.id_assinatura_cliente
+        )
+      )
+      .where(
+        and(
+          eq(
+            clientProductSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signature.signature_id})`
+          ),
+          isNotNull(clientProductSignature.data_expiracao)
+        )
+      )
+      .execute();
+
+    if (result.length === 0) {
+      return [] as IUpdateAndSelectProductExpirationDates[];
+    }
+
+    for (const product of result) {
+      const newExpirationDate = addMonthsToCurrentDate(
+        product.expiration_date ?? validUntil,
+        signature.recurrence_period
+      );
+
+      await this.db
+        .update(clientProductSignature)
+        .set({
+          processar: ClientProductSignatureProcess.YES,
+          status: ClientProductSignatureStatus.ACTIVE,
+          data_agendamento: validUntil,
+          data_expiracao: newExpirationDate,
+        })
+        .where(
+          and(
+            eq(
+              clientProductSignature.id_assinatura_cliente,
+              sql`UUID_TO_BIN(${signature.signature_id})`
+            ),
+            eq(clientProductSignature.id_produto, product.product_id)
+          )
+        )
+        .execute();
+    }
+
+    return result as IUpdateAndSelectProductExpirationDates[];
+  }
+
+  private async selectSignatureProductsActive(
+    signature: ISignatureByOrder,
+    products: IUpdateAndSelectProductExpirationDates[]
+  ): Promise<ISelectSignatureProductsActive[]> {
+    const productsId = products.map((product) => product.product_id);
+    const signaturesIdIgnore = products.map(
+      (product) =>
+        sql`UUID_TO_BIN(${product.signature_id})` as unknown as string
+    );
+
+    const result = await this.db
+      .select({
+        signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
+        product_id: clientProductSignature.id_produto,
+      })
+      .from(clientProductSignature)
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          clientProductSignature.id_assinatura_cliente
+        )
+      )
+      .where(
+        and(
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${signature.client_id})`
+          ),
+          inArray(clientProductSignature.id_produto, productsId),
+          notInArray(
+            clientProductSignature.id_assinatura_cliente,
+            signaturesIdIgnore
+          )
+        )
+      )
+      .execute();
+
+    if (result.length === 0) {
+      return [] as ISelectSignatureProductsActive[];
+    }
+
+    return result as ISelectSignatureProductsActive[];
+  }
+
+  private async updateSignatureProductsActive(
+    signature: ISignatureByOrder,
+    products: IUpdateAndSelectProductExpirationDates[]
+  ): Promise<boolean> {
+    const validUntil = currentTime();
+
+    const selectSignatureProductsActive =
+      await this.selectSignatureProductsActive(signature, products);
+
+    if (selectSignatureProductsActive.length === 0) {
+      return false;
+    }
+
+    const productsId = selectSignatureProductsActive.map(
+      (product) => product.product_id
+    );
+    const signaturesId = selectSignatureProductsActive.map(
+      (product) =>
+        sql`UUID_TO_BIN(${product.signature_id})` as unknown as string
+    );
+
+    const update = await this.db
+      .update(clientProductSignature)
+      .set({
+        processar: ClientProductSignatureProcess.YES,
+        status: ClientProductSignatureStatus.INACTIVE,
+        data_ativacao: null,
+        data_agendamento: null,
+        data_expiracao: validUntil,
+      })
+      .where(
+        and(
+          inArray(clientProductSignature.id_produto, productsId),
+          inArray(clientProductSignature.id_assinatura_cliente, signaturesId)
+        )
+      )
+      .execute();
+
+    return update[0].affectedRows > 0;
+  }
+
+  private async applyFilterUpdateSignatureProductsPaid(
+    signature: ISignatureByOrder,
+    validUntil: string
+  ): Promise<SQL<unknown> | undefined> {
+    let whereUpdate = and(
+      eq(
+        clientProductSignature.id_assinatura_cliente,
+        sql`UUID_TO_BIN(${signature.signature_id})`
+      )
+    );
+
+    const updateAndSelectProductExpirationDates =
+      await this.updateAndSelectProductExpirationDates(signature, validUntil);
+
+    if (updateAndSelectProductExpirationDates.length > 0) {
+      const productsIgnore = updateAndSelectProductExpirationDates.map(
+        (product) => product.product_id
+      );
+
+      if (productsIgnore.length > 0) {
+        whereUpdate = and(
+          eq(
+            clientProductSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signature.signature_id})`
+          ),
+          notInArray(clientProductSignature.id_produto, productsIgnore)
+        );
+      }
+
+      await this.updateSignatureProductsActive(
+        signature,
+        updateAndSelectProductExpirationDates
+      );
+    }
+
+    return whereUpdate;
+  }
+
   async updateSignatureProductsPaid(
     signature: ISignatureByOrder,
     previousSignature: ISignatureByOrder | null
@@ -68,6 +265,11 @@ export class SignaturePaidActiveRepository {
     const signatureDate = addMonthsToCurrentDate(
       validUntil,
       signature.recurrence_period
+    );
+
+    const whereUpdate = await this.applyFilterUpdateSignatureProductsPaid(
+      signature,
+      validUntil
     );
 
     const result = await this.db
@@ -82,12 +284,7 @@ export class SignaturePaidActiveRepository {
             ? null
             : signatureDate,
       })
-      .where(
-        eq(
-          clientProductSignature.id_assinatura_cliente,
-          sql`UUID_TO_BIN(${signature.signature_id})`
-        )
-      )
+      .where(whereUpdate)
       .execute();
 
     if (!result[0].affectedRows) {

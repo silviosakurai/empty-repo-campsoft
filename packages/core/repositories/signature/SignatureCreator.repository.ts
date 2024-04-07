@@ -12,6 +12,7 @@ import {
   ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 
 @injectable()
 export class SignatureCreatorRepository {
@@ -62,14 +63,23 @@ export class SignatureCreatorRepository {
 
   async createSignatureProducts(
     products: string[],
-    signatureId: string
+    signatureId: string,
+    findSignatureActiveByClientId: ISignatureActiveByClient[]
   ): Promise<boolean> {
     const insertProducts = products.map((product) => {
+      const productAlreadyExists = findSignatureActiveByClientId.find(
+        (signature) => signature.product_id === product
+      );
+
       return {
         id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
         id_produto: product,
         processar: ClientProductSignatureProcess.NO,
         status: ClientProductSignatureStatus.INACTIVE,
+        data_expiracao:
+          productAlreadyExists?.recurrence === ClientSignatureRecorrencia.YES
+            ? null
+            : productAlreadyExists?.expiration_date,
       };
     });
 
