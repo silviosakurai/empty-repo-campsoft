@@ -13,7 +13,10 @@ import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { Payment } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { SignatureService } from "./signature.service";
 import { OrderService } from "./order.service";
-import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
 
 @injectable()
 export class PaymentService {
@@ -187,15 +190,20 @@ export class PaymentService {
       voucherProductsAndPlans
     );
 
+    let statusPayment = OrderStatusEnum.FAILED;
     if (payment) {
       await this.voucherService.updateVoucher(voucher);
-      await this.orderService.createOrderPayment(
-        order,
-        signature.signature_id,
-        OrderPaymentsMethodsEnum.VOUCHER,
-        voucher
-      );
+
+      statusPayment = OrderStatusEnum.APPROVED;
     }
+
+    await this.orderService.createOrderPayment(
+      order,
+      signature.signature_id,
+      OrderPaymentsMethodsEnum.VOUCHER,
+      statusPayment,
+      voucher
+    );
   };
 
   payWithCard = async (

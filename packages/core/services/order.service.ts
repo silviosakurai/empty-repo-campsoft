@@ -15,6 +15,7 @@ import {
   OrderCreatePaymentsCard,
 } from "@core/interfaces/repositories/order";
 import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPaymentCreator.repository";
+import { OrderStatusEnum } from "@core/common/enums/models/order";
 
 @injectable()
 export class OrderService {
@@ -87,12 +88,14 @@ export class OrderService {
     order: ListOrderById,
     signatureId: string,
     methodId: string,
+    statusPayment: OrderStatusEnum,
     voucher: string | null
   ) => {
     return this.orderPaymentCreatorRepository.create(
       order,
       signatureId,
       methodId,
+      statusPayment,
       voucher
     );
   };

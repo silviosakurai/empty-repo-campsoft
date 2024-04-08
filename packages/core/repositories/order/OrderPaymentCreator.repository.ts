@@ -5,6 +5,7 @@ import { orderPayment } from "@core/models";
 import { sql } from "drizzle-orm";
 import { ListOrderById } from "@core/interfaces/repositories/order";
 import { currentTime } from "@core/common/functions/currentTime";
+import { OrderStatusEnum } from "@core/common/enums/models/order";
 
 @injectable()
 export class OrderPaymentCreatorRepository {
@@ -16,6 +17,7 @@ export class OrderPaymentCreatorRepository {
     order: ListOrderById,
     signatureId: string,
     methodId: string,
+    statusPayment: OrderStatusEnum,
     voucher: string | null
   ): Promise<boolean> {
     const validUntil = currentTime();
@@ -27,7 +29,7 @@ export class OrderPaymentCreatorRepository {
       id_cliente: sql`UUID_TO_BIN(${order.client_id})` as unknown as string,
       id_assinatura_cliente:
         sql`UUID_TO_BIN(${signatureId})` as unknown as string,
-      id_pedido_pagamento_status: order.status_id,
+      id_pedido_pagamento_status: statusPayment,
       valor_preco: order.total_price,
       valor_desconto: order.total_discount,
       valor_total: order.total_price_with_discount,
