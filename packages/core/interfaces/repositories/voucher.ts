@@ -68,5 +68,5 @@ export interface AvailableProducts {
 
 export interface IVoucherProductsAndPlans {
   products: ProductDetail[] | null;
-  plans: PlanDetails[] | null;
+  plan: PlanDetails | null;
 }

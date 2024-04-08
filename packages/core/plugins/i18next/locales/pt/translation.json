@@ -41,5 +41,6 @@
   "voucher_products_not_found": "Voucher de produtos não encontrado",
   "voucher_product_ids_not_found": "Voucher de IDs de produtos não encontrado",
   "voucher_product_not_eligible": "Voucher de produto não é elegível",
-  "products_not_found": "Produtos não encontrados"
+  "products_not_found": "Produtos não encontrados",
+  "voucher_activate_now_false": "Voucher não pode ser ativado posteriormente"
 }

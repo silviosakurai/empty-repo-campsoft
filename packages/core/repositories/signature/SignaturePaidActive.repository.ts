@@ -11,6 +11,7 @@ import {
   isNotNull,
   inArray,
   ne,
+  count,
 } from "drizzle-orm";
 import {
   ClientProductSignatureProcess,
@@ -25,6 +26,7 @@ import {
   ISignatureByOrder,
   IUpdateAndSelectProductExpirationDates,
 } from "@core/interfaces/repositories/signature";
+import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
 
 @injectable()
 export class SignaturePaidActiveRepository {
@@ -345,5 +347,133 @@ export class SignaturePaidActiveRepository {
     }
 
     return validUntil;
+  }
+
+  async updateSignaturePaidWithVoucher(
+    signature: ISignatureByOrder,
+    voucherProductsAndPlans: IVoucherProductsAndPlans
+  ) {
+    const validUntil = currentTime();
+
+    const result = await this.db
+      .update(clientSignature)
+      .set({
+        id_assinatura_status: SignatureStatus.ACTIVE,
+        recorrencia: ClientSignatureRecorrencia.NO,
+        ciclo: signature.cycle + 1,
+        data_inicio: validUntil,
+        data_assinatura_ate:
+          voucherProductsAndPlans.plan?.expiration_date ?? null,
+        data_proxima_cobranca: null,
+        data_ultimo_pagamento: validUntil,
+        data_cancelamento: null,
+      })
+      .where(
+        eq(
+          clientSignature.id_assinatura_cliente,
+          sql`UUID_TO_BIN(${signature.signature_id})`
+        )
+      )
+      .execute();
+
+    if (!result[0].affectedRows) {
+      return null;
+    }
+
+    await this.updateSignaturePlanOld(signature, validUntil);
+
+    return true;
+  }
+
+  async updateSignatureProductsPaidWithVoucher(
+    signature: ISignatureByOrder,
+    voucherProductsAndPlans: IVoucherProductsAndPlans
+  ): Promise<boolean | null> {
+    const validUntil = currentTime();
+
+    const result = await this.db
+      .update(clientProductSignature)
+      .set({
+        processar: ClientProductSignatureProcess.YES,
+        status: ClientProductSignatureStatus.ACTIVE,
+        data_ativacao: null,
+        data_agendamento: validUntil,
+        data_expiracao: voucherProductsAndPlans.plan?.expiration_date,
+      })
+      .where(
+        eq(
+          clientProductSignature.id_assinatura_cliente,
+          sql`UUID_TO_BIN(${signature.signature_id})`
+        )
+      )
+      .execute();
+
+    if (!result[0].affectedRows) {
+      return null;
+    }
+
+    return true;
+  }
+
+  private async isExistProductSignature(
+    signature: ISignatureByOrder,
+    productId: string
+  ) {
+    const result = await this.db
+      .select({
+        total: count(),
+      })
+      .from(clientProductSignature)
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          clientProductSignature.id_assinatura_cliente
+        )
+      )
+      .where(
+        and(
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${signature.client_id})`
+          ),
+          eq(
+            clientProductSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signature.signature_id})`
+          ),
+          eq(clientProductSignature.id_produto, productId)
+        )
+      )
+      .execute();
+
+    return result[0].total > 0;
+  }
+
+  async updateOrCreateSignatureProductsPaidWithVoucher(
+    signature: ISignatureByOrder,
+    voucherProductsAndPlans: IVoucherProductsAndPlans
+  ): Promise<void> {
+    const validUntil = currentTime();
+
+    voucherProductsAndPlans.products?.forEach(async (product) => {
+      const existProductSignature = await this.isExistProductSignature(
+        signature,
+        product.product_id
+      );
+
+      if (!existProductSignature) {
+        await this.db
+          .insert(clientProductSignature)
+          .values({
+            id_assinatura_cliente: sql`UUID_TO_BIN(${signature.signature_id})`,
+            id_produto: product.product_id,
+            processar: ClientProductSignatureProcess.YES,
+            status: ClientProductSignatureStatus.ACTIVE,
+            data_agendamento: validUntil,
+            data_expiracao: product.expiration_date,
+          })
+          .execute();
+      }
+    });
   }
 }

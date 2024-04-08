@@ -36,7 +36,10 @@ export class VoucherViewerUseCase {
 
     return {
       products: listProductsUserResult,
-      plans: listPlansUserResult,
+      plan:
+        listPlansUserResult && listPlansUserResult?.length > 0
+          ? listPlansUserResult[0]
+          : null,
     } as VoucherViewRequestDto;
   };
 }

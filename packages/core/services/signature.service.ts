@@ -15,6 +15,7 @@ import {
 } from "@core/interfaces/repositories/signature";
 import { OrdersUpdaterRepository } from "@core/repositories/order/OrdersUpdater.repository";
 import { OrderStatusEnum } from "@core/common/enums/models/order";
+import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
 
 @injectable()
 export class SignatureService {
@@ -122,6 +123,53 @@ export class SignatureService {
 
     if (!updateSignatureProductsPaid) {
       return false;
+    }
+
+    return this.ordersUpdaterRepository.updateOrderStatus(
+      orderNumber,
+      OrderStatusEnum.APPROVED
+    );
+  };
+
+  activePaidSignatureWithVoucher = async (
+    orderNumber: string,
+    voucherProductsAndPlans: IVoucherProductsAndPlans
+  ) => {
+    const signature =
+      await this.findSignatureByOrderNumber.findByOrder(orderNumber);
+
+    if (!signature) {
+      return false;
+    }
+
+    const updateSignaturePaid =
+      await this.signaturePaidActiveRepository.updateSignaturePaidWithVoucher(
+        signature,
+        voucherProductsAndPlans
+      );
+
+    if (!updateSignaturePaid) {
+      return false;
+    }
+
+    const updateSignatureProductsPaid =
+      await this.signaturePaidActiveRepository.updateSignatureProductsPaidWithVoucher(
+        signature,
+        voucherProductsAndPlans
+      );
+
+    if (!updateSignatureProductsPaid) {
+      return false;
+    }
+
+    if (
+      voucherProductsAndPlans.products &&
+      voucherProductsAndPlans.products.length > 0
+    ) {
+      await this.signaturePaidActiveRepository.updateOrCreateSignatureProductsPaidWithVoucher(
+        signature,
+        voucherProductsAndPlans
+      );
     }
 
     return this.ordersUpdaterRepository.updateOrderStatus(

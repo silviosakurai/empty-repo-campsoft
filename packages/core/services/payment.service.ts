@@ -81,15 +81,12 @@ export class PaymentService {
         product.status === ProductVoucherStatus.ACTIVE
     );
 
-    const listPlansUser = listPlansUserResult?.filter(
-      (plan) =>
-        plan.status === ProductVoucherStatus.IN_ADDITION ||
-        plan.status === ProductVoucherStatus.ACTIVE
-    );
-
     return {
       products: listProductsUser ?? [],
-      plans: listPlansUser ?? [],
+      plan:
+        listPlansUserResult && listPlansUserResult?.length > 0
+          ? listPlansUserResult[0]
+          : null,
     };
   };
 
@@ -99,17 +96,17 @@ export class PaymentService {
     signature: ISignatureByOrder,
     products: ISignatureFindByClientId[]
   ): boolean => {
-    if (!voucherProductsAndPlans?.plans) {
+    if (!voucherProductsAndPlans) {
       throw new Error(t("voucher_products_and_plans_not_found"));
     }
 
-    const planIds = voucherProductsAndPlans.plans?.map((plan) => plan.plan_id);
+    const planId = voucherProductsAndPlans.plan?.plan_id;
 
-    if (!planIds || planIds.length === 0) {
+    if (!planId) {
       throw new Error(t("voucher_plan_ids_not_found"));
     }
 
-    if (!planIds.includes(signature.plan_id)) {
+    if (planId !== signature.plan_id) {
       throw new Error(t("voucher_plan_not_eligible"));
     }
 
@@ -184,10 +181,9 @@ export class PaymentService {
       findProductsBySignatureNotPlan
     );
 
-    await this.signatureService.activePaidSignature(
+    await this.signatureService.activePaidSignatureWithVoucher(
       order.order_id,
-      order.order_id_previous,
-      order.activation_immediate
+      voucherProductsAndPlans
     );
   };
 

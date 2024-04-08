@@ -221,6 +221,13 @@ export class CreateOrderUseCase {
         throw new Error(t("plan_already_active"));
       }
     }
+
+    if (
+      payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.VOUCHER &&
+      payload.activate_now === false
+    ) {
+      throw new Error(t("voucher_activate_now_false"));
+    }
   }
 
   private async createSignature(
