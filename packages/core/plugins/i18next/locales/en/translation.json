@@ -20,6 +20,6 @@
   "order_not_found": "Order not found.",
   "voucher_not_eligible": "Voucher not eligible!",
   "voucher_not_redeemable": "Voucher not redeemable!",
-  "order_not_found": "Order not found!",
-  "payment_not_found": "Payment not found!"
+  "payment_not_found": "Payment not found!",
+  "email_registered_previously": "Email already registered previously!"
 }

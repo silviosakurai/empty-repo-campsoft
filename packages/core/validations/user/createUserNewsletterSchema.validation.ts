@@ -41,14 +41,6 @@ export const createUserNewsletterSchema = {
       },
       { description: "Unauthorized" }
     ),
-    403: Type.Object(
-      {
-        status: Type.Boolean({ default: false }),
-        message: Type.String(),
-        data: Type.Null(),
-      },
-      { description: "Forbidden" }
-    ),
     409: Type.Object(
       {
         status: Type.Boolean({ default: false }),

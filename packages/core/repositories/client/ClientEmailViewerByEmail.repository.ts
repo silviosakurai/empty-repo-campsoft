@@ -17,6 +17,11 @@ export class ClientEmailViewerByEmailRepository {
         clientId: sql`BIN_TO_UUID(${clientEmail.id_cliente})`,
         token: sql`BIN_TO_UUID(${clientEmail.token})`,
         emailTypeId: clientEmail.id_cliente_email_tipo,
+        hasNewsletter: sql`CASE
+          WHEN ${clientEmailNewsletter.id_cliente} IS NOT NULL
+            THEN true
+            ELSE false
+        END`.mapWith(Boolean),
       })
       .from(clientEmail)
       .leftJoin(

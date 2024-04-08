@@ -21,8 +21,8 @@ export const createClientNewsletter = async (
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('client_not_found'),
-        httpStatusCode: HTTPStatusCode.NOT_FOUND,
+        message: t('email_registered_previously'),
+        httpStatusCode: HTTPStatusCode.CONFLICT,
       });
     }
 
@@ -30,7 +30,7 @@ export const createClientNewsletter = async (
       httpStatusCode: HTTPStatusCode.CREATED,
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {

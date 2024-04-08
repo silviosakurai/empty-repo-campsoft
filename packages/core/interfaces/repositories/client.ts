@@ -27,4 +27,5 @@ export interface ClientEmailViewResponse {
   clientId: string;
   token: string;
   emailTypeId: number;
+  hasNewsletter: boolean;
 }
