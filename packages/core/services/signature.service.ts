@@ -21,13 +21,13 @@ import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher"
 export class SignatureService {
   constructor(
     private readonly signatureViewerByClientId: SignatureByClientIdViewer,
-    private findSignatureByOrderNumber: FindSignatureByOrderNumber,
-    private cancelSignatureRepository: CancelSignatureRepository,
-    private cancelProductSignatureRepository: CancelProductSignatureRepository,
-    private signatureCreatorRepository: SignatureCreatorRepository,
-    private signaturePaidActiveRepository: SignaturePaidActiveRepository,
-    private signatureUpgradedRepository: SignatureUpgradedRepository,
-    private ordersUpdaterRepository: OrdersUpdaterRepository
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
+    private readonly cancelSignatureRepository: CancelSignatureRepository,
+    private readonly cancelProductSignatureRepository: CancelProductSignatureRepository,
+    private readonly signatureCreatorRepository: SignatureCreatorRepository,
+    private readonly signaturePaidActiveRepository: SignaturePaidActiveRepository,
+    private readonly signatureUpgradedRepository: SignatureUpgradedRepository,
+    private readonly ordersUpdaterRepository: OrdersUpdaterRepository
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -115,15 +115,10 @@ export class SignatureService {
       return false;
     }
 
-    const updateSignatureProductsPaid =
-      await this.signaturePaidActiveRepository.updateSignatureProductsPaid(
-        signature,
-        previousOrder
-      );
-
-    if (!updateSignatureProductsPaid) {
-      return false;
-    }
+    await this.signaturePaidActiveRepository.updateSignatureProductsPaid(
+      signature,
+      previousOrder
+    );
 
     return this.ordersUpdaterRepository.updateOrderStatus(
       orderNumber,
@@ -152,15 +147,10 @@ export class SignatureService {
       return false;
     }
 
-    const updateSignatureProductsPaid =
-      await this.signaturePaidActiveRepository.updateSignatureProductsPaidWithVoucher(
-        signature,
-        voucherProductsAndPlans
-      );
-
-    if (!updateSignatureProductsPaid) {
-      return false;
-    }
+    await this.signaturePaidActiveRepository.updateSignatureProductsPaidWithVoucher(
+      signature,
+      voucherProductsAndPlans
+    );
 
     if (
       voucherProductsAndPlans.products &&

@@ -7,6 +7,7 @@ import { injectable } from "tsyringe";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { IVerifyEligibilityUser } from "@core/interfaces/repositories/voucher";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { VoucherUpdaterRepository } from "@core/repositories/voucher/VoucherUpdater.repository";
 
 @injectable()
 export class VoucherService {
@@ -15,7 +16,8 @@ export class VoucherService {
     private readonly customerVoucherRedemptionVerifierRepository: CustomerVoucherRedemptionVerifierRepository,
     private readonly availableVoucherProductsRepository: AvailableVoucherProductsRepository,
     private readonly clientSignatureRepository: ClientSignatureRepository,
-    private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository
+    private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository,
+    private readonly voucherUpdaterRepository: VoucherUpdaterRepository
   ) {}
 
   verifyEligibilityUser = async (
@@ -113,5 +115,9 @@ export class VoucherService {
       voucher,
       selectedProducts
     );
+  };
+
+  updateVoucher = async (voucher: string) => {
+    return this.voucherUpdaterRepository.updateVoucher(voucher);
   };
 }

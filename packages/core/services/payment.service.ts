@@ -181,10 +181,14 @@ export class PaymentService {
       findProductsBySignatureNotPlan
     );
 
-    await this.signatureService.activePaidSignatureWithVoucher(
+    const payment = await this.signatureService.activePaidSignatureWithVoucher(
       order.order_id,
       voucherProductsAndPlans
     );
+
+    if (payment) {
+      await this.voucherService.updateVoucher(voucher);
+    }
   };
 
   payWithCard = async (

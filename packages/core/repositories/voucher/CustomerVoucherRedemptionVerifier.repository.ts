@@ -5,7 +5,6 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { and, eq, sql } from "drizzle-orm";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { IVerifyEligibilityUser } from "@core/interfaces/repositories/voucher";
-import { SignatureStatus } from "@core/common/enums/models/signature";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
@@ -34,7 +33,6 @@ export class CustomerVoucherRedemptionVerifierRepository {
             clientSignature.id_cliente,
             sql`UUID_TO_BIN(${tokenJwtData.clientId})`
           ),
-          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_resgatar_codigo, voucher),
           eq(clientSignature.id_empresa, tokenKeyData.company_id)
         )

@@ -391,6 +391,11 @@ export class SignaturePaidActiveRepository {
   ): Promise<boolean | null> {
     const validUntil = currentTime();
 
+    const whereUpdate = await this.applyFilterUpdateSignatureProductsPaid(
+      signature,
+      validUntil
+    );
+
     const result = await this.db
       .update(clientProductSignature)
       .set({
@@ -400,12 +405,7 @@ export class SignaturePaidActiveRepository {
         data_agendamento: validUntil,
         data_expiracao: voucherProductsAndPlans.plan?.expiration_date,
       })
-      .where(
-        eq(
-          clientProductSignature.id_assinatura_cliente,
-          sql`UUID_TO_BIN(${signature.signature_id})`
-        )
-      )
+      .where(whereUpdate)
       .execute();
 
     if (!result[0].affectedRows) {
@@ -418,7 +418,7 @@ export class SignaturePaidActiveRepository {
   private async isExistProductSignature(
     signature: ISignatureByOrder,
     productId: string
-  ) {
+  ): Promise<boolean> {
     const result = await this.db
       .select({
         total: count(),
@@ -449,6 +449,77 @@ export class SignaturePaidActiveRepository {
     return result[0].total > 0;
   }
 
+  private async existProductSignatureOld(
+    signature: ISignatureByOrder,
+    productId: string
+  ): Promise<ISelectSignatureProductsActive[]> {
+    const result = await this.db
+      .select({
+        signature_id: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
+        product_id: clientProductSignature.id_produto,
+      })
+      .from(clientProductSignature)
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          clientProductSignature.id_assinatura_cliente
+        )
+      )
+      .where(
+        and(
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${signature.client_id})`
+          ),
+          eq(
+            clientProductSignature.status,
+            ClientProductSignatureStatus.ACTIVE
+          ),
+          ne(
+            clientProductSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signature.signature_id})`
+          ),
+          eq(clientProductSignature.id_produto, productId)
+        )
+      )
+      .execute();
+
+    if (result.length === 0) {
+      return [] as ISelectSignatureProductsActive[];
+    }
+
+    return result as ISelectSignatureProductsActive[];
+  }
+
+  private async existProductSignatureCanceledOld(
+    existProductSignatureOld: ISelectSignatureProductsActive[]
+  ): Promise<void> {
+    const validUntil = currentTime();
+
+    existProductSignatureOld.forEach(async (product) => {
+      await this.db
+        .update(clientProductSignature)
+        .set({
+          processar: ClientProductSignatureProcess.YES,
+          status: ClientProductSignatureStatus.INACTIVE,
+          data_ativacao: null,
+          data_agendamento: null,
+          data_expiracao: validUntil,
+        })
+        .where(
+          and(
+            eq(clientProductSignature.id_produto, product.product_id),
+            eq(
+              clientProductSignature.id_assinatura_cliente,
+              sql`UUID_TO_BIN(${product.signature_id})`
+            )
+          )
+        )
+        .execute();
+    });
+  }
+
   async updateOrCreateSignatureProductsPaidWithVoucher(
     signature: ISignatureByOrder,
     voucherProductsAndPlans: IVoucherProductsAndPlans
@@ -462,6 +533,15 @@ export class SignaturePaidActiveRepository {
       );
 
       if (!existProductSignature) {
+        const existProductSignatureOld = await this.existProductSignatureOld(
+          signature,
+          product.product_id
+        );
+
+        if (existProductSignatureOld) {
+          await this.existProductSignatureCanceledOld(existProductSignatureOld);
+        }
+
         await this.db
           .insert(clientProductSignature)
           .values({
