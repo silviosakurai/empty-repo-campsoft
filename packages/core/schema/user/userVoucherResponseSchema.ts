@@ -4,5 +4,5 @@ import { planDetailsWithProductsSchema } from "../plan/planDetailsWithProductsSc
 
 export const userVoucherResponseSchema = Type.Object({
   products: Type.Array(productDetailSchema),
-  plans: Type.Array(planDetailsWithProductsSchema),
+  plan: planDetailsWithProductsSchema,
 });

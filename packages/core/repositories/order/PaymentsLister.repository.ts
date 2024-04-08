@@ -8,6 +8,7 @@ import {
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
+  clientSignature,
 } from "@core/models";
 
 @injectable()
@@ -26,7 +27,7 @@ export class PaymentListerRepository {
           number: orderPayment.pag_cc_numero_cartao,
           credit_card_id: orderPayment.pag_cc_instantbuykey,
         },
-        voucher: orderPayment.pag_hash,
+        voucher: orderPayment.voucher,
         boleto: {
           url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
             THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.url'), NULL)
@@ -51,7 +52,7 @@ export class PaymentListerRepository {
             ELSE NULL
           END`,
         },
-        cycle: orderPayment.assinatura_ciclo,
+        cycle: clientSignature.ciclo,
         created_at: orderPayment.created_at,
         updated_at: orderPayment.updated_at,
       })
@@ -68,6 +69,13 @@ export class PaymentListerRepository {
         eq(
           orderPaymentStatus.id_pedido_pagamento_status,
           orderPayment.id_pedido_pagamento_status
+        )
+      )
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          orderPayment.id_assinatura_cliente
         )
       )
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))

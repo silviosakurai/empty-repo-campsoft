@@ -3,6 +3,7 @@ export enum SignatureStatus {
   CANCELED = 2,
   PENDING = 3,
   INACTIVE = 4,
+  UPGRADED = 5,
 }
 
 export enum ClientSignatureRecorrencia {

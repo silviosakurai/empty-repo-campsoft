@@ -7,6 +7,7 @@ import { injectable } from "tsyringe";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { IVerifyEligibilityUser } from "@core/interfaces/repositories/voucher";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { VoucherUpdaterRepository } from "@core/repositories/voucher/VoucherUpdater.repository";
 
 @injectable()
 export class VoucherService {
@@ -15,7 +16,8 @@ export class VoucherService {
     private readonly customerVoucherRedemptionVerifierRepository: CustomerVoucherRedemptionVerifierRepository,
     private readonly availableVoucherProductsRepository: AvailableVoucherProductsRepository,
     private readonly clientSignatureRepository: ClientSignatureRepository,
-    private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository
+    private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository,
+    private readonly voucherUpdaterRepository: VoucherUpdaterRepository
   ) {}
 
   verifyEligibilityUser = async (
@@ -43,9 +45,7 @@ export class VoucherService {
   };
 
   isClientSignatureActive = async (tokenJwtData: ITokenJwtData) => {
-    return this.clientSignatureRepository.isClientSignatureActive(
-      tokenJwtData
-    );
+    return this.clientSignatureRepository.isClientSignatureActive(tokenJwtData);
   };
 
   listVoucherEligibleProductsUser = async (
@@ -92,10 +92,7 @@ export class VoucherService {
       );
     }
 
-    return this.listVoucherEligiblePlansNotSignatureUser(
-      tokenKeyData,
-      voucher
-    );
+    return this.listVoucherEligiblePlansNotSignatureUser(tokenKeyData, voucher);
   };
 
   listVoucherEligiblePlansNotSignatureUser = async (
@@ -106,5 +103,21 @@ export class VoucherService {
       tokenKeyData,
       voucher
     );
+  };
+
+  isProductsVoucherEligible = async (
+    tokenKeyData: ITokenKeyData,
+    voucher: string | null | undefined,
+    selectedProducts: string[] | null
+  ) => {
+    return this.voucherEligibilityVerifierRepository.isProductsVoucherEligible(
+      tokenKeyData,
+      voucher,
+      selectedProducts
+    );
+  };
+
+  updateVoucher = async (voucher: string) => {
+    return this.voucherUpdaterRepository.updateVoucher(voucher);
   };
 }

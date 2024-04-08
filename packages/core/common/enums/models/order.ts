@@ -18,3 +18,11 @@ export enum OrderPaymentsMethodsEnum {
   DEBIT = "12",
   EXTERNAL_LINK = "13",
 }
+
+export enum OrderStatusEnum {
+  APPROVED = 1,
+  CANCELED = 2,
+  PENDING = 3,
+  FAILED = 4,
+  UPGRADED = 5,
+}
