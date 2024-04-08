@@ -11,6 +11,10 @@ import {
   userPasswordRecoveryMethodsSchema,
   userPasswordRecoveryUpdaterSchema,
   getUserVoucherSchema,
+  getUserShippingAddressSchema,
+  getUserBillingAddressSchema,
+  putUserBillingAddressSchema,
+  putUserShippingAddressSchema,
 } from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -80,5 +84,29 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: getUserVoucherSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.viewVoucher,
+  });
+
+  server.get('/user/billing-address', {
+    schema: getUserBillingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.getBillingAddress,
+  });
+
+  server.get('/user/shipping-address', {
+    schema: getUserShippingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.getShippingAddress,
+  });
+
+  server.put('/user/billing-address', {
+    schema: putUserBillingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.putBillingAddress,
+  });
+
+  server.put('/user/shipping-address', {
+    schema: putUserShippingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.putShippingAddress,
   });
 }

@@ -8,6 +8,10 @@ import { passwordRecoveryMethodsClient } from './methods/passwordRecoveryMethods
 import { updatePasswordRecoveryClient } from './methods/updatePasswordRecoveryClient';
 import { deleteClient } from './methods/deleteClient';
 import { viewVoucher } from './methods/viewVoucher';
+import { getBillingAddress } from './methods/getBillingAddress';
+import { getShippingAddress } from './methods/getShippingAddress';
+import { putBillingAddress } from './methods/putBillingAddress';
+import { putShippingAddress } from './methods/putShippingAddress';
 
 @injectable()
 class ClientController {
@@ -20,6 +24,10 @@ class ClientController {
   public passwordRecoveryMethods = passwordRecoveryMethodsClient;
   public updatePasswordRecovery = updatePasswordRecoveryClient;
   public viewVoucher = viewVoucher;
+  public getBillingAddress = getBillingAddress;
+  public getShippingAddress = getShippingAddress;
+  public putBillingAddress = putBillingAddress;
+  public putShippingAddress = putShippingAddress;
 }
 
 export default ClientController;

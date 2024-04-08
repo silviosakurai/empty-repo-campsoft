@@ -27,6 +27,10 @@ export class ProductService {
     return this.productViewerRepository.get(companyId, sku);
   };
 
+  findProductsByIds = async (companyId: number, productIds: string[]) => {
+    return this.productListerRepository.listByIds(companyId, productIds);
+  };
+
   listCrossSell = async (input: CrossSellProductRequest) => {
     return this.crossSellProductListerRepository.list(input);
   };

@@ -8,5 +8,6 @@ export enum TagSwagger {
   order = "order",
   voucher = "voucher",
   health = "health",
+  cart = "cart",
   review = "review",
 }

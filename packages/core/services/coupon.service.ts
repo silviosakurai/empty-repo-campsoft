@@ -6,11 +6,13 @@ import { ICouponVerifyEligibilityUser } from "@core/interfaces/repositories/coup
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
+import { CouponViewerByIdRepository } from "@core/repositories/coupon/CouponViewerById.repository";
 
 @injectable()
 export class CouponService {
   constructor(
-    private readonly couponListerRepository: CouponListerRepository
+    private readonly couponListerRepository: CouponListerRepository,
+    private readonly couponViewerByIdRepository: CouponViewerByIdRepository
   ) {}
 
   verifyEligibilityCoupon = async (
@@ -101,4 +103,8 @@ export class CouponService {
 
     return isEligibility;
   };
+
+  async view(couponId: number, companyId: number) {
+    return this.couponViewerByIdRepository.view(couponId, companyId);
+  }
 }
