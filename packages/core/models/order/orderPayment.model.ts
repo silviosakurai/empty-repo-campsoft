@@ -34,7 +34,6 @@ export const orderPayment = mysqlTable("pedido_pagamento", {
   id_pedido_pag_metodo: int("id_pedido_pag_metodo"),
   data_pagamento: datetime("data_pagamento", { mode: "string" }),
   voucher: varchar("voucher", { length: 50 }),
-  pag_hash: varchar("pag_hash", { length: 10000 }),
   pag_cc_nome: varchar("pag_cc_nome", { length: 64 }),
   pag_cc_tipo: varchar("pag_cc_tipo", { length: 15 }),
   pag_cc_exp: varchar("pag_cc_exp", { length: 7 }),

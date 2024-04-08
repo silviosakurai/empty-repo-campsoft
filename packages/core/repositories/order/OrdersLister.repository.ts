@@ -140,7 +140,7 @@ export class OrdersListerRepository {
           number: orderPayment.pag_cc_numero_cartao,
           credit_card_id: orderPayment.pag_cc_instantbuykey,
         },
-        voucher: orderPayment.pag_hash,
+        voucher: orderPayment.voucher,
         boleto: {
           url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
             THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.url'), NULL)
