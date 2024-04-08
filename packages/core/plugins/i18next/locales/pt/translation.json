@@ -33,5 +33,13 @@
   "payment_method_not_card": "Método de pagamento não é cartão",
   "payment_method_invalid": "Método de pagamento inválido",
   "previous_order_not_found": "Pedido anterior não encontrado",
-  "plan_already_active": "Plano já ativo"
+  "plan_already_active": "Plano já ativo",
+  "signature_not_found": "Assinatura não encontrada",
+  "voucher_products_and_plans_not_found": "Voucher de produtos e planos não encontrado",
+  "voucher_plan_ids_not_found": "Voucher de IDs de planos não encontrado",
+  "voucher_plan_not_eligible": "Voucher de plano não é elegível",
+  "voucher_products_not_found": "Voucher de produtos não encontrado",
+  "voucher_product_ids_not_found": "Voucher de IDs de produtos não encontrado",
+  "voucher_product_not_eligible": "Voucher de produto não é elegível",
+  "products_not_found": "Produtos não encontrados"
 }

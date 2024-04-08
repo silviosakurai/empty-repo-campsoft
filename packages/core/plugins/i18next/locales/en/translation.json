@@ -33,5 +33,13 @@
   "payment_method_not_card": "Payment method not card!",
   "payment_method_invalid": "Payment method invalid!",
   "previous_order_not_found": "Previous order not found!",
-  "plan_already_active": "Plan already active!"
+  "plan_already_active": "Plan already active!",
+  "signature_not_found": "Signature not found!",
+  "voucher_products_and_plans_not_found": "Voucher products and plans not found!",
+  "voucher_plan_ids_not_found": "Voucher plan ids not found!",
+  "voucher_plan_not_eligible": "Voucher plan not eligible!",
+  "voucher_products_not_found": "Voucher products not found!",
+  "voucher_product_ids_not_found": "Voucher product ids not found!",
+  "voucher_product_not_eligible": "Voucher product not eligible!",
+  "products_not_found": "Products not found!"
 }

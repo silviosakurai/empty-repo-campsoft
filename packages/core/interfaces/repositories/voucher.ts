@@ -65,3 +65,8 @@ export interface AvailableProducts {
   name: string | null;
   quantity: number;
 }
+
+export interface IVoucherProductsAndPlans {
+  products: ProductDetail[] | null;
+  plans: PlanDetails[] | null;
+}

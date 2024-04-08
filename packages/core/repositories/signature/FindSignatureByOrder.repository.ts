@@ -7,10 +7,11 @@ import {
   clientSignature,
   planItem,
 } from "@core/models";
-import { and, count, eq, inArray, sql } from "drizzle-orm";
+import { and, count, eq, inArray, ne, sql } from "drizzle-orm";
 import {
   ISignatureActiveByClient,
   ISignatureByOrder,
+  ISignatureFindByClientId,
   ISignatureFindByOrder,
 } from "@core/interfaces/repositories/signature";
 import { OrderRecorrencia } from "@core/common/enums/models/order";
@@ -156,5 +157,48 @@ export class FindSignatureByOrderNumber {
       );
 
     return response[0].total > 0;
+  }
+
+  async findProductsBySignatureNotPlan(
+    clientId: string,
+    signatureId: string,
+    planId: number
+  ): Promise<ISignatureFindByClientId[]> {
+    const response = await this.db
+      .select({
+        product_id: clientProductSignature.id_produto,
+      })
+      .from(clientProductSignature)
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          clientProductSignature.id_assinatura_cliente
+        )
+      )
+      .leftJoin(
+        planItem,
+        and(
+          eq(planItem.id_plano, clientSignature.id_plano),
+          ne(planItem.id_produto, clientProductSignature.id_produto)
+        )
+      )
+      .where(
+        and(
+          eq(
+            clientSignature.id_assinatura_cliente,
+            sql`UUID_TO_BIN(${signatureId})`
+          ),
+          eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
+          eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
+          eq(clientSignature.id_plano, planId)
+        )
+      );
+
+    if (response.length === 0) {
+      return [] as ISignatureFindByClientId[];
+    }
+
+    return response as ISignatureFindByClientId[];
   }
 }

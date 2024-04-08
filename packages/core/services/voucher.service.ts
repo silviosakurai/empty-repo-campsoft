@@ -43,9 +43,7 @@ export class VoucherService {
   };
 
   isClientSignatureActive = async (tokenJwtData: ITokenJwtData) => {
-    return this.clientSignatureRepository.isClientSignatureActive(
-      tokenJwtData
-    );
+    return this.clientSignatureRepository.isClientSignatureActive(tokenJwtData);
   };
 
   listVoucherEligibleProductsUser = async (
@@ -92,10 +90,7 @@ export class VoucherService {
       );
     }
 
-    return this.listVoucherEligiblePlansNotSignatureUser(
-      tokenKeyData,
-      voucher
-    );
+    return this.listVoucherEligiblePlansNotSignatureUser(tokenKeyData, voucher);
   };
 
   listVoucherEligiblePlansNotSignatureUser = async (
@@ -105,6 +100,18 @@ export class VoucherService {
     return this.availableVoucherPlansRepository.listVoucherEligiblePlansNotSignatureUser(
       tokenKeyData,
       voucher
+    );
+  };
+
+  isProductsVoucherEligible = async (
+    tokenKeyData: ITokenKeyData,
+    voucher: string | null | undefined,
+    selectedProducts: string[] | null
+  ) => {
+    return this.voucherEligibilityVerifierRepository.isProductsVoucherEligible(
+      tokenKeyData,
+      voucher,
+      selectedProducts
     );
   };
 }

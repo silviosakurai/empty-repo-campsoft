@@ -12,6 +12,8 @@ import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PriceService } from "@core/services/price.service";
 import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
+import { PaymentService } from "@core/services/payment.service";
+import { VoucherService } from "@core/services/voucher.service";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -21,7 +23,9 @@ export class CreateOrderUseCase {
     private readonly productService: ProductService,
     private readonly clientService: ClientService,
     private readonly signatureService: SignatureService,
-    private readonly priceService: PriceService
+    private readonly priceService: PriceService,
+    private readonly paymentService: PaymentService,
+    private readonly voucherService: VoucherService
   ) {}
 
   async execute(
@@ -41,13 +45,25 @@ export class CreateOrderUseCase {
       throw new Error(t("client_not_found"));
     }
 
-    const [isPlanProductAndProductGroups, isPlanProductCrossSell] =
-      await Promise.all([
-        this.planService.isPlanProductAndProductGroups(tokenKeyData, payload),
-        this.productService.isPlanProductCrossSell(tokenKeyData, payload),
-      ]);
+    const [
+      isPlanProductAndProductGroups,
+      isPlanProductCrossSell,
+      isProductsVoucher,
+    ] = await Promise.all([
+      this.planService.isPlanProductAndProductGroups(tokenKeyData, payload),
+      this.productService.isPlanProductCrossSell(tokenKeyData, payload),
+      this.voucherService.isProductsVoucherEligible(
+        tokenKeyData,
+        payload.payment?.voucher,
+        payload.products
+      ),
+    ]);
 
-    if (!isPlanProductCrossSell || !isPlanProductAndProductGroups) {
+    if (
+      !isPlanProductAndProductGroups ||
+      (!isPlanProductCrossSell && !payload.payment?.voucher) ||
+      (!isProductsVoucher && payload.payment?.voucher)
+    ) {
       throw new Error(t("product_not_eligible_for_plan"));
     }
 
@@ -121,13 +137,46 @@ export class CreateOrderUseCase {
       findSignatureActiveByClientId
     );
 
-    await this.signatureService.activePaidSignature(
-      createOrder.order_id,
-      createOrder.order_id_previous,
-      createOrder.active_now
+    await this.payWith(
+      t,
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      createOrder.order_id
     );
 
     return createOrder;
+  }
+
+  private async payWith(
+    t: TFunction<"translation", undefined>,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: CreateOrderRequestDto,
+    orderId: string
+  ): Promise<void> {
+    if (
+      payload.payment?.voucher &&
+      payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.VOUCHER
+    ) {
+      return this.paymentService.payWithVoucher(
+        t,
+        tokenKeyData,
+        tokenJwtData,
+        orderId,
+        payload.payment.voucher
+      );
+    }
+
+    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
+      return this.paymentService.payWithCard(
+        t,
+        tokenKeyData,
+        tokenJwtData,
+        orderId,
+        payload.payment
+      );
+    }
   }
 
   private async validatePaymentMethod(
