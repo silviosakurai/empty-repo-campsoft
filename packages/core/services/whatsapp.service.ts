@@ -1,5 +1,4 @@
-import { InvalidPhoneNumberError } from "@core/common/exceptions/InvalidPhoneNumberError";
-import { PhoneNumberValidator } from "@core/common/functions/PhoneNumberValidator";
+import { phoneNumberIncludesCountryCode } from "@core/common/functions/phoneNumberIncludesCountryCode";
 import { whatsappEnvironment } from "@core/config/environments";
 import {
   IWhatsappService,
@@ -7,21 +6,18 @@ import {
 } from "@core/interfaces/services/IWhatsapp.service";
 import { injectable } from "tsyringe";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
+import { LoggerService } from "@core/services/logger.service";
 
 @injectable()
 export class WhatsappService implements IWhatsappService {
-  constructor(private readonly phoneNumberValidator: PhoneNumberValidator) {}
+  constructor(private readonly logger: LoggerService) {}
 
   async send(input: IWhatsappServiceInput): Promise<MessageInstance> {
     const client = await this.connection();
 
     try {
-      this.phonesValidate(input);
-
       const sendPhone = this.sendPhone(input.sender_phone);
-      const targetPhone = this.phoneNumberIncludesCountryCode(
-        input.target_phone
-      );
+      const targetPhone = phoneNumberIncludesCountryCode(input.target_phone);
 
       const response = await client.messages.create({
         from: `whatsapp:${sendPhone}`,
@@ -31,31 +27,10 @@ export class WhatsappService implements IWhatsappService {
 
       return response as MessageInstance;
     } catch (error: unknown) {
-      throw new Error(error as string);
+      this.logger.error(error);
+
+      throw error;
     }
-  }
-
-  private phonesValidate({
-    sender_phone,
-    target_phone,
-  }: IWhatsappServiceInput): null | InvalidPhoneNumberError {
-    const targetPhone = this.phoneNumberIncludesCountryCode(target_phone);
-
-    const targetPhoneValidated =
-      this.phoneNumberValidator.validate(targetPhone);
-
-    if (targetPhoneValidated) {
-      throw new InvalidPhoneNumberError("Target Phone is not valid.");
-    }
-
-    const sendPhone = this.sendPhone(sender_phone);
-
-    const senderPhoneValidated = this.phoneNumberValidator.validate(sendPhone);
-    if (senderPhoneValidated) {
-      throw new InvalidPhoneNumberError("Sender Phone is not valid.");
-    }
-
-    return null;
   }
 
   private async connection() {
@@ -71,14 +46,6 @@ export class WhatsappService implements IWhatsappService {
   private sendPhone(sendPhone: string | null | undefined): string {
     const phoneNumber = sendPhone ?? whatsappEnvironment.whatsappApiNumber;
 
-    return this.phoneNumberIncludesCountryCode(phoneNumber);
-  }
-
-  private phoneNumberIncludesCountryCode(phoneNumber: string): string {
-    if (!phoneNumber.startsWith("+")) {
-      return `+55${phoneNumber}`;
-    }
-
-    return phoneNumber;
+    return phoneNumberIncludesCountryCode(phoneNumber);
   }
 }

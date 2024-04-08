@@ -5,7 +5,6 @@ import {
 } from "@core/common/enums/models/client";
 import {
   mysqlTable,
-  int,
   varchar,
   mysqlEnum,
   date,
@@ -19,10 +18,13 @@ export const client = mysqlTable("cliente", {
     .default("uuid_to_bin(uuid())")
     .notNull()
     .primaryKey(),
-  status: mysqlEnum("status", [ClientStatus.ACTIVE, ClientStatus.INACTIVE])
+  status: mysqlEnum("status", [
+    ClientStatus.ACTIVE,
+    ClientStatus.INACTIVE,
+    ClientStatus.DELETED,
+  ])
     .notNull()
     .default(ClientStatus.ACTIVE),
-  id_cliente_tipo: int("id_cliente_tipo").notNull().default(1),
   id_facebook: bigint("id_facebook", { mode: "bigint", unsigned: true }),
   nome: varchar("nome", { length: 50 }),
   sobrenome: varchar("sobrenome", { length: 50 }),
@@ -34,7 +36,6 @@ export const client = mysqlTable("cliente", {
   senha: varchar("senha", { length: 65 }),
   senha_campsoft: varchar("senha_campsoft", { length: 100 }),
   sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
-  sms_validacao: varchar("sms_validacao", { length: 6 }),
   cliente_hash: varchar("cliente_hash", { length: 32 }),
   cliente_zoop_producao: varchar("cliente_zoop_producao", { length: 32 }),
   cliente_zoop_sandbox: varchar("cliente_zoop_sandbox", { length: 32 }),

@@ -2,15 +2,17 @@ import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { sendResponse } from "@core/common/functions/sendResponse";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
-import { ViewApiTfaUseCase } from "@core/useCases/api/ViewApiTfa.useCase";
+import { ApiTfaViewerUseCase } from "@core/useCases/api/ApiTfaViewer.useCase";
 import { container } from "tsyringe";
 import { ViewApiTfaRequest } from "@core/useCases/api/dtos/ViewApiTfaRequest.dto";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 async function authenticateTfa(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const { redis } = request.server;
   const { tokentfa } = request.headers as { tokentfa: string };
 
@@ -22,7 +24,7 @@ async function authenticateTfa(
   }
 
   try {
-    const decoded = (await request.server.decodeToken(tokentfa)) as {
+    const decoded = (await request.server.verifyToken(tokentfa)) as {
       token: string;
     };
 
@@ -37,14 +39,21 @@ async function authenticateTfa(
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
-      request.tfaInfo = JSON.parse(cacheAuth);
+      request.tokenTfaData = JSON.parse(cacheAuth);
+
+      if (checkClientIdsAndAuthorize(request.tokenTfaData, tokenJwtData)) {
+        return sendResponse(reply, {
+          message: t("not_authorized"),
+          httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+        });
+      }
 
       return;
     }
 
-    const viewApiTfaUseCase = container.resolve(ViewApiTfaUseCase);
+    const apiTfaViewerUseCase = container.resolve(ApiTfaViewerUseCase);
 
-    const responseAuth = await viewApiTfaUseCase.execute({
+    const responseAuth = await apiTfaViewerUseCase.execute({
       token: decoded.token,
     } as ViewApiTfaRequest);
 
@@ -55,9 +64,16 @@ async function authenticateTfa(
       });
     }
 
+    if (checkClientIdsAndAuthorize(responseAuth, tokenJwtData)) {
+      return sendResponse(reply, {
+        message: t("not_authorized"),
+        httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      });
+    }
+
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
-    request.tfaInfo = responseAuth;
+    request.tokenTfaData = responseAuth;
 
     return;
   } catch (error) {
@@ -66,6 +82,20 @@ async function authenticateTfa(
       httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
     });
   }
+}
+
+function checkClientIdsAndAuthorize(
+  tokenTfaData: ITokenTfaData,
+  tokenJwtData: ITokenJwtData
+): boolean {
+  if (
+    tokenTfaData.clientId &&
+    tokenTfaData.clientId !== tokenJwtData?.clientId
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 export default fp(async (fastify) => {

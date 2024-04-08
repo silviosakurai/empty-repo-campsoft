@@ -6,10 +6,16 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
+import { CouponRescueStatus } from "@core/common/enums/models/coupon";
 
 export const couponCart = mysqlTable("cupom_carrinho", {
   id_cupom_carrinho: int("id_cupom_carrinho").notNull().primaryKey(),
-  status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
+  status: mysqlEnum("status", [
+    CouponRescueStatus.ACTIVE,
+    CouponRescueStatus.INACTIVE,
+  ])
+    .notNull()
+    .default(CouponRescueStatus.ACTIVE),
   cupom_carrinho: varchar("cupom_carrinho", { length: 50 })
     .notNull()
     .default("0"),
@@ -22,5 +28,4 @@ export const couponCart = mysqlTable("cupom_carrinho", {
   updated_at: datetime("updated_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  deleted: mysqlEnum("deleted", ["Y", "N"]).notNull().default("N"),
 });

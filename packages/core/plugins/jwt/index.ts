@@ -4,7 +4,7 @@ import fastifyJwt from "@fastify/jwt";
 import { generalEnvironment } from "@core/config/environments";
 
 async function jwtPlugin(fastify: FastifyInstance) {
-  fastify.register(fastifyJwt, {
+  await fastify.register(fastifyJwt, {
     secret: generalEnvironment.jwtSecret,
     sign: {
       expiresIn: generalEnvironment.jwtSecretExpiresIn,
@@ -17,6 +17,14 @@ async function jwtPlugin(fastify: FastifyInstance) {
     }
 
     return fastify.jwt.decode(token);
+  });
+
+  fastify.decorate("verifyToken", async (token: string) => {
+    if (!token) {
+      return null;
+    }
+
+    return fastify.jwt.verify(token);
   });
 }
 

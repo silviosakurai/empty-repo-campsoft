@@ -11,7 +11,6 @@ export const planItem = mysqlTable("plano_item", {
   id_plano: int("id_plano").notNull(),
   id_produto: varchar("id_produto", { length: 10 }),
   id_produto_grupo: int("id_produto_grupo"),
-  ordem: int("ordem").notNull().default(999),
   percentual_do_plano: double("percentual_do_plano"),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()

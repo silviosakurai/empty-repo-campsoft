@@ -6,29 +6,24 @@ import {
   ISmsServiceSendInput,
 } from "@core/interfaces/services/ISms.service";
 import axios from "axios";
+import { injectable } from "tsyringe";
+import { LoggerService } from "@core/services/logger.service";
 
+@injectable()
 export class SmsService implements ISmsService {
+  constructor(private readonly logger: LoggerService) {}
+
   async send(input: ISmsServiceSendInput) {
-    const regexPhoneNumberAndDDD = /^\d{11}$/;
-
-    if (!regexPhoneNumberAndDDD.test(input.phone)) {
-      return new Error("Telefone inválido, seguir o padrão 99999999999");
-    }
-
-    const response = await this.connection();
-
-    if (response instanceof Error) {
-      return response;
-    }
-
     try {
+      const response = await this.connection();
+
       const { data } = await axios.post<ISmsSentMessageResponse>(
         `${smsEnvironment.smsApiBaseUrl}/api/campanha/simples`,
         {
           produtoId: smsEnvironment.smsApiProdutoId,
           centroCustoId: smsEnvironment.smsApiCentralCustomId,
           telefones: input.phone,
-          nome: input.name,
+          nome: input.name ?? "Mania de App",
           mensagemCampanha: input.message,
         },
         {
@@ -42,16 +37,17 @@ export class SmsService implements ISmsService {
       );
 
       return data;
-    } catch (error) {
-      console.error(error);
-      return error;
+    } catch (error: unknown) {
+      this.logger.error(error);
+
+      throw error;
     }
   }
 
   private async connection() {
     try {
       const response = await axios.post<ISmsServiceGatewayResponse>(
-        `${smsEnvironment.smsApiAuthUrl}/login"`,
+        `${smsEnvironment.smsApiAuthUrl}/login`,
         {
           email: smsEnvironment.smsApiEmail,
           password: smsEnvironment.smsApiPassword,
@@ -67,10 +63,10 @@ export class SmsService implements ISmsService {
       );
 
       return response.data;
-    } catch (error: any) {
-      return Error(
-        `${error.response.status} - ${error.response.data.message} - ${error.response.data.code}`
-      );
+    } catch (error: unknown) {
+      this.logger.error(error);
+
+      throw error;
     }
   }
 }

@@ -10,12 +10,17 @@ export const createClient = async (
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientCreatorUseCase);
-  const { t, apiAccess, tfaInfo } = request;
+  const { t, tokenKeyData, tokenTfaData } = request;
 
   try {
-    const validateType = clientUseCase.validateTypeTfa(tfaInfo, request.body);
+    const validateType = clientUseCase.validateTypeTfa(
+      tokenTfaData,
+      request.body
+    );
 
     if (!validateType) {
+      request.server.logger.warn(validateType, request.id);
+
       return sendResponse(reply, {
         message: t('phone_not_match_token'),
         httpStatusCode: HTTPStatusCode.FORBIDDEN,
@@ -23,13 +28,14 @@ export const createClient = async (
     }
 
     const response = await clientUseCase.create(
-      apiAccess.company_id,
+      tokenKeyData.company_id,
       request.body
     );
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
-        data: response,
         message: t('previously_registered_user'),
         httpStatusCode: HTTPStatusCode.CONFLICT,
       });
@@ -40,6 +46,8 @@ export const createClient = async (
       httpStatusCode: HTTPStatusCode.CREATED,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

@@ -1,6 +1,6 @@
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 export interface ViewClientRequest {
-  apiAccess: ViewApiResponse;
+  tokenKeyData: ITokenKeyData;
   userId: string;
 }

@@ -5,17 +5,13 @@ import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 
 @injectable()
 export class LoginAuthUseCase {
-  private authService: AuthService;
-
-  constructor(clientService: AuthService) {
-    this.authService = clientService;
-  }
+  constructor(private readonly authService: AuthService) {}
 
   async execute({
-    apiAccess,
+    tokenKeyData,
     login,
     password,
   }: LoginRequest): Promise<LoginResponse | null> {
-    return await this.authService.authenticate(apiAccess, login, password);
+    return this.authService.authenticate(tokenKeyData, login, password);
   }
 }

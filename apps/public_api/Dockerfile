@@ -1,16 +1,33 @@
-FROM node:20.11.1-alpine3.19 as common-build
+FROM public.ecr.aws/docker/library/node:20.11.1-alpine as builder
 
-RUN npm install -g pnpm
-
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
+COPY pnpm-lock.yaml* ./
+
 COPY . .
 
+ENV PNPM_HOME="/usr/local/share/pnpm"
+ENV PATH="${PNPM_HOME}:${PATH}"
+
+RUN npm install -g pnpm
+RUN pnpm add -g turbo
 RUN pnpm install
 
-RUN pnpm run build
+RUN turbo run build --filter=public
+
+FROM public.ecr.aws/docker/library/node:20.11.1-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/apps/public_api/dist /app
+COPY --from=builder /app/node_modules /app/node_modules
+
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
 
 EXPOSE 3001
 
-CMD node dist/index.js
+WORKDIR /app/apps/public_api/src
+
+CMD ["node", "index.js"]

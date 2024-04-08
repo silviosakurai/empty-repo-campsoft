@@ -1,6 +1,7 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
+import { createCacheKey } from "@core/common/functions/createCacheKey";
 import { sendResponse } from "@core/common/functions/sendResponse";
-import { ViewApiKeyUseCase } from "@core/useCases/api/ViewApiKey.useCase";
+import { ApiKeyViewerUseCase } from "@core/useCases/api/ApiKeyViewer.useCase";
 import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
@@ -18,19 +19,33 @@ async function authenticateKeyApi(
   const routeMethod = request.routeOptions.method;
   const routeModule = request.module;
 
-  try {
-    const viewApiKeyUseCase = container.resolve(ViewApiKeyUseCase);
+  if (!keyapi) {
+    return sendResponse(reply, {
+      message: t("not_authorized"),
+      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+    });
+  }
 
-    const cacheKey = `keyapi:${keyapi}`;
+  try {
+    const apiKeyViewerUseCase = container.resolve(ApiKeyViewerUseCase);
+
+    const cacheKey = createCacheKey(
+      "keyCache",
+      keyapi,
+      routePath,
+      routeMethod,
+      routeModule
+    );
+
     const cacheAuth = await redis.get(cacheKey);
 
     if (cacheAuth) {
-      request.apiAccess = JSON.parse(cacheAuth);
+      request.tokenKeyData = JSON.parse(cacheAuth);
 
       return;
     }
 
-    const responseAuth = await viewApiKeyUseCase.execute({
+    const responseAuth = await apiKeyViewerUseCase.execute({
       keyApi: keyapi,
       routePath,
       routeMethod,
@@ -46,12 +61,12 @@ async function authenticateKeyApi(
 
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
-    request.apiAccess = responseAuth;
+    request.tokenKeyData = responseAuth;
 
     return;
   } catch (error) {
     return sendResponse(reply, {
-      message: t("internal_server_error"),
+      message: t("not_authorized"),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
     });
   }

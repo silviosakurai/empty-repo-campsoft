@@ -1,9 +1,9 @@
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 export interface ViewApiJwtRequest {
   clientId: string;
-  apiAccess: ViewApiResponse;
+  tokenKeyData: ITokenKeyData;
   routePath: string;
   routeMethod: RouteMethod;
   routeModule: RouteModule;

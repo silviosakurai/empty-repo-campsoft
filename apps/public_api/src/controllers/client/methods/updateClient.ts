@@ -8,26 +8,25 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 export const updateClient = async (
   request: FastifyRequest<{
     Body: UpdateClientRequestDto;
-    Params: {
-      userId: string;
-    };
   }>,
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientUpdaterUseCase);
-  const { t, apiAccess } = request;
+  const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
     const response = await clientUseCase.update(
-      request.params.userId,
+      tokenJwtData.clientId,
       request.body,
-      apiAccess
+      tokenKeyData
     );
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('client_not_found'),
-        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 
@@ -36,6 +35,8 @@ export const updateClient = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

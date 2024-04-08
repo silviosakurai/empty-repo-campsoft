@@ -1,6 +1,7 @@
 export enum ClientStatus {
   ACTIVE = "ativo",
   INACTIVE = "inativo",
+  DELETED = "deletado",
 }
 
 export enum ClientGender {
@@ -21,4 +22,19 @@ export enum ClientType {
   FRANCHISEE_SUPERVISOR = 5,
   FRANCHISEE_SELLER = 6,
   MANIA_OPERATOR = 7,
+}
+
+export enum ClientMagicTokenStatus {
+  YES = "Y",
+  NO = "N",
+}
+
+export enum ClientAddress {
+  BILLING = "Cobranca",
+  SHIPPING = "Envio",
+}
+
+export enum ClientShippingAddress {
+  YES = "Y",
+  NO = "N",
 }

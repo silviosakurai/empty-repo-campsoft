@@ -11,29 +11,26 @@ import {
   tfaCodes,
 } from "@core/models";
 import { and, eq, or, sql } from "drizzle-orm";
-import { ViewApiResponse } from "@core/useCases/api/dtos/ViewApiResponse.dto";
 import { ApiStatus } from "@core/common/enums/models/api";
 import { CompanyStatus } from "@core/common/enums/models/company";
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 import { ClientStatus } from "@core/common/enums/models/client";
-import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class ApiRepository {
-  private db: MySql2Database<typeof schema>;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async findApiByKey(
     keyApi: string,
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
-  ): Promise<ViewApiResponse | null> {
+  ): Promise<ITokenKeyData | null> {
     const result = await this.db
       .select({
         api_key: apiAccess.api_chave,
@@ -52,15 +49,19 @@ export class ApiRepository {
       .innerJoin(route, eq(route.id_rota, accessRouteType.id_rota))
       .where(
         and(
-          or(
-            eq(apiAccess.api_chave, keyApi),
-            eq(apiAccess.api_chave_sandbox, keyApi)
+          and(
+            or(
+              eq(apiAccess.api_chave, keyApi),
+              eq(apiAccess.api_chave_sandbox, keyApi)
+            )
           ),
-          eq(apiAccess.api_status, ApiStatus.ACTIVE),
-          eq(company.status, CompanyStatus.ACTIVE),
-          eq(route.rota, routePath),
-          eq(route.metodo, routeMethod),
-          eq(route.module, routeModule)
+          and(
+            eq(apiAccess.api_status, ApiStatus.ACTIVE),
+            eq(company.status, CompanyStatus.ACTIVE),
+            eq(route.rota, routePath),
+            eq(route.metodo, routeMethod),
+            eq(route.module, routeModule)
+          )
         )
       )
       .execute();
@@ -69,22 +70,19 @@ export class ApiRepository {
       return null;
     }
 
-    return result[0] as unknown as ViewApiResponse;
+    return result[0] as unknown as ITokenKeyData;
   }
 
   async findApiByJwt(
     clientId: string,
-    apiAccessKey: ViewApiResponse,
+    tokenKeyData: ITokenKeyData,
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
-  ): Promise<boolean> {
+  ): Promise<ITokenJwtData | null> {
     const result = await this.db
       .select({
-        client_id: client.id_cliente,
-        client_type_id: client.id_cliente_tipo,
-        name: client.nome,
-        status: client.status,
+        clientId: sql`BIN_TO_UUID(${client.id_cliente})`,
       })
       .from(client)
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))
@@ -97,7 +95,7 @@ export class ApiRepository {
         and(
           eq(client.status, ClientStatus.ACTIVE),
           eq(client.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(access.id_empresa, apiAccessKey.company_id),
+          eq(access.id_empresa, tokenKeyData.company_id),
           eq(route.rota, routePath),
           eq(route.metodo, routeMethod),
           eq(route.module, routeModule)
@@ -105,12 +103,17 @@ export class ApiRepository {
       )
       .execute();
 
-    return result.length > 0;
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as unknown as ITokenJwtData;
   }
 
-  async findApiByTfa(token: string): Promise<ViewApiTfaResponse | null> {
+  async findApiByTfa(token: string): Promise<ITokenTfaData | null> {
     const result = await this.db
       .select({
+        clientId: sql`BIN_TO_UUID(${tfaCodes.id_cliente})`,
         type: tfaCodes.tipo,
         destiny: tfaCodes.destino,
       })
@@ -122,6 +125,6 @@ export class ApiRepository {
       return null;
     }
 
-    return result[0] as unknown as ViewApiTfaResponse;
+    return result[0] as unknown as ITokenTfaData;
   }
 }

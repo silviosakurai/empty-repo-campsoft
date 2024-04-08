@@ -1,25 +1,18 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
-import { UpdateClientRequestDto } from "./dtos/UpdateClientRequest.dto";
-import { ViewApiResponse } from "../api/dtos/ViewApiResponse.dto";
+import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientRequest.dto";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientUpdaterUseCase {
-  private clientService: ClientService;
-
-  constructor(clientService: ClientService) {
-    this.clientService = clientService;
-  }
+  constructor(private readonly clientService: ClientService) {}
 
   async update(
     clientId: string,
     input: UpdateClientRequestDto,
-    apiAccess: ViewApiResponse
+    tokenKeyData: ITokenKeyData
   ): Promise<boolean | null> {
-    const userFounded = await this.clientService.viewClient(
-      apiAccess,
-      clientId
-    );
+    const userFounded = await this.clientService.view(tokenKeyData, clientId);
 
     if (!userFounded) {
       return null;

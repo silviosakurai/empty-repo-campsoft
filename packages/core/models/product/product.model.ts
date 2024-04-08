@@ -1,14 +1,18 @@
+import { Status } from "@core/common/enums/Status";
 import {
   mysqlTable,
   int,
   timestamp,
   varchar,
   mysqlEnum,
+  double,
 } from "drizzle-orm/mysql-core";
 
 export const product = mysqlTable("produto", {
   id_produto: varchar("id_produto", { length: 10 }).notNull().primaryKey(),
-  status: mysqlEnum("status", ["ativo", "inativo"]),
+  status: mysqlEnum("status", [Status.ACTIVE, Status.INACTIVE]).default(
+    Status.ACTIVE
+  ),
   id_produto_tipo: int("id_produto_tipo"),
   produto: varchar("produto", { length: 50 }),
   descricao: varchar("descricao", { length: 1000 }),
@@ -30,6 +34,8 @@ export const product = mysqlTable("produto", {
   como_acessar_url: varchar("como_acessar_url", { length: 150 }),
   como_acessar_url_ios: varchar("como_acessar_url_ios", { length: 150 }),
   como_acessar_url_and: varchar("como_acessar_url_and", { length: 150 }),
+  preco: double("preco"),
+  preco_face: double("preco_face"),
   obs: varchar("obs", { length: 100 }),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()

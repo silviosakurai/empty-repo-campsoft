@@ -5,23 +5,22 @@ import { AccessService } from "@core/services/access.service";
 import { AccessType } from "@core/common/enums/models/access";
 import { encodePassword } from "@core/common/functions/encodePassword";
 import { InternalServerError } from "@core/common/exceptions/InternalServerError";
-import { ViewApiTfaResponse } from "@core/useCases/api/dtos/ViewApiTfaResponse.dto";
 import { TFAType } from "@core/common/enums/models/tfa";
+import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
+import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
+import { CreateClientResponse } from "@core/useCases/client/dtos/CreateClientResponse.dto";
 
 @injectable()
 export class ClientCreatorUseCase {
-  private clientService: ClientService;
-  private accessService: AccessService;
-
-  constructor(clientService: ClientService, accessService: AccessService) {
-    this.clientService = clientService;
-    this.accessService = accessService;
-  }
+  constructor(
+    private readonly clientService: ClientService,
+    private readonly accessService: AccessService
+  ) {}
 
   async create(
     companyId: number,
     input: CreateClientRequestDto
-  ): Promise<{ user_id: string } | null> {
+  ): Promise<CreateClientResponse | null> {
     const response = await this.confirmIfRegisteredPreviously({
       cpf: input.cpf,
       email: input.email,
@@ -50,6 +49,9 @@ export class ClientCreatorUseCase {
     await this.clientService.connectClientAndCompany({
       clientId: userCreated.user_id,
       companyId,
+      cpf: input.cpf,
+      phoneNumber: input.phone,
+      status: ClientCompanyStatus.ACTIVE,
     });
 
     await this.accessService.create({
@@ -62,16 +64,20 @@ export class ClientCreatorUseCase {
   }
 
   validateTypeTfa(
-    tfaInfo: ViewApiTfaResponse,
+    tokenTfaData: ITokenTfaData,
     input: CreateClientRequestDto
   ): boolean {
-    if (tfaInfo.type === TFAType.EMAIL && tfaInfo.destiny !== input.email) {
+    if (
+      tokenTfaData.type === TFAType.EMAIL &&
+      tokenTfaData.destiny !== input.email
+    ) {
       return false;
     }
 
     if (
-      (tfaInfo.type === TFAType.SMS || tfaInfo.type === TFAType.WHATSAPP) &&
-      tfaInfo.destiny !== input.phone
+      (tokenTfaData.type === TFAType.SMS ||
+        tokenTfaData.type === TFAType.WHATSAPP) &&
+      tokenTfaData.destiny !== input.phone
     ) {
       return false;
     }
@@ -80,7 +86,7 @@ export class ClientCreatorUseCase {
   }
 
   private async confirmIfRegisteredPreviously(input: IUserExistsFunction) {
-    const response = await this.clientService.readClientByCpfEmailPhone(input);
+    const response = await this.clientService.listClientByCpfEmailPhone(input);
 
     if (response) return true;
 

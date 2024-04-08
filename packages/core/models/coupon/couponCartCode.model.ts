@@ -3,7 +3,6 @@ import {
   int,
   timestamp,
   varchar,
-  mysqlEnum,
   double,
   varbinary,
 } from "drizzle-orm/mysql-core";
@@ -27,5 +26,4 @@ export const couponCartCode = mysqlTable("cupom_carrinho_codigo", {
   desconto_valor: double("desconto_valor"),
   created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
-  deleted: mysqlEnum("deleted", ["Y", "N"]).default("N"),
 });

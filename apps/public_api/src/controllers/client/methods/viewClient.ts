@@ -1,25 +1,25 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { ViewClientRequest } from '@core/useCases/client/dtos/ViewClientRequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ViewClientUseCase } from '@core/useCases/client/ViewClient.useCase';
+import { ClientViewerUseCase } from '@core/useCases/client/ClientViewer.useCase';
 import { container } from 'tsyringe';
 
 export const viewClient = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const viewClientUseCase = container.resolve(ViewClientUseCase);
-  const { t, apiAccess } = request;
-  const { userId } = request.params as ViewClientRequest;
+  const clientViewerUseCase = container.resolve(ClientViewerUseCase);
+  const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
-    const response = await viewClientUseCase.execute({
-      apiAccess,
-      userId,
+    const response = await clientViewerUseCase.execute({
+      tokenKeyData,
+      userId: tokenJwtData.clientId,
     });
 
     if (!response) {
+      request.server.logger.warn(response, request.id);
+
       return sendResponse(reply, {
         message: t('client_not_found'),
         httpStatusCode: HTTPStatusCode.NOT_FOUND,
@@ -31,6 +31,8 @@ export const viewClient = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    request.server.logger.error(error, request.id);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
