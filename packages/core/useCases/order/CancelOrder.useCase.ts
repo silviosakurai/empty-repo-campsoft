@@ -1,5 +1,4 @@
 import { injectable } from "tsyringe";
-import { OrderService } from "@core/services/order.service";
 import { ProductService } from "@core/services/product.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -8,47 +7,57 @@ import { CancelOrderResponse } from "./dtos/CancelOrderResponse.dto";
 
 @injectable()
 export class CancelOrderUseCase {
-  private orderService: OrderService;
-  private signatureService: SignatureService;
-  private productService: ProductService;
-
   constructor(
-    orderService: OrderService,
-    signatureService: SignatureService,
-    productService: ProductService,
-  ) {
-    this.orderService = orderService;
-    this.signatureService = signatureService;
-    this.productService = productService;
-  }
+    private readonly signatureService: SignatureService,
+    private readonly productService: ProductService
+  ) {}
 
   async execute(
     orderNumber: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ): Promise<CancelOrderResponse | null> {
-    const productsToInative = await this.signatureService.findByOrderNumber(orderNumber);
+    const productsToInative =
+      await this.signatureService.findByOrderNumber(orderNumber);
 
-    if (!productsToInative) { return null }
+    if (!productsToInative) {
+      return null;
+    }
 
-    const isOrderCanceled = await this.signatureService.cancelByOrderNumber(orderNumber, tokenKeyData, tokenJwtData);
+    const isOrderCanceled = await this.signatureService.cancelByOrderNumber(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
 
-    if (!isOrderCanceled) { return null }
+    if (!isOrderCanceled) {
+      return null;
+    }
 
     const signatureId = productsToInative[0].signature_id;
-    const onlyProducts = productsToInative.map(product => {
+    const productCancelDate = productsToInative[0].product_cancel_date;
+    const onlyProducts = productsToInative.map((product) => {
       return product.product_id;
-    })
+    });
 
-    const isProductsCanceled = await this.signatureService.cancelProducts(signatureId, onlyProducts);
+    const isProductsCanceled = await this.signatureService.cancelProducts(
+      signatureId,
+      productCancelDate,
+      onlyProducts
+    );
 
-    if (!isProductsCanceled) { return null }
+    if (!isProductsCanceled) {
+      return null;
+    }
 
-    const products = await this.productService.listByIds(tokenKeyData.company_id, onlyProducts);
+    const products = await this.productService.listByIds(
+      tokenKeyData.company_id,
+      onlyProducts
+    );
 
     return {
-      status: 'canceled',
-      products
-    }
+      status: "canceled",
+      products,
+    };
   }
 }

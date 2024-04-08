@@ -1,6 +1,4 @@
 export * from "./order.model";
-export * from "./orderItem.model";
-export * from "./orderOrigin.model";
 export * from "./orderPayment.model";
 export * from "./orderPaymentGateway.model";
 export * from "./orderPaymentMethod.model";

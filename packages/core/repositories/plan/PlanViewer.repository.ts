@@ -28,7 +28,7 @@ export class PlanViewerRepository {
         visible_site: sql<boolean>`CASE 
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
-        END`,
+        END`.mapWith(Boolean),
         business_id: plan.id_empresa,
         plan: plan.plano,
         image: plan.imagem,

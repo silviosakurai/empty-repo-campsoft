@@ -67,9 +67,37 @@ export interface OrderByNumberResponse {
   totals: TotalsOrder;
   installments: Installments;
   payments: OrderPayments[];
-  plans: FindOrderByNumberPlans[];
+  plan: FindOrderByNumberPlans | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface OrderCreatePaymentsCard {
+  installments: number;
+  value: number;
+}
+
+export interface CreateOrder {
+  order_id: string;
+  order_id_previous: string | null;
+  active_now: boolean;
+}
+
+export interface ListOrderById {
+  order_id: string;
+  order_id_previous: string;
+  client_id: string;
+  company_id: number;
+  status_id: number;
+  recurrence: number;
+  recurrence_period: number;
+  total_price: number;
+  total_discount: number;
+  total_price_with_discount: number;
+  total_previous_order_discount_value: number;
+  total_installments: number;
+  total_installments_value: number;
+  activation_immediate: boolean;
 }
 
 export type OrderPayments = Static<typeof orderPaymentsSchema>;

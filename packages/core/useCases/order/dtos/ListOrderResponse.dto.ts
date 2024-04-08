@@ -32,7 +32,7 @@ export interface ListOrderResponse {
   installments: Installments;
   payments: OrderPayments[];
   products: ProductDetail[];
-  plans: PlanDetailsWithProducts[];
+  plan: PlanDetailsWithProducts;
   created_at: string;
   updated_at: string;
 }

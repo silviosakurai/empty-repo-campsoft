@@ -31,7 +31,6 @@ export const findOrderByNumber = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.error(error);
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {

@@ -9,12 +9,13 @@ export const createClientNewsletter = async (
   reply: FastifyReply
 ) => {
   const service = container.resolve(ClientEmailNewsletterCreatorUseCase);
-  const { t, tokenJwtData } = request;
+  const { t, tokenJwtData, tokenKeyData } = request;
 
   try {
     const response = await service.create(
       tokenJwtData.clientId,
-      request.body.email
+      request.body.email,
+      tokenKeyData.company_id
     );
 
     if (!response) {
@@ -30,7 +31,6 @@ export const createClientNewsletter = async (
       httpStatusCode: HTTPStatusCode.CREATED,
     });
   } catch (error) {
-    console.log(error);
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {

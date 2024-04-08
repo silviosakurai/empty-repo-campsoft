@@ -1,3 +1,4 @@
+import { EmailTemplateModuleNotFoundError } from "@core/common/exceptions/EmailTemplateModuleNotFoundError";
 import { ClientService, EmailService } from "@core/services";
 import { TemplateService } from "@core/services/template.service";
 import { injectable } from "tsyringe";
@@ -10,22 +11,24 @@ export class ClientEmailNewsletterCreatorUseCase {
     private readonly templateService: TemplateService
   ) {}
 
-  async create(clientId: string, email: string) {
+  async create(clientId: string, email: string, companyId?: number) {
     const client = await this.clientService.clientEmailViewByEmail(email);
 
     if (client?.some((item) => item.hasNewsletter)) {
       return null;
     }
 
-    if (!client || !client[0].token) {
+    if (!client?.[0].token) {
       await this.clientService.createEmail({
         clientId,
         email,
         emailType: 1,
       });
 
-      const response = await this.sendEmail(email);
-      console.log(response);
+      const emailCreated =
+        await this.clientService.clientEmailViewByEmail(email);
+
+      await this.sendEmail(email, emailCreated?.[0].token as string, companyId);
     }
 
     await this.clientService.createEmailNewsletter(clientId, 2);
@@ -33,13 +36,35 @@ export class ClientEmailNewsletterCreatorUseCase {
     return true;
   }
 
-  private async sendEmail(email: string, companyId?: number) {
-    const emailTemplate = await this.templateService.viewTemplateEmail(
-      9,
+  private async sendEmail(email: string, token: string, companyId?: number) {
+    const emailTemplateModule =
+      await this.templateService.viewModuleByName("ativacao_email");
+
+    if (!emailTemplateModule) {
+      throw new EmailTemplateModuleNotFoundError(
+        "EmailTemplateModuleNotFoundError"
+      );
+    }
+
+    const companyEmailTemplate = await this.templateService.viewTemplateEmail(
+      emailTemplateModule[0].id,
       companyId
     );
 
-    await this.emailService.send({
+    if (companyEmailTemplate.length) {
+      return await this.emailService.send({
+        to: email,
+        from: companyEmailTemplate[0].fromEmail,
+        html: companyEmailTemplate[0].html ?? "",
+        subject: companyEmailTemplate[0].subject,
+      });
+    }
+
+    const emailTemplate = await this.templateService.viewTemplateEmail(
+      emailTemplateModule[0].id
+    );
+
+    return await this.emailService.send({
       to: email,
       from: emailTemplate[0].fromEmail,
       html: emailTemplate[0].html ?? "",

@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import {
   order,
   orderStatus,
-  orderItem,
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
@@ -15,12 +14,14 @@ import {
   productGroup,
   planItem,
   productGroupProduct,
+  clientSignature,
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { and, count, eq, sql } from "drizzle-orm";
 import {
   ListOrder,
+  ListOrderById,
   OrderPayments,
   PlanDetails,
 } from "@core/interfaces/repositories/order";
@@ -58,13 +59,13 @@ export class OrdersListerRepository {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
           discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
           discount_coupon_value: sql<number>`CASE
-            WHEN ${orderItem.valor_cupom} IS NOT NULL 
-              THEN SUM(${orderItem.valor_cupom}) 
+            WHEN ${order.valor_cupom} IS NOT NULL 
+              THEN SUM(${order.valor_cupom}) 
             ELSE 0
           END`.mapWith(Number),
           discount_product_value: sql<number>`CASE
-            WHEN ${orderItem.desconto_produto} IS NOT NULL 
-              THEN SUM(${orderItem.desconto_produto}) 
+            WHEN ${order.desconto_produto} IS NOT NULL 
+              THEN SUM(${order.desconto_produto}) 
             ELSE 0
           END`.mapWith(Number),
           discount_percentage: sql<number>`CASE 
@@ -86,7 +87,6 @@ export class OrdersListerRepository {
         orderStatus,
         eq(orderStatus.id_pedido_status, order.id_pedido_status)
       )
-      .leftJoin(orderItem, eq(orderItem.id_pedido, order.id_pedido))
       .where(
         and(
           eq(order.id_empresa, tokenKeyData.company_id),
@@ -140,7 +140,7 @@ export class OrdersListerRepository {
           number: orderPayment.pag_cc_numero_cartao,
           credit_card_id: orderPayment.pag_cc_instantbuykey,
         },
-        voucher: orderPayment.pag_hash,
+        voucher: orderPayment.voucher,
         boleto: {
           url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
             THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.url'), NULL)
@@ -165,7 +165,7 @@ export class OrdersListerRepository {
             ELSE NULL
           END`,
         },
-        cycle: orderPayment.assinatura_ciclo,
+        cycle: clientSignature.ciclo,
         created_at: orderPayment.created_at,
         updated_at: orderPayment.updated_at,
       })
@@ -184,6 +184,13 @@ export class OrdersListerRepository {
           orderPayment.id_pedido_pagamento_status
         )
       )
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          orderPayment.id_assinatura_cliente
+        )
+      )
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
 
@@ -194,7 +201,7 @@ export class OrdersListerRepository {
     return result as OrderPayments[];
   }
 
-  private async fetchOrderPlans(tokenKeyData: ITokenKeyData, orderId: string) {
+  private async fetchOrderPlan(tokenKeyData: ITokenKeyData, orderId: string) {
     const result = await this.db
       .select({
         plan_id: plan.id_plano,
@@ -202,7 +209,7 @@ export class OrdersListerRepository {
         visible_site: sql<boolean>`CASE 
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
-        END`,
+        END`.mapWith(Boolean),
         business_id: plan.id_empresa,
         plan: plan.plano,
         image: plan.imagem,
@@ -210,8 +217,7 @@ export class OrdersListerRepository {
         short_description: plan.descricao_curta,
       })
       .from(plan)
-      .innerJoin(orderItem, eq(orderItem.id_plano, plan.id_plano))
-      .innerJoin(order, eq(order.id_pedido, orderItem.id_pedido))
+      .innerJoin(order, eq(order.id_plano, plan.id_plano))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
       .where(
         and(
@@ -223,12 +229,12 @@ export class OrdersListerRepository {
       .execute();
 
     if (result.length === 0) {
-      return [];
+      return null;
     }
 
     const enrichPromises = await this.enrichPlanAndProductGroupsPromises(
       tokenKeyData,
-      result
+      result[0]
     );
 
     return enrichPromises;
@@ -390,7 +396,7 @@ export class OrdersListerRepository {
       async (orderPayments: ListOrder) => ({
         ...orderPayments,
         payments: await this.fetchOrderPayments(orderPayments.order_id),
-        plans: await this.fetchOrderPlans(tokenKeyData, orderPayments.order_id),
+        plan: await this.fetchOrderPlan(tokenKeyData, orderPayments.order_id),
       })
     );
 
@@ -403,24 +409,20 @@ export class OrdersListerRepository {
 
   private async enrichPlanAndProductGroupsPromises(
     tokenKeyData: ITokenKeyData,
-    result: PlanDetails[]
+    plan: PlanDetails
   ) {
-    const enrichPlanPromises = result.map(async (plan: PlanDetails) => ({
+    const [prices, planProducts, productGroups] = await Promise.all([
+      this.fetchPricesByPlan(plan.plan_id),
+      this.fetchPlanProductDetails(tokenKeyData, plan.plan_id),
+      this.fetchPlanProductGroupsDetails(tokenKeyData, plan.plan_id),
+    ]);
+
+    return {
       ...plan,
-      prices: await this.fetchPricesByPlan(plan.plan_id),
-      plan_products: await this.fetchPlanProductDetails(
-        tokenKeyData,
-        plan.plan_id
-      ),
-      product_groups: await this.fetchPlanProductGroupsDetails(
-        tokenKeyData,
-        plan.plan_id
-      ),
-    }));
-
-    const enrichedPlans = await Promise.all(enrichPlanPromises);
-
-    return enrichedPlans;
+      prices,
+      plan_products: planProducts,
+      product_groups: productGroups,
+    };
   }
 
   private async enrichAvailableProductsByProductGroupsPromises(
@@ -441,5 +443,47 @@ export class OrdersListerRepository {
     );
 
     return enrichedProductGroups;
+  }
+
+  async listOrderById(orderId: string): Promise<ListOrderById | null> {
+    const result = await this.db
+      .select({
+        order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
+        order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
+        client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+        company_id: order.id_empresa,
+        status_id: order.id_pedido_status,
+        recurrence: order.recorrencia,
+        recurrence_period: order.recorrencia_periodo,
+        total_price: order.valor_preco,
+        total_discount: order.valor_desconto,
+        total_price_with_discount: order.valor_total,
+        total_previous_order_discount_value:
+          order.valor_desconto_ordem_anterior,
+        total_installments: order.pedido_parcelas_vezes,
+        total_installments_value: order.pedido_parcelas_valor,
+        activation_immediate: order.ativacao_imediata,
+      })
+      .from(order)
+      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result[0] as unknown as ListOrderById;
+  }
+
+  async orderIsExists(orderId: string): Promise<boolean> {
+    const result = await this.db
+      .select({
+        count: count(),
+      })
+      .from(order)
+      .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
+      .execute();
+
+    return result[0].count > 0;
   }
 }

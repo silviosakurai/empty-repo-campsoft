@@ -9,13 +9,9 @@ import { clientSignature } from "@core/models";
 
 @injectable()
 export class CancelSignatureRepository {
-  private db: MySql2Database<typeof schema>;
-
   constructor(
-    @inject("Database") mySql2Database: MySql2Database<typeof schema>
-  ) {
-    this.db = mySql2Database;
-  }
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
 
   async cancel(
     orderNumber: string,
@@ -33,7 +29,10 @@ export class CancelSignatureRepository {
         and(
           eq(clientSignature.id_pedido, sql`UUID_TO_BIN(${orderNumber})`),
           eq(clientSignature.id_empresa, tokenKeyData.company_id),
-          eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
+          eq(
+            clientSignature.id_cliente,
+            sql`UUID_TO_BIN(${tokenJwtData.clientId})`
+          )
         )
       )
       .execute();

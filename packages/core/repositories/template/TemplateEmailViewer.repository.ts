@@ -2,7 +2,7 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { templateEmail, templateModule } from "@core/models/template";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 @injectable()
 export class TemplateEmailViewer {
@@ -28,8 +28,9 @@ export class TemplateEmailViewer {
       )
       .where(
         and(
-          eq(templateModule.id_template_modulo, templateModuleId)
-          // (companyId ? eq(templateEmail.id_empresa, companyId) : '')
+          eq(templateModule.id_template_modulo, templateModuleId),
+          ...(companyId ? [eq(templateEmail.id_empresa, companyId)] : []),
+          ...(!companyId ? [isNull(templateEmail.id_empresa)] : [])
         )
       );
 

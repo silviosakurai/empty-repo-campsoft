@@ -8,6 +8,7 @@ import {
   mysqlEnum,
   double,
   varbinary,
+  boolean,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
@@ -16,13 +17,12 @@ export const order = mysqlTable("pedido", {
     .notNull()
     .primaryKey()
     .default(sql`uuid_to_bin(uuid())`),
+  id_pedido_anterior: varbinary("id_pedido_anterior", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
   id_vendedor: varbinary("id_vendedor", { length: 16 }),
   id_empresa: int("id_empresa").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
-  id_fi_contas_split_regra: int("id_fi_contas_split_regra"),
-  id_fi_zoop_split_regra: int("id_fi_zoop_split_regra"),
-  id_pedido_presenteador: int("id_pedido_presenteador"),
+  id_plano: int("id_plano"),
   recorrencia: mysqlEnum("recorrencia", [
     OrderRecorrencia.NO,
     OrderRecorrencia.YES,
@@ -30,15 +30,17 @@ export const order = mysqlTable("pedido", {
   recorrencia_periodo: int("recorrencia_periodo").notNull().default(1),
   valor_preco: double("valor_preco").notNull().default(0.0),
   valor_desconto: double("valor_desconto").notNull().default(0.0),
+  valor_desconto_ordem_anterior: double("valor_desconto_ordem_anterior")
+    .notNull()
+    .default(0.0),
   valor_total: double("valor_total").notNull().default(0.0),
-  taxa_meio_pagamento: double("taxa_meio_pagamento").notNull(),
+  valor_cupom: double("valor_cupom").notNull().default(0.0),
+  desconto_produto: double("desconto_produto").notNull().default(0.0),
   pedido_parcelas_valor: double("pedido_parcelas_valor"),
   pedido_parcelas_vezes: int("pedido_parcelas_vezes"),
-  id_pedido_origem: int("id_pedido_origem"),
-  id_marketplace: int("id_marketplace"),
-  marketplace_id: varchar("marketplace_id", { length: 50 }),
   cupom_carrinho_codigo: varchar("cupom_carrinho_codigo", { length: 12 }),
   cupom_resgatar_codigo: varchar("cupom_resgatar_codigo", { length: 12 }),
+  ativacao_imediata: boolean("ativacao_imediata").default(true),
   cliente_email: varchar("cliente_email", { length: 100 }),
   cliente_primeiro_nome: varchar("cliente_primeiro_nome", { length: 50 }),
   cliente_ultimo_nome: varchar("cliente_ultimo_nome", { length: 50 }),
