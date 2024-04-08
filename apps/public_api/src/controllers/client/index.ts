@@ -8,6 +8,7 @@ import { passwordRecoveryMethodsClient } from './methods/passwordRecoveryMethods
 import { updatePasswordRecoveryClient } from './methods/updatePasswordRecoveryClient';
 import { deleteClient } from './methods/deleteClient';
 import { viewVoucher } from './methods/viewVoucher';
+import { createClientNewsletter } from './methods/createClientNewsletter';
 import { getBillingAddress } from './methods/getBillingAddress';
 import { getShippingAddress } from './methods/getShippingAddress';
 import { putBillingAddress } from './methods/putBillingAddress';
@@ -24,6 +25,7 @@ class ClientController {
   public passwordRecoveryMethods = passwordRecoveryMethodsClient;
   public updatePasswordRecovery = updatePasswordRecoveryClient;
   public viewVoucher = viewVoucher;
+  public createClientNewsletter = createClientNewsletter;
   public getBillingAddress = getBillingAddress;
   public getShippingAddress = getShippingAddress;
   public putBillingAddress = putBillingAddress;

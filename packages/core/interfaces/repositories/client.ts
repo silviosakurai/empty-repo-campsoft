@@ -16,3 +16,16 @@ export interface IPasswordRecoveryMethods {
   email: string;
   phone: string;
 }
+
+export interface ClientEmailCreatorInput {
+  email: string;
+  emailType: number;
+  clientId: string;
+}
+
+export interface ClientEmailViewResponse {
+  clientId: string;
+  token: string;
+  emailTypeId: number;
+  hasNewsletter: boolean;
+}

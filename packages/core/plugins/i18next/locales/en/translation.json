@@ -21,6 +21,9 @@
   "voucher_not_eligible": "Voucher not eligible!",
   "voucher_not_redeemable": "Voucher not redeemable!",
   "payment_not_found": "Payment not found!",
+<<<<<<< HEAD
+  "email_registered_previously": "Email already registered previously!"
+=======
   "product_not_eligible_for_plan": "Product not eligible for plan!",
   "plan_price_not_found": "Plan price not found!",
   "installments_not_calculated": "Installments not calculated!",
@@ -43,4 +46,5 @@
   "voucher_product_not_eligible": "Voucher product not eligible!",
   "products_not_found": "Products not found!",
   "voucher_activate_now_false": "Voucher cannot be activated later"
+>>>>>>> e12235c627027905a7c7222eae0f241a6373a492
 }
