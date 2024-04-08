@@ -46,6 +46,7 @@ export class SignaturePaidActiveRepository {
       .update(clientSignature)
       .set({
         id_assinatura_status: SignatureStatus.ACTIVE,
+        ciclo: signature.cycle + 1,
         data_inicio: validUntil,
         data_assinatura_ate:
           signature.recurrence.toString() === ClientSignatureRecorrencia.YES

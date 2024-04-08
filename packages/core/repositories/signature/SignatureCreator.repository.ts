@@ -32,7 +32,7 @@ export class SignatureCreatorRepository {
         id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
         id_empresa: tokenKeyData.company_id,
-        ciclo: 1,
+        ciclo: 0,
         id_assinatura_status: SignatureStatus.PENDING,
         id_plano: payload.plan.plan_id,
         recorrencia: payload.subscribe
