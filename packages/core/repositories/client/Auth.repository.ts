@@ -25,7 +25,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
         birth_date: client.data_nascimento,
@@ -66,7 +65,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
         birth_date: client.data_nascimento,
@@ -102,7 +100,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
         birth_date: client.data_nascimento,

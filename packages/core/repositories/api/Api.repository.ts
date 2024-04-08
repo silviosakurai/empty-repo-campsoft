@@ -49,12 +49,7 @@ export class ApiRepository {
       .innerJoin(route, eq(route.id_rota, accessRouteType.id_rota))
       .where(
         and(
-          and(
-            or(
-              eq(apiAccess.api_chave, keyApi),
-              eq(apiAccess.api_chave_sandbox, keyApi)
-            )
-          ),
+          and(eq(apiAccess.api_chave, keyApi)),
           and(
             eq(apiAccess.api_status, ApiStatus.ACTIVE),
             eq(company.status, CompanyStatus.ACTIVE),

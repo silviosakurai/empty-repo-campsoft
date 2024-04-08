@@ -9,11 +9,6 @@ export enum ClientGender {
   FEMALE = "F",
 }
 
-export enum ClientSandbox {
-  YES = "Y",
-  NO = "N",
-}
-
 export enum ClientType {
   CLIENT = 1,
   MANIA_ADMIN = 2,
