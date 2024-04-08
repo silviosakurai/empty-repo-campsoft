@@ -193,8 +193,6 @@ export class PaymentService {
 
   payWithCard = async (
     t: TFunction<"translation", undefined>,
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
     orderId: string,
     payment: Payment | null
   ) => {

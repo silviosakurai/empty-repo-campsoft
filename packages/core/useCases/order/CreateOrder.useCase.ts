@@ -169,13 +169,7 @@ export class CreateOrderUseCase {
     }
 
     if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
-      return this.paymentService.payWithCard(
-        t,
-        tokenKeyData,
-        tokenJwtData,
-        orderId,
-        payload.payment
-      );
+      return this.paymentService.payWithCard(t, orderId, payload.payment);
     }
   }
 
