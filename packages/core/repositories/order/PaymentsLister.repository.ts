@@ -75,7 +75,7 @@ export class PaymentListerRepository {
         clientSignature,
         eq(
           clientSignature.id_assinatura_cliente,
-          sql`UUID_TO_BIN(${orderPayment.id_assinatura_cliente})`
+          orderPayment.id_assinatura_cliente
         )
       )
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))

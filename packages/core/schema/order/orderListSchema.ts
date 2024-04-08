@@ -12,7 +12,7 @@ export const orderListSchema = Type.Object({
   totals: orderTotalsSchema,
   installments: paymentInstallmentsSchema,
   payments: Type.Array(orderPaymentsSchema),
-  plans: Type.Array(planDetailsWithProductsSelectedSchema),
+  plan: Type.Union([planDetailsWithProductsSelectedSchema, Type.Null()]),
   created_at: Type.String({ format: "date-time" }),
   updated_at: Type.String({ format: "date-time" }),
 });

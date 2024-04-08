@@ -67,7 +67,7 @@ export interface OrderByNumberResponse {
   totals: TotalsOrder;
   installments: Installments;
   payments: OrderPayments[];
-  plans: FindOrderByNumberPlans[];
+  plan: FindOrderByNumberPlans | null;
   created_at: string;
   updated_at: string;
 }

@@ -69,7 +69,9 @@ export class OrderByNumberViewerRepository {
         )
       );
 
-    if (!record.length) return null;
+    if (!record.length) {
+      return null;
+    }
 
     const results = await this.completePaymentsAndPlansPromises(
       record[0],
@@ -80,18 +82,18 @@ export class OrderByNumberViewerRepository {
   }
 
   private async completePaymentsAndPlansPromises(
-    result: Omit<OrderByNumberResponse, "payments" | "products" | "plans">,
+    result: Omit<OrderByNumberResponse, "payments" | "products" | "plan">,
     tokenKeyData: ITokenKeyData
-  ): Promise<OrderByNumberResponse> {
-    const recordsFormatted = {
-      ...result,
-      payments: await this.orderPaymentByOrderIdViewer.find(result.order_id),
-      plans: await this.orderPlansByOrderIdViewer.view(
-        result.order_id,
-        tokenKeyData
-      ),
-    };
+  ): Promise<OrderByNumberResponse | null> {
+    const [payments, plan] = await Promise.all([
+      this.orderPaymentByOrderIdViewer.find(result.order_id),
+      this.orderPlansByOrderIdViewer.view(result.order_id, tokenKeyData),
+    ]);
 
-    return recordsFormatted;
+    return {
+      ...result,
+      payments,
+      plan,
+    };
   }
 }

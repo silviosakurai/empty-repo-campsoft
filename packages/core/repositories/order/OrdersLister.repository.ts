@@ -201,7 +201,7 @@ export class OrdersListerRepository {
     return result as OrderPayments[];
   }
 
-  private async fetchOrderPlans(tokenKeyData: ITokenKeyData, orderId: string) {
+  private async fetchOrderPlan(tokenKeyData: ITokenKeyData, orderId: string) {
     const result = await this.db
       .select({
         plan_id: plan.id_plano,
@@ -209,7 +209,7 @@ export class OrdersListerRepository {
         visible_site: sql<boolean>`CASE 
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
-        END`,
+        END`.mapWith(Boolean),
         business_id: plan.id_empresa,
         plan: plan.plano,
         image: plan.imagem,
@@ -229,12 +229,12 @@ export class OrdersListerRepository {
       .execute();
 
     if (result.length === 0) {
-      return [];
+      return null;
     }
 
     const enrichPromises = await this.enrichPlanAndProductGroupsPromises(
       tokenKeyData,
-      result
+      result[0]
     );
 
     return enrichPromises;
@@ -396,7 +396,7 @@ export class OrdersListerRepository {
       async (orderPayments: ListOrder) => ({
         ...orderPayments,
         payments: await this.fetchOrderPayments(orderPayments.order_id),
-        plans: await this.fetchOrderPlans(tokenKeyData, orderPayments.order_id),
+        plan: await this.fetchOrderPlan(tokenKeyData, orderPayments.order_id),
       })
     );
 
@@ -409,24 +409,20 @@ export class OrdersListerRepository {
 
   private async enrichPlanAndProductGroupsPromises(
     tokenKeyData: ITokenKeyData,
-    result: PlanDetails[]
+    plan: PlanDetails
   ) {
-    const enrichPlanPromises = result.map(async (plan: PlanDetails) => ({
+    const [prices, planProducts, productGroups] = await Promise.all([
+      this.fetchPricesByPlan(plan.plan_id),
+      this.fetchPlanProductDetails(tokenKeyData, plan.plan_id),
+      this.fetchPlanProductGroupsDetails(tokenKeyData, plan.plan_id),
+    ]);
+
+    return {
       ...plan,
-      prices: await this.fetchPricesByPlan(plan.plan_id),
-      plan_products: await this.fetchPlanProductDetails(
-        tokenKeyData,
-        plan.plan_id
-      ),
-      product_groups: await this.fetchPlanProductGroupsDetails(
-        tokenKeyData,
-        plan.plan_id
-      ),
-    }));
-
-    const enrichedPlans = await Promise.all(enrichPlanPromises);
-
-    return enrichedPlans;
+      prices,
+      plan_products: planProducts,
+      product_groups: productGroups,
+    };
   }
 
   private async enrichAvailableProductsByProductGroupsPromises(
