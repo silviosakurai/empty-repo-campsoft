@@ -8,3 +8,7 @@ export * from "./userPasswordRecoveryMethodsSchema.validation";
 export * from "./userPasswordRecoveryUpdaterSchema.validation";
 export * from "./getUserVoucherSchema.validation";
 export * from "./createUserNewsletterSchema.validation";
+export * from "./getUserShippingAddressSchema.validation";
+export * from "./getUserBillingAddressSchema.validation";
+export * from "./putUserBillingAddressSchema.validation";
+export * from "./putUserShippingAddressSchema.validation";

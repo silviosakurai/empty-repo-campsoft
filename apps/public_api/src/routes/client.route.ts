@@ -12,6 +12,10 @@ import {
   userPasswordRecoveryUpdaterSchema,
   getUserVoucherSchema,
   createUserNewsletterSchema,
+  getUserShippingAddressSchema,
+  getUserBillingAddressSchema,
+  putUserBillingAddressSchema,
+  putUserShippingAddressSchema,
 } from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -87,5 +91,29 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.createClientNewsletter,
     schema: createUserNewsletterSchema,
+  });
+
+  server.get('/user/billing-address', {
+    schema: getUserBillingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.getBillingAddress,
+  });
+
+  server.get('/user/shipping-address', {
+    schema: getUserShippingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.getShippingAddress,
+  });
+
+  server.put('/user/billing-address', {
+    schema: putUserBillingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.putBillingAddress,
+  });
+
+  server.put('/user/shipping-address', {
+    schema: putUserShippingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.putShippingAddress,
   });
 }
