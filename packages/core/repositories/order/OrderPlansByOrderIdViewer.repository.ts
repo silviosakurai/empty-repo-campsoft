@@ -2,7 +2,7 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { and, eq, sql } from "drizzle-orm";
 import * as schema from "@core/models";
-import { plan, orderItem, order, planPrice } from "@core/models";
+import { plan, order, planPrice } from "@core/models";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PricesByPlanIdListerRepository } from "../plan/PricesByPlanIdLister.repository";
@@ -39,8 +39,7 @@ export class OrderPlansByOrderIdViewerRepository {
         short_description: plan.descricao_curta,
       })
       .from(plan)
-      .innerJoin(orderItem, eq(orderItem.id_plano, plan.id_plano))
-      .innerJoin(order, eq(order.id_pedido, orderItem.id_pedido))
+      .innerJoin(order, eq(order.id_plano, plan.id_plano))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
       .where(
         and(

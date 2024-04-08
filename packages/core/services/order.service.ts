@@ -11,8 +11,10 @@ import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 import {
   CreateOrder,
+  ListOrderById,
   OrderCreatePaymentsCard,
 } from "@core/interfaces/repositories/order";
+import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPaymentCreator.repository";
 
 @injectable()
 export class OrderService {
@@ -20,7 +22,8 @@ export class OrderService {
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
-    private readonly orderCreatorRepository: OrderCreatorRepository
+    private readonly orderCreatorRepository: OrderCreatorRepository,
+    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository
   ) {}
 
   list = async (
@@ -77,6 +80,20 @@ export class OrderService {
       planPrice,
       user,
       totalPricesInstallments
+    );
+  };
+
+  createOrderPayment = async (
+    order: ListOrderById,
+    signatureId: string,
+    methodId: string,
+    voucher: string | null
+  ) => {
+    return this.orderPaymentCreatorRepository.create(
+      order,
+      signatureId,
+      methodId,
+      voucher
     );
   };
 }

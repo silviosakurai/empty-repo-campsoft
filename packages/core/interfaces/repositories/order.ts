@@ -94,6 +94,7 @@ export interface ListOrderById {
   total_price: number;
   total_discount: number;
   total_price_with_discount: number;
+  total_previous_order_discount_value: number;
   total_installments: number;
   total_installments_value: number;
   activation_immediate: boolean;

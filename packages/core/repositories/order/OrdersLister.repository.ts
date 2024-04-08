@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import {
   order,
   orderStatus,
-  orderItem,
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
@@ -15,6 +14,7 @@ import {
   productGroup,
   planItem,
   productGroupProduct,
+  clientSignature,
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -59,13 +59,13 @@ export class OrdersListerRepository {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
           discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
           discount_coupon_value: sql<number>`CASE
-            WHEN ${orderItem.valor_cupom} IS NOT NULL 
-              THEN SUM(${orderItem.valor_cupom}) 
+            WHEN ${order.valor_cupom} IS NOT NULL 
+              THEN SUM(${order.valor_cupom}) 
             ELSE 0
           END`.mapWith(Number),
           discount_product_value: sql<number>`CASE
-            WHEN ${orderItem.desconto_produto} IS NOT NULL 
-              THEN SUM(${orderItem.desconto_produto}) 
+            WHEN ${order.desconto_produto} IS NOT NULL 
+              THEN SUM(${order.desconto_produto}) 
             ELSE 0
           END`.mapWith(Number),
           discount_percentage: sql<number>`CASE 
@@ -87,7 +87,6 @@ export class OrdersListerRepository {
         orderStatus,
         eq(orderStatus.id_pedido_status, order.id_pedido_status)
       )
-      .leftJoin(orderItem, eq(orderItem.id_pedido, order.id_pedido))
       .where(
         and(
           eq(order.id_empresa, tokenKeyData.company_id),
@@ -166,7 +165,7 @@ export class OrdersListerRepository {
             ELSE NULL
           END`,
         },
-        cycle: orderPayment.assinatura_ciclo,
+        cycle: clientSignature.ciclo,
         created_at: orderPayment.created_at,
         updated_at: orderPayment.updated_at,
       })
@@ -183,6 +182,13 @@ export class OrdersListerRepository {
         eq(
           orderPaymentStatus.id_pedido_pagamento_status,
           orderPayment.id_pedido_pagamento_status
+        )
+      )
+      .innerJoin(
+        clientSignature,
+        eq(
+          clientSignature.id_assinatura_cliente,
+          sql`UUID_TO_BIN(${orderPayment.id_assinatura_cliente})`
         )
       )
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
@@ -211,8 +217,7 @@ export class OrdersListerRepository {
         short_description: plan.descricao_curta,
       })
       .from(plan)
-      .innerJoin(orderItem, eq(orderItem.id_plano, plan.id_plano))
-      .innerJoin(order, eq(order.id_pedido, orderItem.id_pedido))
+      .innerJoin(order, eq(order.id_plano, plan.id_plano))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
       .where(
         and(
@@ -457,6 +462,8 @@ export class OrdersListerRepository {
         total_price: order.valor_preco,
         total_discount: order.valor_desconto,
         total_price_with_discount: order.valor_total,
+        total_previous_order_discount_value:
+          order.valor_desconto_ordem_anterior,
         total_installments: order.pedido_parcelas_vezes,
         total_installments_value: order.pedido_parcelas_valor,
         activation_immediate: order.ativacao_imediata,

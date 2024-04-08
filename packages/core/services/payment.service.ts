@@ -13,6 +13,7 @@ import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { Payment } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { SignatureService } from "./signature.service";
 import { OrderService } from "./order.service";
+import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 
 @injectable()
 export class PaymentService {
@@ -188,6 +189,12 @@ export class PaymentService {
 
     if (payment) {
       await this.voucherService.updateVoucher(voucher);
+      await this.orderService.createOrderPayment(
+        order,
+        signature.signature_id,
+        OrderPaymentsMethodsEnum.VOUCHER,
+        voucher
+      );
     }
   };
 

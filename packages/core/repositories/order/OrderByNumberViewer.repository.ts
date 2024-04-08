@@ -1,7 +1,7 @@
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
-import { order, orderStatus, orderItem } from "@core/models";
+import { order, orderStatus, orderPayment } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
 import { OrderPaymentByOrderIdViewerRepository } from "./OrderPaymentByOrderIdViewer.repository";
 import { OrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer.repository";
@@ -32,8 +32,8 @@ export class OrderByNumberViewerRepository {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
           discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
           discount_coupon_value: sql<number>`CASE
-            WHEN ${orderItem.valor_cupom} IS NOT NULL 
-              THEN SUM(${orderItem.valor_cupom}) 
+            WHEN ${order.valor_cupom} IS NOT NULL 
+              THEN SUM(${order.valor_cupom}) 
             ELSE 0
           END`.mapWith(Number),
           discount_percentage: sql<number>`CASE 
@@ -42,8 +42,8 @@ export class OrderByNumberViewerRepository {
             ELSE 0 
           END`.mapWith(Number),
           discount_product_value: sql<number>`CASE
-            WHEN ${orderItem.desconto_produto} IS NOT NULL 
-              THEN SUM(${orderItem.desconto_produto}) 
+            WHEN ${order.desconto_produto} IS NOT NULL 
+              THEN SUM(${order.desconto_produto}) 
             ELSE 0
           END`.mapWith(Number),
           total: sql`${order.valor_total}`.mapWith(Number),
@@ -61,7 +61,6 @@ export class OrderByNumberViewerRepository {
         orderStatus,
         eq(orderStatus.id_pedido_status, order.id_pedido_status)
       )
-      .leftJoin(orderItem, eq(orderItem.id_pedido, order.id_pedido))
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderNumber})`),

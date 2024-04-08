@@ -22,6 +22,7 @@ export const order = mysqlTable("pedido", {
   id_vendedor: varbinary("id_vendedor", { length: 16 }),
   id_empresa: int("id_empresa").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
+  id_plano: int("id_plano"),
   recorrencia: mysqlEnum("recorrencia", [
     OrderRecorrencia.NO,
     OrderRecorrencia.YES,
@@ -33,6 +34,8 @@ export const order = mysqlTable("pedido", {
     .notNull()
     .default(0.0),
   valor_total: double("valor_total").notNull().default(0.0),
+  valor_cupom: double("valor_cupom").notNull().default(0.0),
+  desconto_produto: double("valor_cupom").notNull().default(0.0),
   pedido_parcelas_valor: double("pedido_parcelas_valor"),
   pedido_parcelas_vezes: int("pedido_parcelas_vezes"),
   cupom_carrinho_codigo: varchar("cupom_carrinho_codigo", { length: 12 }),
