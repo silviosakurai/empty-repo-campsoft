@@ -497,7 +497,7 @@ export class SignaturePaidActiveRepository {
   ): Promise<void> {
     const validUntil = currentTime();
 
-    existProductSignatureOld.forEach(async (product) => {
+    for (const product of existProductSignatureOld) {
       await this.db
         .update(clientProductSignature)
         .set({
@@ -517,7 +517,7 @@ export class SignaturePaidActiveRepository {
           )
         )
         .execute();
-    });
+    }
   }
 
   async updateOrCreateSignatureProductsPaidWithVoucher(

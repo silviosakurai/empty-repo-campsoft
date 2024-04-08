@@ -1,7 +1,7 @@
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
-import { order, orderStatus, orderPayment } from "@core/models";
+import { order, orderStatus } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
 import { OrderPaymentByOrderIdViewerRepository } from "./OrderPaymentByOrderIdViewer.repository";
 import { OrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer.repository";
