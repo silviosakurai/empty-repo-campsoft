@@ -36,6 +36,7 @@ export class OrderCreatorRepository {
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
       id_empresa: tokenKeyData.company_id,
       id_pedido_status: OrderStatusEnum.PENDING,
+      id_plano: payload.plan.plan_id ?? null,
       recorrencia: payload.subscribe
         ? OrderRecorrencia.YES
         : OrderRecorrencia.NO,
