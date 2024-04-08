@@ -5,7 +5,6 @@ import {
   mysqlEnum,
   date,
   timestamp,
-  bigint,
   binary,
 } from "drizzle-orm/mysql-core";
 
