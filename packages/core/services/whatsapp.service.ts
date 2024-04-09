@@ -16,6 +16,7 @@ import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 import { extractPhoneNumber } from "@core/common/functions/extractPhoneNumber";
 import { formatDateToString } from "@core/common/functions/formatDateToString";
+import { Twilio } from "twilio";
 
 @injectable()
 export class WhatsappService implements IWhatsappService {
@@ -46,13 +47,17 @@ export class WhatsappService implements IWhatsappService {
   }
 
   private async connection() {
-    const accountSid = whatsappEnvironment.whatsappApiSid;
-    const authToken = whatsappEnvironment.whatsappApiToken;
-    const { Twilio } = await import("twilio");
+    try {
+      const accountSid = whatsappEnvironment.whatsappApiSid;
+      const authToken = whatsappEnvironment.whatsappApiToken;
 
-    const client = new Twilio(accountSid, authToken);
+      const client = new Twilio(accountSid, authToken);
+      return client;
+    } catch (error) {
+      this.logger.error(error);
 
-    return client;
+      throw error;
+    }
   }
 
   private sendPhone(sendPhone: string | null | undefined): string {
