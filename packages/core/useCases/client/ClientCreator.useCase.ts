@@ -69,6 +69,15 @@ export class ClientCreatorUseCase {
       accessTypeId: AccessType.GENERAL,
     });
 
+    this.sendNotification(tokenKeyData, input);
+
+    return userCreated;
+  }
+
+  private sendNotification(
+    tokenKeyData: ITokenKeyData,
+    input: CreateClientRequestDto
+  ) {
     const notificationTemplate = {
       email: input.email,
       phoneNumber: input.phone,
@@ -78,21 +87,19 @@ export class ClientCreatorUseCase {
       name: input.first_name ?? input.last_name,
     } as IReplaceTemplate;
 
-    await this.emailService.sendEmail(
+    this.emailService.sendEmail(
       tokenKeyData,
       notificationTemplate,
       TemplateModulo.CADASTRO,
       replaceTemplate
     );
 
-    await this.whatsappService.sendWhatsapp(
+    this.whatsappService.sendWhatsapp(
       tokenKeyData,
       notificationTemplate,
       TemplateModulo.CADASTRO,
       replaceTemplate
     );
-
-    return userCreated;
   }
 
   validateTypeTfa(
