@@ -14,7 +14,8 @@ export interface LoginUserTFA {
   login: string;
 }
 
-export interface LoginEmail {
-  email: string;
+export interface NotificationTemplate {
+  email?: string;
+  phoneNumber?: string;
   clientId?: string | null;
 }

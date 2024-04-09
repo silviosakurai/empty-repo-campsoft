@@ -12,7 +12,7 @@ import { EmailBlock, EmailType } from "@core/common/enums/models/email";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
-import { LoginEmail } from "@core/interfaces/services/IClient.service";
+import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 
 @injectable()
 export class EmailListerRepository {
@@ -83,7 +83,7 @@ export class EmailListerRepository {
 
   async insertEmailHistory(
     templateId: number,
-    loginEmail: LoginEmail,
+    notificationTemplate: NotificationTemplate,
     sender: string | null,
     emailToken: string,
     sendDate: string
@@ -92,9 +92,9 @@ export class EmailListerRepository {
       .insert(emailHistory)
       .values({
         id_template_email: templateId,
-        id_cliente: loginEmail.clientId ?? null,
+        id_cliente: notificationTemplate.clientId ?? null,
         remetente_email: sender ?? "",
-        destinatario_email: loginEmail.email,
+        destinatario_email: notificationTemplate.email ?? "",
         email_token_externo: emailToken,
         data_envio: sendDate,
       })

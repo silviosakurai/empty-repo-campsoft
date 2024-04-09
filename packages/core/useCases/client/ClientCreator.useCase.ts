@@ -10,9 +10,9 @@ import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 import { CreateClientResponse } from "@core/useCases/client/dtos/CreateClientResponse.dto";
 import { IUserExistsFunction } from "@core/interfaces/repositories/client";
-import { EmailService } from "@core/services";
+import { EmailService, WhatsappService } from "@core/services";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { LoginEmail } from "@core/interfaces/services/IClient.service";
+import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 
@@ -21,7 +21,8 @@ export class ClientCreatorUseCase {
   constructor(
     private readonly clientService: ClientService,
     private readonly accessService: AccessService,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    private readonly whatsappService: WhatsappService
   ) {}
 
   async create(
@@ -68,9 +69,10 @@ export class ClientCreatorUseCase {
       accessTypeId: AccessType.GENERAL,
     });
 
-    const loginEmail = {
+    const notificationTemplate = {
       email: input.email,
-    } as LoginEmail;
+      phoneNumber: input.phone,
+    } as NotificationTemplate;
 
     const replaceTemplate = {
       name: input.first_name ?? input.last_name,
@@ -78,7 +80,14 @@ export class ClientCreatorUseCase {
 
     await this.emailService.sendEmail(
       tokenKeyData,
-      loginEmail,
+      notificationTemplate,
+      TemplateModulo.CADASTRO,
+      replaceTemplate
+    );
+
+    await this.whatsappService.sendWhatsapp(
+      tokenKeyData,
+      notificationTemplate,
       TemplateModulo.CADASTRO,
       replaceTemplate
     );

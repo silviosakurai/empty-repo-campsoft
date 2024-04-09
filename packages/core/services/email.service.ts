@@ -9,7 +9,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
 import { EmailListerRepository } from "@core/repositories/email/EmailLister.repository";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
-import { LoginEmail } from "@core/interfaces/services/IClient.service";
+import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 import { replaceTemplate } from "@core/common/functions/replaceTemplate";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 import { currentTime } from "@core/common/functions/currentTime";
@@ -84,7 +84,7 @@ export class EmailService implements IEmailService {
 
   public async sendEmail(
     tokenKeyData: ITokenKeyData,
-    loginEmail: LoginEmail,
+    notificationTemplate: NotificationTemplate,
     templateModulo: TemplateModulo,
     rTemplate: IReplaceTemplate
   ): Promise<boolean> {
@@ -94,7 +94,7 @@ export class EmailService implements IEmailService {
     const payload = {
       html: template,
       subject: subject,
-      to: loginEmail.email,
+      to: notificationTemplate.email,
       from: sender,
     } as IEmailSendService;
 
@@ -106,7 +106,7 @@ export class EmailService implements IEmailService {
     if (sendEmail) {
       await this.emailListerRepository.insertEmailHistory(
         templateId,
-        loginEmail,
+        notificationTemplate,
         sender,
         emailToken,
         sendDate

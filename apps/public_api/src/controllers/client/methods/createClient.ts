@@ -43,8 +43,6 @@ export const createClient = async (
       httpStatusCode: HTTPStatusCode.CREATED,
     });
   } catch (error) {
-    console.log(error);
-
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {
