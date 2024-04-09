@@ -60,7 +60,7 @@ export class EmailService implements IEmailService {
   public async getTemplateEmailModule(
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo
-  ): Promise<ITemplateEmail> {
+  ): Promise<ITemplateEmail | null> {
     return this.emailListerRepository.getTemplateEmail(
       tokenKeyData,
       templateModulo
@@ -71,11 +71,15 @@ export class EmailService implements IEmailService {
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo,
     rTemplate: IReplaceTemplate
-  ): Promise<ITemplateEmail> {
+  ): Promise<ITemplateEmail | null> {
     const template = await this.getTemplateEmailModule(
       tokenKeyData,
       templateModulo
     );
+
+    if (!template) {
+      return null;
+    }
 
     template.template = replaceTemplate(template.template, rTemplate);
 
@@ -88,14 +92,21 @@ export class EmailService implements IEmailService {
     templateModulo: TemplateModulo,
     rTemplate: IReplaceTemplate
   ): Promise<boolean> {
-    const { template, templateId, subject, sender } =
-      await this.getTemplateEmail(tokenKeyData, templateModulo, rTemplate);
+    const template = await this.getTemplateEmail(
+      tokenKeyData,
+      templateModulo,
+      rTemplate
+    );
+
+    if (!template) {
+      return false;
+    }
 
     const payload = {
-      html: template,
-      subject: subject,
+      html: template.template,
+      subject: template.subject,
       to: notificationTemplate.email,
-      from: sender,
+      from: template.sender,
     } as IEmailSendService;
 
     const sendEmail = await this.send(payload);
@@ -105,9 +116,9 @@ export class EmailService implements IEmailService {
 
     if (sendEmail) {
       await this.emailListerRepository.insertEmailHistory(
-        templateId,
+        template.templateId,
         notificationTemplate,
-        sender,
+        template.sender,
         emailToken,
         sendDate
       );

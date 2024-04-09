@@ -21,7 +21,7 @@ export class WhatsAppListerRepository {
   async getTemplateWhatsapp(
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo
-  ): Promise<ITemplateWhatsapp> {
+  ): Promise<ITemplateWhatsapp | null> {
     const result = await this.db
       .select({
         template: templateWhatsApp.template,
@@ -55,10 +55,10 @@ export class WhatsAppListerRepository {
       .execute();
 
     if (!result.length) {
-      throw new Error("Template not found");
+      return null;
     }
 
-    return result[0] as unknown as ITemplateWhatsapp;
+    return result[0] as ITemplateWhatsapp;
   }
 
   async insertWhatsAppHistory(

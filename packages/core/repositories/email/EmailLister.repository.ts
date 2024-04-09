@@ -40,7 +40,7 @@ export class EmailListerRepository {
   async getTemplateEmail(
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo
-  ): Promise<ITemplateEmail> {
+  ): Promise<ITemplateEmail | null> {
     const result = await this.db
       .select({
         templateId: templateEmail.id_template_email,
@@ -75,10 +75,10 @@ export class EmailListerRepository {
       .execute();
 
     if (!result.length) {
-      throw new Error("Template not found");
+      return null;
     }
 
-    return result[0] as unknown as ITemplateEmail;
+    return result[0] as ITemplateEmail;
   }
 
   async insertEmailHistory(

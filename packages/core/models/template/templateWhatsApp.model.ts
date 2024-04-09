@@ -1,10 +1,4 @@
-import {
-  mysqlTable,
-  int,
-  datetime,
-  varchar,
-  char,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, int, datetime, char, text } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const templateWhatsApp = mysqlTable("template_whatsapp", {
@@ -16,7 +10,7 @@ export const templateWhatsApp = mysqlTable("template_whatsapp", {
   id_template_tipo: int("id_template_tipo").notNull(),
   id_template_modulo: int("id_template_modulo").notNull(),
   nome: char("nome", { length: 50 }),
-  template: varchar("template", { length: 200 }),
+  template: text("template"),
   created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

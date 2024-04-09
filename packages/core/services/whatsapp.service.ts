@@ -69,7 +69,7 @@ export class WhatsappService implements IWhatsappService {
   public async getTemplateWhatsappModule(
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo
-  ): Promise<ITemplateWhatsapp> {
+  ): Promise<ITemplateWhatsapp | null> {
     return this.whatsAppListerRepository.getTemplateWhatsapp(
       tokenKeyData,
       templateModulo
@@ -80,11 +80,15 @@ export class WhatsappService implements IWhatsappService {
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo,
     rTemplate: IReplaceTemplate
-  ): Promise<ITemplateWhatsapp> {
+  ): Promise<ITemplateWhatsapp | null> {
     const template = await this.getTemplateWhatsappModule(
       tokenKeyData,
       templateModulo
     );
+
+    if (!template) {
+      return null;
+    }
 
     template.template = replaceTemplate(template.template, rTemplate);
 
@@ -97,15 +101,19 @@ export class WhatsappService implements IWhatsappService {
     templateModulo: TemplateModulo,
     rTemplate: IReplaceTemplate
   ): Promise<boolean> {
-    const { template, templateId } = await this.getTemplateWhatsapp(
+    const template = await this.getTemplateWhatsapp(
       tokenKeyData,
       templateModulo,
       rTemplate
     );
 
+    if (!template) {
+      return false;
+    }
+
     const payload = {
       target_phone: notificationTemplate.phoneNumber,
-      message: template,
+      message: template.template,
     } as IWhatsappServiceInput;
 
     const sendWA = await this.send(payload);
@@ -116,7 +124,7 @@ export class WhatsappService implements IWhatsappService {
       const sendDate = formatDateToString(sendWA.dateCreated);
 
       await this.whatsAppListerRepository.insertWhatsAppHistory(
-        templateId,
+        template.templateId,
         notificationTemplate,
         sender,
         whatsappToken,
