@@ -14,7 +14,6 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { formatDateToString } from "@core/common/functions/formatDateToString";
 import { ISmsSentMessageResponse } from "@core/interfaces/services/ISms.service";
 import { currentTime } from "@core/common/functions/currentTime";
-import { SendEmailCommandOutput } from "@aws-sdk/client-ses";
 import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 

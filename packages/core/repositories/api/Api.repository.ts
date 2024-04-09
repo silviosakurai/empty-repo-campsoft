@@ -10,7 +10,7 @@ import {
   client,
   tfaCodes,
 } from "@core/models";
-import { and, eq, or, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { ApiStatus } from "@core/common/enums/models/api";
 import { CompanyStatus } from "@core/common/enums/models/company";
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
