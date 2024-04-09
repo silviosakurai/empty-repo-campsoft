@@ -11,7 +11,6 @@ import {
   userPasswordRecoveryMethodsSchema,
   userPasswordRecoveryUpdaterSchema,
   getUserVoucherSchema,
-  createUserNewsletterSchema,
   getUserShippingAddressSchema,
   getUserBillingAddressSchema,
   putUserBillingAddressSchema,
@@ -85,12 +84,6 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: getUserVoucherSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.viewVoucher,
-  });
-
-  server.post('/user/newsletter', {
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-    handler: clientController.createClientNewsletter,
-    schema: createUserNewsletterSchema,
   });
 
   server.get('/user/billing-address', {
