@@ -6,8 +6,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 
 async function validateClientCreation(
-  request: FastifyRequest<{ Body: CreateClientRequestDto }>,
-  reply: FastifyReply
+  request: FastifyRequest<{ Body: CreateClientRequestDto }>
 ) {
   const clientUseCase = container.resolve(ClientCreatorUseCase);
   const { t, tokenTfaData } = request;
@@ -18,6 +17,7 @@ async function validateClientCreation(
 
   if (!validateType) {
     request.server.logger.warn(validateType, request.id);
+
     throw new Error(t('phone_not_match_token'));
   }
 }
@@ -27,7 +27,7 @@ async function createClientHandler(
   reply: FastifyReply
 ) {
   try {
-    await validateClientCreation(request, reply);
+    await validateClientCreation(request);
 
     const clientUseCase = container.resolve(ClientCreatorUseCase);
     const { tokenKeyData } = request;
