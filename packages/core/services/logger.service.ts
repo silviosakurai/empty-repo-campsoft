@@ -39,12 +39,32 @@ export class LoggerService implements ILoggerService {
     return sanitizedMessage;
   }
 
-  private getObjectMessage(message: any) {
-    if (typeof message === "object") {
-      return JSON.stringify(message);
+  private getObjectMessage(message: any): string {
+    if (message === null) {
+      return "null";
     }
 
-    return message;
+    if (typeof message === "string") {
+      return message.toString();
+    }
+
+    if (typeof message === "number") {
+      return message.toString();
+    }
+
+    if (typeof message === "boolean") {
+      return message.toString();
+    }
+
+    if (typeof message === "object") {
+      try {
+        return JSON.stringify(message);
+      } catch (error) {
+        return "Log message serialization failed";
+      }
+    }
+
+    return String(message);
   }
 
   private parseMessage(message: any, requestId?: string) {

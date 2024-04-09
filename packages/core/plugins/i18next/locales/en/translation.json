@@ -43,5 +43,6 @@
   "voucher_product_ids_not_found": "Voucher product ids not found!",
   "voucher_product_not_eligible": "Voucher product not eligible!",
   "products_not_found": "Products not found!",
-  "voucher_activate_now_false": "Voucher cannot be activated later"
+  "voucher_activate_now_false": "Voucher cannot be activated later",
+  "email_disposable_not_allowed": "Disposable email not allowed!"
 }

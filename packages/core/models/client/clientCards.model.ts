@@ -1,8 +1,18 @@
-import { mysqlTable, tinyint, datetime, char } from "drizzle-orm/mysql-core";
+import {
+  mysqlTable,
+  tinyint,
+  datetime,
+  char,
+  varbinary,
+} from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const clientCards = mysqlTable("cliente_cartoes", {
-  card_id: char("card_id", { length: 40 }),
+  card_id: varbinary("id_assinatura_cliente", { length: 16 })
+    .default("uuid_to_bin(uuid())")
+    .notNull()
+    .primaryKey(),
+  id_cliente: varbinary("id_cliente", { length: 16 }),
   fingerprint: char("fingerprint", { length: 30 }),
   valid: tinyint("valid"),
   brand: char("brand", { length: 20 }),

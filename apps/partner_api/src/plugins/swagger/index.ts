@@ -21,7 +21,7 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           'Seja bem-vindo ao Mania de App! Nesta documentação, apresentaremos uma visão detalhada da API. Através deste guia, você obterá uma compreensão abrangente do desenvolvimento, implementação e manutenção deste projeto.',
         version: '1.0.0',
       },
-      host: generalEnvironment.appUrlPublic,
+      host: generalEnvironment.appUrlPartner,
       schemes: [generalEnvironment.protocol],
       consumes: ['application/json'],
       securityDefinitions: {
@@ -37,58 +37,12 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           name: 'keyapi',
           description: 'Chave API para autenticação',
         },
-        authenticateTfa: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'tokentfa',
-          description: 'Chave TFA para autenticação',
-        },
       },
       produces: ['application/json'],
       tags: [
         {
-          name: TagSwagger.authentication,
-          description: 'End-points relacionados à autenticação',
-        },
-        {
-          name: TagSwagger.banner,
-          description: 'End-points relacionados ao banner',
-        },
-        {
-          name: TagSwagger.cart,
-          description: 'End-points relacionados ao carrinho de compras',
-        },
-        {
-          name: TagSwagger.health,
-          description: 'End-points relacionados à saúde da aplicação',
-        },
-        {
-          name: TagSwagger.order,
-          description: 'End-points relacionados ao pedido',
-        },
-        {
-          name: TagSwagger.plan,
-          description: 'End-points relacionados ao plano',
-        },
-        {
           name: TagSwagger.product,
           description: 'End-points relacionados ao produto',
-        },
-        {
-          name: TagSwagger.review,
-          description: 'End-points relacionados à avaliação',
-        },
-        {
-          name: TagSwagger.tfa,
-          description: 'End-points relacionados ao TFA',
-        },
-        {
-          name: TagSwagger.user,
-          description: 'End-points relacionados ao usuário',
-        },
-        {
-          name: TagSwagger.voucher,
-          description: 'End-points relacionados ao voucher',
         },
       ],
     },

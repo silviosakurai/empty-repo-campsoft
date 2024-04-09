@@ -10,7 +10,7 @@ import {
   client,
   tfaCodes,
 } from "@core/models";
-import { and, eq, or, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { ApiStatus } from "@core/common/enums/models/api";
 import { CompanyStatus } from "@core/common/enums/models/company";
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
@@ -49,12 +49,7 @@ export class ApiRepository {
       .innerJoin(route, eq(route.id_rota, accessRouteType.id_rota))
       .where(
         and(
-          and(
-            or(
-              eq(apiAccess.api_chave, keyApi),
-              eq(apiAccess.api_chave_sandbox, keyApi)
-            )
-          ),
+          and(eq(apiAccess.api_chave, keyApi)),
           and(
             eq(apiAccess.api_status, ApiStatus.ACTIVE),
             eq(company.status, CompanyStatus.ACTIVE),

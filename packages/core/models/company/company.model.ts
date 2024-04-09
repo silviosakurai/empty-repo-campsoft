@@ -9,7 +9,6 @@ import {
 
 export const company = mysqlTable("empresa", {
   id_empresa: int("id_empresa").notNull().primaryKey(),
-  id_empresa_pai: int("id_empresa_pai"),
   id_api_acesso: int("id_api_acesso"),
   id_empresa_tipo: int("id_empresa_tipo"),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),

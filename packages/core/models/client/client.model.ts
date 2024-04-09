@@ -1,15 +1,10 @@
-import {
-  ClientGender,
-  ClientSandbox,
-  ClientStatus,
-} from "@core/common/enums/models/client";
+import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import {
   mysqlTable,
   varchar,
   mysqlEnum,
   date,
   timestamp,
-  bigint,
   binary,
 } from "drizzle-orm/mysql-core";
 
@@ -25,7 +20,6 @@ export const client = mysqlTable("cliente", {
   ])
     .notNull()
     .default(ClientStatus.ACTIVE),
-  id_facebook: bigint("id_facebook", { mode: "bigint", unsigned: true }),
   nome: varchar("nome", { length: 50 }),
   sobrenome: varchar("sobrenome", { length: 50 }),
   data_nascimento: date("data_nascimento"),
@@ -34,14 +28,7 @@ export const client = mysqlTable("cliente", {
   telefone: varchar("telefone", { length: 11 }).notNull(),
   cpf: varchar("cpf", { length: 11 }),
   senha: varchar("senha", { length: 65 }),
-  senha_campsoft: varchar("senha_campsoft", { length: 100 }),
   sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
-  cliente_hash: varchar("cliente_hash", { length: 32 }),
-  cliente_zoop_producao: varchar("cliente_zoop_producao", { length: 32 }),
-  cliente_zoop_sandbox: varchar("cliente_zoop_sandbox", { length: 32 }),
-  sandbox: mysqlEnum("sandbox", [ClientSandbox.YES, ClientSandbox.NO]).default(
-    ClientSandbox.NO
-  ),
   obs: varchar("obs", { length: 50 }),
   created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),

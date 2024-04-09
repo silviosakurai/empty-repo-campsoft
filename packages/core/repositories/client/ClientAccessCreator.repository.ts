@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "@core/models";
+import { clientCompanyData } from "@core/models";
 import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
 import { sql } from "drizzle-orm";
 
@@ -12,12 +13,13 @@ export class ClientAccessCreatorRepository {
 
   async create(input: IClientConnectClientAndCompany): Promise<boolean> {
     const result = await this.db
-      .insert(schema.clientCompanyData)
+      .insert(clientCompanyData)
       .values({
         id_cliente: sql`UUID_TO_BIN(${input.clientId})`,
         id_empresa: input.companyId,
         cpf: input.cpf,
         telefone: input.phoneNumber,
+        email: input.email,
         status: input.status,
       })
       .execute();

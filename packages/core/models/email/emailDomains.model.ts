@@ -6,7 +6,7 @@ export const emailDomains = mysqlTable("email_dominios", {
     .notNull()
     .primaryKey()
     .autoincrement(),
-  email: varchar("email_disposable", { length: 100 }).notNull(),
+  email: varchar("email", { length: 100 }).notNull(),
   tipo: mysqlEnum("tipo", [EmailType.DISPOSABLE, EmailType.GRATIS]),
   bloquear: mysqlEnum("bloquear", [EmailBlock.YES, EmailBlock.NO]),
 });
