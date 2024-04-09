@@ -1,20 +1,46 @@
+import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { inject, injectable } from "tsyringe";
-import { templateEmail, templateModule, emailHistory } from "@core/models";
-import { and, desc, eq, or, sql } from "drizzle-orm";
-import { TemplateModulo } from "@core/common/enums/TemplateMessage";
-import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
-import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
+import {
+  emailDomains,
+  templateEmail,
+  templateModule,
+  emailHistory,
+} from "@core/models";
+import { and, count, eq, like, sql, or, desc } from "drizzle-orm";
+import { EmailBlock, EmailType } from "@core/common/enums/models/email";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
+import { TemplateModulo } from "@core/common/enums/TemplateMessage";
+import { LoginEmail } from "@core/interfaces/services/IClient.service";
 
 @injectable()
-export class TfaCodesEmail {
+export class EmailListerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async getTemplateEmail(tokenKeyData: ITokenKeyData): Promise<ITemplateEmail> {
+  async isEmailDisposable(emailDomain: string): Promise<boolean> {
+    const results = await this.db
+      .select({
+        total: count(),
+      })
+      .from(emailDomains)
+      .where(
+        and(
+          like(emailDomains.email, emailDomain),
+          eq(emailDomains.tipo, EmailType.DISPOSABLE),
+          eq(emailDomains.bloquear, EmailBlock.YES)
+        )
+      );
+
+    return results[0].total > 0;
+  }
+
+  async getTemplateEmail(
+    tokenKeyData: ITokenKeyData,
+    templateModulo: TemplateModulo
+  ): Promise<ITemplateEmail> {
     const result = await this.db
       .select({
         templateId: templateEmail.id_template_email,
@@ -33,14 +59,14 @@ export class TfaCodesEmail {
         or(
           and(
             eq(templateEmail.id_empresa, tokenKeyData.company_id),
-            eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
+            eq(templateModule.modulo, templateModulo)
           ),
           and(
             eq(
               templateEmail.id_empresa,
               sql`${templateEmail.id_empresa} IS NULL`
             ),
-            eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
+            eq(templateModule.modulo, templateModulo)
           )
         )
       )
@@ -57,7 +83,7 @@ export class TfaCodesEmail {
 
   async insertEmailHistory(
     templateId: number,
-    loginUserTFA: LoginUserTFA,
+    loginEmail: LoginEmail,
     sender: string | null,
     emailToken: string,
     sendDate: string
@@ -66,9 +92,9 @@ export class TfaCodesEmail {
       .insert(emailHistory)
       .values({
         id_template_email: templateId,
-        id_cliente: loginUserTFA.clientId ?? null,
+        id_cliente: loginEmail.clientId ?? null,
         remetente_email: sender ?? "",
-        destinatario_email: loginUserTFA.login,
+        destinatario_email: loginEmail.email,
         email_token_externo: emailToken,
         data_envio: sendDate,
       })

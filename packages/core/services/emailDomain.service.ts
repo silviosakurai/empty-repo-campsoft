@@ -1,4 +1,4 @@
-import { EmailListerRepository } from "@core/repositories/email/ReviewLister.repository";
+import { EmailListerRepository } from "@core/repositories/email/EmailLister.repository";
 import { injectable } from "tsyringe";
 
 @injectable()

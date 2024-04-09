@@ -27,10 +27,7 @@ export const createClient = async (
       });
     }
 
-    const response = await clientUseCase.create(
-      tokenKeyData.company_id,
-      request.body
-    );
+    const response = await clientUseCase.create(tokenKeyData, request.body);
 
     if (!response) {
       request.server.logger.warn(response, request.id);

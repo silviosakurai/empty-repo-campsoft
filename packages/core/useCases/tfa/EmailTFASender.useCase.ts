@@ -1,12 +1,10 @@
 import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
-import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
 import { EmailService } from "@core/services/email.service";
-import { replaceTemplate } from "@core/common/functions/replaceTemplate";
+import { LoginEmail } from "@core/interfaces/services/IClient.service";
+import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
-import { IEmailSendService } from "@core/interfaces/services/IEmail.service";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class EmailTFASenderUserCase {
@@ -21,42 +19,25 @@ export class EmailTFASenderUserCase {
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
     const code = await this.tfaService.generateAndVerifyToken();
-    const { template, templateId, subject, sender } =
-      await this.getTemplateEmail(tokenKeyData, code);
 
-    const payload = {
-      html: template,
-      subject: subject,
-      to: loginUserTFA.login,
-      from: sender,
-    } as IEmailSendService;
+    const loginEmail = {
+      email: loginUserTFA.login,
+      clientId: loginUserTFA.clientId,
+    } as LoginEmail;
 
-    const sendEmail = await this.emailService.send(payload);
+    const replaceTemplate = {
+      code,
+    } as IReplaceTemplate;
 
-    if (sendEmail) {
-      await this.tfaService.insertEmailHistory(
-        templateId,
-        loginUserTFA,
-        sender,
-        sendEmail
-      );
-    }
+    await this.emailService.sendEmail(
+      tokenKeyData,
+      loginEmail,
+      TemplateModulo.CODIGO_TFA,
+      replaceTemplate
+    );
 
     await this.tfaService.insertCodeUser(type, loginUserTFA, code);
 
     return true;
-  }
-
-  async getTemplateEmail(
-    tokenKeyData: ITokenKeyData,
-    code: string
-  ): Promise<ITemplateEmail> {
-    const template = await this.tfaService.getTemplateEmail(tokenKeyData);
-
-    template.template = replaceTemplate(template.template, {
-      code,
-    } as IReplaceTemplate);
-
-    return template;
   }
 }

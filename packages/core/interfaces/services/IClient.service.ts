@@ -13,3 +13,8 @@ export interface LoginUserTFA {
   clientId: string | null;
   login: string;
 }
+
+export interface LoginEmail {
+  email: string;
+  clientId?: string | null;
+}

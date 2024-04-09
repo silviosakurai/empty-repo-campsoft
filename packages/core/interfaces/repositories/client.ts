@@ -29,3 +29,9 @@ export interface ClientEmailViewResponse {
   emailTypeId: number;
   hasNewsletter: boolean;
 }
+
+export interface IUserExistsFunction {
+  email: string;
+  cpf: string;
+  phone: string;
+}
