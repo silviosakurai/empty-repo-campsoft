@@ -35,6 +35,7 @@ async function createClientHandler(
 
     if (!response) {
       request.server.logger.warn(response, request.id);
+
       throw new Error(request.t('previously_registered_user'));
     }
 
