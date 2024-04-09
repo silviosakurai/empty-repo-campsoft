@@ -20,7 +20,7 @@ export const clientCompanyData = mysqlTable("cliente_empresa_dados", {
     .default(ClientCompanyStatus.ACTIVE),
   cpf: varchar("cpf", { length: 11 }),
   telefone: varchar("telefone", { length: 11 }),
-  email: varchar("email", { length: 100 }).notNull().default("ativo"),
+  email: varchar("email", { length: 100 }),
   created_at: datetime("created_at", { mode: "string" }).default(
     sql`CURRENT_TIMESTAMP`
   ),

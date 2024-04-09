@@ -5,6 +5,7 @@ export interface IClientConnectClientAndCompany {
   companyId: number;
   cpf?: string;
   phoneNumber?: string;
+  email?: string;
   status?: ClientCompanyStatus;
 }
 

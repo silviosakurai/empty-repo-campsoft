@@ -50,6 +50,7 @@ export class ClientCreatorUseCase {
       clientId: userCreated.user_id,
       companyId,
       cpf: input.cpf,
+      email: input.email,
       phoneNumber: input.phone,
       status: ClientCompanyStatus.ACTIVE,
     });
