@@ -55,6 +55,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           description: 'End-points relacionados ao banner',
         },
         {
+          name: TagSwagger.cart,
+          description: 'End-points relacionados ao carrinho de compras',
+        },
+        {
           name: TagSwagger.health,
           description: 'End-points relacionados à saúde da aplicação',
         },
@@ -71,20 +75,20 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           description: 'End-points relacionados ao produto',
         },
         {
-          name: TagSwagger.tfa,
-          description: 'End-points relacionados ao TFA',
+          name: TagSwagger.review,
+          description: 'End-points relacionados à avaliação',
         },
         {
-          name: TagSwagger.voucher,
-          description: 'End-points relacionados ao voucher',
+          name: TagSwagger.tfa,
+          description: 'End-points relacionados ao TFA',
         },
         {
           name: TagSwagger.user,
           description: 'End-points relacionados ao usuário',
         },
         {
-          name: TagSwagger.review,
-          description: 'End-points relacionados à avaliação',
+          name: TagSwagger.voucher,
+          description: 'End-points relacionados ao voucher',
         },
       ],
     },
