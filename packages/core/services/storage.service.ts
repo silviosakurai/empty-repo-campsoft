@@ -24,7 +24,7 @@ export class StorageService implements IStorageService {
       await this.client.send(command);
       return this.createUrl(clientId);
     } catch (err) {
-      console.log('StorageService : uploadImage : err:', err)
+      console.error('StorageService : uploadImage : err:', err)
       return null;
     }
   }
