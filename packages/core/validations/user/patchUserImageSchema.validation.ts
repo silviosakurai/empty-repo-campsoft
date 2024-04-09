@@ -3,8 +3,8 @@ import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { userPutAddressResponseSchema } from "@core/schema/user/userPutAddressResponseSchema";
 
-export const putUserBillingAddressSchema = {
-  description: "Atualiza ou adiciona o endereço de cobrança",
+export const patchUserImageSchemaSchema = {
+  description: "Altera a imagem do usuario logado",
   tags: [TagSwagger.user],
   produces: ["application/json"],
   security: [
@@ -23,15 +23,7 @@ export const putUserBillingAddressSchema = {
     ),
   }),
   body: Type.Object({
-    shipping_address: Type.Optional(Type.Boolean()),
-    zip_code: Type.String(),
-    street: Type.String(),
-    number: Type.String(),
-    complement: Type.String(),
-    neighborhood: Type.String(),
-    phone: Type.String(),
-    city: Type.String(),
-    state: Type.String(),
+    image: Type.String(),
   }),
   response: {
     200: Type.Object(
