@@ -81,23 +81,15 @@ export class ClientService {
     return this.clientCreatorRepository.create(input);
   };
 
-  createAddressBilling = async (
+  createAddress = async (
     userId: string,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
   ) => {
-    return this.clientAddressCreatorRepository.createAddressBilling(
+    return this.clientAddressCreatorRepository.createAddress(
       userId,
-      data
-    );
-  };
-
-  createAddressShipping = async (
-    userId: string,
-    data: UpdateClientAddressRequest
-  ) => {
-    return this.clientAddressCreatorRepository.createAddressShipping(
-      userId,
-      data
+      data,
+      clientAddress
     );
   };
 
@@ -120,23 +112,15 @@ export class ClientService {
     return this.clientPasswordUpdaterRepository.update(tokenTfaData, newPass);
   };
 
-  updateAddressBilling = async (
+  updateAddress = async (
     userId: string,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
   ) => {
-    return this.clientAddressUpdaterRepository.updateAddressBilling(
+    return this.clientAddressUpdaterRepository.updateAddress(
       userId,
-      data
-    );
-  };
-
-  updateAddressShipping = async (
-    userId: string,
-    data: UpdateClientAddressRequest
-  ) => {
-    return this.clientAddressUpdaterRepository.updateAddressShipping(
-      userId,
-      data
+      data,
+      clientAddress
     );
   };
 

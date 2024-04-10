@@ -4,6 +4,7 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { ClientAddressUpdaterUseCase } from '@core/useCases/client/ClientAddressUpdater.useCase';
 import { UpdateClientAddressRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
+import { ClientAddress } from '@core/common/enums/models/client';
 
 export const putBillingAddress = async (
   request: FastifyRequest<{
@@ -17,9 +18,10 @@ export const putBillingAddress = async (
   );
 
   try {
-    const update = await clientAddressUpdaterUseCase.updateBilling(
+    const update = await clientAddressUpdaterUseCase.update(
       tokenJwtData.clientId,
-      request.body
+      request.body,
+      ClientAddress.BILLING
     );
 
     if (!update) {

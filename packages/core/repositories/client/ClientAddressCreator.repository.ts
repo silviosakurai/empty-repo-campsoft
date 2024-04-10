@@ -15,43 +15,16 @@ export class ClientAddressCreatorRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async createAddressBilling(
+  async createAddress(
     userId: string,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAdd: ClientAddress
   ): Promise<boolean> {
     const result = await this.db
       .insert(clientAddress)
       .values({
         id_cliente: sql`UUID_TO_BIN(${userId})`,
-        tipo: ClientAddress.BILLING,
-        endereco_envio: ClientShippingAddress.NO,
-        cep: data.zip_code,
-        rua: data.street,
-        numero: data.number,
-        complemento: data.complement,
-        bairro: data.neighborhood,
-        cidade: data.city,
-        uf: data.state,
-        telefone: data.phone,
-      })
-      .execute();
-
-    if (!result.length) {
-      return false;
-    }
-
-    return true;
-  }
-
-  async createAddressShipping(
-    userId: string,
-    data: UpdateClientAddressRequest
-  ): Promise<boolean> {
-    const result = await this.db
-      .insert(clientAddress)
-      .values({
-        id_cliente: sql`UUID_TO_BIN(${userId})`,
-        tipo: ClientAddress.SHIPPING,
+        tipo: clientAdd,
         endereco_envio: ClientShippingAddress.NO,
         cep: data.zip_code,
         rua: data.street,

@@ -15,9 +15,10 @@ export class ClientAddressUpdaterRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async updateAddressBilling(
+  async updateAddress(
     userId: string,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAdd: ClientAddress
   ): Promise<boolean> {
     const result = await this.db
       .update(clientAddress)
@@ -34,38 +35,7 @@ export class ClientAddressUpdaterRepository {
       .where(
         and(
           eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(clientAddress.tipo, ClientAddress.BILLING)
-        )
-      )
-      .execute();
-
-    if (!result[0].affectedRows) {
-      return false;
-    }
-
-    return true;
-  }
-
-  async updateAddressShipping(
-    userId: string,
-    data: UpdateClientAddressRequest
-  ): Promise<boolean> {
-    const result = await this.db
-      .update(clientAddress)
-      .set({
-        cep: data.zip_code,
-        rua: data.street,
-        numero: data.number,
-        complemento: data.complement,
-        bairro: data.neighborhood,
-        cidade: data.city,
-        uf: data.state,
-        telefone: data.phone,
-      })
-      .where(
-        and(
-          eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(clientAddress.tipo, ClientAddress.SHIPPING)
+          eq(clientAddress.tipo, clientAdd)
         )
       )
       .execute();

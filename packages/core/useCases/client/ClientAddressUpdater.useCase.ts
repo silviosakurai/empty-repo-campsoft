@@ -13,30 +13,26 @@ import {
 export class ClientAddressUpdaterUseCase {
   constructor(private readonly clientService: ClientService) {}
 
-  async updateBilling(
-    clientId: string,
-    data: UpdateClientAddressRequest
-  ): Promise<boolean> {
-    const addressExists = await this.clientService.viewBilling(clientId);
-
-    if (!addressExists) {
-      return this.clientService.createAddressBilling(clientId, data);
+  async addressExists(clientId: string, clientAddress: ClientAddress) {
+    if (clientAddress === ClientAddress.BILLING) {
+      return this.clientService.viewBilling(clientId);
     }
 
-    return this.clientService.updateAddressBilling(clientId, data);
+    return this.clientService.viewShipping(clientId);
   }
 
-  async updateShipping(
+  async update(
     clientId: string,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
   ): Promise<boolean> {
-    const addressExists = await this.clientService.viewShipping(clientId);
+    const addressExists = await this.addressExists(clientId, clientAddress);
 
     if (!addressExists) {
-      return this.clientService.createAddressShipping(clientId, data);
+      return this.clientService.createAddress(clientId, data, clientAddress);
     }
 
-    return this.clientService.updateAddressShipping(clientId, data);
+    return this.clientService.updateAddress(clientId, data, clientAddress);
   }
 
   async updateShippingAddress(
