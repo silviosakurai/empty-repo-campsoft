@@ -46,5 +46,7 @@
   "voucher_activate_now_false": "Voucher cannot be activated later",
   "email_disposable_not_allowed": "Disposable email not allowed!",
   "billing_address_not_found": "Billing address not found!",
-  "shipping_address_not_found": "Shipping address not found!"
+  "shipping_address_not_found": "Shipping address not found!",
+  "error_updating_shipping_address": "Error updating shipping address!",
+  "error_updating_billing_address": "Error updating billing address!"
 }

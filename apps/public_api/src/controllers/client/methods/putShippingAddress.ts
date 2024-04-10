@@ -3,11 +3,11 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { ClientAddressUpdaterUseCase } from '@core/useCases/client/ClientAddressUpdater.useCase';
-import { UpdateClientAddressShippingRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
+import { UpdateClientAddressRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
 
 export const putShippingAddress = async (
   request: FastifyRequest<{
-    Body: UpdateClientAddressShippingRequest;
+    Body: UpdateClientAddressRequest;
   }>,
   reply: FastifyReply
 ) => {
@@ -17,13 +17,19 @@ export const putShippingAddress = async (
   );
 
   try {
-    await clientAddressUpdaterUseCase.updateShipping(
+    const update = await clientAddressUpdaterUseCase.updateShipping(
       tokenJwtData.clientId,
       request.body
     );
 
+    if (!update) {
+      return sendResponse(reply, {
+        message: t('error_updating_shipping_address'),
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
+
     return sendResponse(reply, {
-      data: request.body,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {

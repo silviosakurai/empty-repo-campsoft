@@ -7,10 +7,7 @@ import {
   ClientAddress,
   ClientShippingAddress,
 } from "@core/common/enums/models/client";
-import {
-  UpdateClientAddressBillingRequest,
-  UpdateClientAddressShippingRequest,
-} from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
+import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
 
 @injectable()
 export class ClientAddressCreatorRepository {
@@ -20,7 +17,7 @@ export class ClientAddressCreatorRepository {
 
   async createAddressBilling(
     userId: string,
-    data: UpdateClientAddressBillingRequest
+    data: UpdateClientAddressRequest
   ): Promise<boolean> {
     const result = await this.db
       .insert(clientAddress)
@@ -48,7 +45,7 @@ export class ClientAddressCreatorRepository {
 
   async createAddressShipping(
     userId: string,
-    data: UpdateClientAddressShippingRequest
+    data: UpdateClientAddressRequest
   ): Promise<boolean> {
     const result = await this.db
       .insert(clientAddress)

@@ -1,8 +1,8 @@
 import { injectable } from "tsyringe";
 import { ClientService } from "@core/services/client.service";
 import {
-  UpdateClientAddressBillingRequest,
-  UpdateClientAddressShippingRequest,
+  PatchClientAddressResponse,
+  UpdateClientAddressRequest,
 } from "./dtos/UpdateClientAddressRequest.dto";
 import {
   ClientAddress,
@@ -15,7 +15,7 @@ export class ClientAddressUpdaterUseCase {
 
   async updateBilling(
     clientId: string,
-    data: UpdateClientAddressBillingRequest
+    data: UpdateClientAddressRequest
   ): Promise<boolean> {
     const addressExists = await this.clientService.viewBilling(clientId);
 
@@ -28,7 +28,7 @@ export class ClientAddressUpdaterUseCase {
 
   async updateShipping(
     clientId: string,
-    data: UpdateClientAddressShippingRequest
+    data: UpdateClientAddressRequest
   ): Promise<boolean> {
     const addressExists = await this.clientService.viewShipping(clientId);
 
@@ -36,14 +36,21 @@ export class ClientAddressUpdaterUseCase {
       return this.clientService.createAddressShipping(clientId, data);
     }
 
-    if (data.shipping_address) {
-      return this.clientService.updateShippingAddress(
-        clientId,
-        ClientAddress.BILLING,
-        ClientShippingAddress.YES
-      );
-    }
-
     return this.clientService.updateAddressShipping(clientId, data);
+  }
+
+  async updateShippingAddress(
+    clientId: string,
+    data: PatchClientAddressResponse
+  ): Promise<boolean> {
+    const shippingAddress = data.shipping_address
+      ? ClientShippingAddress.YES
+      : ClientShippingAddress.NO;
+
+    return this.clientService.updateShippingAddress(
+      clientId,
+      ClientAddress.BILLING,
+      shippingAddress
+    );
   }
 }

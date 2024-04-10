@@ -1,13 +1,13 @@
 import {
+  userPatchClientAddressRequestSchema,
   userUpdateClientAddressRequestSchema,
-  userUpdateClientAddressShippingRequestSchema,
 } from "@core/schema/user/userUpdateClientAddressRequestSchema";
 import { Static } from "@sinclair/typebox";
 
-export type UpdateClientAddressBillingRequest = Static<
+export type UpdateClientAddressRequest = Static<
   typeof userUpdateClientAddressRequestSchema
 >;
 
-export type UpdateClientAddressShippingRequest = Static<
-  typeof userUpdateClientAddressShippingRequestSchema
+export type PatchClientAddressResponse = Static<
+  typeof userPatchClientAddressRequestSchema
 >;

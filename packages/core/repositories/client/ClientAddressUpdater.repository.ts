@@ -3,10 +3,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { clientAddress } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import {
-  UpdateClientAddressBillingRequest,
-  UpdateClientAddressShippingRequest,
-} from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
+import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
 import {
   ClientAddress,
   ClientShippingAddress,
@@ -20,7 +17,7 @@ export class ClientAddressUpdaterRepository {
 
   async updateAddressBilling(
     userId: string,
-    data: UpdateClientAddressBillingRequest
+    data: UpdateClientAddressRequest
   ): Promise<boolean> {
     const result = await this.db
       .update(clientAddress)
@@ -51,7 +48,7 @@ export class ClientAddressUpdaterRepository {
 
   async updateAddressShipping(
     userId: string,
-    data: UpdateClientAddressShippingRequest
+    data: UpdateClientAddressRequest
   ): Promise<boolean> {
     const result = await this.db
       .update(clientAddress)

@@ -30,10 +30,7 @@ import {
   ClientAddress,
   ClientShippingAddress,
 } from "@core/common/enums/models/client";
-import {
-  UpdateClientAddressBillingRequest,
-  UpdateClientAddressShippingRequest,
-} from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
+import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
 import { ClientAddressCreatorRepository } from "@core/repositories/client/ClientAddressCreator.repository";
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 
@@ -84,7 +81,7 @@ export class ClientService {
 
   createAddressBilling = async (
     userId: string,
-    data: UpdateClientAddressBillingRequest
+    data: UpdateClientAddressRequest
   ) => {
     return this.clientAddressCreatorRepository.createAddressBilling(
       userId,
@@ -94,7 +91,7 @@ export class ClientService {
 
   createAddressShipping = async (
     userId: string,
-    data: UpdateClientAddressShippingRequest
+    data: UpdateClientAddressRequest
   ) => {
     return this.clientAddressCreatorRepository.createAddressShipping(
       userId,
@@ -123,7 +120,7 @@ export class ClientService {
 
   updateAddressBilling = async (
     userId: string,
-    data: UpdateClientAddressBillingRequest
+    data: UpdateClientAddressRequest
   ) => {
     return this.clientAddressUpdaterRepository.updateAddressBilling(
       userId,
@@ -133,7 +130,7 @@ export class ClientService {
 
   updateAddressShipping = async (
     userId: string,
-    data: UpdateClientAddressShippingRequest
+    data: UpdateClientAddressRequest
   ) => {
     return this.clientAddressUpdaterRepository.updateAddressShipping(
       userId,

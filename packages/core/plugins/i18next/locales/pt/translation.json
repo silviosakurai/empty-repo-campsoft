@@ -46,5 +46,7 @@
   "voucher_activate_now_false": "Voucher não pode ser ativado posteriormente",
   "email_disposable_not_allowed": "E-mail descartável não permitido",
   "billing_address_not_found": "Endereço de cobrança não encontrado",
-  "shipping_address_not_found": "Endereço de entrega não encontrado"
+  "shipping_address_not_found": "Endereço de entrega não encontrado",
+  "error_updating_shipping_address": "Erro ao atualizar o endereço de entrega",
+  "error_updating_billing_address": "Erro ao atualizar o endereço de cobrança"
 }
