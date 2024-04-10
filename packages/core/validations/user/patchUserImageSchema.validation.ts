@@ -35,6 +35,14 @@ export const patchUserImageSchemaSchema = {
       },
       { description: "Successful" }
     ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
+    ),
     401: Type.Object(
       {
         status: Type.Boolean({ default: false }),

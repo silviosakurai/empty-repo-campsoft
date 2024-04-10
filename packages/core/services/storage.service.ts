@@ -17,24 +17,35 @@ export class StorageService implements IStorageService {
     });
   }
 
-  public async uploadImage(clientId: string, imageBase64: string) {
-    const buffer = Buffer.from(imageBase64, "base64");
+  public async uploadImage(
+    clientId: string,
+    imageBase64: string
+  ): Promise<string | null> {
+    const regex = /^data:image\/([a-zA-Z]+);base64,(.+)$/;
+    const match = regex.exec(imageBase64);
+
+    if (!match) {
+      return null;
+    }
+
+    const [, extension, base64Data] = match;
+    const buffer = Buffer.from(base64Data, "base64");
 
     const command = new PutObjectCommand({
       Bucket: awsEnvironment.s3BucketName,
-      Key: `image/${clientId}`,
+      Key: `image/${clientId}.${extension}`,
       Body: buffer,
     });
 
     try {
       await this.client.send(command);
-      return this.createUrl(clientId);
+      return this.createUrl(clientId, extension);
     } catch (err) {
       console.error("StorageService : uploadImage : err:", err);
       return null;
     }
   }
 
-  private createUrl = (clientId: string) =>
-    `https://${awsEnvironment.s3BucketName}.s3.${awsEnvironment.s3Region}.amazonaws.com/image/${clientId}`;
+  private createUrl = (clientId: string, extension: string) =>
+    `https://${awsEnvironment.s3BucketName}.s3.${awsEnvironment.s3Region}.amazonaws.com/image/${clientId}.${extension}`;
 }

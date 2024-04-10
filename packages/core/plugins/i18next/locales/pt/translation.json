@@ -50,5 +50,8 @@
   "error_updating_shipping_address": "Erro ao atualizar o endereço de entrega",
   "error_updating_billing_address": "Erro ao atualizar o endereço de cobrança",
   "failed_to_upload_image": "Falha ao fazer upload da imagem",
-  "failed_to_update_image": "Falha ao atualizar a imagem"
+  "failed_to_update_image": "Falha ao atualizar a imagem",
+  "invalid_image_format": "Formato de imagem inválido",
+  "format_not_supported_allowed_formats_png_jpeg_jpg": "Formato não suportado. Formatos permitidos: PNG, JPEG, JPG",
+  "image_size_exceeded_2mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB"
 }
