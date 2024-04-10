@@ -5,8 +5,12 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
 import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
+import { OrderCreatedViewerRepository } from "@core/repositories/order/OrderCreatedViewer.repository";
 import { OrderCreatorRepository } from "@core/repositories/order/OrderCreator.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import {
+  CreateOrderRequestDto,
+  ViewOrderCreatedRequestDto,
+} from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 import {
@@ -24,7 +28,8 @@ export class OrderService {
     private readonly paymentListerRepository: PaymentListerRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
     private readonly orderCreatorRepository: OrderCreatorRepository,
-    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository
+    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
+    private readonly OrderCreatedViewerRepository: OrderCreatedViewerRepository
   ) {}
 
   list = async (
@@ -98,5 +103,23 @@ export class OrderService {
       statusPayment,
       voucher
     );
+  };
+
+  viewOrderCreated = async (
+    input: ViewOrderCreatedRequestDto,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    orderId: string
+  ) => {
+    try {
+      return await this.OrderCreatedViewerRepository.viewOrderCreated(
+        input,
+        tokenKeyData,
+        tokenJwtData,
+        orderId
+      );
+    } catch (error) {
+      throw error;
+    }
   };
 }

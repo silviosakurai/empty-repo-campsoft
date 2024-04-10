@@ -3,7 +3,11 @@ import { OrderService } from "@core/services/order.service";
 import { PlanService } from "@core/services/plan.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import {
+  CreateOrderRequestDto,
+  ViewOrderCreatedRequestDto,
+  ViewOrderCreatedResponseDto,
+} from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { ClientService, ProductService } from "@core/services";
 import { CreateOrder } from "@core/interfaces/repositories/order";
@@ -126,6 +130,8 @@ export class CreateOrderUseCase {
     if (!createOrder) {
       throw new Error(t("error_create_order"));
     }
+
+    const orderId = createOrder.order_id;
 
     await this.createSignature(
       t,
@@ -256,5 +262,29 @@ export class CreateOrderUseCase {
     }
 
     return createSignature;
+  }
+
+  async viewOrderCreated(
+    input: ViewOrderCreatedRequestDto,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    orderId: string
+  ): Promise<ViewOrderCreatedResponseDto> {
+    const [results] = await Promise.all([
+      this.orderService.viewOrderCreated(
+        input,
+        tokenKeyData,
+        tokenJwtData,
+        orderId
+      ),
+    ]);
+
+    if (!results.length) {
+      //return this.emptyResult(input);
+    }
+
+    return {
+      results: results,
+    };
   }
 }

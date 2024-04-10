@@ -27,3 +27,30 @@ export interface CreateOrderRequestDto {
   coupon_code: string | null;
   payment: Payment | null;
 }
+
+export interface ViewOrderCreatedRequestDto {
+  previous_order_id: string;
+  activate_now: boolean;
+  plan: {
+    plan_id: number;
+    selected_products: string[];
+  };
+  products: string[];
+  months: number;
+  subscribe: boolean;
+  coupon_code: string;
+  payment: {
+    type: "boleto" | "pix" | "credit_card" | "voucher";
+    credit_card?: {
+      name: string;
+      number: string;
+      expire_month: number;
+      expire_year: number;
+      cvv: string;
+      installments: number;
+    };
+    credit_card_id?: number;
+    voucher?: string;
+  };
+}
+export interface ViewOrderCreatedResponseDto {}
