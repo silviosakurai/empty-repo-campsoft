@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import { ClientEmailNewsletterCreatorUseCase } from '@core/useCases/client/ClientEmailNewsletterCreator.useCase';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
+import { EmailDisposableNotAllowedError } from '@core/common/exceptions/EmailIsDisposableError';
 
 export const createClientNewsletter = async (
   request: FastifyRequest<{ Body: { email: string } }>,
@@ -15,7 +16,8 @@ export const createClientNewsletter = async (
     const response = await service.create(
       tokenJwtData.clientId,
       request.body.email,
-      tokenKeyData.company_id
+      tokenKeyData,
+      t
     );
 
     if (!response) {
@@ -32,6 +34,13 @@ export const createClientNewsletter = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+
+    if (error instanceof EmailDisposableNotAllowedError) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.CONFLICT,
+      });
+    }
 
     return sendResponse(reply, {
       message: t('internal_server_error'),
