@@ -222,6 +222,10 @@ export class CreateOrderUseCase {
     ) {
       throw new Error(t("voucher_activate_now_false"));
     }
+
+    if (payload.coupon_code && payload.payment.voucher) {
+      throw new Error(t("coupon_code_with_voucher_not_allowed"));
+    }
   }
 
   private async createSignature(

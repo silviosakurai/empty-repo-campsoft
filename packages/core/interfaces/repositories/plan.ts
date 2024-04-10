@@ -39,6 +39,8 @@ export interface PlanPriceOrder {
 export interface PlanPriceCrossSellOrder {
   product_id: string | null;
   price_discount: number;
+  discount_coupon?: number | null;
+  discount_product?: number | null;
 }
 
 export interface PlanListerOrderResponse {

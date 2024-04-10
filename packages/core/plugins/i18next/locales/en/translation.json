@@ -53,5 +53,6 @@
   "failed_to_update_image": "Failed to update image!",
   "invalid_image_format": "Invalid image format!",
   "format_not_supported_allowed_formats_png_jpeg_jpg": "Format not supported. Allowed formats: png, jpeg, jpg",
-  "image_size_exceeded_2mb": "Image size exceeded 2MB!"
+  "image_size_exceeded_2mb": "Image size exceeded 2MB!",
+  "coupon_code_with_voucher_not_allowed": "Coupon code with voucher not allowed!"
 }

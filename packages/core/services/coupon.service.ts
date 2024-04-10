@@ -49,12 +49,17 @@ export class CouponService {
     payload: CreateOrderRequestDto,
     finalPrice: number
   ): PlanPrice => {
+    let discountCoupon = 0;
+
     const findPlan = coupon.find(
       (item) => item.id_plano === payload.plan.plan_id
     );
 
     if (findPlan) {
-      finalPrice -= finalPrice * findPlan.desconto_percentual;
+      const discountValue = finalPrice * findPlan.desconto_percentual;
+
+      finalPrice -= discountValue;
+      discountCoupon += discountValue;
     }
 
     const discountValue = Number(planPrice.price) - finalPrice;
@@ -66,6 +71,7 @@ export class CouponService {
       discount_value: Number(discountValue.toFixed(2)),
       discount_percentage: Number(discountPercentage.toFixed(2)),
       price_with_discount: Math.max(0, Number(finalPrice.toFixed(2))),
+      discount_coupon: Number(discountCoupon.toFixed(2)),
     };
   };
 
