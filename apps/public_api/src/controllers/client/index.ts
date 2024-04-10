@@ -13,6 +13,7 @@ import { getBillingAddress } from './methods/getBillingAddress';
 import { getShippingAddress } from './methods/getShippingAddress';
 import { putBillingAddress } from './methods/putBillingAddress';
 import { putShippingAddress } from './methods/putShippingAddress';
+import { patchShippingAddress } from './methods/patchShippingAddress';
 import { patchImage } from './methods/patchImage';
 
 @injectable()
@@ -31,6 +32,7 @@ class ClientController {
   public getShippingAddress = getShippingAddress;
   public putBillingAddress = putBillingAddress;
   public putShippingAddress = putShippingAddress;
+  public patchShippingAddress = patchShippingAddress;
   public patchImage = patchImage;
 }
 

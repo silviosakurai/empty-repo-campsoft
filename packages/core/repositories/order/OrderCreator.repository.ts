@@ -44,6 +44,8 @@ export class OrderCreatorRepository {
       valor_preco: Number(planPrice.price ?? 0),
       valor_desconto: Number(planPrice.discount_value ?? 0),
       valor_total: Number(planPrice.price_with_discount ?? 0),
+      valor_cupom: Number(planPrice.discount_coupon ?? 0),
+      desconto_produto: Number(planPrice.discount_product ?? 0),
       valor_desconto_ordem_anterior: Number(
         planPrice.price_with_discount_order_previous ?? 0
       ),

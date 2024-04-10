@@ -18,6 +18,7 @@ export const patchImage = async (
 
   try {
     const response = await clientImageUpdaterUseCase.update(
+      t,
       tokenJwtData.clientId,
       request.body.image
     );
@@ -28,6 +29,13 @@ export const patchImage = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+
+    if (error instanceof Error) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     return sendResponse(reply, {
       message: t('internal_server_error'),

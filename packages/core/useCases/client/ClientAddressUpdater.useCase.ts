@@ -1,38 +1,52 @@
 import { injectable } from "tsyringe";
 import { ClientService } from "@core/services/client.service";
-import { ViewClientAddressDTO } from "./dtos/ViewClientAddressResponse.dto";
-import { UpdateClientAddressRequest } from "./dtos/UpdateClientAddressRequest.dto";
-import { ClientAddress, ClientShippingAddress } from "@core/common/enums/models/client";
+import {
+  PatchClientAddressResponse,
+  UpdateClientAddressRequest,
+} from "./dtos/UpdateClientAddressRequest.dto";
+import {
+  ClientAddress,
+  ClientShippingAddress,
+} from "@core/common/enums/models/client";
 
 @injectable()
 export class ClientAddressUpdaterUseCase {
   constructor(private readonly clientService: ClientService) {}
 
-  async updateBilling(clientId: string, data: UpdateClientAddressRequest): Promise<void> {
-    const addressExists = await this.checkIfAddressExists(clientId, ClientAddress.BILLING);
-
-    if (!addressExists) {
-      await this.clientService.createAddress(clientId, ClientAddress.BILLING, data);
+  async addressExists(clientId: string, clientAddress: ClientAddress) {
+    if (clientAddress === ClientAddress.BILLING) {
+      return this.clientService.viewBilling(clientId);
     }
 
-    await this.clientService.updateAddress(clientId, data);
+    return this.clientService.viewShipping(clientId);
   }
 
-  async updateShipping(clientId: string, data: UpdateClientAddressRequest): Promise<void> {
-    const addressExists = await this.checkIfAddressExists(clientId, ClientAddress.SHIPPING);
+  async update(
+    clientId: string,
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
+  ): Promise<boolean> {
+    const addressExists = await this.addressExists(clientId, clientAddress);
 
     if (!addressExists) {
-      await this.clientService.createAddress(clientId, ClientAddress.SHIPPING, data);
+      return this.clientService.createAddress(clientId, data, clientAddress);
     }
 
-    if (data.shipping_address) {
-      await this.clientService.updateShippingAddress(clientId, ClientAddress.BILLING, ClientShippingAddress.YES);
-    }
-
-    await this.clientService.updateAddress(clientId, data);
+    return this.clientService.updateAddress(clientId, data, clientAddress);
   }
 
-  async checkIfAddressExists(clientId: string, type: ClientAddress): Promise<ViewClientAddressDTO | null> {
-    return this.clientService.viewAddress(clientId, type);
+  async updateShippingAddress(
+    clientId: string,
+    data: PatchClientAddressResponse
+  ): Promise<boolean> {
+    const shippingAddress = data.shipping_address
+      ? ClientShippingAddress.YES
+      : ClientShippingAddress.NO;
+
+    return this.clientService.updateShippingAddress(
+      clientId,
+      ClientAddress.BILLING,
+      shippingAddress
+    );
   }
 }

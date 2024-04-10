@@ -6,12 +6,8 @@ import { generateTokenTfa } from "@core/common/functions/generateTokenTfa";
 import { TFAType } from "@core/common/enums/models/tfa";
 import {
   ITemplateSMS,
-  ITemplateWhatsapp,
   IValidateCodeTFA,
 } from "@core/interfaces/repositories/tfa";
-import { extractPhoneNumber } from "@core/common/functions/extractPhoneNumber";
-import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
-import { formatDateToString } from "@core/common/functions/formatDateToString";
 import { ISmsSentMessageResponse } from "@core/interfaces/services/ISms.service";
 import { currentTime } from "@core/common/functions/currentTime";
 import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
@@ -39,12 +35,6 @@ export class TfaService {
     return token;
   }
 
-  public async getTemplateWhatsapp(
-    tokenKeyData: ITokenKeyData
-  ): Promise<ITemplateWhatsapp> {
-    return this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(tokenKeyData);
-  }
-
   public async getTemplateSms(
     tokenKeyData: ITokenKeyData
   ): Promise<ITemplateSMS> {
@@ -57,24 +47,6 @@ export class TfaService {
     code: string
   ): Promise<boolean> {
     return this.tfaCodesRepository.insertCodeUser(type, loginUserTFA, code);
-  }
-
-  async insertWhatsAppHistory(
-    templateId: number,
-    loginUserTFA: LoginUserTFA,
-    sendWA: MessageInstance
-  ): Promise<boolean> {
-    const sender = extractPhoneNumber(sendWA.from);
-    const whatsappToken = sendWA.sid;
-    const sendDate = formatDateToString(sendWA.dateCreated);
-
-    return this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
-      templateId,
-      loginUserTFA,
-      sender,
-      whatsappToken,
-      sendDate
-    );
   }
 
   async insertSmsHistory(

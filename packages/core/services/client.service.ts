@@ -61,8 +61,12 @@ export class ClientService {
     return this.clientViewerRepository.view(tokenKeyData, userId);
   };
 
-  viewAddress = async (userId: string, type: ClientAddress) => {
-    return this.clientAddressViewerRepository.view(userId, type);
+  viewBilling = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewBilling(userId);
+  };
+
+  viewShipping = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewShipping(userId);
   };
 
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
@@ -79,10 +83,14 @@ export class ClientService {
 
   createAddress = async (
     userId: string,
-    type: ClientAddress,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
   ) => {
-    return this.clientAddressCreatorRepository.create(userId, type, data);
+    return this.clientAddressCreatorRepository.createAddress(
+      userId,
+      data,
+      clientAddress
+    );
   };
 
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
@@ -104,8 +112,16 @@ export class ClientService {
     return this.clientPasswordUpdaterRepository.update(tokenTfaData, newPass);
   };
 
-  updateAddress = async (userId: string, data: UpdateClientAddressRequest) => {
-    return this.clientAddressUpdaterRepository.update(userId, data);
+  updateAddress = async (
+    userId: string,
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
+  ) => {
+    return this.clientAddressUpdaterRepository.updateAddress(
+      userId,
+      data,
+      clientAddress
+    );
   };
 
   updateShippingAddress = async (

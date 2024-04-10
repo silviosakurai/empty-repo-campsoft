@@ -4,7 +4,10 @@ import { clientAddress } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
-import { ClientAddress, ClientShippingAddress } from "@core/common/enums/models/client";
+import {
+  ClientAddress,
+  ClientShippingAddress,
+} from "@core/common/enums/models/client";
 
 @injectable()
 export class ClientAddressUpdaterRepository {
@@ -12,9 +15,10 @@ export class ClientAddressUpdaterRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async update(
+  async updateAddress(
     userId: string,
     data: UpdateClientAddressRequest,
+    clientAdd: ClientAddress
   ): Promise<boolean> {
     const result = await this.db
       .update(clientAddress)
@@ -28,7 +32,12 @@ export class ClientAddressUpdaterRepository {
         uf: data.state,
         telefone: data.phone,
       })
-      .where(eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`))
+      .where(
+        and(
+          eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
+          eq(clientAddress.tipo, clientAdd)
+        )
+      )
       .execute();
 
     if (!result[0].affectedRows) {
@@ -41,7 +50,7 @@ export class ClientAddressUpdaterRepository {
   async updateShippingAddress(
     userId: string,
     type: ClientAddress,
-    shippingAddress: ClientShippingAddress,
+    shippingAddress: ClientShippingAddress
   ): Promise<boolean> {
     const result = await this.db
       .update(clientAddress)
@@ -51,7 +60,7 @@ export class ClientAddressUpdaterRepository {
       .where(
         and(
           eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(clientAddress.tipo, type),
+          eq(clientAddress.tipo, type)
         )
       )
       .execute();

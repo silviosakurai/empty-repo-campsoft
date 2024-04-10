@@ -1,7 +1,7 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userPutAddressResponseSchema } from "@core/schema/user/userPutAddressResponseSchema";
+import { userUpdateClientAddressRequestSchema } from "@core/schema/user/userUpdateClientAddressRequestSchema";
 
 export const putUserShippingAddressSchema = {
   description: "Atualiza ou adiciona o endereço de envio",
@@ -22,23 +22,13 @@ export const putUserShippingAddressSchema = {
       })
     ),
   }),
-  body: Type.Object({
-    shipping_address: Type.Optional(Type.Boolean()),
-    zip_code: Type.String(),
-    street: Type.String(),
-    number: Type.String(),
-    complement: Type.String(),
-    neighborhood: Type.String(),
-    phone: Type.String(),
-    city: Type.String(),
-    state: Type.String(),
-  }),
+  body: userUpdateClientAddressRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: userPutAddressResponseSchema,
+        data: Type.Null(),
       },
       { description: "Successful" }
     ),

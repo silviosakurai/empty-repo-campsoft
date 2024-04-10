@@ -61,8 +61,14 @@ export class CrossSellProductListerRepository {
         },
         prices: {
           months: productCrossSell.meses,
-          price: sql<number>`CAST(${product.preco_face} AS DECIMAL(10,2))`,
-          price_with_discount: sql<number>`CAST(${productCrossSell.preco_desconto} AS DECIMAL(10,2))`,
+          price:
+            sql<number>`CAST(${product.preco_face} AS DECIMAL(10,2))`.mapWith(
+              Number
+            ),
+          price_with_discount:
+            sql<number>`CAST(${productCrossSell.preco_desconto} AS DECIMAL(10,2))`.mapWith(
+              Number
+            ),
         },
         created_at: product.created_at,
         updated_at: product.updated_at,

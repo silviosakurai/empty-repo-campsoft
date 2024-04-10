@@ -22,7 +22,7 @@ export const getBillingAddress = async (
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('client_not_found'),
+        message: t('billing_address_not_found'),
         httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }

@@ -16,6 +16,7 @@ import {
   getUserBillingAddressSchema,
   putUserBillingAddressSchema,
   putUserShippingAddressSchema,
+  patchUserShippingAddressSchema,
   patchUserImageSchemaSchema,
 } from '@core/validations/user';
 
@@ -116,6 +117,12 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: putUserShippingAddressSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.putShippingAddress,
+  });
+
+  server.patch('/user/shipping-address', {
+    schema: patchUserShippingAddressSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.patchShippingAddress,
   });
 
   server.patch('/user/image', {

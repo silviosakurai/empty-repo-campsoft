@@ -16,6 +16,7 @@ import {
 } from "@core/interfaces/repositories/order";
 import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPaymentCreator.repository";
 import { OrderStatusEnum } from "@core/common/enums/models/order";
+import { CouponService } from "./coupon.service";
 
 @injectable()
 export class OrderService {
@@ -24,7 +25,8 @@ export class OrderService {
     private readonly paymentListerRepository: PaymentListerRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
     private readonly orderCreatorRepository: OrderCreatorRepository,
-    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository
+    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
+    private readonly couponService: CouponService
   ) {}
 
   list = async (
@@ -74,7 +76,7 @@ export class OrderService {
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard
   ): Promise<CreateOrder | null> => {
-    return this.orderCreatorRepository.create(
+    const create = await this.orderCreatorRepository.create(
       tokenKeyData,
       tokenJwtData,
       payload,
@@ -82,6 +84,16 @@ export class OrderService {
       user,
       totalPricesInstallments
     );
+
+    if (!create) {
+      return null;
+    }
+
+    if (payload.coupon_code) {
+      await this.couponService.updateCoupon(payload.coupon_code);
+    }
+
+    return create;
   };
 
   createOrderPayment = async (
