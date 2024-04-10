@@ -48,6 +48,7 @@
     "typescript": "^5.4.4"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.550.0",
     "@aws-sdk/client-ses": "^3.549.0",
     "@fastify/auth": "^4.6.1",
     "@fastify/caching": "^8.3.0",

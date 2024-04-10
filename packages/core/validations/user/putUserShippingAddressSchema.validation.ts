@@ -22,8 +22,16 @@ export const putUserShippingAddressSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    voucherCode: Type.String(),
+  body: Type.Object({
+    shipping_address: Type.Optional(Type.Boolean()),
+    zip_code: Type.String(),
+    street: Type.String(),
+    number: Type.String(),
+    complement: Type.String(),
+    neighborhood: Type.String(),
+    phone: Type.String(),
+    city: Type.String(),
+    state: Type.String(),
   }),
   response: {
     200: Type.Object(
