@@ -33,6 +33,7 @@ import {
 import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
 import { ClientAddressCreatorRepository } from "@core/repositories/client/ClientAddressCreator.repository";
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
+import { ClientEmailActivatorRepository } from "@core/repositories/client/ClientEmailActivator.repository";
 
 @injectable()
 export class ClientService {
@@ -48,6 +49,7 @@ export class ClientService {
     private readonly clientByEmailPhoneRepository: ClientByEmailPhoneRepository,
     private readonly clientPhoneUpdaterRepository: ClientPhoneUpdaterRepository,
     private readonly clientAddressUpdaterRepository: ClientAddressUpdaterRepository,
+    private readonly clientEmailActivatorRepository: ClientEmailActivatorRepository,
     private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
     private readonly clientEmailViewerByEmailRepository: ClientEmailViewerByEmailRepository,
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
@@ -151,5 +153,9 @@ export class ClientService {
 
   createEmail = async (input: ClientEmailCreatorInput) => {
     return this.emailCreatorRepository.create(input);
+  };
+
+  activateEmail = async (clientId: string, token: string) => {
+    return this.clientEmailActivatorRepository.activate(clientId, token);
   };
 }

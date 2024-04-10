@@ -1,18 +1,18 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ClientNewsletterViewerUseCase } from '@core/useCases/client/ClientNewsletterViewer.useCase';
+import { ClientEmailActivatorUseCase } from '@core/useCases/client/ClientEmailActivator.useCase';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 
-export const viewClientNewsletter = async (
-  request: FastifyRequest,
+export const activateClientEmail = async (
+  request: FastifyRequest<{ Params: { token: string } }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(ClientNewsletterViewerUseCase);
-  const { t } = request;
+  const service = container.resolve(ClientEmailActivatorUseCase);
+  const { t, tokenJwtData } = request;
 
   try {
-    await service.execute();
+    await service.execute(tokenJwtData.clientId, request.params.token);
   } catch (error) {
     console.log(error);
 

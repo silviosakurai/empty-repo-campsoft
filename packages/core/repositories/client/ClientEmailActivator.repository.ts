@@ -1,0 +1,31 @@
+import { inject, injectable } from "tsyringe";
+import * as schema from "@core/models";
+import { MySql2Database } from "drizzle-orm/mysql2";
+import { sql, eq } from "drizzle-orm";
+import { clientEmail } from "@core/models/client";
+import { and } from "drizzle-orm";
+import { ClientEmailVerified } from "@core/common/enums/models/clientEmail";
+
+@injectable()
+export class ClientEmailActivatorRepository {
+  constructor(
+    @inject("Database") private readonly db: MySql2Database<typeof schema>
+  ) {}
+
+  async activate(clientId: string, token: string) {
+    const results = await this.db
+      .update(clientEmail)
+      .set({
+        verificado: ClientEmailVerified.YES,
+        verificado_data: new Date().toISOString(),
+      })
+      .where(
+        and(
+          eq(clientEmail.id_cliente, sql`UUID_TO_BIN(${clientId})`),
+          eq(clientEmail.token, sql`UUID_TO_BIN(${token})`)
+        )
+      );
+
+    console.log(results);
+  }
+}

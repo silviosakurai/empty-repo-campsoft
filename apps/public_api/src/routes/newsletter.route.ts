@@ -11,9 +11,4 @@ export default async function newsletterRoutes(server: FastifyInstance) {
     handler: newsletterController.create,
     schema: createUserNewsletterSchema,
   });
-
-  server.get('/user/newsletter', {
-    handler: newsletterController.view,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-  });
 }
