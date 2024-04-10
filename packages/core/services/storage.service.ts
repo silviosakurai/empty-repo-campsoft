@@ -17,6 +17,16 @@ export class StorageService implements IStorageService {
     });
   }
 
+  public mimeTypeToExtension = (extension: string): string => {
+    let mimeType = "image/jpeg";
+
+    if (extension === "png") {
+      mimeType = "image/png";
+    }
+
+    return mimeType;
+  };
+
   public async uploadImage(
     clientId: string,
     imageBase64: string
@@ -35,6 +45,7 @@ export class StorageService implements IStorageService {
       Bucket: awsEnvironment.s3BucketName,
       Key: `image/${clientId}.${extension}`,
       Body: buffer,
+      ContentType: this.mimeTypeToExtension(extension),
     });
 
     try {
