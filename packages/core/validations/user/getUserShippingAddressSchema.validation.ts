@@ -22,9 +22,6 @@ export const getUserShippingAddressSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    voucherCode: Type.String(),
-  }),
   response: {
     200: Type.Object(
       {

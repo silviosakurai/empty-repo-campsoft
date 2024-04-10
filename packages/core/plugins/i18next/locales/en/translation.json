@@ -44,5 +44,15 @@
   "voucher_product_not_eligible": "Voucher product not eligible!",
   "products_not_found": "Products not found!",
   "voucher_activate_now_false": "Voucher cannot be activated later",
-  "email_disposable_not_allowed": "Disposable email not allowed!"
+  "email_disposable_not_allowed": "Disposable email not allowed!",
+  "billing_address_not_found": "Billing address not found!",
+  "shipping_address_not_found": "Shipping address not found!",
+  "error_updating_shipping_address": "Error updating shipping address!",
+  "error_updating_billing_address": "Error updating billing address!",
+  "failed_to_upload_image": "Failed to upload image!",
+  "failed_to_update_image": "Failed to update image!",
+  "invalid_image_format": "Invalid image format!",
+  "format_not_supported_allowed_formats_png_jpeg_jpg": "Format not supported. Allowed formats: png, jpeg, jpg",
+  "image_size_exceeded_2mb": "Image size exceeded 2MB!",
+  "coupon_code_with_voucher_not_allowed": "Coupon code with voucher not allowed!"
 }

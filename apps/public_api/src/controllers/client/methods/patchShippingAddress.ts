@@ -3,12 +3,11 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { ClientAddressUpdaterUseCase } from '@core/useCases/client/ClientAddressUpdater.useCase';
-import { UpdateClientAddressRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
-import { ClientAddress } from '@core/common/enums/models/client';
+import { PatchClientAddressResponse } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
 
-export const putShippingAddress = async (
+export const patchShippingAddress = async (
   request: FastifyRequest<{
-    Body: UpdateClientAddressRequest;
+    Body: PatchClientAddressResponse;
   }>,
   reply: FastifyReply
 ) => {
@@ -18,10 +17,9 @@ export const putShippingAddress = async (
   );
 
   try {
-    const update = await clientAddressUpdaterUseCase.update(
+    const update = await clientAddressUpdaterUseCase.updateShippingAddress(
       tokenJwtData.clientId,
-      request.body,
-      ClientAddress.SHIPPING
+      request.body
     );
 
     if (!update) {

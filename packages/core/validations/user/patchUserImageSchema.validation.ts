@@ -1,10 +1,13 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userUpdateClientAddressRequestSchema } from "@core/schema/user/userUpdateClientAddressRequestSchema";
+import {
+  userUploadImageSchemaRequest,
+  userUploadImageSchemaResponse,
+} from "@core/schema/user/userUploadImageSchema";
 
-export const putUserShippingAddressSchema = {
-  description: "Atualiza ou adiciona o endereço de envio",
+export const patchUserImageSchemaSchema = {
+  description: "Altera a imagem do usuario logado",
   tags: [TagSwagger.user],
   produces: ["application/json"],
   security: [
@@ -22,13 +25,13 @@ export const putUserShippingAddressSchema = {
       })
     ),
   }),
-  body: userUpdateClientAddressRequestSchema,
+  body: userUploadImageSchemaRequest,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Null(),
+        data: userUploadImageSchemaResponse,
       },
       { description: "Successful" }
     ),

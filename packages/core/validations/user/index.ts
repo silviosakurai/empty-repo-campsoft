@@ -13,3 +13,5 @@ export * from "./getUserBillingAddressSchema.validation";
 export * from "./putUserBillingAddressSchema.validation";
 export * from "./putUserShippingAddressSchema.validation";
 export * from "./userActivatePasswordSchema.validation";
+export * from "./patchUserShippingAddressSchema.validation";
+export * from "./patchUserImageSchema.validation";

@@ -1,10 +1,11 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userUpdateClientAddressRequestSchema } from "@core/schema/user/userUpdateClientAddressRequestSchema";
+import { userPatchClientAddressRequestSchema } from "@core/schema/user/userUpdateClientAddressRequestSchema";
 
-export const putUserShippingAddressSchema = {
-  description: "Atualiza ou adiciona o endereço de envio",
+export const patchUserShippingAddressSchema = {
+  description:
+    "Atualiza se o endereço de entrega do cliente é o mesmo que o endereço de cobrança",
   tags: [TagSwagger.user],
   produces: ["application/json"],
   security: [
@@ -22,7 +23,7 @@ export const putUserShippingAddressSchema = {
       })
     ),
   }),
-  body: userUpdateClientAddressRequestSchema,
+  body: userPatchClientAddressRequestSchema,
   response: {
     200: Type.Object(
       {

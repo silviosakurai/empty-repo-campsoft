@@ -7,10 +7,23 @@ import {
 import { injectable } from "tsyringe";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { LoggerService } from "@core/services/logger.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
+import { WhatsAppListerRepository } from "@core/repositories/whatsapp/WhatsAppLister.repository";
+import { TemplateModulo } from "@core/common/enums/TemplateMessage";
+import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
+import { replaceTemplate } from "@core/common/functions/replaceTemplate";
+import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
+import { extractPhoneNumber } from "@core/common/functions/extractPhoneNumber";
+import { formatDateToString } from "@core/common/functions/formatDateToString";
+import { Twilio } from "twilio";
 
 @injectable()
 export class WhatsappService implements IWhatsappService {
-  constructor(private readonly logger: LoggerService) {}
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly whatsAppListerRepository: WhatsAppListerRepository
+  ) {}
 
   async send(input: IWhatsappServiceInput): Promise<MessageInstance> {
     const client = await this.connection();
@@ -25,7 +38,7 @@ export class WhatsappService implements IWhatsappService {
         to: `whatsapp:${targetPhone}`,
       });
 
-      return response as MessageInstance;
+      return response;
     } catch (error: unknown) {
       this.logger.error(error);
 
@@ -34,18 +47,93 @@ export class WhatsappService implements IWhatsappService {
   }
 
   private async connection() {
-    const accountSid = whatsappEnvironment.whatsappApiSid;
-    const authToken = whatsappEnvironment.whatsappApiToken;
-    const { Twilio } = await import("twilio");
+    try {
+      const accountSid = whatsappEnvironment.whatsappApiSid;
+      const authToken = whatsappEnvironment.whatsappApiToken;
 
-    const client = new Twilio(accountSid, authToken);
+      const client = new Twilio(accountSid, authToken);
+      return client;
+    } catch (error) {
+      this.logger.error(error);
 
-    return client;
+      throw error;
+    }
   }
 
   private sendPhone(sendPhone: string | null | undefined): string {
     const phoneNumber = sendPhone ?? whatsappEnvironment.whatsappApiNumber;
 
     return phoneNumberIncludesCountryCode(phoneNumber);
+  }
+
+  public async getTemplateWhatsappModule(
+    tokenKeyData: ITokenKeyData,
+    templateModulo: TemplateModulo
+  ): Promise<ITemplateWhatsapp | null> {
+    return this.whatsAppListerRepository.getTemplateWhatsapp(
+      tokenKeyData,
+      templateModulo
+    );
+  }
+
+  public async getTemplateWhatsapp(
+    tokenKeyData: ITokenKeyData,
+    templateModulo: TemplateModulo,
+    rTemplate: IReplaceTemplate
+  ): Promise<ITemplateWhatsapp | null> {
+    const template = await this.getTemplateWhatsappModule(
+      tokenKeyData,
+      templateModulo
+    );
+
+    if (!template) {
+      return null;
+    }
+
+    template.template = replaceTemplate(template.template, rTemplate);
+
+    return template;
+  }
+
+  public async sendWhatsapp(
+    tokenKeyData: ITokenKeyData,
+    notificationTemplate: NotificationTemplate,
+    templateModulo: TemplateModulo,
+    rTemplate: IReplaceTemplate
+  ): Promise<boolean> {
+    const template = await this.getTemplateWhatsapp(
+      tokenKeyData,
+      templateModulo,
+      rTemplate
+    );
+
+    if (!template) {
+      return false;
+    }
+
+    const payload = {
+      target_phone: notificationTemplate.phoneNumber,
+      message: template.template,
+    } as IWhatsappServiceInput;
+
+    const sendWA = await this.send(payload);
+
+    if (sendWA) {
+      const sender = extractPhoneNumber(sendWA.from);
+      const whatsappToken = sendWA.sid;
+      const sendDate = formatDateToString(sendWA.dateCreated);
+
+      await this.whatsAppListerRepository.insertWhatsAppHistory(
+        template.templateId,
+        notificationTemplate,
+        sender,
+        whatsappToken,
+        sendDate
+      );
+
+      return true;
+    }
+
+    return false;
   }
 }
