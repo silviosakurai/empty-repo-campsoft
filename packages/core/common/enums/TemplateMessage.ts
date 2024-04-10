@@ -7,4 +7,5 @@ export enum TemplateModulo {
   RENOVACAO = "renovacao",
   ASSINATURA_CANCELADA = "assinatura_cancelada",
   LINK_PAGAMENTO = "link_pagamento",
+  ATIVACAO_EMAIL = "ativacao_email",
 }

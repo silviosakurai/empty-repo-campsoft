@@ -10,12 +10,14 @@ export class AwsEnvironment {
   private readonly AWS_SECRET_ACCESS_KEY: string | undefined;
   private readonly AWS_REGION: string | undefined;
   private readonly AWS_SES_EMAIL: string | undefined;
+  private readonly AWS_BUCKET_NAME: string | undefined;
 
   constructor() {
     this.AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
     this.AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
     this.AWS_REGION = process.env.AWS_REGION;
     this.AWS_SES_EMAIL = process.env.AWS_SES_EMAIL;
+    this.AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
   }
 
   public get awsAccessKeyId(): string {
@@ -48,5 +50,13 @@ export class AwsEnvironment {
     }
 
     return this.AWS_SES_EMAIL;
+  }
+
+  public get awsBucketName(): string {
+    if (!this.AWS_BUCKET_NAME) {
+      throw new InvalidConfigurationError("AWS_BUCKET_NAME is not defined.");
+    }
+
+    return this.AWS_BUCKET_NAME;
   }
 }

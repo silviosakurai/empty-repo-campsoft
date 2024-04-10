@@ -6,11 +6,13 @@ export function replaceTemplate(
   values: IReplaceTemplate
 ): string {
   if (values.code) {
-    template = template.replace(TemplateMessageParams.CODE, values.code);
+    const regexPattern = new RegExp(TemplateMessageParams.CODE, "g");
+    template = template.replace(regexPattern, values.code);
   }
 
   if (values.name) {
-    template = template.replace(TemplateMessageParams.NAME, values.name);
+    const regexPattern = new RegExp(TemplateMessageParams.NAME, "g");
+    template = template.replace(regexPattern, values.name);
   }
 
   return template;
