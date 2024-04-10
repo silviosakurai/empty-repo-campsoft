@@ -44,5 +44,7 @@
   "voucher_product_not_eligible": "Voucher de produto não é elegível",
   "products_not_found": "Produtos não encontrados",
   "voucher_activate_now_false": "Voucher não pode ser ativado posteriormente",
-  "email_disposable_not_allowed": "E-mail descartável não permitido"
+  "email_disposable_not_allowed": "E-mail descartável não permitido",
+  "billing_address_not_found": "Endereço de cobrança não encontrado",
+  "shipping_address_not_found": "Endereço de entrega não encontrado"
 }

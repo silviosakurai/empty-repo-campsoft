@@ -3,11 +3,11 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { ClientAddressUpdaterUseCase } from '@core/useCases/client/ClientAddressUpdater.useCase';
-import { UpdateClientAddressRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
+import { UpdateClientAddressShippingRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
 
 export const putShippingAddress = async (
   request: FastifyRequest<{
-    Body: UpdateClientAddressRequest;
+    Body: UpdateClientAddressShippingRequest;
   }>,
   reply: FastifyReply
 ) => {

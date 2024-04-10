@@ -44,5 +44,7 @@
   "voucher_product_not_eligible": "Voucher product not eligible!",
   "products_not_found": "Products not found!",
   "voucher_activate_now_false": "Voucher cannot be activated later",
-  "email_disposable_not_allowed": "Disposable email not allowed!"
+  "email_disposable_not_allowed": "Disposable email not allowed!",
+  "billing_address_not_found": "Billing address not found!",
+  "shipping_address_not_found": "Shipping address not found!"
 }

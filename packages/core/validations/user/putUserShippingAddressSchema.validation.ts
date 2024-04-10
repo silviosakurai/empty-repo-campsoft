@@ -2,6 +2,7 @@ import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { userPutAddressResponseSchema } from "@core/schema/user/userPutAddressResponseSchema";
+import { userUpdateClientAddressShippingRequestSchema } from "@core/schema/user/userUpdateClientAddressRequestSchema";
 
 export const putUserShippingAddressSchema = {
   description: "Atualiza ou adiciona o endereço de envio",
@@ -22,9 +23,7 @@ export const putUserShippingAddressSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    voucherCode: Type.String(),
-  }),
+  body: userUpdateClientAddressShippingRequestSchema,
   response: {
     200: Type.Object(
       {

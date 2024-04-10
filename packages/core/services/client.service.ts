@@ -30,7 +30,10 @@ import {
   ClientAddress,
   ClientShippingAddress,
 } from "@core/common/enums/models/client";
-import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
+import {
+  UpdateClientAddressBillingRequest,
+  UpdateClientAddressShippingRequest,
+} from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
 import { ClientAddressCreatorRepository } from "@core/repositories/client/ClientAddressCreator.repository";
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 
@@ -59,8 +62,12 @@ export class ClientService {
     return this.clientViewerRepository.view(tokenKeyData, userId);
   };
 
-  viewAddress = async (userId: string, type: ClientAddress) => {
-    return this.clientAddressViewerRepository.view(userId, type);
+  viewBilling = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewBilling(userId);
+  };
+
+  viewShipping = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewShipping(userId);
   };
 
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
@@ -75,12 +82,24 @@ export class ClientService {
     return this.clientCreatorRepository.create(input);
   };
 
-  createAddress = async (
+  createAddressBilling = async (
     userId: string,
-    type: ClientAddress,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressBillingRequest
   ) => {
-    return this.clientAddressCreatorRepository.create(userId, type, data);
+    return this.clientAddressCreatorRepository.createAddressBilling(
+      userId,
+      data
+    );
+  };
+
+  createAddressShipping = async (
+    userId: string,
+    data: UpdateClientAddressShippingRequest
+  ) => {
+    return this.clientAddressCreatorRepository.createAddressShipping(
+      userId,
+      data
+    );
   };
 
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
@@ -102,8 +121,24 @@ export class ClientService {
     return this.clientPasswordUpdaterRepository.update(tokenTfaData, newPass);
   };
 
-  updateAddress = async (userId: string, data: UpdateClientAddressRequest) => {
-    return this.clientAddressUpdaterRepository.update(userId, data);
+  updateAddressBilling = async (
+    userId: string,
+    data: UpdateClientAddressBillingRequest
+  ) => {
+    return this.clientAddressUpdaterRepository.updateAddressBilling(
+      userId,
+      data
+    );
+  };
+
+  updateAddressShipping = async (
+    userId: string,
+    data: UpdateClientAddressShippingRequest
+  ) => {
+    return this.clientAddressUpdaterRepository.updateAddressShipping(
+      userId,
+      data
+    );
   };
 
   updateShippingAddress = async (

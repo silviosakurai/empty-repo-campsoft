@@ -1,21 +1,11 @@
-import { ClientShippingAddress } from "@core/common/enums/models/client";
+import { userBillingAddressResponseSchema } from "@core/schema/user/userBillingAddressResponseSchema";
+import { userShippingAddressResponseSchema } from "@core/schema/user/userShippingAddressResponseSchema";
+import { Static } from "@sinclair/typebox";
 
-export interface ViewClientBaseAddressResponse {
-  zip_code: string;
-  street: string;
-  number: string;
-  complement: string;
-  neighborhood: string;
-  phone: string;
-  city: string;
-  state: string;
-  created_at: string;
-  updated_at: string;
-}
-export interface ViewClientAddressDTO extends ViewClientBaseAddressResponse{
-  shipping_address: ClientShippingAddress;
-}
+export type ViewClientBillingAddressResponse = Static<
+  typeof userBillingAddressResponseSchema
+>;
 
-export interface ViewClientBillingAddressResponse extends ViewClientBaseAddressResponse {
-  shipping_address: boolean;
-}
+export type ViewClientShippingAddressResponse = Static<
+  typeof userShippingAddressResponseSchema
+>;
