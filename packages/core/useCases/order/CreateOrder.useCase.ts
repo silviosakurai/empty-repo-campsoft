@@ -280,11 +280,16 @@ export class CreateOrderUseCase {
     ]);
 
     if (!results.length) {
-      //return this.emptyResult(input);
+      return this.emptyResult(input);
     }
 
     return {
       results: results,
+    };
+  }
+  private emptyResult(input: ViewOrderCreatedRequestDto) {
+    return {
+      results: [],
     };
   }
 }

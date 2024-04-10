@@ -85,6 +85,7 @@ export class OrderCreatedViewerRepository {
       )
       .where(
         and(
+          eq(order.id_pedido, sql`UUID_TO_BIN(${orderId}`),
           eq(order.id_empresa, tokenKeyData.company_id),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
