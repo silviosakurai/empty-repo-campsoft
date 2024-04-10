@@ -19,7 +19,7 @@ export class EmailService implements IEmailService {
   private client: SESClient;
 
   constructor(private readonly emailListerRepository: EmailListerRepository) {
-    this.client = new SESClient({ region: awsEnvironment.awsSesRegion });
+    this.client = new SESClient({ region: awsEnvironment.sesRegion });
   }
 
   private parseEmail(
@@ -42,7 +42,7 @@ export class EmailService implements IEmailService {
           Data: subject,
         },
       },
-      Source: from ?? awsEnvironment.awsSesEmail,
+      Source: from ?? awsEnvironment.sesEmail,
     });
   }
 

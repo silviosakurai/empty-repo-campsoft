@@ -9,10 +9,10 @@ export class StorageService implements IStorageService {
 
   constructor() {
     this.client = new S3Client({
-      region: awsEnvironment.awsS3Region,
+      region: awsEnvironment.s3Region,
       credentials: {
-        accessKeyId: awsEnvironment.awsS3AccessKeyId,
-        secretAccessKey: awsEnvironment.awsS3SecretAccessKey,
+        accessKeyId: awsEnvironment.s3AccessKeyId,
+        secretAccessKey: awsEnvironment.s3SecretAccessKey,
       },
     });
   }
@@ -21,7 +21,7 @@ export class StorageService implements IStorageService {
     const buffer = Buffer.from(imageBase64, "base64");
 
     const command = new PutObjectCommand({
-      Bucket: awsEnvironment.awsS3BucketName,
+      Bucket: awsEnvironment.s3BucketName,
       Key: `image/${clientId}`,
       Body: buffer,
     });
@@ -36,5 +36,5 @@ export class StorageService implements IStorageService {
   }
 
   private createUrl = (clientId: string) =>
-    `https://${awsEnvironment.awsS3BucketName}.s3.${awsEnvironment.awsS3Region}.amazonaws.com/image/${clientId}`;
+    `https://${awsEnvironment.s3BucketName}.s3.${awsEnvironment.s3Region}.amazonaws.com/image/${clientId}`;
 }
