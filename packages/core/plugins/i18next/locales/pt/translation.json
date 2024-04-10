@@ -48,5 +48,7 @@
   "billing_address_not_found": "Endereço de cobrança não encontrado",
   "shipping_address_not_found": "Endereço de entrega não encontrado",
   "error_updating_shipping_address": "Erro ao atualizar o endereço de entrega",
-  "error_updating_billing_address": "Erro ao atualizar o endereço de cobrança"
+  "error_updating_billing_address": "Erro ao atualizar o endereço de cobrança",
+  "failed_to_upload_image": "Falha ao fazer upload da imagem",
+  "failed_to_update_image": "Falha ao atualizar a imagem"
 }

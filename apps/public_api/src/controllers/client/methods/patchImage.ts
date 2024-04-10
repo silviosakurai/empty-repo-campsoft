@@ -18,6 +18,7 @@ export const patchImage = async (
 
   try {
     const response = await clientImageUpdaterUseCase.update(
+      t,
       tokenJwtData.clientId,
       request.body.image
     );

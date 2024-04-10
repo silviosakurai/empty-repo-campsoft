@@ -48,5 +48,7 @@
   "billing_address_not_found": "Billing address not found!",
   "shipping_address_not_found": "Shipping address not found!",
   "error_updating_shipping_address": "Error updating shipping address!",
-  "error_updating_billing_address": "Error updating billing address!"
+  "error_updating_billing_address": "Error updating billing address!",
+  "failed_to_upload_image": "Failed to upload image!",
+  "failed_to_update_image": "Failed to update image!"
 }

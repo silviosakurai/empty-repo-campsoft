@@ -1,21 +1,39 @@
 import { injectable } from "tsyringe";
 import { ClientService } from "@core/services/client.service";
 import { StorageService } from "@core/services/storage.service";
+import { TFunction } from "i18next";
+import { ImageUpdaterResponse } from "./dtos/ImageUpdaterResponse.dto";
 
 @injectable()
 export class ClientImageUpdaterUseCase {
   constructor(
     private readonly clientService: ClientService,
-    private readonly storageService: StorageService,
+    private readonly storageService: StorageService
   ) {}
 
-  async update(clientId: string, imageBase64: string): Promise<boolean> {
-    const imageUrl = await this.storageService.uploadImage(clientId, imageBase64);
+  async update(
+    t: TFunction<"translation", undefined>,
+    clientId: string,
+    imageBase64: string
+  ): Promise<ImageUpdaterResponse> {
+    const imageUrl = await this.storageService.uploadImage(
+      clientId,
+      imageBase64
+    );
 
     if (!imageUrl) {
-      throw new Error('Failed to upload image');
+      throw new Error(t("failed_to_upload_image"));
     }
 
-    return this.clientService.updateImage(clientId, imageUrl);
+    const update = await this.clientService.updateImage(clientId, imageUrl);
+
+    if (!update) {
+      throw new Error(t("failed_to_update_image"));
+    }
+
+    return {
+      client_id: clientId,
+      image: imageUrl,
+    };
   }
 }

@@ -1,7 +1,10 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userPutAddressResponseSchema } from "@core/schema/user/userPutAddressResponseSchema";
+import {
+  userUploadImageSchemaRequest,
+  userUploadImageSchemaResponse,
+} from "@core/schema/user/userUploadImageSchema";
 
 export const patchUserImageSchemaSchema = {
   description: "Altera a imagem do usuario logado",
@@ -22,25 +25,15 @@ export const patchUserImageSchemaSchema = {
       })
     ),
   }),
-  body: Type.Object({
-    image: Type.String(),
-  }),
+  body: userUploadImageSchemaRequest,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: userPutAddressResponseSchema,
+        data: userUploadImageSchemaResponse,
       },
       { description: "Successful" }
-    ),
-    400: Type.Object(
-      {
-        status: Type.Boolean({ default: false }),
-        message: Type.String(),
-        data: Type.Null(),
-      },
-      { description: "Bad Request" }
     ),
     401: Type.Object(
       {
