@@ -3,7 +3,6 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { sql, eq } from "drizzle-orm";
 import { clientEmail } from "@core/models/client";
-import { and } from "drizzle-orm";
 import { ClientEmailVerified } from "@core/common/enums/models/clientEmail";
 
 @injectable()
