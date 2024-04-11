@@ -115,7 +115,6 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.patch('/user/email-activation/:token', {
     schema: userActivatePasswordSchema,
-    preHandler: [server.authenticateJwt],
     handler: clientController.activateClientEmail,
   });
 

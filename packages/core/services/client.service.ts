@@ -173,8 +173,8 @@ export class ClientService {
     return this.emailCreatorRepository.create(input);
   };
 
-  activateEmail = async (clientId: string, token: string) => {
-    return this.clientEmailActivatorRepository.activate(clientId, token);
+  activateEmail = async (token: string) => {
+    return this.clientEmailActivatorRepository.activate(token);
   };
 
   updateImage = async (clientId: string, storageUrl: string) => {

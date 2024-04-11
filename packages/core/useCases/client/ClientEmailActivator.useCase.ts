@@ -5,7 +5,7 @@ import { injectable } from "tsyringe";
 export class ClientEmailActivatorUseCase {
   constructor(private readonly clientService: ClientService) {}
 
-  async execute(clientId: string, token: string) {
-    return this.clientService.activateEmail(clientId, token);
+  async execute(token: string) {
+    return this.clientService.activateEmail(token);
   }
 }

@@ -12,19 +12,14 @@ export class ClientEmailActivatorRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async activate(clientId: string, token: string) {
+  async activate(token: string) {
     const results = await this.db
       .update(clientEmail)
       .set({
         verificado: ClientEmailVerified.YES,
         verificado_data: new Date().toISOString(),
       })
-      .where(
-        and(
-          eq(clientEmail.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(clientEmail.token, sql`UUID_TO_BIN(${token})`)
-        )
-      );
+      .where(eq(clientEmail.token, sql`UUID_TO_BIN(${token})`));
 
     if (!results[0].affectedRows) {
       return false;

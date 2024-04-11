@@ -9,13 +9,10 @@ export const activateClientEmail = async (
   reply: FastifyReply
 ) => {
   const service = container.resolve(ClientEmailActivatorUseCase);
-  const { t, tokenJwtData } = request;
+  const { t } = request;
 
   try {
-    const result = await service.execute(
-      tokenJwtData.clientId,
-      request.params.token
-    );
+    const result = await service.execute(request.params.token);
 
     if (!result) {
       return sendResponse(reply, {
