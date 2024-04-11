@@ -1,5 +1,5 @@
 import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ApiRepository } from "@core/repositories/api/Api.repository";
 import { injectable } from "tsyringe";
 
@@ -23,14 +23,12 @@ export class ApiService {
 
   findApiByJwt = async (
     clientId: string,
-    tokenKeyData: ITokenKeyData,
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
-  ) => {
+  ): Promise<ITokenJwtData | null> => {
     return this.apiRepository.findApiByJwt(
       clientId,
-      tokenKeyData,
       routePath,
       routeMethod,
       routeModule

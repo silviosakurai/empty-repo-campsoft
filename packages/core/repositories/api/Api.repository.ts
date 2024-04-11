@@ -17,7 +17,11 @@ import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
 import { ClientStatus } from "@core/common/enums/models/client";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import {
+  ITokenJwtAccess,
+  ITokenJwtData,
+} from "@core/common/interfaces/ITokenJwtData";
+import { AccessStatus } from "@core/common/enums/models/access";
 
 @injectable()
 export class ApiRepository {
@@ -70,17 +74,17 @@ export class ApiRepository {
 
   async findApiByJwt(
     clientId: string,
-    tokenKeyData: ITokenKeyData,
     routePath: string,
     routeMethod: RouteMethod,
     routeModule: RouteModule
   ): Promise<ITokenJwtData | null> {
     const result = await this.db
       .select({
-        clientId: sql`BIN_TO_UUID(${client.id_cliente})`,
+        companyId: sql<number>`${access.id_empresa}`.mapWith(Number),
+        accessTypeId: sql<number>`${access.id_acesso_tipo}`.mapWith(Number),
       })
-      .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
+      .from(access)
+      .innerJoin(client, eq(client.id_cliente, access.id_cliente))
       .innerJoin(
         accessRouteType,
         eq(accessRouteType.id_acesso_tipo, access.id_acesso_tipo)
@@ -90,19 +94,32 @@ export class ApiRepository {
         and(
           eq(client.status, ClientStatus.ACTIVE),
           eq(client.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(access.id_empresa, tokenKeyData.company_id),
+          eq(access.status, AccessStatus.ACTIVE),
           eq(route.rota, routePath),
           eq(route.metodo, routeMethod),
           eq(route.module, routeModule)
         )
       )
+      .groupBy(access.id_cliente, access.id_empresa, access.id_acesso_tipo)
       .execute();
 
-    if (!result.length) {
+    if (!result || result.length === 0) {
       return null;
     }
 
-    return result[0] as unknown as ITokenJwtData;
+    const accessData: ITokenJwtAccess[] = result
+      .filter((item) => item.companyId !== null && item.accessTypeId !== null)
+      .map((item) => ({
+        companyId: item.companyId,
+        accessTypeId: item.accessTypeId,
+      }));
+
+    const tokenJwtData: ITokenJwtData = {
+      clientId,
+      access: accessData,
+    };
+
+    return tokenJwtData;
   }
 
   async findApiByTfa(token: string): Promise<ITokenTfaData | null> {
