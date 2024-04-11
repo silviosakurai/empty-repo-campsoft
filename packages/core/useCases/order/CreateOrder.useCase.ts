@@ -3,13 +3,13 @@ import { OrderService } from "@core/services/order.service";
 import { PlanService } from "@core/services/plan.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import {
-  CreateOrderRequestDto,
-  ViewOrderCreatedResponseDto,
-} from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { ClientService, ProductService } from "@core/services";
-import { CreateOrder } from "@core/interfaces/repositories/order";
+import {
+  CreateOrder,
+  OrderByNumberResponse,
+} from "@core/interfaces/repositories/order";
 import { SignatureService } from "@core/services/signature.service";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PriceService } from "@core/services/price.service";
@@ -273,7 +273,7 @@ export class CreateOrderUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     orderId: string
-  ): Promise<ViewOrderCreatedResponseDto> {
+  ): Promise<OrderByNumberResponse | null> {
     const results = await this.orderService.viewOrderByNumber(
       orderId,
       tokenKeyData,
@@ -281,7 +281,7 @@ export class CreateOrderUseCase {
     );
 
     if (!results) {
-      return [];
+      return null;
     }
 
     return results;
