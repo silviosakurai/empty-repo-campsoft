@@ -17,7 +17,7 @@ export const postProduct = async (
   try {
     const response = await productsCreatorUseCase.execute(
       tokenKeyData.company_id,
-      request.body,
+      request.body
     );
 
     if (!response) {

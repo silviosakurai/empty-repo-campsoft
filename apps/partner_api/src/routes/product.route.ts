@@ -3,7 +3,7 @@ import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
   listProductByCompanySchema,
-  postProductSchema
+  postProductSchema,
 } from '@core/validations/product';
 
 export default async function productRoutes(server: FastifyInstance) {

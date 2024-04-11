@@ -11,19 +11,20 @@ export const listProduct = async (
   }>,
   reply: FastifyReply
 ) => {
-  const productsListerByCompanyUseCase = container.resolve(ProductsListerByCompanyUseCase);
+  const productsListerByCompanyUseCase = container.resolve(
+    ProductsListerByCompanyUseCase
+  );
   const { t, tokenJwtData } = request;
 
-  const companyIds: number[] = 
-    request.query.companies
-      ? request.query.companies.split(',').map(Number)
-      : [];
+  const companyIds: number[] = request.query.companies
+    ? request.query.companies.split(',').map(Number)
+    : [];
 
   try {
     const response = await productsListerByCompanyUseCase.execute(
       tokenJwtData,
       request.query,
-      companyIds,
+      companyIds
     );
 
     if (!response) {
