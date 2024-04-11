@@ -5,7 +5,6 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import {
   CreateOrderRequestDto,
-  ViewOrderCreatedRequestDto,
   ViewOrderCreatedResponseDto,
 } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
@@ -131,8 +130,6 @@ export class CreateOrderUseCase {
       throw new Error(t("error_create_order"));
     }
 
-    const orderId = createOrder.order_id;
-
     await this.createSignature(
       t,
       tokenKeyData,
@@ -151,7 +148,11 @@ export class CreateOrderUseCase {
       createOrder.order_id
     );
 
-    return createOrder;
+    return this.viewOrderCreated(
+      tokenKeyData,
+      tokenJwtData,
+      createOrder.order_id
+    );
   }
 
   private async payWith(
@@ -265,31 +266,20 @@ export class CreateOrderUseCase {
   }
 
   async viewOrderCreated(
-    input: ViewOrderCreatedRequestDto,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     orderId: string
   ): Promise<ViewOrderCreatedResponseDto> {
-    const [results] = await Promise.all([
-      this.orderService.viewOrderCreated(
-        input,
-        tokenKeyData,
-        tokenJwtData,
-        orderId
-      ),
-    ]);
+    const results = await this.orderService.viewOrderByNumber(
+      orderId,
+      tokenKeyData,
+      tokenJwtData
+    );
 
-    if (!results.length) {
-      return this.emptyResult(input);
+    if (!results) {
+      return [];
     }
 
-    return {
-      results: results,
-    };
-  }
-  private emptyResult(input: ViewOrderCreatedRequestDto) {
-    return {
-      results: [],
-    };
+    return results;
   }
 }
