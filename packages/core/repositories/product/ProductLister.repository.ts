@@ -20,7 +20,7 @@ export class ProductListerRepository {
   ) {}
 
   async list(
-    companyId: number,
+    companyIds: number[],
     query: ListProductRequest
   ): Promise<ListProductResponse | null> {
     const filters = this.setFilters(query);
@@ -65,7 +65,12 @@ export class ProductListerRepository {
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(eq(productCompany.id_empresa, companyId), ...filters));
+      .where(
+        and(
+          inArray(productCompany.id_empresa, companyIds),
+          ...filters
+        )
+      );
 
     const totalResult = await allQuery.execute();
 

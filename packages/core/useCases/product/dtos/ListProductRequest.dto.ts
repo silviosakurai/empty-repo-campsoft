@@ -4,6 +4,7 @@ import { ProductFields } from "@core/common/enums/models/product";
 
 export interface ListProductRequest {
   id?: string;
+  companies?: string;
   status?: Status;
   name?: string;
   description?: string;

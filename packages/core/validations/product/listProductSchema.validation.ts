@@ -28,6 +28,7 @@ export const listProductSchema = {
   querystring: Type.Object({
     ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
+    companies: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({
         enum: Object.values(Status),

@@ -16,7 +16,12 @@ export class ProductService {
   ) {}
 
   list = async (companyId: number, query: ListProductRequest) => {
-    return this.productListerRepository.list(companyId, query);
+    const companyIds = [companyId];
+    return this.productListerRepository.list(companyIds, query);
+  };
+
+  listByCompanyIds = async (companyIds: number[], query: ListProductRequest) => {
+    return this.productListerRepository.list(companyIds, query);
   };
 
   listByIds = async (companyId: number, productIds: string[]) => {
