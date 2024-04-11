@@ -44,5 +44,15 @@
   "voucher_product_not_eligible": "Voucher de produto não é elegível",
   "products_not_found": "Produtos não encontrados",
   "voucher_activate_now_false": "Voucher não pode ser ativado posteriormente",
-  "email_disposable_not_allowed": "E-mail descartável não permitido"
+  "email_disposable_not_allowed": "E-mail descartável não permitido",
+  "billing_address_not_found": "Endereço de cobrança não encontrado",
+  "shipping_address_not_found": "Endereço de entrega não encontrado",
+  "error_updating_shipping_address": "Erro ao atualizar o endereço de entrega",
+  "error_updating_billing_address": "Erro ao atualizar o endereço de cobrança",
+  "failed_to_upload_image": "Falha ao fazer upload da imagem",
+  "failed_to_update_image": "Falha ao atualizar a imagem",
+  "invalid_image_format": "Formato de imagem inválido",
+  "format_not_supported_allowed_formats_png_jpeg_jpg": "Formato não suportado. Formatos permitidos: PNG, JPEG, JPG",
+  "image_size_exceeded_2mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
+  "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido"
 }

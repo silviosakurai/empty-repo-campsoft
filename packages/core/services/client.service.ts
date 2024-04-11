@@ -33,6 +33,7 @@ import {
 import { UpdateClientAddressRequest } from "@core/useCases/client/dtos/UpdateClientAddressRequest.dto";
 import { ClientAddressCreatorRepository } from "@core/repositories/client/ClientAddressCreator.repository";
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
+import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
 
 @injectable()
 export class ClientService {
@@ -52,15 +53,20 @@ export class ClientService {
     private readonly clientEmailViewerByEmailRepository: ClientEmailViewerByEmailRepository,
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
-    private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository
+    private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
+    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
     return this.clientViewerRepository.view(tokenKeyData, userId);
   };
 
-  viewAddress = async (userId: string, type: ClientAddress) => {
-    return this.clientAddressViewerRepository.view(userId, type);
+  viewBilling = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewBilling(userId);
+  };
+
+  viewShipping = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewShipping(userId);
   };
 
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
@@ -77,10 +83,14 @@ export class ClientService {
 
   createAddress = async (
     userId: string,
-    type: ClientAddress,
-    data: UpdateClientAddressRequest
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
   ) => {
-    return this.clientAddressCreatorRepository.create(userId, type, data);
+    return this.clientAddressCreatorRepository.createAddress(
+      userId,
+      data,
+      clientAddress
+    );
   };
 
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
@@ -102,8 +112,16 @@ export class ClientService {
     return this.clientPasswordUpdaterRepository.update(tokenTfaData, newPass);
   };
 
-  updateAddress = async (userId: string, data: UpdateClientAddressRequest) => {
-    return this.clientAddressUpdaterRepository.update(userId, data);
+  updateAddress = async (
+    userId: string,
+    data: UpdateClientAddressRequest,
+    clientAddress: ClientAddress
+  ) => {
+    return this.clientAddressUpdaterRepository.updateAddress(
+      userId,
+      data,
+      clientAddress
+    );
   };
 
   updateShippingAddress = async (
@@ -151,5 +169,9 @@ export class ClientService {
 
   createEmail = async (input: ClientEmailCreatorInput) => {
     return this.emailCreatorRepository.create(input);
+  };
+
+  updateImage = async (clientId: string, storageUrl: string) => {
+    return this.clientImageUpdaterRepository.update(clientId, storageUrl);
   };
 }

@@ -1,4 +1,10 @@
-import { mysqlTable, int, datetime, varchar } from "drizzle-orm/mysql-core";
+import {
+  mysqlTable,
+  int,
+  datetime,
+  varchar,
+  text,
+} from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const templateEmail = mysqlTable("template_email", {
@@ -20,8 +26,8 @@ export const templateEmail = mysqlTable("template_email", {
     .notNull()
     .default("contato@maniadeapp.com.br"),
   assunto: varchar("assunto", { length: 255 }).notNull().default("Email Geral"),
-  email_txt: varchar("email_txt", { length: 1000 }),
-  email_html: varchar("email_html", { length: 1000 }),
+  email_txt: text("email_txt"),
+  email_html: text("email_html"),
   created_at: datetime("created_at", { mode: "string" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

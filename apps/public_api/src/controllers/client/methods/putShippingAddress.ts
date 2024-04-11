@@ -4,6 +4,7 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { ClientAddressUpdaterUseCase } from '@core/useCases/client/ClientAddressUpdater.useCase';
 import { UpdateClientAddressRequest } from '@core/useCases/client/dtos/UpdateClientAddressRequest.dto';
+import { ClientAddress } from '@core/common/enums/models/client';
 
 export const putShippingAddress = async (
   request: FastifyRequest<{
@@ -17,13 +18,20 @@ export const putShippingAddress = async (
   );
 
   try {
-    await clientAddressUpdaterUseCase.updateShipping(
+    const update = await clientAddressUpdaterUseCase.update(
       tokenJwtData.clientId,
-      request.body
+      request.body,
+      ClientAddress.SHIPPING
     );
 
+    if (!update) {
+      return sendResponse(reply, {
+        message: t('error_updating_shipping_address'),
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
+
     return sendResponse(reply, {
-      data: request.body,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {

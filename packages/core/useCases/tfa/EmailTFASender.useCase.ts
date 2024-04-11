@@ -2,7 +2,7 @@ import { TfaService } from "@core/services/tfa.service";
 import { injectable } from "tsyringe";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { EmailService } from "@core/services/email.service";
-import { LoginEmail } from "@core/interfaces/services/IClient.service";
+import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 
@@ -20,10 +20,10 @@ export class EmailTFASenderUserCase {
   }: SendCodeLoginTFARequest): Promise<boolean> {
     const code = await this.tfaService.generateAndVerifyToken();
 
-    const loginEmail = {
+    const notificationTemplate = {
       email: loginUserTFA.login,
       clientId: loginUserTFA.clientId,
-    } as LoginEmail;
+    } as NotificationTemplate;
 
     const replaceTemplate = {
       code,
@@ -31,7 +31,7 @@ export class EmailTFASenderUserCase {
 
     await this.emailService.sendEmail(
       tokenKeyData,
-      loginEmail,
+      notificationTemplate,
       TemplateModulo.CODIGO_TFA,
       replaceTemplate
     );
