@@ -6,15 +6,22 @@ import { CrossSellProductListerRepository } from "@core/repositories/product/Cro
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductRequest.dto";
+import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 
 @injectable()
 export class ProductService {
   constructor(
+    private readonly productCreatorRepository: ProductCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
     private readonly productViewerRepository: ProductViewerRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository
   ) {}
 
+  create = async (input: CreateProductRequest) => {
+    return this.productCreatorRepository.create(input);
+  };
+  
   list = async (companyId: number, query: ListProductRequest) => {
     const companyIds = [companyId];
     return this.productListerRepository.list(companyIds, query);

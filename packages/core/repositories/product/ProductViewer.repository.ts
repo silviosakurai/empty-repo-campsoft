@@ -39,6 +39,10 @@ export class ProductViewerRepository {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
         },
+        prices: {
+          face_value: product.preco_face,
+          price: product.preco,
+        },
         created_at: product.created_at,
         updated_at: product.updated_at,
       })
