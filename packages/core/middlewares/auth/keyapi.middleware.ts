@@ -15,7 +15,7 @@ async function authenticateKeyApi(
   const { redis } = request.server;
   const { keyapi } = request.headers;
 
-  const routePath = request.routeOptions.url || request.raw.url;
+  const routePath = request.routeOptions.url ?? request.raw.url;
   const routeMethod = request.routeOptions.method;
   const routeModule = request.module;
 
