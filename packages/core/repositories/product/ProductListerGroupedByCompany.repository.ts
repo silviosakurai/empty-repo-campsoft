@@ -3,7 +3,6 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { product, productCompany, productType, company } from "@core/models";
 import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import {
