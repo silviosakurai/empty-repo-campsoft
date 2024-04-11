@@ -9,8 +9,13 @@ export class ProductsCreatorUseCase {
   ) {}
 
   async execute(
+    companyId: number,
     body: CreateProductRequest,
   ): Promise<boolean> {
-    return this.productService.create(body);
+    const productId = body.product_id;
+
+    await this.productService.create(body);
+
+    return this.productService.createProductCompany(productId, companyId);
   }
 }

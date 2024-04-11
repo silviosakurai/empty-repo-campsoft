@@ -12,10 +12,11 @@ export const postProduct = async (
   reply: FastifyReply
 ) => {
   const productsCreatorUseCase = container.resolve(ProductsCreatorUseCase);
-  const { t } = request;
+  const { t, tokenKeyData } = request;
 
   try {
     const response = await productsCreatorUseCase.execute(
+      tokenKeyData.company_id,
       request.body,
     );
 

@@ -8,12 +8,16 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductRequest.dto";
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
+import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
+import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
 
 @injectable()
 export class ProductService {
   constructor(
     private readonly productCreatorRepository: ProductCreatorRepository,
+    private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
+    private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly productViewerRepository: ProductViewerRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository
   ) {}
@@ -21,14 +25,17 @@ export class ProductService {
   create = async (input: CreateProductRequest) => {
     return this.productCreatorRepository.create(input);
   };
+
+  createProductCompany = async (productId: string, companyId: number) => {
+    return this.productCompanyCreatorRepository.create(productId, companyId);
+  };
   
   list = async (companyId: number, query: ListProductRequest) => {
-    const companyIds = [companyId];
-    return this.productListerRepository.list(companyIds, query);
+    return this.productListerRepository.list(companyId, query);
   };
 
   listByCompanyIds = async (companyIds: number[], query: ListProductRequest) => {
-    return this.productListerRepository.list(companyIds, query);
+    return this.productListerGroupedByCompanyRepository.list(companyIds, query);
   };
 
   listByIds = async (companyId: number, productIds: string[]) => {

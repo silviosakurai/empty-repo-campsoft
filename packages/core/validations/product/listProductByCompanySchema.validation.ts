@@ -4,10 +4,10 @@ import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
-import { productListResponseSchema } from "@core/schema/product/productListResponseSchema";
+import { productListGroupedByCompanyResponseSchema } from "@core/schema/product/productListGroupedByCompanyResponseSchema";
 import { Type } from "@sinclair/typebox";
 
-export const listProductSchema = {
+export const listProductByCompanySchema = {
   description: "Lista os produtos",
   tags: [TagSwagger.product],
   produces: ["application/json"],
@@ -28,6 +28,7 @@ export const listProductSchema = {
   querystring: Type.Object({
     ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
+    companies: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({
         enum: Object.values(Status),
@@ -53,7 +54,7 @@ export const listProductSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: productListResponseSchema,
+        data: productListGroupedByCompanyResponseSchema,
       },
       { description: "Successful" }
     ),

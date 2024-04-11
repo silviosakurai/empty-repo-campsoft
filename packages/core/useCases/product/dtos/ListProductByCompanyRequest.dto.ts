@@ -2,8 +2,9 @@ import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { ProductFields } from "@core/common/enums/models/product";
 
-export interface ListProductRequest {
+export interface ListProductByCompanyRequest {
   id?: string;
+  companies?: string;
   status?: Status;
   name?: string;
   description?: string;

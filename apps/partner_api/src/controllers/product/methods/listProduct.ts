@@ -3,11 +3,11 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ProductsListerByCompanyUseCase } from '@core/useCases/product/ProductsListerByCompany.useCase';
 import { container } from 'tsyringe';
-import { ListProductRequest } from '@core/useCases/product/dtos/ListProductRequest.dto';
+import { ListProductByCompanyRequest } from '@core/useCases/product/dtos/ListProductByCompanyRequest.dto';
 
 export const listProduct = async (
   request: FastifyRequest<{
-    Querystring: ListProductRequest;
+    Querystring: ListProductByCompanyRequest;
   }>,
   reply: FastifyReply
 ) => {
@@ -21,7 +21,7 @@ export const listProduct = async (
 
   try {
     const response = await productsListerByCompanyUseCase.execute(
-      tokenJwtData.clientId,
+      tokenJwtData,
       request.query,
       companyIds,
     );

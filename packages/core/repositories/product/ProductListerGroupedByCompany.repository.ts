@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { product, productCompany, productType } from "@core/models";
+import { product, productCompany, productType, company } from "@core/models";
 import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
@@ -10,19 +10,20 @@ import {
   ProductFields,
   ProductFieldsToOrder,
 } from "@core/common/enums/models/product";
-import { ListProductResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
+import { ListProductGroupedByCompany, ListProductGroupedByCompanyResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
+import { ProductDto, ProductDtoResponse } from "@core/interfaces/repositories/products";
 
 @injectable()
-export class ProductListerRepository {
+export class ProductListerGroupedByCompanyRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
   async list(
-    companyId: number,
+    companyIds: number[],
     query: ListProductRequest
-  ): Promise<ListProductResponse | null> {
+  ): Promise<ListProductGroupedByCompanyResponse | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -58,6 +59,8 @@ export class ProductListerRepository {
         },
         created_at: product.created_at,
         updated_at: product.updated_at,
+        company_id: productCompany.id_empresa,
+        company_name: company.nome_fantasia,
       })
       .from(product)
       .innerJoin(
@@ -65,11 +68,20 @@ export class ProductListerRepository {
         eq(product.id_produto, productCompany.id_produto)
       )
       .innerJoin(
+        company,
+        eq(company.id_empresa, productCompany.id_empresa)
+      )
+      .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(eq(productCompany.id_empresa, companyId), ...filters));
+      .where(
+        and(
+          inArray(productCompany.id_empresa, companyIds),
+          ...filters
+        )
+      );
 
     const totalResult = await allQuery.execute();
 
@@ -82,6 +94,8 @@ export class ProductListerRepository {
       return null;
     }
 
+    const bodyWithCompany = this.parseCompany(totalPaginated);
+    
     const paging = setPaginationData(
       totalPaginated.length,
       totalResult.length,
@@ -91,66 +105,8 @@ export class ProductListerRepository {
 
     return {
       paging,
-      results: totalPaginated as unknown as ProductResponse[],
+      results: bodyWithCompany as unknown as ListProductGroupedByCompany[],
     };
-  }
-
-  async listByIds(
-    companyId: number,
-    productIds: string[]
-  ): Promise<ProductResponse[]> {
-    const products = await this.db
-      .select({
-        product_id: product.id_produto,
-        status: product.status,
-        name: product.produto,
-        long_description: product.descricao,
-        short_description: product.descricao_curta,
-        marketing_phrases: product.frases_marketing,
-        content_provider_name: product.conteudista_nome,
-        slug: product.url_caminho,
-        images: {
-          main_image: product.imagem,
-          icon: product.icon,
-          logo: product.logo,
-          background_image: product.imagem_background,
-        },
-        how_to_access: {
-          desktop: product.como_acessar_desk,
-          mobile: product.como_acessar_mob,
-          url_web: product.como_acessar_url,
-          url_ios: product.como_acessar_url_ios,
-          url_android: product.como_acessar_url_and,
-        },
-        product_type: {
-          product_type_id: productType.id_produto_tipo,
-          product_type_name: productType.produto_tipo,
-        },
-        prices: {
-          face_value: product.preco_face,
-          price: product.preco,
-        },
-        created_at: product.created_at,
-        updated_at: product.updated_at,
-      })
-      .from(product)
-      .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
-      )
-      .innerJoin(
-        productType,
-        eq(product.id_produto_tipo, productType.id_produto_tipo)
-      )
-      .where(
-        and(
-          eq(productCompany.id_empresa, companyId),
-          inArray(product.id_produto, productIds)
-        )
-      )
-      .execute();
-
-    return products as unknown as ProductResponse[];
   }
 
   private setFilters(query: ListProductRequest): SQLWrapper[] {
@@ -203,5 +159,27 @@ export class ProductListerRepository {
     }
 
     return defaultOrderBy;
+  }
+
+  private parseCompany(products: ProductDto[]): ProductDtoResponse[] {
+    const productsParsed: any  = {};
+
+    products.forEach(product => {
+      if (!productsParsed[product.product_id]) {
+        productsParsed[product.product_id] = {
+          ...product,
+          companies: [] as any,
+        };
+      }
+      productsParsed[product.product_id].companies.push({
+        company_id: product.company_id,
+        company_name: product.company_name
+      });
+
+      delete productsParsed[product.product_id].company_id
+      delete productsParsed[product.product_id].company_name
+    });
+
+    return Object.values(productsParsed);
   }
 }
