@@ -26,6 +26,10 @@ export class ClientEmailActivatorRepository {
         )
       );
 
-    console.log(results);
+    if (!results[0].affectedRows) {
+      return false;
+    }
+
+    return true;
   }
 }

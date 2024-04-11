@@ -8,7 +8,7 @@ export const userActivatePasswordSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({

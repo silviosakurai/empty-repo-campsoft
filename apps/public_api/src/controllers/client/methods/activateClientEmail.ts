@@ -12,7 +12,21 @@ export const activateClientEmail = async (
   const { t, tokenJwtData } = request;
 
   try {
-    await service.execute(tokenJwtData.clientId, request.params.token);
+    const result = await service.execute(
+      tokenJwtData.clientId,
+      request.params.token
+    );
+
+    if (!result) {
+      return sendResponse(reply, {
+        message: t('token_not_found'),
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
+      });
+    }
+
+    return sendResponse(reply, {
+      httpStatusCode: HTTPStatusCode.OK,
+    });
   } catch (error) {
     console.log(error);
 
