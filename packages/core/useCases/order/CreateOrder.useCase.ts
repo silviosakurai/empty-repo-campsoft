@@ -6,7 +6,10 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { ClientService, ProductService } from "@core/services";
-import { CreateOrder } from "@core/interfaces/repositories/order";
+import {
+  CreateOrder,
+  OrderByNumberResponse,
+} from "@core/interfaces/repositories/order";
 import { SignatureService } from "@core/services/signature.service";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PriceService } from "@core/services/price.service";
@@ -145,7 +148,11 @@ export class CreateOrderUseCase {
       createOrder.order_id
     );
 
-    return createOrder;
+    return this.viewOrderCreated(
+      tokenKeyData,
+      tokenJwtData,
+      createOrder.order_id
+    );
   }
 
   private async payWith(
@@ -260,5 +267,23 @@ export class CreateOrderUseCase {
     }
 
     return createSignature;
+  }
+
+  async viewOrderCreated(
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    orderId: string
+  ): Promise<OrderByNumberResponse | null> {
+    const results = await this.orderService.viewOrderByNumber(
+      orderId,
+      tokenKeyData,
+      tokenJwtData
+    );
+
+    if (!results) {
+      return null;
+    }
+
+    return results;
   }
 }

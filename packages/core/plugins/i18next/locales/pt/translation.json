@@ -57,5 +57,6 @@
   "image_size_exceeded_2mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
   "product_update_not_allowed": "Atualização de produto não permitida.",
-  "error_update_product": "Erro ao atualizar o produto."
+  "error_update_product": "Erro ao atualizar o produto.",
+  "token_not_found": "Token não encontrado."
 }

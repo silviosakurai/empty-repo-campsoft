@@ -11,13 +11,14 @@ import {
   userPasswordRecoveryMethodsSchema,
   userPasswordRecoveryUpdaterSchema,
   getUserVoucherSchema,
-  createUserNewsletterSchema,
   getUserShippingAddressSchema,
   getUserBillingAddressSchema,
   putUserBillingAddressSchema,
   putUserShippingAddressSchema,
+  userActivatePasswordSchema,
   patchUserShippingAddressSchema,
   patchUserImageSchemaSchema,
+  createUserNewsletterSchema,
 } from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -89,12 +90,6 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.viewVoucher,
   });
 
-  server.post('/user/newsletter', {
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-    handler: clientController.createClientNewsletter,
-    schema: createUserNewsletterSchema,
-  });
-
   server.get('/user/billing-address', {
     schema: getUserBillingAddressSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
@@ -119,6 +114,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.putShippingAddress,
   });
 
+  server.patch('/user/email-activation/:token', {
+    schema: userActivatePasswordSchema,
+    handler: clientController.activateClientEmail,
+  });
+
   server.patch('/user/shipping-address', {
     schema: patchUserShippingAddressSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
@@ -129,5 +129,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: patchUserImageSchemaSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.patchImage,
+  });
+
+  server.post('/user/newsletter', {
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.createClientNewsletter,
+    schema: createUserNewsletterSchema,
   });
 }

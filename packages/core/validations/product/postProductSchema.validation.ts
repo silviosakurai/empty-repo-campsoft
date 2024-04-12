@@ -11,6 +11,7 @@ export const postProductSchema = {
   security: [
     {
       authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({
