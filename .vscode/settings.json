@@ -13,7 +13,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "sonarlint.connectedMode.project": {
-    "connectionId": "http-data-tocalivros-com-9000-",
-    "projectKey": "mania-core"
+    "connectionId": "tocalivros",
+    "projectKey": "mania-partner"
   }
 }

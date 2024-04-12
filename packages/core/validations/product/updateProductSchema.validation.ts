@@ -11,6 +11,7 @@ export const updateProductSchema = {
   security: [
     {
       authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({
@@ -31,7 +32,7 @@ export const updateProductSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: productCreateResponseSchema,
+        data: Type.Null(),
       },
       { description: "Successful" }
     ),
@@ -42,6 +43,16 @@ export const updateProductSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
+    ),
+    403: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      {
+        description: "Forbidden",
+      }
     ),
     404: Type.Object(
       {

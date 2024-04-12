@@ -12,6 +12,7 @@ import { ProductListerGroupedByCompanyRepository } from "@core/repositories/prod
 import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
 import { ProductUpdaterRepository } from "@core/repositories/product/ProductUpdater.repository";
 import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductRequest.dto";
+import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
 
 @injectable()
 export class ProductService {
@@ -20,6 +21,7 @@ export class ProductService {
     private readonly productListerRepository: ProductListerRepository,
     private readonly productCreatorRepository: ProductCreatorRepository,
     private readonly productUpdaterRepository: ProductUpdaterRepository,
+    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository,
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository
@@ -123,4 +125,8 @@ export class ProductService {
   update = async (productId: string, input: UpdateProductRequest) => {
     return this.productUpdaterRepository.update(productId, input);
   };
+
+  productCompanyViewer(productId: string, companyId: number) {
+    return this.productCompanyViewerRepository.view(productId, companyId);
+  }
 }
