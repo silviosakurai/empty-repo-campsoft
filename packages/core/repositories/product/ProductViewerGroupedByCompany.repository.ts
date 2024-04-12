@@ -1,11 +1,10 @@
-import { eq, and } from "drizzle-orm";
 import * as schema from "@core/models";
 import { inject, injectable } from "tsyringe";
+import { eq, and, inArray } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { product, productCompany, productType, company } from "@core/models";
 import { ProductDto, ProductDtoResponse } from "@core/interfaces/repositories/products";
 import { ListProductGroupedByCompany } from "@core/useCases/product/dtos/ListProductResponse.dto";
-import { inArray } from "drizzle-orm";
 
 @injectable()
 export class ProductViewerGroupedByCompanyRepository {
