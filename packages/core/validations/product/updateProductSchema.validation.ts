@@ -1,7 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { productCreateResponseSchema } from "@core/schema/product/productCreateResponseSchema";
 import { productUpdateSchema } from "@core/schema/product/productUpdateSchema";
 
 export const updateProductSchema = {
