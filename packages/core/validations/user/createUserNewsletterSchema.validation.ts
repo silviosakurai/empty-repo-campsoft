@@ -30,7 +30,7 @@ export const createUserNewsletterSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: userCreatorResponseSchema,
+        data: Type.Object({}),
       },
       { description: "Successful" }
     ),
