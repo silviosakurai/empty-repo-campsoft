@@ -18,6 +18,7 @@ import {
   userActivatePasswordSchema,
   patchUserShippingAddressSchema,
   patchUserImageSchemaSchema,
+  createUserNewsletterSchema,
 } from '@core/validations/user';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -128,5 +129,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: patchUserImageSchemaSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.patchImage,
+  });
+
+  server.post('/user/newsletter', {
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.createClientNewsletter,
+    schema: createUserNewsletterSchema,
   });
 }
