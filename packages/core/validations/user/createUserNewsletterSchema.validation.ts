@@ -1,7 +1,6 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userCreatorResponseSchema } from "@core/schema/user/userCreatorResponseSchema";
 
 export const createUserNewsletterSchema = {
   description: "Registra o e-mail do cliente na newsletter",
