@@ -30,7 +30,7 @@ export class ProductUpdaterRepository {
       .where(eq(product.id_produto, productId))
       .execute();
 
-    if (!result.length) {
+    if (!result[0].affectedRows) {
       return false;
     }
 
