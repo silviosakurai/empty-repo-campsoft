@@ -10,6 +10,7 @@ import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductR
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
 import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
+import { ProductViewerGroupedByCompanyRepository } from "@core/repositories/product/ProductViewerGroupedByCompany.repository";
 
 @injectable()
 export class ProductService {
@@ -19,6 +20,7 @@ export class ProductService {
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly productViewerRepository: ProductViewerRepository,
+    private readonly productViewerGroupedByCompanyRepository: ProductViewerGroupedByCompanyRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository
   ) {}
 
@@ -44,6 +46,10 @@ export class ProductService {
 
   view = async (companyId: number, sku: string) => {
     return this.productViewerRepository.get(companyId, sku);
+  };
+
+  viewByCompanyIds = async (companyIds: number[], sku: string) => {
+    return this.productViewerGroupedByCompanyRepository.view(companyIds, sku);
   };
 
   findProductsByIds = async (companyId: number, productIds: string[]) => {
