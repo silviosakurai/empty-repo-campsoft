@@ -19,7 +19,13 @@ export class EmailService implements IEmailService {
   private client: SESClient;
 
   constructor(private readonly emailListerRepository: EmailListerRepository) {
-    this.client = new SESClient({ region: awsEnvironment.sesRegion });
+    this.client = new SESClient({
+      credentials: {
+        accessKeyId: awsEnvironment.sesAccessKeyId,
+        secretAccessKey: awsEnvironment.sesSecretAccessKey,
+      },
+      region: awsEnvironment.sesRegion,
+    });
   }
 
   private parseEmail(
