@@ -14,6 +14,7 @@ export const listProductByCompanySchema = {
   security: [
     {
       authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({
