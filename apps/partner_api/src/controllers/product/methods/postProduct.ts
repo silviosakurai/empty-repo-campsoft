@@ -1,43 +1,36 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ProductsListerByCompanyUseCase } from '@core/useCases/product/ProductsListerByCompany.useCase';
+import { ProductsCreatorUseCase } from '@core/useCases/product/ProductsCreator.useCase';
 import { container } from 'tsyringe';
-import { ListProductByCompanyRequest } from '@core/useCases/product/dtos/ListProductByCompanyRequest.dto';
+import { CreateProductRequest } from '@core/useCases/product/dtos/CreateProductRequest.dto';
 
-export const listProduct = async (
+export const postProduct = async (
   request: FastifyRequest<{
-    Querystring: ListProductByCompanyRequest;
+    Body: CreateProductRequest;
   }>,
   reply: FastifyReply
 ) => {
-  const productsListerByCompanyUseCase = container.resolve(
-    ProductsListerByCompanyUseCase
-  );
-  const { t, tokenJwtData } = request;
-
-  const companyIds: number[] = request.query.companies
-    ? request.query.companies.split(',').map(Number)
-    : [];
+  const productsCreatorUseCase = container.resolve(ProductsCreatorUseCase);
+  const { t, tokenKeyData } = request;
 
   try {
-    const response = await productsListerByCompanyUseCase.execute(
-      tokenJwtData,
-      request.query,
-      companyIds
+    const response = await productsCreatorUseCase.execute(
+      tokenKeyData.company_id,
+      request.body
     );
 
     if (!response) {
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('product_not_found'),
+        message: t('error_create_product'),
         httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 
     return sendResponse(reply, {
-      data: response,
+      data: request.body,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
