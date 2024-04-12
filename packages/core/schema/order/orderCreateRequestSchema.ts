@@ -23,14 +23,17 @@ export const orderPaymentSchema = Type.Object({
 
 export const orderPlanSchema = Type.Object({
   plan_id: Type.Number(),
-  selected_products: Type.Union([Type.Array(Type.String()), Type.Null()]),
+  selected_products: Type.Array(Type.String(), { nullable: true }),
 });
 
 export const orderCreateRequestSchema = Type.Object({
   previous_order_id: Type.Union([Type.String(), Type.Null()]),
   activate_now: Type.Boolean(),
   plan: orderPlanSchema,
-  products: Type.Union([Type.Array(Type.String()), Type.Null()]),
+  products: Type.Union([
+    Type.Array(Type.String(), { nullable: true }),
+    Type.Null(),
+  ]),
   months: Type.Number(),
   subscribe: Type.Union([Type.Boolean(), Type.Null()]),
   coupon_code: Type.Union([Type.String(), Type.Null()]),
