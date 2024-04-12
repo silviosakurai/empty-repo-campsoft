@@ -10,6 +10,7 @@ export const createUserNewsletterSchema = {
   security: [
     {
       authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({
