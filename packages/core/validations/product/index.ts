@@ -4,3 +4,4 @@ export * from "./getProductCrossSellSchema.validation";
 export * from "./listProductByCompanySchema.validation";
 export * from "./postProductSchema.validation";
 export * from "./updateProductSchema.validation";
+export * from "./createProductImageSchema.validation";

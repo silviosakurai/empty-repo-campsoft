@@ -13,6 +13,8 @@ import { ProductCompanyCreatorRepository } from "@core/repositories/product/Prod
 import { ProductUpdaterRepository } from "@core/repositories/product/ProductUpdater.repository";
 import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductRequest.dto";
 import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
+import { ProductImagesUrlUpdaterRepository } from "@core/repositories/product/ProductImagesUrlUpdater.repository";
+import { ProductImageRepositoryCreateInput } from "@core/interfaces/repositories/products";
 
 @injectable()
 export class ProductService {
@@ -21,6 +23,7 @@ export class ProductService {
     private readonly productListerRepository: ProductListerRepository,
     private readonly productCreatorRepository: ProductCreatorRepository,
     private readonly productUpdaterRepository: ProductUpdaterRepository,
+    private readonly imagesUrlUpdaterRepository: ProductImagesUrlUpdaterRepository,
     private readonly productCompanyViewerRepository: ProductCompanyViewerRepository,
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
@@ -128,5 +131,9 @@ export class ProductService {
 
   productCompanyViewer(productId: string, companyId: number) {
     return this.productCompanyViewerRepository.view(productId, companyId);
+  }
+
+  updateImagesUrl(productId: string, input: ProductImageRepositoryCreateInput) {
+    return this.imagesUrlUpdaterRepository.update(productId, input);
   }
 }
