@@ -11,7 +11,7 @@ export default async function planRoutes(server: FastifyInstance) {
 
   server.get('/plans', {
     schema: listPlanByCompanySchema,
-    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: planController.list,
   });
 
