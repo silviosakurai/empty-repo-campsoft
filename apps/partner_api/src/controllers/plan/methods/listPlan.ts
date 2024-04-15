@@ -12,11 +12,11 @@ export const listPlan = async (
   reply: FastifyReply
 ) => {
   const planListerUseCase = container.resolve(PlansListerUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenJwtData } = request;
 
   try {
     const response = await planListerUseCase.execute(
-      tokenKeyData.company_id,
+      tokenJwtData,
       request.query
     );
 
