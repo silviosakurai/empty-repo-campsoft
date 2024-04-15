@@ -2,6 +2,10 @@ import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { productCreateResponseSchema } from "@core/schema/product/productCreateResponseSchema";
+import {
+  productImageCreateParamsSchema,
+  productImageCreateSchema,
+} from "@core/schema/product/productImageCreateSchema";
 
 export const createProductImageSchema = {
   description: "Cadastra uma nova imagem para o produto",
@@ -21,13 +25,9 @@ export const createProductImageSchema = {
         default: Language.pt,
       })
     ),
-    "Content-Type": Type.String({ default: "multipart/form-data" }),
   }),
-  // body: productCreateSchema,
-  params: Type.Object({
-    sku: Type.String(),
-    type: Type.String({ enum: ["image", "logo", "icon"] }),
-  }),
+  body: productImageCreateSchema,
+  params: productImageCreateParamsSchema,
   response: {
     200: Type.Object(
       {
