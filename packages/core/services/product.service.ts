@@ -10,16 +10,21 @@ import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductR
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
 import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
+import { ProductUpdaterRepository } from "@core/repositories/product/ProductUpdater.repository";
+import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductRequest.dto";
+import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
 
 @injectable()
 export class ProductService {
   constructor(
-    private readonly productCreatorRepository: ProductCreatorRepository,
-    private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
-    private readonly productListerRepository: ProductListerRepository,
-    private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly productViewerRepository: ProductViewerRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository
+    private readonly productListerRepository: ProductListerRepository,
+    private readonly productCreatorRepository: ProductCreatorRepository,
+    private readonly productUpdaterRepository: ProductUpdaterRepository,
+    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository,
+    private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
+    private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -29,12 +34,15 @@ export class ProductService {
   createProductCompany = async (productId: string, companyId: number) => {
     return this.productCompanyCreatorRepository.create(productId, companyId);
   };
-  
+
   list = async (companyId: number, query: ListProductRequest) => {
     return this.productListerRepository.list(companyId, query);
   };
 
-  listByCompanyIds = async (companyIds: number[], query: ListProductRequest) => {
+  listByCompanyIds = async (
+    companyIds: number[],
+    query: ListProductRequest
+  ) => {
     return this.productListerGroupedByCompanyRepository.list(companyIds, query);
   };
 
@@ -113,4 +121,12 @@ export class ProductService {
 
     return allProductsSelected;
   };
+
+  update = async (productId: string, input: UpdateProductRequest) => {
+    return this.productUpdaterRepository.update(productId, input);
+  };
+
+  productCompanyViewer(productId: string, companyId: number) {
+    return this.productCompanyViewerRepository.view(productId, companyId);
+  }
 }

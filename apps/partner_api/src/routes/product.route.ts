@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import {
   listProductByCompanySchema,
   postProductSchema,
+  updateProductSchema,
 } from '@core/validations/product';
 
 export default async function productRoutes(server: FastifyInstance) {
@@ -19,5 +20,11 @@ export default async function productRoutes(server: FastifyInstance) {
     schema: postProductSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.post,
+  });
+
+  server.put('/products/:sku', {
+    handler: productController.update,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    schema: updateProductSchema,
   });
 }
