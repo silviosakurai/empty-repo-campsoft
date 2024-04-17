@@ -132,6 +132,16 @@ export class ProductService {
     );
   };
 
+  deleteDetailHowToAccess = async (
+    productId: string,
+    updateParams: UpdateParams
+  ) => {
+    return this.productDetailHowToAccessUpdaterRepository.updateDetailHowToAccess(
+      productId,
+      updateParams
+    );
+  };
+
   productCompanyViewer(productId: string, companyId: number) {
     return this.productCompanyViewerRepository.view(productId, companyId);
   }

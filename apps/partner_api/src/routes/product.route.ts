@@ -22,7 +22,13 @@ export default async function productRoutes(server: FastifyInstance) {
     handler: productController.post,
   });
 
-  server.post('/products/:sku/how-to-access', {
+  server.put('/products/:sku/how-to-access', {
+    schema: updateProductDetailHowToAccessSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.updateDetail,
+  });
+
+  server.delete('/products/:sku/how-to-access', {
     schema: updateProductDetailHowToAccessSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.updateDetail,
