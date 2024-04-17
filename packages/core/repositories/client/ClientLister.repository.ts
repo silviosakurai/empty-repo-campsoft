@@ -1,5 +1,5 @@
 import { setPaginationData } from "@core/common/functions/createPaginationData";
-import { ClientDto, ClientDtoResponse } from "@core/interfaces/repositories/client";
+import { ClientListResponse, ClientWithCompaniesListResponse } from "@core/interfaces/repositories/client";
 import * as schema from "@core/models";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 import { ListClientGroupedByCompany, ListClienttGroupedByCompanyResponse } from "@core/useCases/client/dtos/ListClientResponse.dto";
@@ -22,12 +22,12 @@ export class ClientListerRepository {
 
     const allQuery = this.db
       .select({
-        user_id: sql`BIN_TO_UUID(${schema.client.id_cliente})`,
+        user_id: sql`BIN_TO_UUID(${schema.client.id_cliente})`.mapWith(String),
         status: schema.client.status,
         name: schema.client.nome,
         first_name: schema.client.nome,
         last_name: schema.client.sobrenome,
-        birthday: sql`DATE_FORMAT(${schema.client.data_nascimento}, "%Y-%m-%d")`,
+        birthday: sql`DATE_FORMAT(${schema.client.data_nascimento}, "%Y-%m-%d")`.mapWith(String),
         email: schema.client.email,
         phone: schema.client.telefone,
         cpf: schema.client.cpf,
@@ -92,16 +92,16 @@ export class ClientListerRepository {
         filters.push(eq(schema.client.email, query.email));
       }
 
+      return filters;
     }
-    else {
-      filters.push(eq(schema.company.id_empresa, companyId))
-    }
+
+    filters.push(eq(schema.company.id_empresa, companyId))
 
     return filters;
   }
 
 
-  private parseCompany(clients: ClientDto[]): ClientDtoResponse[] {
+  private parseCompany(clients: ClientListResponse[]): ClientWithCompaniesListResponse[] {
 
     const clientsParsed: any = {};
 
