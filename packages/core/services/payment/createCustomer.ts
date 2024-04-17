@@ -1,10 +1,16 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
-import { ICreateCustomer } from "@core/interfaces/services/payment/ICreateCustomer";
+import {
+  ICreateCustomer,
+  ICreateCustomerResponse,
+} from "@core/interfaces/services/payment/ICreateCustomer";
 import { paymentApiInstance } from "./paymentApiInstance";
+import { IZoopError } from "@core/interfaces/services/payment/IZoopError";
 
 export async function createCustomer(input: ICreateCustomer) {
   try {
-    const response = await paymentApiInstance.post("/buyers", input);
+    const response = await paymentApiInstance.post<
+      ICreateCustomerResponse & IZoopError
+    >("/buyers", input);
 
     if (response.status === HTTPStatusCode.CREATED) {
       return {
@@ -19,7 +25,6 @@ export async function createCustomer(input: ICreateCustomer) {
       message: response.data.error.message,
     };
   } catch (error) {
-    console.log((error as any).response);
     return {
       status: false,
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

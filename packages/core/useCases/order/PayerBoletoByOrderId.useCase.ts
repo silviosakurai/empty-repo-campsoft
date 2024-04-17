@@ -4,6 +4,8 @@ import { PaymentService } from "@core/services/payment.service";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
+import { ClientPaymentCreatorUseCase } from "./ClientPaymentCreator.useCase";
+import { ViewClientResponse } from "../client/dtos/ViewClientResponse.dto";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
@@ -11,7 +13,8 @@ export class PayerByBoletoByOrderIdUseCase {
     private readonly orderService: OrderService,
     private readonly clientService: ClientService,
     private readonly paymentService: PaymentService,
-    private readonly paymentGatewayService: PaymentGatewayService
+    private readonly paymentGatewayService: PaymentGatewayService,
+    private readonly clientPaymentCreatorUseCase: ClientPaymentCreatorUseCase
   ) {}
 
   async pay(
@@ -41,18 +44,31 @@ export class PayerByBoletoByOrderIdUseCase {
       throw new Error(t("client_not_found"));
     }
 
-    const createdCustomer = await this.paymentGatewayService.createCustomer({
-      firstName: client.first_name,
-      lastName: client.last_name,
-      cpf: client.cpf,
-      phone: client.phone,
-      birthDate: new Date(client.birthday),
-      email: client.email,
-    });
+    const clientPayment = await this.clientService.viewPaymentClient(
+      client.client_id
+    );
 
-    console.log(sellerId);
-    console.log(createdCustomer);
+    const externalId = clientPayment
+      ? clientPayment.external_id
+      : await this.generateExternalId(t, client);
 
-    return createdCustomer;
+    // await this.paymentGatewayService.createTransactionFullTicket;
+  }
+
+  private async generateExternalId(
+    t: TFunction<"translation", undefined>,
+    client: ViewClientResponse
+  ) {
+    await this.clientPaymentCreatorUseCase.create(t, client);
+
+    const clientPayment = await this.clientService.viewPaymentClient(
+      client.client_id
+    );
+
+    if (!clientPayment) {
+      throw new Error(t("internal_server_error"));
+    }
+
+    return clientPayment.external_id;
   }
 }

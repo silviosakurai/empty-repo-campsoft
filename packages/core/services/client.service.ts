@@ -35,6 +35,8 @@ import { ClientAddressCreatorRepository } from "@core/repositories/client/Client
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 import { ClientEmailActivatorRepository } from "@core/repositories/client/ClientEmailActivator.repository";
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
+import { ClientPaymentCreatorRepository } from "@core/repositories/client/ClientPaymentCreator.repository";
+import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
 
 @injectable()
 export class ClientService {
@@ -56,7 +58,9 @@ export class ClientService {
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
-    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
+    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
+    private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
+    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
@@ -179,5 +183,16 @@ export class ClientService {
 
   updateImage = async (clientId: string, storageUrl: string) => {
     return this.clientImageUpdaterRepository.update(clientId, storageUrl);
+  };
+
+  createPaymentClient = async (clientId: string, clientExternalId: string) => {
+    return this.clientPaymentCreatorRepository.create(
+      clientId,
+      clientExternalId
+    );
+  };
+
+  viewPaymentClient = async (clientId: string) => {
+    return this.clientPaymentViewerRepository.view(clientId);
   };
 }
