@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
   listUserWithCompaniesSchema,
-  userUpdaterByIdSchema
+  userUpdaterByIdSchema,
 } from '@core/validations/user';
 import ClientController from '@/controllers/client';
 

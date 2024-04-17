@@ -38,7 +38,6 @@ export class ClientViewerRepository {
         )
       )
       .execute();
-    console.log('achou user')
 
     if (!result.length) {
       return null;
