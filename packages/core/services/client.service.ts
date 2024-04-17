@@ -37,6 +37,7 @@ import { ClientEmailActivatorRepository } from "@core/repositories/client/Client
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 
 @injectable()
 export class ClientService {
@@ -60,7 +61,7 @@ export class ClientService {
     private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
-  ) {}
+  ) { }
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
     return this.clientViewerRepository.view(tokenKeyData, userId);
@@ -107,6 +108,10 @@ export class ClientService {
   };
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
+    return this.clientUpdaterRepository.update(clientId, input);
+  };
+
+  updateById = async (clientId: string, input: UpdateClientByIdRequestDto) => {
     return this.clientUpdaterRepository.update(clientId, input);
   };
 

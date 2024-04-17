@@ -10,7 +10,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 export class ClientViewerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
-  ) {}
+  ) { }
 
   async view(
     tokenKeyData: ITokenKeyData,
@@ -38,6 +38,7 @@ export class ClientViewerRepository {
         )
       )
       .execute();
+    console.log('achou user')
 
     if (!result.length) {
       return null;
