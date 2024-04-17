@@ -1,5 +1,5 @@
 import { ClientService } from "@core/services";
-import { ListClientResponse, ListClientResult, ListClienttGroupedByCompanyResponse } from "./dtos/ListClientResponse.dto";
+import { ListClienttGroupedByCompanyResponse } from "./dtos/ListClientResponse.dto";
 import { ListClientRequest } from "./dtos/ListClientRequest.dto";
 import { injectable } from "tsyringe";
 

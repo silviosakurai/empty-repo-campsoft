@@ -50,8 +50,6 @@ export class ClientListerRepository {
       )
       .groupBy()
 
-    const totalResult = await allQuery.execute();
-
     const paginatedQuery = allQuery
       .limit(query.per_page)
       .offset((query.current_page - 1) * query.per_page);
