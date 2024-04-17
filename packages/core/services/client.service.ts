@@ -61,7 +61,7 @@ export class ClientService {
     private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
-  ) { }
+  ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
     return this.clientViewerRepository.view(tokenKeyData, userId);
@@ -80,8 +80,8 @@ export class ClientService {
   };
 
   listWithCompanies = async (companyId: number, query: ListClientRequest) => {
-    return this.clientListerRepository.listWithCompanies(companyId, query)
-  }
+    return this.clientListerRepository.listWithCompanies(companyId, query);
+  };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
     return this.clientByEmailPhoneRepository.find(input);
@@ -112,7 +112,7 @@ export class ClientService {
   };
 
   updateById = async (clientId: string, input: UpdateClientByIdRequestDto) => {
-    return this.clientUpdaterRepository.update(clientId, input);
+    return this.clientUpdaterRepository.updateById(clientId, input);
   };
 
   updatePhone = async (

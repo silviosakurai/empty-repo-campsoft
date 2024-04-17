@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { ClientByIdUpdaterUseCase } from '@core/useCases/client/clientByIdUpdater.useCase';
+import { ClientByIdUpdaterUseCase } from '@core/useCases/client/ClientByIdUpdater.useCase';
 import { UpdateClientByIdRequestDto } from '@core/useCases/client/dtos/updateClientByIdRequest.dto';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
