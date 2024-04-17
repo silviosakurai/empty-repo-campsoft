@@ -41,4 +41,9 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.cancelOrder,
   });
+
+  server.post('/orders/:orderNumber/payments/boleto', {
+    handler: orderController.paymentByBoleto,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+  });
 }

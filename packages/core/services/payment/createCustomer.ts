@@ -1,13 +1,10 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
-import { generalEnvironment } from "@core/config/environments";
 import { ICreateCustomer } from "@core/interfaces/services/payment/ICreateCustomer";
-import axios from "axios";
+import { paymentApiInstance } from "./paymentApiInstance";
 
 export async function createCustomer(input: ICreateCustomer) {
   try {
-    const response = await axios.post(
-      `${generalEnvironment.paymentApiBaseUrl}/v1/marketplaces/${generalEnvironment.paymentMarketPlace}}/buyers`
-    );
+    const response = await paymentApiInstance.post("/buyers", input);
 
     if (response.status === HTTPStatusCode.CREATED) {
       return {
@@ -22,6 +19,7 @@ export async function createCustomer(input: ICreateCustomer) {
       message: response.data.error.message,
     };
   } catch (error) {
+    console.log((error as any).response);
     return {
       status: false,
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
