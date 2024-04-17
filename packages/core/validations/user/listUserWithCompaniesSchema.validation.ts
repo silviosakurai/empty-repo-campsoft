@@ -5,7 +5,6 @@ import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { ClientFields, ClientStatus } from "@core/common/enums/models/client";
 import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
 import { userListGroupedByCompanyResponseSchema } from "@core/schema/user/userListGroupedByCompanyResponseSchema";
-import { userReponseWithCompaniesSchema } from "@core/schema/user/userResponseWithCompaniesSchema";
 import { Type } from "@sinclair/typebox";
 
 export const listUserWithCompaniesSchema = {
@@ -37,7 +36,7 @@ export const listUserWithCompaniesSchema = {
       })
     ),
     email: Type.Optional(Type.String({ format: "email" })),
-    phone: Type.Optional(Type.String({ minLength: 11, maxLength: 12 })),
+    name: Type.Optional(Type.String()),
     cpf: Type.Optional(Type.String({ minLength: 11, maxLength: 11 })),
     sort_by: Type.Optional(
       Type.String({

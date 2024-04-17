@@ -1,4 +1,4 @@
-import { ClientStatus } from "@core/common/enums/models/client";
+import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { Type } from "@sinclair/typebox";
 import { companySchemaWithUserAndLeader } from "../company/companySchemaWithUserAndLeader";
 
@@ -8,5 +8,10 @@ export const userDetailsGroupedByCompanySchema = Type.Object({
     name: Type.String(),
     first_name: Type.String(),
     last_name: Type.String(),
+    birthday: Type.String(),
+    email: Type.String(),
+    phone: Type.String(),
+    cpf: Type.String(),
+    gender: Type.String({ enum: Object.values(ClientGender) }),
     companies: Type.Array(companySchemaWithUserAndLeader),
 })

@@ -1,11 +1,9 @@
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { ClientDto, ClientDtoResponse } from "@core/interfaces/repositories/client";
 import * as schema from "@core/models";
-import { ClientResponse } from "@core/useCases/client/dtos/ClientResponse.dto";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
-import { ListClientGroupedByCompany, ListClientResponse, ListClienttGroupedByCompanyResponse } from "@core/useCases/client/dtos/ListClientResponse.dto";
-import { eq, sql } from "drizzle-orm";
-import { SQLWrapper } from "drizzle-orm";
+import { ListClientGroupedByCompany, ListClienttGroupedByCompanyResponse } from "@core/useCases/client/dtos/ListClientResponse.dto";
+import { eq, sql, and, SQLWrapper } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 
@@ -20,7 +18,7 @@ export class ClientListerRepository {
     query: ListClientRequest
   ): Promise<ListClienttGroupedByCompanyResponse | null> {
 
-    const filters = this.setFilters(query);
+    const filters = this.setFilters(query, companyId);
 
     const allQuery = this.db
       .select({
@@ -29,6 +27,11 @@ export class ClientListerRepository {
         name: schema.client.nome,
         first_name: schema.client.nome,
         last_name: schema.client.sobrenome,
+        birthday: sql`DATE_FORMAT(${schema.client.data_nascimento}, "%Y-%m-%d")`,
+        email: schema.client.email,
+        phone: schema.client.telefone,
+        cpf: schema.client.cpf,
+        gender: schema.client.sexo,
         company_id: schema.company.id_empresa,
         company_name: schema.company.nome_fantasia,
         user_type: schema.access.id_acesso_tipo
@@ -41,6 +44,9 @@ export class ClientListerRepository {
       .innerJoin(
         schema.company,
         eq(schema.company.id_empresa, schema.access.id_empresa)
+      )
+      .where(
+        and(...filters)
       )
       .groupBy()
 
@@ -57,9 +63,10 @@ export class ClientListerRepository {
     }
 
     const bodyWithCompany = this.parseCompany(totalPaginated)
+
     const paging = setPaginationData(
-      totalPaginated.length,
-      totalResult.length,
+      bodyWithCompany.length,
+      bodyWithCompany.length,
       query.per_page,
       query.current_page
     );
@@ -70,21 +77,27 @@ export class ClientListerRepository {
     };
   }
 
-  private setFilters(query: ListClientRequest): SQLWrapper[] {
+  private setFilters(query: ListClientRequest, companyId: number): SQLWrapper[] {
     const filters: SQLWrapper[] = [];
 
-    if (query.cpf) {
-      filters.push(eq(schema.client.cpf, query.cpf));
-    }
+    if (query.cpf || query.name || query.email) {
 
-    if (query.name) {
-      filters.push(eq(schema.client.nome, query.name));
-    }
+      if (query.cpf) {
+        filters.push(eq(schema.client.cpf, query.cpf));
+      }
 
-    if (query.email) {
-      filters.push(eq(schema.client.email, query.email));
-    }
+      if (query.name) {
+        filters.push(eq(schema.client.nome, query.name));
+      }
 
+      if (query.email) {
+        filters.push(eq(schema.client.email, query.email));
+      }
+
+    }
+    else {
+      filters.push(eq(schema.company.id_empresa, companyId))
+    }
 
     return filters;
   }

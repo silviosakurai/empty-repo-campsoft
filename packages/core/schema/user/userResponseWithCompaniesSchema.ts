@@ -8,6 +8,11 @@ export const userReponseWithCompaniesSchema = Type.Object({
   status: Type.String({ enum: Object.values(ClientStatus) }),
   first_name: Type.String(),
   last_name: Type.String(),
+  birthday: Type.String(),
+  email: Type.String(),
+  phone: Type.String(),
+  cpf: Type.String(),
+  gender: Type.String({ enum: Object.values(ClientGender) }),
   companies: Type.Array(Type.Object({
     company_id: Type.Number(),
     company_name: Type.String(),
