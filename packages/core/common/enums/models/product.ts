@@ -38,3 +38,10 @@ export enum ProductVoucherStatus {
   ACTIVE = "active",
   EXPIRED = "expired",
 }
+
+export enum ProductHowToAccessType {
+  ANDROID = "android",
+  IOS = "ios",
+  WEB = "web",
+  DESKTOP = "desktop",
+}

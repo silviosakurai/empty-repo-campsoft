@@ -10,6 +10,9 @@ import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductR
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
 import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
+import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
+import { ProductDetailHowToAccessUpdaterRepository } from "@core/repositories/product/ProductDetailHowToAccessUpdater.repository";
+import { UpdateParams } from "@core/useCases/product/dtos/ProductDetaiHowToAccess.dto";
 
 @injectable()
 export class ProductService {
@@ -19,7 +22,9 @@ export class ProductService {
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly productViewerRepository: ProductViewerRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
+    private readonly productDetailHowToAccessUpdaterRepository: ProductDetailHowToAccessUpdaterRepository,
+    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -29,12 +34,15 @@ export class ProductService {
   createProductCompany = async (productId: string, companyId: number) => {
     return this.productCompanyCreatorRepository.create(productId, companyId);
   };
-  
+
   list = async (companyId: number, query: ListProductRequest) => {
     return this.productListerRepository.list(companyId, query);
   };
 
-  listByCompanyIds = async (companyIds: number[], query: ListProductRequest) => {
+  listByCompanyIds = async (
+    companyIds: number[],
+    query: ListProductRequest
+  ) => {
     return this.productListerGroupedByCompanyRepository.list(companyIds, query);
   };
 
@@ -113,4 +121,18 @@ export class ProductService {
 
     return allProductsSelected;
   };
+
+  updateDetailHowToAccess = async (
+    productId: string,
+    updateParams: UpdateParams
+  ) => {
+    return this.productDetailHowToAccessUpdaterRepository.updateDetailHowToAccess(
+      productId,
+      updateParams
+    );
+  };
+
+  productCompanyViewer(productId: string, companyId: number) {
+    return this.productCompanyViewerRepository.view(productId, companyId);
+  }
 }
