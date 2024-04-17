@@ -35,7 +35,6 @@ export const updateProductDetailHowToAccess = async (
     }
 
     return sendResponse(reply, {
-      message: t('product_details_updated_successfully'),
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
