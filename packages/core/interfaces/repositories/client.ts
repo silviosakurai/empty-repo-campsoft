@@ -35,3 +35,26 @@ export interface IUserExistsFunction {
   cpf: string;
   phone: string;
 }
+
+interface Company {
+  company_id: number;
+  company_name: string;
+}
+
+export interface ClientDto {
+  user_id: unknown,
+  name: string | null,
+  first_name: string | null,
+  last_name: string | null,
+  company_id: number,
+  company_name: string | null,
+  user_type: number | null,
+}
+
+export interface ClientDtoResponse {
+  user_id: string;
+  name: string,
+  first_name: string,
+  last_name: string,
+  companies: Company[] | null;
+}
