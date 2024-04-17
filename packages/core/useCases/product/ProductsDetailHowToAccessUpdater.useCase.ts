@@ -24,14 +24,19 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
 
     const updateParams = this.buildUpdateParams(input.request);
 
+    if (!updateParams) {
+      return null;
+    }
+
     return this.productService.updateDetailHowToAccess(
       input.productId,
       updateParams
     );
   }
+
   private buildUpdateParams(
     request: UpdateProductDetailHowToAccessRequest
-  ): UpdateParams {
+  ): UpdateParams | null {
     let como_acessar_mob: string | undefined = undefined;
     let como_acessar_url_and: string | undefined = undefined;
     let como_acessar_url_ios: string | undefined = undefined;
@@ -56,7 +61,7 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
         como_acessar_desk = request.content;
         break;
       default:
-        throw new Error("Tipo inválido");
+        return null;
     }
     const updateParams: UpdateParams = {};
 

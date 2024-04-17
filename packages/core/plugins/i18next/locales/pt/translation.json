@@ -23,6 +23,7 @@
   "payment_not_found": "Pagamento não encontrado",
   "email_registered_previously": "Email cadastrado anteriormente!",
   "product_not_eligible_for_plan": "Produto não é elegível para o plano",
+  "product_how_to_access_type_not_found": "Tipo de como acessar vinculado produto, não foi encontrado!",
   "plan_price_not_found": "Preço do plano não encontrado",
   "installments_not_calculated": "Parcelas não calculadas",
   "coupon_not_eligible": "Cupom não é elegível",

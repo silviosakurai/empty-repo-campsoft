@@ -29,7 +29,7 @@ export const updateProductDetailHowToAccess = async (
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('error_update_product'),
+        message: t('product_how_to_access_type_not_found'),
         httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
