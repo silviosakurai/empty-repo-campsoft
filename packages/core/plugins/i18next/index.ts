@@ -13,10 +13,13 @@ async function i18nextPlugin(fastify: FastifyInstance) {
     "translation.json"
   );
 
+  console.log("localesPath", localesPath);
+
   i18next
     .use(Backend)
     .use(LanguageDetector)
     .init({
+      debug: true,
       fallbackLng: "pt",
       backend: {
         loadPath: localesPath,
