@@ -9,12 +9,16 @@ import { PlanProductGroupDetailsListerRepository } from "@core/repositories/plan
 import { PlanProduct } from "@core/interfaces/repositories/plan";
 import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrder.repository";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
+import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 
 @injectable()
 export class PlanService {
   constructor(
     private readonly planListerRepository: PlanListerRepository,
+    private readonly planListerByCompanyRepository: PlanListerByCompanyRepository,
     private readonly planViewerRepository: PlanViewerRepository,
+    private readonly planViewerByCompanyRepository: PlanViewerByCompanyRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
@@ -25,8 +29,16 @@ export class PlanService {
     return this.planListerRepository.list(companyId, query);
   };
 
+  listByCompany = async (companyIds: number[], query: ListPlanRequest) => {
+    return this.planListerByCompanyRepository.list(companyIds, query);
+  };
+
   view = async (companyId: number, planId: number) => {
     return this.planViewerRepository.get(companyId, planId);
+  };
+
+  viewByCompany = async (companyIds: number[], planId: number) => {
+    return this.planViewerByCompanyRepository.get(companyIds, planId);
   };
 
   upgrade = async (
