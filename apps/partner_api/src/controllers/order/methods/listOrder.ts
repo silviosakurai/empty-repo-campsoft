@@ -11,7 +11,9 @@ export const listOrder = async (
   }>,
   reply: FastifyReply
 ) => {
-  const ordersListerUseCase = container.resolve(OrdersListerFromPartnersUseCase);
+  const ordersListerUseCase = container.resolve(
+    OrdersListerFromPartnersUseCase
+  );
   const { t, tokenKeyData, tokenJwtData } = request;
   const input = request.query;
 
