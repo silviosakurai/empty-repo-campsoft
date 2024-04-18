@@ -4,6 +4,7 @@ import { ListProductRequest } from "@core/useCases/product/dtos/ListProductReque
 import { ListProductGroupedByCompanyResponse } from "./dtos/ListProductResponse.dto";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { AccessType } from "@core/common/enums/models/access";
+import { checkIfCompanyHasAccess } from "@core/common/functions/checkIfCompanyHasAccess";
 
 @injectable()
 export class ProductsListerByCompanyUseCase {
@@ -16,7 +17,7 @@ export class ProductsListerByCompanyUseCase {
     query: ListProductRequest,
     companyIdsToFilter: number[],
   ): Promise<ListProductGroupedByCompanyResponse | null> {
-    const companyIdsAllowed = this.companyIdsAllowed(tokenJwtData)
+    const companyIdsAllowed = checkIfCompanyHasAccess(tokenJwtData.access, AccessType.PRODUCT_MANAGEMENT)
 
     let filteredCompanyIds = companyIdsAllowed
 
@@ -27,7 +28,4 @@ export class ProductsListerByCompanyUseCase {
 
     return this.productService.listByCompanyIds(filteredCompanyIds, query);
   }
-
-  private companyIdsAllowed = (tokenJwtData: ITokenJwtData) : number[] => 
-      tokenJwtData.access.filter((a) => a.accessTypeId === AccessType.PRODUCT_MANAGEMENT).map((a) => a.companyId);
 }
