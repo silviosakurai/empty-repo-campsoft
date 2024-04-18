@@ -45,6 +45,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           description: 'End-points relacionados ao produto',
         },
         {
+          name: TagSwagger.plan,
+          description: 'End-points relacionados ao plano',
+        },
+        {
           name: TagSwagger.order,
           description: 'End-points relacionados a pedido',
         },
