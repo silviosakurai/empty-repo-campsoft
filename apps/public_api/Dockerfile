@@ -16,6 +16,9 @@ RUN pnpm install
 
 RUN turbo run build --filter=public
 
+RUN mkdir -p /build_locales
+COPY packages/core/plugins/i18next/locales /build_locales
+
 FROM public.ecr.aws/docker/library/node:20.11.1-alpine
 
 WORKDIR /app
@@ -25,6 +28,8 @@ COPY --from=builder /app/node_modules /app/node_modules
 
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
+
+COPY --from=builder /build_locales /app/packages/core/plugins/i18next/locales
 
 EXPOSE 3001
 
