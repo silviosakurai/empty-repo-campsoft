@@ -21,7 +21,7 @@ import { ProductImageRepositoryCreateInput } from "@core/interfaces/repositories
 export class ProductService {
   constructor(
     private readonly productViewerRepository: ProductViewerRepository,
-    private readonly productListerRepository: ProductListerRepository,
+    private readonly productViewerGroupedByCompanyRepository: ProductViewerGroupedByCompanyRepository,
     private readonly productCreatorRepository: ProductCreatorRepository,
     private readonly productUpdaterRepository: ProductUpdaterRepository,
     private readonly imagesUrlUpdaterRepository: ProductImagesUrlUpdaterRepository,
@@ -29,11 +29,7 @@ export class ProductService {
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
-    private readonly productViewerRepository: ProductViewerRepository,
-    private readonly productViewerGroupedByCompanyRepository: ProductViewerGroupedByCompanyRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
-    private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
   ) {}
 
   create = async (input: CreateProductRequest) => {
