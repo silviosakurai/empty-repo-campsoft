@@ -17,7 +17,7 @@ export function validateImage(
     throw new Error(t("format_not_supported_allowed_formats_png_jpeg_jpg"));
   }
 
-  if (base64Data.length > 1024 * 1024 * 2) {
-    throw new Error(t("image_size_exceeded_2mb"));
+  if (base64Data.length > 1024 * 1024 * 5) {
+    throw new Error(t("image_size_exceeded_5mb"));
   }
 }
