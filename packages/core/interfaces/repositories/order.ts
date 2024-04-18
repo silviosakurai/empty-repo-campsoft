@@ -99,6 +99,12 @@ export interface ListOrderById {
   total_installments: number;
   total_installments_value: number;
   activation_immediate: boolean;
+  observation?: string;
 }
 
 export type OrderPayments = Static<typeof orderPaymentsSchema>;
+
+export interface OrderPaymentUpdateInput {
+  paymentTransactionId: string;
+  paymentLink?: string;
+}

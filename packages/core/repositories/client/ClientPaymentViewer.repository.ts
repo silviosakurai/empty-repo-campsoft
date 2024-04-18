@@ -14,7 +14,7 @@ export class ClientPaymentViewerRepository {
     const result = await this.db
       .select({
         client_id: clientPayment.id_cliente,
-        external_id: clientPayment.id_client_externo,
+        external_id: clientPayment.id_cliente_externo,
       })
       .from(clientPayment)
       .where(eq(clientPayment.id_cliente, sql`UUID_TO_BIN(${clientId})`))

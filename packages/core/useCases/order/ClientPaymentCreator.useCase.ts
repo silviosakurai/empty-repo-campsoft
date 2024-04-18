@@ -3,6 +3,8 @@ import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { injectable } from "tsyringe";
 import { ViewClientResponse } from "../client/dtos/ViewClientResponse.dto";
 import { TFunction } from "i18next";
+import { ViewClientBillingAddressResponse } from "../client/dtos/ViewClientAddressResponse.dto";
+import { formatOnlyDateToString } from "@core/common/functions/formatOnlyDateToString";
 
 @injectable()
 export class ClientPaymentCreatorUseCase {
@@ -13,15 +15,27 @@ export class ClientPaymentCreatorUseCase {
 
   async create(
     t: TFunction<"translation", undefined>,
-    client: ViewClientResponse
+    client: ViewClientResponse & {
+      address: ViewClientBillingAddressResponse | null;
+    }
   ) {
     const createdCustomer = await this.paymentGatewayService.createCustomer({
-      firstName: client.first_name,
-      lastName: client.last_name,
-      cpf: client.cpf,
-      phone: client.phone,
-      birthDate: new Date(client.birthday),
+      first_name: client.first_name,
+      last_name: client.last_name,
+      taxpayer_id: client.cpf,
+      phone_number: client.phone,
+      birthdate: formatOnlyDateToString(new Date(client.birthday)),
       email: client.email,
+      address: {
+        line1: client.address?.street,
+        line2: client.address?.number,
+        line3: client.address?.complement,
+        neighborhood: client.address?.neighborhood,
+        city: client.address?.city,
+        country_code: "BR",
+        postal_code: client.address?.zip_code,
+        state: client.address?.state ?? "",
+      },
     });
 
     if (!createdCustomer.data) {

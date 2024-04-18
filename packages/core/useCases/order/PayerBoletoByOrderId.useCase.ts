@@ -30,9 +30,11 @@ export class PayerByBoletoByOrderIdUseCase {
 
     const sellerId = order.seller_id
       ? order.seller_id
-      : await this.paymentService.sellerViewByEmail(
-          "ricardo@maniadeapp.com.br"
-        );
+      : (
+          await this.paymentService.sellerViewByEmail(
+            "ricardo@maniadeapp.com.br"
+          )
+        )?.sellerId;
 
     if (!sellerId) {
       throw new Error(t("seller_not_found"));
@@ -52,14 +54,30 @@ export class PayerByBoletoByOrderIdUseCase {
       ? clientPayment.external_id
       : await this.generateExternalId(t, client);
 
-    // await this.paymentGatewayService.createTransactionFullTicket;
+    const result =
+      await this.paymentGatewayService.createTransactionSimpleTicket({
+        amount: +order.total_price * 100,
+        customerId: externalId,
+        description: order.observation,
+        reference_id: order.order_id,
+        sellerId,
+      });
+
+    return result;
   }
 
   private async generateExternalId(
     t: TFunction<"translation", undefined>,
     client: ViewClientResponse
   ) {
-    await this.clientPaymentCreatorUseCase.create(t, client);
+    const address = await this.clientService.viewBilling(client.client_id);
+
+    const clientWithAddress = {
+      ...client,
+      address,
+    };
+
+    await this.clientPaymentCreatorUseCase.create(t, clientWithAddress);
 
     const clientPayment = await this.clientService.viewPaymentClient(
       client.client_id

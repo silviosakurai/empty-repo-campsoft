@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { clientPayment } from "@core/models";
+import { sql } from "drizzle-orm";
 
 @injectable()
 export class ClientPaymentCreatorRepository {
@@ -13,8 +14,8 @@ export class ClientPaymentCreatorRepository {
     const result = await this.db
       .insert(clientPayment)
       .values({
-        id_cliente: clientId,
-        id_client_externo: clientExternalId,
+        id_cliente: sql`UUID_TO_BIN(${clientId})`,
+        id_cliente_externo: clientExternalId,
       })
       .execute();
 

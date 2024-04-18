@@ -464,6 +464,7 @@ export class OrdersListerRepository {
         total_installments: order.pedido_parcelas_vezes,
         total_installments_value: order.pedido_parcelas_valor,
         activation_immediate: order.ativacao_imediata,
+        observation: order.obs,
       })
       .from(order)
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))

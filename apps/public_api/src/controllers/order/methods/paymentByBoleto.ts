@@ -17,6 +17,13 @@ export const paymentByBoleto = async (
   try {
     const result = await service.pay(t, tokenKeyData, params.orderNumber);
 
+    if (!result.status) {
+      return sendResponse(reply, {
+        data: result.data,
+        httpStatusCode: result.httpStatusCode,
+      });
+    }
+
     return sendResponse(reply, {
       data: result,
       httpStatusCode: HTTPStatusCode.OK,

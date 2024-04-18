@@ -1,21 +1,22 @@
 export interface ICreateCustomer {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email?: string;
-  phone: string;
-  cpf: string;
-  birthDate?: Date;
+  phone_number: string;
+  taxpayer_id: string;
+  birthdate?: string;
   address?: ICreateCustomerAddress;
 }
 
 interface ICreateCustomerAddress {
-  streetAddress: string;
-  number?: string;
+  line1?: string;
+  line2?: string;
+  line3?: string;
   neighborhood?: string;
   city?: string;
-  state: string;
-  countryCode: string;
-  postalCode: string;
+  state: string; // Código ISO 3166-2 para o estado, com duas letras. Ex.: "MG","RJ","PR"
+  postal_code?: string; // CEP com 8 dígitos sem separador
+  country_code: string; // ISO 3166-1 alpha-2 - códigos de país de duas letras. Valor padrão: "BR"
 }
 
 export interface ICreateCustomerResponse {
