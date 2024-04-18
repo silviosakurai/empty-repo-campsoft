@@ -83,3 +83,9 @@ export interface ProductDtoResponse {
   created_at: string;
   updated_at: string;
 }
+
+export interface ProductImageRepositoryCreateInput {
+  imageUrl: string | null;
+  iconUrl: string | null;
+  logoUrl: string | null;
+}

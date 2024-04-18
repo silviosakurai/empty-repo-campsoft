@@ -56,5 +56,7 @@
   "format_not_supported_allowed_formats_png_jpeg_jpg": "Format not supported. Allowed formats: png, jpeg, jpg",
   "image_size_exceeded_2mb": "Image size exceeded 2MB!",
   "coupon_code_with_voucher_not_allowed": "Coupon code with voucher not allowed!",
+  "product_update_not_allowed": "Product update not allowed!",
+  "error_update_product": "Error update products!",
   "token_not_found": "Token not found."
 }

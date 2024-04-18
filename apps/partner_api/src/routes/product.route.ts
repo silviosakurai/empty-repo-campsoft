@@ -5,6 +5,8 @@ import {
   getProductPartnerSchema,
   listProductByCompanySchema,
   postProductSchema,
+  updateProductSchema,
+  createProductImageSchema,
 } from '@core/validations/product';
 
 export default async function productRoutes(server: FastifyInstance) {
@@ -26,5 +28,17 @@ export default async function productRoutes(server: FastifyInstance) {
     schema: postProductSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.post,
+  });
+
+  server.put('/products/:sku', {
+    handler: productController.update,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    schema: updateProductSchema,
+  });
+
+  server.post('/products/:sku/images/:type', {
+    handler: productController.createImage,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    schema: createProductImageSchema,
   });
 }
