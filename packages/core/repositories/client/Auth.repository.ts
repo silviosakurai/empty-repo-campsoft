@@ -32,6 +32,7 @@ export class AuthRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
+        photo: client.foto,
       })
       .from(client)
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))
@@ -72,6 +73,7 @@ export class AuthRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
+        photo: client.foto,
       })
       .from(client)
       .innerJoin(access, eq(access.id_cliente, client.id_cliente))

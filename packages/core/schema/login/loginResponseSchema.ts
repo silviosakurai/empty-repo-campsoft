@@ -11,4 +11,5 @@ export const loginResponseSchema = Type.Object({
   phone: Type.String(),
   cpf: Type.String(),
   gender: Type.String({ enum: Object.values(ClientGender) }),
+  photo: Type.Union([Type.String(), Type.Null()]),
 });
