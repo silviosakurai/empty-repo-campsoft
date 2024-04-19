@@ -17,6 +17,8 @@ export class OrderPaymentUpdaterByOrderIdRepository {
       .set({
         pag_trans_id: input.paymentTransactionId,
         pag_info_adicional: input.paymentLink,
+        due_date: input.dueDate,
+        codigo_barra: input.barcode,
       })
       .where(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`))
       .execute();

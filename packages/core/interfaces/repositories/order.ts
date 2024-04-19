@@ -107,4 +107,6 @@ export type OrderPayments = Static<typeof orderPaymentsSchema>;
 export interface OrderPaymentUpdateInput {
   paymentTransactionId: string;
   paymentLink?: string;
+  dueDate?: string;
+  barcode?: string;
 }
