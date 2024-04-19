@@ -52,6 +52,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           name: TagSwagger.order,
           description: 'End-points relacionados a pedido',
         },
+        {
+          name: TagSwagger.banner,
+          description: 'End-points relacionados a banner',
+        },
       ],
     },
   });
