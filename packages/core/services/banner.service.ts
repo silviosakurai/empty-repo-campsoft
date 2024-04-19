@@ -1,9 +1,11 @@
+import { BannerImageType } from "@core/common/enums/models/banner";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { IBannerReaderInput } from "@core/interfaces/repositories/banner";
 import { BannerCreatorRepository } from "@core/repositories/banner/BannerCreator.repository";
 import { BannerDeleterRepository } from "@core/repositories/banner/BannerDeleter.repository";
 import { BannerItemCreatorRepository } from "@core/repositories/banner/BannerItemCreator.repository";
 import { BannerItemDeleterRepository } from "@core/repositories/banner/BannerItemDeleter.repository";
+import { BannerItemImageUpdaterRepository } from "@core/repositories/banner/BannerItemImageUpdater.repository";
 import { BannerItemUpdaterRepository } from "@core/repositories/banner/BannerItemUpdater.repository";
 import { BannerListerRepository } from "@core/repositories/banner/BannerLister.repository";
 import { BannerReaderRepository } from "@core/repositories/banner/BannerReader.repository";
@@ -27,6 +29,7 @@ export class BannerService {
     private readonly bannerItemUpdaterRepository: BannerItemUpdaterRepository,
     private readonly bannerDeleterRepository: BannerDeleterRepository,
     private readonly bannerItemDeleterRepository: BannerItemDeleterRepository,
+    private readonly bannerItemImageUpdaterRepository: BannerItemImageUpdaterRepository,
   ) {}
 
   list = async (tokenKeyData: ITokenKeyData, input: IBannerReaderInput) => {
@@ -61,6 +64,20 @@ export class BannerService {
 
   createItem = async (bannerId: number, input: BannerItemCreatorRequest) => {
     return this.bannerItemCreatorRepository.create(bannerId, input);
+  };
+
+  createImage = async (
+    bannerId: number,
+    bannerItemId: number,
+    type: BannerImageType,
+    imageUrl: string,
+  ) => {
+    return this.bannerItemImageUpdaterRepository.update(
+      bannerId,
+      bannerItemId,
+      type,
+      imageUrl,
+    );
   };
 
   update = async (bannerId: number, input: BannerUpdaterRequestDto) => {

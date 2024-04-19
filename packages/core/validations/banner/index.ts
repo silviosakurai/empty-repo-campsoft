@@ -7,3 +7,4 @@ export * from "./bannerUpdaterPartnerSchema.validation";
 export * from "./bannerItemUpdaterPartnerSchema.validation";
 export * from "./bannerDeleterPartnerSchema.validation";
 export * from "./bannerItemDeleterPartnerSchema.validation";
+export * from "./bannerImageUploaderPartnerSchema.validation";

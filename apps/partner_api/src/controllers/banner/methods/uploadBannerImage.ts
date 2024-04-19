@@ -2,28 +2,29 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { BannerItemUpdaterUseCase } from '@core/useCases/banner/BannerItemUpdater.usecase';
+import { BannerImageUploaderUseCase } from '@core/useCases/banner/BannerImageUploader.usecase';
 import {
-  BannerItemUpdaterParamsRequestDto,
-  BannerItemUpdaterRequestDto
-} from '@core/useCases/banner/dtos/BannerItemUpdaterRequest.dto';
+  BannerImageRequestParamsDto,
+  BannerImageRequestBodyDto,
+} from '@core/useCases/banner/dtos/BannerImageUploaderRequest.dto';
 
-export const updateBannerItem = async (
+export const uploadBannerImage = async (
   request: FastifyRequest<{
-    Body: BannerItemUpdaterRequestDto;
-    Params: BannerItemUpdaterParamsRequestDto;
+    Params: BannerImageRequestParamsDto;
+    Body: BannerImageRequestBodyDto;
   }>,
   reply: FastifyReply
 ) => {
   const { t, tokenJwtData } = request;
-  const bannerItemUpdaterUseCase = container.resolve(BannerItemUpdaterUseCase);
+  const bannerImageUploaderUseCase = container.resolve(BannerImageUploaderUseCase);
 
   try {
-    const response = await bannerItemUpdaterUseCase.update(
+    const response = await bannerImageUploaderUseCase.upload(
       t,
       tokenJwtData,
       parseInt(request.params.bannerId),
       parseInt(request.params.bannerItemId),
+      request.params.type,
       request.body,
     );
 
@@ -31,16 +32,16 @@ export const updateBannerItem = async (
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('internal_server_error'),
-        httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+        message: t('banner_update_not_allowed'),
+        httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 
     return sendResponse(reply, {
-      data: request.body,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
+    console.log('error:', error)
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {

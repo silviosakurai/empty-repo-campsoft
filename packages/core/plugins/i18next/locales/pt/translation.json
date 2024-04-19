@@ -7,6 +7,7 @@
   "client_not_found": "Cliente não encontrado",
   "product_not_found": "Produto não encontrado",
   "banner_not_found": "Banner não encontrado",
+  "banner_item_not_found": "Banner item não encontrado",
   "error_send_code_verification": "Erro ao enviar o código de verificação",
   "previously_registered_user": "Usuário já cadastrado anteriormente.",
   "user_updated_successfully": "Usuário atualizado com sucesso.",
@@ -58,6 +59,7 @@
   "image_size_exceeded_2mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
   "product_update_not_allowed": "Atualização de produto não permitida.",
+  "banner_update_not_allowed": "Atualização de Banner não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
   "token_not_found": "Token não encontrado."
 }

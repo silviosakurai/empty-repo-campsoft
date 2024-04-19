@@ -15,11 +15,13 @@ export const updateBanner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const bannerUpdaterUseCase = container.resolve(BannerUpdaterUseCase);
 
   try {
     const response = await bannerUpdaterUseCase.update(
+      t,
+      tokenJwtData,
       parseInt(request.params.bannerId),
       request.body,
     );

@@ -7,6 +7,7 @@ import { updateBanner } from './methods/updateBanner';
 import { updateBannerItem } from './methods/updateBannerItem';
 import { deleteBanner } from './methods/deleteBanner';
 import { deleteBannerItem } from './methods/deleteBannerItem';
+import { uploadBannerImage } from './methods/uploadBannerImage';
 
 @injectable()
 class BannerController {
@@ -18,6 +19,7 @@ class BannerController {
   public updateItem = updateBannerItem;
   public delete = deleteBanner;
   public deleteItem = deleteBannerItem;
+  public uploadBannerImage = uploadBannerImage;
 }
 
 export default BannerController;

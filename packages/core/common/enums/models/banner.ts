@@ -12,3 +12,8 @@ export enum BannerItemFormat {
   HTML = "HTML",
   IMG = "IMG",
 }
+
+export enum BannerImageType {
+  mobile = "mobile",
+  desktop = "desktop",
+}

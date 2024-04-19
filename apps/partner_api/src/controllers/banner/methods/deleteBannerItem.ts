@@ -13,11 +13,13 @@ export const deleteBannerItem = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const bannerItemDeleterUseCase = container.resolve(BannerItemDeleterUseCase);
 
   try {
     const response = await bannerItemDeleterUseCase.delete(
+      t,
+      tokenJwtData,
       parseInt(request.params.bannerId),
       parseInt(request.params.bannerItemId),
     );

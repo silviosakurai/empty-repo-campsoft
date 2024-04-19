@@ -10,6 +10,7 @@ import {
   bannerItemUpdaterPartnerSchema,
   bannerDeleterPartnerSchema,
   bannerItemDeleterPartnerSchema,
+  bannerImageUploaderPartnerSchema,
 } from '@core/validations/banner';
 
 export default async function bannerRoutes(server: FastifyInstance) {
@@ -37,6 +38,12 @@ export default async function bannerRoutes(server: FastifyInstance) {
     schema: bannerItemCreatorPartnerSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.createItem,
+  });
+
+  server.post('/banners/:bannerId/items/:bannerItemId/images/:type', {
+    schema: bannerImageUploaderPartnerSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: bannerController.uploadBannerImage,
   });
 
   server.put('/banners/:bannerId', {
