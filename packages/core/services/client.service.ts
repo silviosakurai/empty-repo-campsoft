@@ -37,12 +37,15 @@ import { ClientEmailActivatorRepository } from "@core/repositories/client/Client
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
 import { ClientPaymentCreatorRepository } from "@core/repositories/client/ClientPaymentCreator.repository";
 import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
+import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
+import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 
 @injectable()
 export class ClientService {
   constructor(
     private readonly clientEraserRepository: ClientEraserRepository,
     private readonly clientViewerRepository: ClientViewerRepository,
+    private readonly clientListerRepository: ClientListerRepository,
     private readonly clientAddressViewerRepository: ClientAddressViewerRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
     private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
@@ -75,8 +78,16 @@ export class ClientService {
     return this.clientAddressViewerRepository.viewShipping(userId);
   };
 
+  viewShippingExist = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewShippingExist(userId);
+  };
+
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     return this.clientByCpfEmailPhoneRepository.find(input);
+  };
+
+  listWithCompanies = async (companyId: number, query: ListClientRequest) => {
+    return this.clientListerRepository.listWithCompanies(companyId, query);
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {

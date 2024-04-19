@@ -15,3 +15,4 @@ export * from "./putUserShippingAddressSchema.validation";
 export * from "./userActivatePasswordSchema.validation";
 export * from "./patchUserShippingAddressSchema.validation";
 export * from "./patchUserImageSchema.validation";
+export * from "./listUserWithCompaniesSchema.validation";
