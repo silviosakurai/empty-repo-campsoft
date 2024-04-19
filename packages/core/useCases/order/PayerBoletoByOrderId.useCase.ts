@@ -4,8 +4,7 @@ import { PaymentService } from "@core/services/payment.service";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
-import { ClientPaymentCreatorUseCase } from "./ClientPaymentCreator.useCase";
-import { ViewClientResponse } from "../client/dtos/ViewClientResponse.dto";
+import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
@@ -14,7 +13,7 @@ export class PayerByBoletoByOrderIdUseCase {
     private readonly clientService: ClientService,
     private readonly paymentService: PaymentService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly clientPaymentCreatorUseCase: ClientPaymentCreatorUseCase
+    private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
   async pay(
@@ -52,7 +51,7 @@ export class PayerByBoletoByOrderIdUseCase {
 
     const externalId = clientPayment
       ? clientPayment.external_id
-      : await this.generateExternalId(t, client);
+      : await this.paymentExternalGeneratorUseCase.generate(t, client);
 
     const result =
       await this.paymentGatewayService.createTransactionSimpleTicket({
@@ -75,29 +74,5 @@ export class PayerByBoletoByOrderIdUseCase {
     });
 
     return result;
-  }
-
-  private async generateExternalId(
-    t: TFunction<"translation", undefined>,
-    client: ViewClientResponse
-  ) {
-    const address = await this.clientService.viewBilling(client.client_id);
-
-    const clientWithAddress = {
-      ...client,
-      address,
-    };
-
-    await this.clientPaymentCreatorUseCase.create(t, clientWithAddress);
-
-    const clientPayment = await this.clientService.viewPaymentClient(
-      client.client_id
-    );
-
-    if (!clientPayment) {
-      throw new Error(t("internal_server_error"));
-    }
-
-    return clientPayment.external_id;
   }
 }
