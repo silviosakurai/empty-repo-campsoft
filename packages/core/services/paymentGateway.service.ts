@@ -9,8 +9,6 @@ import { createCustomer } from "./payment/createCustomer";
 
 @injectable()
 export class PaymentGatewayService {
-  constructor() {}
-
   saveCardToken = saveCardToken;
   createTransactionPix = createTransactionPix;
   createTransactionFullTicket = createTransactionFullTicket;
