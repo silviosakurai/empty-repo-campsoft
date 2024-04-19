@@ -4,7 +4,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { BannerListerUseCase } from '@core/useCases/banner/BannerLister.usecase';
 import { BannerReaderRequestDto } from '@core/useCases/banner/dtos/BannerReaderRequest.dto';
-import { access } from 'fs';
 
 export const listBanner = async (
   request: FastifyRequest<{
