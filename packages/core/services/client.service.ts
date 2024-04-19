@@ -35,12 +35,15 @@ import { ClientAddressCreatorRepository } from "@core/repositories/client/Client
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 import { ClientEmailActivatorRepository } from "@core/repositories/client/ClientEmailActivator.repository";
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
+import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
+import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 
 @injectable()
 export class ClientService {
   constructor(
     private readonly clientEraserRepository: ClientEraserRepository,
     private readonly clientViewerRepository: ClientViewerRepository,
+    private readonly clientListerRepository: ClientListerRepository,
     private readonly clientAddressViewerRepository: ClientAddressViewerRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
     private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
@@ -78,6 +81,10 @@ export class ClientService {
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     return this.clientByCpfEmailPhoneRepository.find(input);
   };
+
+  listWithCompanies = async (companyId: number, query: ListClientRequest) => {
+    return this.clientListerRepository.listWithCompanies(companyId, query)
+  }
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
     return this.clientByEmailPhoneRepository.find(input);
