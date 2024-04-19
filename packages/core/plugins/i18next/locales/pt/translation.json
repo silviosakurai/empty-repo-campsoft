@@ -55,7 +55,9 @@
   "failed_to_update_image": "Falha ao atualizar a imagem",
   "invalid_image_format": "Formato de imagem inválido",
   "format_not_supported_allowed_formats_png_jpeg_jpg": "Formato não suportado. Formatos permitidos: PNG, JPEG, JPG",
-  "image_size_exceeded_2mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
+  "image_size_exceeded_5mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
+  "product_update_not_allowed": "Atualização de produto não permitida.",
+  "error_update_product": "Erro ao atualizar o produto.",
   "token_not_found": "Token não encontrado."
 }

@@ -1,10 +1,11 @@
-import { Type } from "@fastify/type-provider-typebox";
+import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { productUpdateSchema } from "@core/schema/product/productUpdateSchema";
 
-export const createUserNewsletterSchema = {
-  description: "Registra o e-mail do cliente na newsletter",
-  tags: [TagSwagger.user],
+export const updateProductSchema = {
+  description: "Altualiza um produto",
+  tags: [TagSwagger.product],
   produces: ["application/json"],
   security: [
     {
@@ -21,15 +22,16 @@ export const createUserNewsletterSchema = {
       })
     ),
   }),
-  body: Type.Object({
-    email: Type.String({ format: "email" }),
+  body: productUpdateSchema,
+  params: Type.Object({
+    sku: Type.String(),
   }),
   response: {
-    201: Type.Object(
+    200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Object({}),
+        data: Type.Null(),
       },
       { description: "Successful" }
     ),
@@ -41,13 +43,23 @@ export const createUserNewsletterSchema = {
       },
       { description: "Unauthorized" }
     ),
-    409: Type.Object(
+    403: Type.Object(
       {
         status: Type.Boolean({ default: false }),
         message: Type.String(),
         data: Type.Null(),
       },
-      { description: "Conflict" }
+      {
+        description: "Forbidden",
+      }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {

@@ -15,6 +15,7 @@ import { putShippingAddress } from './methods/putShippingAddress';
 import { activateClientEmail } from './methods/activateClientEmail';
 import { patchShippingAddress } from './methods/patchShippingAddress';
 import { patchImage } from './methods/patchImage';
+import { createClientNewsletter } from './methods/createClientNewsletter';
 
 @injectable()
 class ClientController {
@@ -34,6 +35,7 @@ class ClientController {
   public activateClientEmail = activateClientEmail;
   public patchShippingAddress = patchShippingAddress;
   public patchImage = patchImage;
+  public createClientNewsletter = createClientNewsletter;
 }
 
 export default ClientController;

@@ -10,21 +10,32 @@ import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductR
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
 import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
-import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
 import { ProductDetailHowToAccessUpdaterRepository } from "@core/repositories/product/ProductDetailHowToAccessUpdater.repository";
 import { UpdateParams } from "@core/useCases/product/dtos/ProductDetaiHowToAccess.dto";
+import { ProductViewerGroupedByCompanyRepository } from "@core/repositories/product/ProductViewerGroupedByCompany.repository";
+import { ProductUpdaterRepository } from "@core/repositories/product/ProductUpdater.repository";
+import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductRequest.dto";
+import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
+import { ProductImagesUrlUpdaterRepository } from "@core/repositories/product/ProductImagesUrlUpdater.repository";
+import { ProductImageRepositoryCreateInput } from "@core/interfaces/repositories/products";
 
 @injectable()
 export class ProductService {
   constructor(
+    private readonly productViewerRepository: ProductViewerRepository,
+    private readonly productViewerGroupedByCompanyRepository: ProductViewerGroupedByCompanyRepository,
     private readonly productCreatorRepository: ProductCreatorRepository,
+    private readonly productUpdaterRepository: ProductUpdaterRepository,
+    private readonly imagesUrlUpdaterRepository: ProductImagesUrlUpdaterRepository,
+    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository,
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly productViewerRepository: ProductViewerRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
     private readonly productDetailHowToAccessUpdaterRepository: ProductDetailHowToAccessUpdaterRepository,
-    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository
+    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -52,6 +63,10 @@ export class ProductService {
 
   view = async (companyId: number, sku: string) => {
     return this.productViewerRepository.get(companyId, sku);
+  };
+
+  viewByCompanyIds = async (companyIds: number[], sku: string) => {
+    return this.productViewerGroupedByCompanyRepository.view(companyIds, sku);
   };
 
   findProductsByIds = async (companyId: number, productIds: string[]) => {
@@ -122,6 +137,7 @@ export class ProductService {
     return allProductsSelected;
   };
 
+
   updateDetailHowToAccess = async (
     productId: string,
     updateParams: UpdateParams
@@ -142,7 +158,16 @@ export class ProductService {
     );
   };
 
+  update = async (productId: string, input: UpdateProductRequest) => {
+    return this.productUpdaterRepository.update(productId, input);
+  };
+
   productCompanyViewer(productId: string, companyId: number) {
     return this.productCompanyViewerRepository.view(productId, companyId);
   }
+
+  updateImagesUrl(productId: string, input: ProductImageRepositoryCreateInput) {
+    return this.imagesUrlUpdaterRepository.update(productId, input);
+  }
+
 }

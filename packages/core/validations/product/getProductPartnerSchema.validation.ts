@@ -1,10 +1,11 @@
-import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { productDetailsWithPricesAndDatesGroupedByCompanySchema } from "@core/schema/product/productDetailsWithPricesAndDatesGroupedByCompany";
+import { Type } from "@sinclair/typebox";
 
-export const createUserNewsletterSchema = {
-  description: "Registra o e-mail do cliente na newsletter",
-  tags: [TagSwagger.user],
+export const getProductPartnerSchema = {
+  description: "Lista produto por id",
+  tags: [TagSwagger.product],
   produces: ["application/json"],
   security: [
     {
@@ -21,15 +22,15 @@ export const createUserNewsletterSchema = {
       })
     ),
   }),
-  body: Type.Object({
-    email: Type.String({ format: "email" }),
+  params: Type.Object({
+    sku: Type.String(),
   }),
   response: {
-    201: Type.Object(
+    200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Object({}),
+        data: productDetailsWithPricesAndDatesGroupedByCompanySchema,
       },
       { description: "Successful" }
     ),
@@ -41,13 +42,13 @@ export const createUserNewsletterSchema = {
       },
       { description: "Unauthorized" }
     ),
-    409: Type.Object(
+    404: Type.Object(
       {
         status: Type.Boolean({ default: false }),
         message: Type.String(),
         data: Type.Null(),
       },
-      { description: "Conflict" }
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {
