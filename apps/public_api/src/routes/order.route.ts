@@ -7,6 +7,7 @@ import {
   postCancelOrderSchema,
   ordersByNumberParamSchema,
   createOrderSchema,
+  postOrderPaymentBoletoSchema,
 } from '@core/validations/order';
 
 export default async function orderRoutes(server: FastifyInstance) {
@@ -45,5 +46,6 @@ export default async function orderRoutes(server: FastifyInstance) {
   server.post('/orders/:orderNumber/payments/boleto', {
     handler: orderController.paymentByBoleto,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    schema: postOrderPaymentBoletoSchema,
   });
 }

@@ -25,8 +25,8 @@ export const paymentByBoleto = async (
     }
 
     return sendResponse(reply, {
-      data: result,
-      httpStatusCode: HTTPStatusCode.OK,
+      httpStatusCode: HTTPStatusCode.CREATED,
+      data: result.data,
     });
   } catch (error) {
     console.log(error);

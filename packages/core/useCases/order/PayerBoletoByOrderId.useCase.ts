@@ -5,6 +5,7 @@ import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
+import { ResponseService } from "@core/common/interfaces/IResponseServices";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
@@ -73,6 +74,12 @@ export class PayerByBoletoByOrderIdUseCase {
       barcode: result.data.payment_method.barcode,
     });
 
-    return result;
+    return {
+      data: {
+        url: result.data.payment_method.url,
+        code: result.data.payment_method.barcode,
+      },
+      status: true,
+    } as ResponseService;
   }
 }
