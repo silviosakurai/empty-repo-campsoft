@@ -4,7 +4,6 @@ import {
   listUserWithCompaniesSchema,
   userUpdaterByIdSchema,
 } from '@core/validations/user';
-import { listUserWithCompaniesSchema } from '@core/validations/user';
 import ClientController from '@/controllers/client';
 
 export default async function clientRoutes(server: FastifyInstance) {
