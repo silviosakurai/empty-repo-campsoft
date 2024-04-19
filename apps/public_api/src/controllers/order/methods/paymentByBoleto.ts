@@ -29,8 +29,6 @@ export const paymentByBoleto = async (
       data: result.data,
     });
   } catch (error) {
-    console.log(error);
-
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {
