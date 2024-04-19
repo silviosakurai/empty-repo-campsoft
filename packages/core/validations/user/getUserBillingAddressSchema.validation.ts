@@ -1,7 +1,7 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userShippingAddressResponseSchema } from "@core/schema/user/userShippingAddressResponseSchema";
+import { userBillingAddressResponseSchema } from "@core/schema/user/userBillingAddressResponseSchema";
 
 export const getUserBillingAddressSchema = {
   description: "Exibe o endereço de cobrança",
@@ -27,7 +27,7 @@ export const getUserBillingAddressSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: userShippingAddressResponseSchema,
+        data: userBillingAddressResponseSchema,
       },
       { description: "Successful" }
     ),
