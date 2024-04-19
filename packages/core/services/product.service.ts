@@ -31,11 +31,8 @@ export class ProductService {
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
-    private readonly productViewerRepository: ProductViewerRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
     private readonly productDetailHowToAccessUpdaterRepository: ProductDetailHowToAccessUpdaterRepository,
-    private readonly productCompanyViewerRepository: ProductCompanyViewerRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -137,7 +134,6 @@ export class ProductService {
     return allProductsSelected;
   };
 
-
   updateDetailHowToAccess = async (
     productId: string,
     updateParams: UpdateParams
@@ -169,5 +165,4 @@ export class ProductService {
   updateImagesUrl(productId: string, input: ProductImageRepositoryCreateInput) {
     return this.imagesUrlUpdaterRepository.update(productId, input);
   }
-
 }
