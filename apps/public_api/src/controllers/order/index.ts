@@ -5,6 +5,7 @@ import { cancelOrder } from './methods/cancelOrder';
 import { findOrderByNumber } from './methods/findOrderByNumber';
 import { createOrder } from './methods/createOrder';
 import { paymentByBoleto } from './methods/paymentByBoleto';
+import { paymentByCreditCard } from './methods/paymentByCreditCard';
 
 @injectable()
 class OrderController {
@@ -14,6 +15,7 @@ class OrderController {
   public findByNumber = findOrderByNumber;
   public cancelOrder = cancelOrder;
   public paymentByBoleto = paymentByBoleto;
+  public paymentByCreditCard = paymentByCreditCard;
 }
 
 export default OrderController;
