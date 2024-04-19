@@ -75,6 +75,10 @@ export class ClientService {
     return this.clientAddressViewerRepository.viewShipping(userId);
   };
 
+  viewShippingExist = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewShippingExist(userId);
+  };
+
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     return this.clientByCpfEmailPhoneRepository.find(input);
   };

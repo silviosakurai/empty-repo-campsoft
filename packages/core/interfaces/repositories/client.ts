@@ -41,12 +41,12 @@ interface Company {
   company_name: string;
 }
 
-export interface ClientDto {
-  user_id: unknown,
+export interface ClientListResponse {
+  user_id: string,
   name: string | null,
   first_name: string | null,
   last_name: string | null,
-  birthday: unknown,
+  birthday: string,
   email: string | null,
   phone: string | null,
   cpf: string | null,
@@ -56,7 +56,7 @@ export interface ClientDto {
   user_type: number | null,
 }
 
-export interface ClientDtoResponse {
+export interface ClientWithCompaniesListResponse {
   user_id: string;
   name: string,
   first_name: string,

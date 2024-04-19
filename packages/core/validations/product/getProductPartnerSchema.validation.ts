@@ -1,11 +1,11 @@
-import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userBillingAddressResponseSchema } from "@core/schema/user/userBillingAddressResponseSchema";
+import { productDetailsWithPricesAndDatesGroupedByCompanySchema } from "@core/schema/product/productDetailsWithPricesAndDatesGroupedByCompany";
+import { Type } from "@sinclair/typebox";
 
-export const getUserBillingAddressSchema = {
-  description: "Exibe o endereço de cobrança",
-  tags: [TagSwagger.user],
+export const getProductPartnerSchema = {
+  description: "Lista produto por id",
+  tags: [TagSwagger.product],
   produces: ["application/json"],
   security: [
     {
@@ -22,22 +22,17 @@ export const getUserBillingAddressSchema = {
       })
     ),
   }),
+  params: Type.Object({
+    sku: Type.String(),
+  }),
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: userBillingAddressResponseSchema,
+        data: productDetailsWithPricesAndDatesGroupedByCompanySchema,
       },
       { description: "Successful" }
-    ),
-    400: Type.Object(
-      {
-        status: Type.Boolean({ default: false }),
-        message: Type.String(),
-        data: Type.Null(),
-      },
-      { description: "Bad Request" }
     ),
     401: Type.Object(
       {
@@ -46,6 +41,14 @@ export const getUserBillingAddressSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {

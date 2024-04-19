@@ -4,6 +4,7 @@ import {
   listUserWithCompaniesSchema,
   userUpdaterByIdSchema,
 } from '@core/validations/user';
+import { listUserWithCompaniesSchema } from '@core/validations/user';
 import ClientController from '@/controllers/client';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -20,4 +21,5 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.update,
   });
+
 }
