@@ -1,5 +1,5 @@
 import * as schema from "@core/models";
-import { eq, sql, and, or } from "drizzle-orm";
+import { eq, sql, and, or, count } from "drizzle-orm";
 import { clientAddress } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
@@ -74,7 +74,11 @@ export class ClientAddressViewerRepository {
       .where(
         and(
           or(
-            eq(clientAddress.endereco_envio, ClientShippingAddress.YES),
+            and(
+              eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
+              eq(clientAddress.tipo, ClientAddress.BILLING),
+              eq(clientAddress.endereco_envio, ClientShippingAddress.YES)
+            ),
             and(
               eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
               eq(clientAddress.tipo, ClientAddress.SHIPPING)
@@ -89,5 +93,26 @@ export class ClientAddressViewerRepository {
     }
 
     return result[0] as unknown as ViewClientShippingAddressResponse;
+  }
+
+  async viewShippingExist(userId: string): Promise<boolean> {
+    const result = await this.db
+      .select({
+        total: count(),
+      })
+      .from(clientAddress)
+      .where(
+        and(
+          eq(clientAddress.id_cliente, sql`UUID_TO_BIN(${userId})`),
+          eq(clientAddress.tipo, ClientAddress.SHIPPING)
+        )
+      )
+      .execute();
+
+    if (!result.length) {
+      return false;
+    }
+
+    return result[0].total > 0;
   }
 }

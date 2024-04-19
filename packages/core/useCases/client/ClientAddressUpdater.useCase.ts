@@ -18,7 +18,7 @@ export class ClientAddressUpdaterUseCase {
       return this.clientService.viewBilling(clientId);
     }
 
-    return this.clientService.viewShipping(clientId);
+    return this.clientService.viewShippingExist(clientId);
   }
 
   async update(
@@ -27,6 +27,14 @@ export class ClientAddressUpdaterUseCase {
     clientAddress: ClientAddress
   ): Promise<boolean> {
     const addressExists = await this.addressExists(clientId, clientAddress);
+
+    if (clientAddress === ClientAddress.SHIPPING) {
+      await this.clientService.updateShippingAddress(
+        clientId,
+        ClientAddress.BILLING,
+        ClientShippingAddress.NO
+      );
+    }
 
     if (!addressExists) {
       return this.clientService.createAddress(clientId, data, clientAddress);
