@@ -41,25 +41,25 @@ interface Company {
   company_name: string;
 }
 
-export interface ClientListResponse {
-  user_id: string,
-  name: string | null,
-  first_name: string | null,
-  last_name: string | null,
-  birthday: string,
-  email: string | null,
-  phone: string | null,
-  cpf: string | null,
-  gender: string | null,
-  company_id: number,
-  company_name: string | null,
-  user_type: number | null,
+export interface ClientWithCompaniesResponse {
+  user_id: string;
+  name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  birthday: string;
+  email: string | null;
+  phone: string | null;
+  cpf: string | null;
+  gender: string | null;
+  company_id: number;
+  company_name: string | null;
+  user_type: number | null;
 }
 
-export interface ClientWithCompaniesListResponse {
-  user_id: string;
-  name: string,
-  first_name: string,
-  last_name: string,
+export interface ClientWithListCompaniesResponse {
+  user_id: string | null;
+  name: string | null;
+  first_name: string | null;
+  last_name: string | null;
   companies: Company[] | null;
 }

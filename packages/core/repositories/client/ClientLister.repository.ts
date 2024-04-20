@@ -1,7 +1,7 @@
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import {
-  ClientListResponse,
-  ClientWithCompaniesListResponse,
+  ClientWithListCompaniesResponse,
+  ClientWithCompaniesResponse,
 } from "@core/interfaces/repositories/client";
 import * as schema from "@core/models";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
@@ -112,27 +112,27 @@ export class ClientListerRepository {
   }
 
   private parseCompany(
-    clients: ClientListResponse[]
-  ): ClientWithCompaniesListResponse[] {
+    clients: ClientWithCompaniesResponse[]
+  ): ClientWithListCompaniesResponse[] {
     const clientsParsed: any = {};
 
     clients.forEach((client) => {
-      if (!clientsParsed[client.user_id as string]) {
-        clientsParsed[client.user_id as string] = {
+      if (!clientsParsed[client.user_id]) {
+        clientsParsed[client.user_id] = {
           ...client,
           companies: [] as any,
         };
       }
-      clientsParsed[client?.user_id as string].companies.push({
+      clientsParsed[client?.user_id].companies.push({
         company_id: client.company_id,
         company_name: client.company_name,
         user_type: client.user_type,
         leader_id: "",
       });
 
-      delete clientsParsed[client.user_id as string].company_id;
-      delete clientsParsed[client.user_id as string].company_name;
-      delete clientsParsed[client.user_id as string].user_type;
+      delete clientsParsed[client.user_id].company_id;
+      delete clientsParsed[client.user_id].company_name;
+      delete clientsParsed[client.user_id].user_type;
     });
 
     return Object.values(clientsParsed);

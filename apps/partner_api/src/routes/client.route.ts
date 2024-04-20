@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
+  getUserByIdSchema,
   listUserWithCompaniesSchema,
   userUpdaterByIdSchema,
 } from '@core/validations/user';
@@ -21,4 +22,9 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.update,
   });
 
+  server.get('/users/:userId', {
+    schema: getUserByIdSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.view,
+  });
 }

@@ -1,9 +1,7 @@
 import { Type } from "@sinclair/typebox";
-import { pagingResponseSchema } from "../paging/pagingResponseSchema";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 
-export const userResponseWithCompaniesSchema = Type.Object({
-  ...pagingResponseSchema.properties,
+export const userByIdResponseWithCompaniesSchema = Type.Object({
   user_id: Type.String({ format: "uuid" }),
   status: Type.String({ enum: Object.values(ClientStatus) }),
   first_name: Type.String(),

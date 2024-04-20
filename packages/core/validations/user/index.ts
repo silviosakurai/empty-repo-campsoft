@@ -1,4 +1,5 @@
 export * from "./getUserSchema.validation";
+export * from "./getUserByIdSchema.validation";
 export * from "./userCreatorSchema.validation";
 export * from "./userUpdaterSchema.validation";
 export * from "./userUpdaterByIdSchema.validation";
