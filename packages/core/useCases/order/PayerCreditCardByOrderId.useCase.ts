@@ -1,19 +1,18 @@
 import { ClientService, OrderService } from "@core/services";
-import { PaymentService } from "@core/services/payment.service";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { injectable } from "tsyringe";
-import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 import { TFunction } from "i18next";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { ResponseService } from "@core/common/interfaces/IResponseServices";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly clientService: ClientService,
-    private readonly paymentService: PaymentService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
   async pay(
@@ -21,36 +20,51 @@ export class PayerCreditCardByOrderIdUseCase {
     tokenKey: ITokenKeyData,
     orderId: string
   ) {
-    const order = await this.orderService.listOrderById(orderId);
+    const { externalId, order, sellerId } =
+      await this.orderWithPaymentReaderUseCase.view(t, tokenKey, orderId);
 
-    if (!order) {
-      throw new Error(t("order_not_found"));
-    }
+    // const result =
+    //   await this.paymentGatewayService.createTransactionCard({
+    //     amount: +order.total_price * 100,
+    //     customerId: externalId,
+    //     description: order.observation,
+    //     reference_id: order.order_id,
+    //     sellerId,
+    //   });
 
-    const sellerId = order.seller_id
-      ? order.seller_id
-      : (
-          await this.paymentService.sellerViewByEmail(
-            "ricardo@maniadeapp.com.br"
-          )
-        )?.sellerId;
+    // if (!result.data) {
+    //   return result;
+    // }
 
-    if (!sellerId) {
-      throw new Error(t("seller_not_found"));
-    }
+    // await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
+    //   paymentTransactionId: result.data.id,
+    //   paymentLink: result.data.payment_method.url,
+    //   dueDate: result.data.payment_method.expiration_date,
+    //   barcode: result.data.payment_method.barcode,
+    // });
 
-    const client = await this.clientService.view(tokenKey, order.client_id);
+    // return {
+    //   data: {
+    //     url: result.data.payment_method.url,
+    //     code: result.data.payment_method.barcode,
+    //   },
+    //   status: true,
+    // } as ResponseService;
+  }
 
-    if (!client) {
-      throw new Error(t("client_not_found"));
-    }
+  private async validateCreditCard(clientId: string) {
+    const creditCardsRegistered =
+      await this.clientService.readCreditCardByClientId(clientId);
 
-    const clientPayment = await this.clientService.viewPaymentClient(
-      client.client_id
-    );
+    creditCardsRegistered.find((item) => {
+      const last2DigitsOfCurrentYear = +new Date().getFullYear() % 100;
 
-    const externalId = clientPayment
-      ? clientPayment.external_id
-      : await this.paymentExternalGeneratorUseCase.generate(t, client);
+      // if (
+      //   item.expiration_year === last2DigitsOfCurrentYear &&
+      //   item.expiration_month <= new Date().getMonth()
+      // ) {
+      //   return;
+      // }
+    });
   }
 }

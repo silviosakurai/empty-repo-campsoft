@@ -1,14 +1,27 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { container } from 'tsyringe';
+import { PayerCreditCardByOrderIdUseCase } from '@core/useCases/order/PayerCreditCardByOrderId.useCase';
 
 export const paymentByCreditCard = async (
-  request: FastifyRequest,
+  request: FastifyRequest<{
+    Params: { orderNumber: string };
+  }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenKeyData, params } = request;
+  const service = container.resolve(PayerCreditCardByOrderIdUseCase);
 
   try {
+    const result = await service.pay(t, tokenKeyData, params.orderNumber);
+
+    // if (!result) {
+    //   return sendResponse(reply, {
+    //     data: result.data,
+    //     httpStatusCode: result.httpStatusCode,
+    //   });
+    // }
   } catch (error) {
     console.log(error);
 

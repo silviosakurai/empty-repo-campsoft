@@ -39,6 +39,7 @@ import { ClientPaymentCreatorRepository } from "@core/repositories/client/Client
 import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { ClientCardReaderByClientIdRepository } from "@core/repositories/client/ClientCardReaderByClientId.repository";
 
 @injectable()
 export class ClientService {
@@ -63,7 +64,8 @@ export class ClientService {
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
     private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
-    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository
+    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository,
+    private readonly cardReaderByClientIdRepository: ClientCardReaderByClientIdRepository
   ) {}
 
   view = async (tokenKeyData: ITokenKeyData, userId: string) => {
@@ -205,5 +207,9 @@ export class ClientService {
 
   viewPaymentClient = async (clientId: string) => {
     return this.clientPaymentViewerRepository.view(clientId);
+  };
+
+  readCreditCardByClientId = async (clientId: string) => {
+    return this.cardReaderByClientIdRepository.read(clientId);
   };
 }

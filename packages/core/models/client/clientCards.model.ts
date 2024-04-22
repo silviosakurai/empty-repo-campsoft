@@ -4,6 +4,7 @@ import {
   datetime,
   char,
   varbinary,
+  varchar,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
@@ -13,6 +14,7 @@ export const clientCards = mysqlTable("cliente_cartoes", {
     .notNull()
     .primaryKey(),
   id_cliente: varbinary("id_cliente", { length: 16 }),
+  id_externo: varchar("id_externo", { length: 50 }).notNull(),
   fingerprint: char("fingerprint", { length: 30 }),
   valid: tinyint("valid"),
   brand: char("brand", { length: 20 }),
