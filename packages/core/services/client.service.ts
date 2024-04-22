@@ -37,6 +37,7 @@ import { ClientEmailActivatorRepository } from "@core/repositories/client/Client
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 
 @injectable()
 export class ClientService {
@@ -83,8 +84,8 @@ export class ClientService {
   };
 
   listWithCompanies = async (companyId: number, query: ListClientRequest) => {
-    return this.clientListerRepository.listWithCompanies(companyId, query)
-  }
+    return this.clientListerRepository.listWithCompanies(companyId, query);
+  };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
     return this.clientByEmailPhoneRepository.find(input);
@@ -112,6 +113,10 @@ export class ClientService {
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
     return this.clientUpdaterRepository.update(clientId, input);
+  };
+
+  updateById = async (clientId: string, input: UpdateClientByIdRequestDto) => {
+    return this.clientUpdaterRepository.updateById(clientId, input);
   };
 
   updatePhone = async (
