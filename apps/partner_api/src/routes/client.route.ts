@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import {
   getUserByIdSchema,
   listUserWithCompaniesSchema,
+  userDeleteByIdSchema,
   userUpdaterByIdSchema,
 } from '@core/validations/user';
 import ClientController from '@/controllers/client';
@@ -26,5 +27,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: getUserByIdSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
+  });
+
+  server.delete('/users/:userId', {
+    schema: userDeleteByIdSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.delete,
   });
 }

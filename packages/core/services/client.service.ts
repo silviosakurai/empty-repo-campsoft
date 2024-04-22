@@ -38,6 +38,7 @@ import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientIm
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
+import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 
 @injectable()
 export class ClientService {
@@ -67,7 +68,7 @@ export class ClientService {
     return this.clientViewerRepository.view(tokenKeyData, userId);
   };
 
-  viewById = async (tokenKeyData: ITokenKeyData, userId: string) => {
+  viewById = async (userId: string) => {
     return this.clientViewerRepository.viewById(userId);
   };
 
@@ -173,6 +174,10 @@ export class ClientService {
     userFounded: ViewClientResponse
   ) => {
     return this.clientEraserRepository.delete(tokenJwtData, userFounded);
+  };
+
+  deleteById = async (userId: string, userFounded: ViewClientByIdResponse) => {
+    return this.clientEraserRepository.deleteById(userId, userFounded);
   };
 
   createEmailNewsletter = async (

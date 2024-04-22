@@ -4,6 +4,7 @@ export * from "./userCreatorSchema.validation";
 export * from "./userUpdaterSchema.validation";
 export * from "./userUpdaterByIdSchema.validation";
 export * from "./userDeleteSchema.validation";
+export * from "./userDeleteByIdSchema.validation";
 export * from "./userPhoneUpdaterSchema.validation";
 export * from "./userPasswordUpdaterSchema.validation";
 export * from "./userPasswordRecoveryMethodsSchema.validation";
