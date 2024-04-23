@@ -12,19 +12,26 @@ export default async function productRoutes(server: FastifyInstance) {
 
   server.get('/products', {
     schema: listProductSchema,
-    preHandler: [server.authenticateKeyApi],
     handler: productController.list,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+    ],
   });
 
   server.get('/products/:sku', {
     schema: getProductSchema,
-    preHandler: [server.authenticateKeyApi],
     handler: productController.view,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+    ],
   });
 
   server.get('/products/cross-sell', {
     schema: getProductCrossSellSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.listCrossSell,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 }

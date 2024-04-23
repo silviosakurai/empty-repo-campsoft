@@ -14,31 +14,46 @@ export default async function orderRoutes(server: FastifyInstance) {
 
   server.get('/orders', {
     schema: ordersSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.list,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.post('/orders', {
     schema: createOrderSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.create,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.get('/orders/:orderNumber', {
     schema: ordersByNumberParamSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.findByNumber,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.get('/orders/:orderNumber/payments', {
     schema: getPaymentsSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.listPayments,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.post('/orders/:orderNumber/cancel', {
     schema: postCancelOrderSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: orderController.cancelOrder,
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 }

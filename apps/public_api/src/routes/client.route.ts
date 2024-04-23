@@ -20,98 +20,167 @@ import {
   patchUserImageSchemaSchema,
   createUserNewsletterSchema,
 } from '@core/validations/user';
+import { Permissions } from '@core/common/enums/Permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
   server.get('/user', {
     schema: getUserSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_VIEW,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.post('/user', {
     schema: userCreatorSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateTfa],
     handler: clientController.create,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_CREATE,
+        ]),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.put('/user', {
     schema: userUpdaterSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.update,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_UPDATE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.delete('/user', {
     schema: userDeleteSchema,
-    preHandler: [
-      server.authenticateKeyApi,
-      server.authenticateJwt,
-      server.authenticateTfa,
-    ],
     handler: clientController.delete,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_DELETE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.patch('/user/phone', {
     schema: userPhoneUpdaterSchema,
-    preHandler: [
-      server.authenticateKeyApi,
-      server.authenticateJwt,
-      server.authenticateTfa,
-    ],
     handler: clientController.updatePhone,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_UPDATE_PHONE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.patch('/user/password', {
     schema: userPasswordUpdaterSchema,
-    preHandler: [
-      server.authenticateKeyApi,
-      server.authenticateJwt,
-      server.authenticateTfa,
-    ],
     handler: clientController.updatePassword,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_UPDATE_PASSWORD,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.get('/user/recovery-password/:login', {
     schema: userPasswordRecoveryMethodsSchema,
-    preHandler: [server.authenticateKeyApi],
     handler: clientController.passwordRecoveryMethods,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_RECOVERY_PASSWORD,
+        ]),
+    ],
   });
 
   server.patch('/user/recovery-password', {
     schema: userPasswordRecoveryUpdaterSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateTfa],
     handler: clientController.updatePasswordRecovery,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_RECOVERY_PASSWORD,
+        ]),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.get('/user/vouchers/:voucherCode', {
     schema: getUserVoucherSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.viewVoucher,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_VOUCHER,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.get('/user/billing-address', {
     schema: getUserBillingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.getBillingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_ADDRESS_BILLING_VIEW,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.get('/user/shipping-address', {
     schema: getUserShippingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.getShippingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_ADDRESS_SHIPPING_VIEW,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.put('/user/billing-address', {
     schema: putUserBillingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.putBillingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_ADDRESS_BILLING_UPDATE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.put('/user/shipping-address', {
     schema: putUserShippingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.putShippingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_ADDRESS_SHIPPING_UPDATE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.patch('/user/email-activation/:token', {
@@ -121,19 +190,37 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.patch('/user/shipping-address', {
     schema: patchUserShippingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.patchShippingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_ADDRESS_SHIPPING_UPDATE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.patch('/user/image', {
     schema: patchUserImageSchemaSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.patchImage,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_IMAGE_UPDATE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 
   server.post('/user/newsletter', {
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-    handler: clientController.createClientNewsletter,
     schema: createUserNewsletterSchema,
+    handler: clientController.createClientNewsletter,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, [
+          Permissions.PUBLIC_USER_NEWSLETTER_SUBSCRIBE,
+        ]),
+      (request, reply) => server.authenticateJwt(request, reply),
+    ],
   });
 }

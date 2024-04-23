@@ -14,9 +14,13 @@ import { and, eq, sql } from "drizzle-orm";
 import { ApiStatus } from "@core/common/enums/models/api";
 import { RouteModule } from "@core/common/enums/models/route";
 import { ClientStatus } from "@core/common/enums/models/client";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import {
+  FindApiByKey,
+  ITokenKeyData,
+} from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { Permissions } from "@core/common/enums/Permissions";
 
 @injectable()
 export class ApiRepository {
@@ -24,15 +28,37 @@ export class ApiRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
+  private actionPermissionKey(result: FindApiByKey[]): ITokenKeyData | null {
+    if (
+      !result[0].id_api_key ||
+      !result[0].id_parceiro ||
+      !result[0].id_cargo
+    ) {
+      return null;
+    }
+
+    const keyData = {
+      acoes: [] as Permissions[],
+      id_api_key: result[0].id_api_key as number,
+      id_parceiro: result[0].id_parceiro as number,
+      id_cargo: result[0].id_cargo as number,
+    } as ITokenKeyData;
+
+    result.forEach((row) => {
+      keyData.acoes.push(row.acao as Permissions);
+    });
+
+    return keyData;
+  }
+
   async findApiByKey(
     keyApi: string,
     routeModule: RouteModule
   ): Promise<ITokenKeyData | null> {
-    const result = await this.db
+    const result = (await this.db
       .select({
         acao: action.acao,
         id_api_key: permission.id_api_key,
-        id_grupo: permission.id_grupo,
         id_parceiro: permission.id_parceiro,
         id_cargo: permission.id_cargo,
       })
@@ -51,17 +77,16 @@ export class ApiRepository {
       .groupBy(
         action.acao,
         permission.id_api_key,
-        permission.id_grupo,
         permission.id_parceiro,
         permission.id_cargo
       )
-      .execute();
+      .execute()) as FindApiByKey[];
 
     if (!result.length) {
       return null;
     }
 
-    return result as unknown as ITokenKeyData;
+    return this.actionPermissionKey(result);
   }
 
   async findApiByJwt(

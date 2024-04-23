@@ -9,6 +9,8 @@ export default async function reviewRoutes(server: FastifyInstance) {
   server.get('/reviews', {
     schema: listReviewSchema,
     handler: reviewController.list,
-    preHandler: [server.authenticateKeyApi],
+    preHandler: [
+      (request, reply) => server.authenticateKeyApi(request, reply, null),
+    ],
   });
 }
