@@ -61,6 +61,7 @@
   "product_update_not_allowed": "Product update not allowed!",
   "product_group_update_not_allowed": "Product Group update not allowed!",
   "error_update_product": "Error update products!",
-  "error_update_product_group": "Error adding product to a group!",
+  "error_update_product_group": "Error update products groups!",
+  "error_update_product_group_products": "Error adding product to a group!",
   "token_not_found": "Token not found."
 }

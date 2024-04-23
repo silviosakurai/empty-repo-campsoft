@@ -1,41 +1,37 @@
+import { container } from 'tsyringe';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { AddProductsToGroupUseCase } from '@core/useCases/product/AddProductsToGroup.useCase';
-import { container } from 'tsyringe';
-import {
-  AddProductToGroupBodyRequest,
-  AddProductToGroupParamsRequest,
-} from '@core/useCases/product/dtos/AddProductToGroupRequest.dto';
+import { ProductGroupViewerUseCase } from '@core/useCases/product/ProductGroupViewer.useCase';
+import { ViewProductGroupRequest } from '@core/useCases/product/dtos/ViewProductGroupRequest.dto';
 
-export const addProductToGroup = async (
+export const viewGroup = async (
   request: FastifyRequest<{
-    Params: AddProductToGroupParamsRequest;
-    Body: AddProductToGroupBodyRequest;
+    Params: ViewProductGroupRequest;
   }>,
   reply: FastifyReply
 ) => {
-  const addProductsToGroupUseCase = container.resolve(
-    AddProductsToGroupUseCase
+  const productGroupViewerUseCase = container.resolve(
+    ProductGroupViewerUseCase
   );
   const { t } = request;
 
   try {
-    const response = await addProductsToGroupUseCase.execute(
+    const response = await productGroupViewerUseCase.execute(
       request.params.groupId,
-      request.body
     );
 
     if (!response) {
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('error_update_product_group_products'),
+        message: t('product_group_not_found'),
         httpStatusCode: HTTPStatusCode.NOT_FOUND,
       });
     }
 
     return sendResponse(reply, {
+      data: response,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {

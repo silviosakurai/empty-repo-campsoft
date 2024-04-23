@@ -21,6 +21,9 @@ import { ProductGroupProductCreatorRepository } from "@core/repositories/product
 import { ProductGroupProductDeleterRepository } from "@core/repositories/product/ProductGroupProductDeleter.repository";
 import { ProductGroupProductViewerRepository } from "@core/repositories/product/ProductGroupProductViewer.repository";
 import { ProductGroupImagesUrlUpdaterRepository } from "@core/repositories/product/ProductGroupImagesUrlUpdater.repository";
+import { ProductGroupProductListerRepository } from "@core/repositories/product/ProductGroupProductLister.repository";
+import { ProductGroupUpdaterRepository } from "@core/repositories/product/ProductGroupUpdater.repository";
+import { UpdateProductGroupBodyRequest } from "@core/useCases/product/dtos/UpdateProductGroupRequest.dto";
 
 @injectable()
 export class ProductService {
@@ -36,7 +39,9 @@ export class ProductService {
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
     private readonly productGroupViewerRepository: ProductGroupViewerRepository,
+    private readonly productGroupUpdaterRepository: ProductGroupUpdaterRepository,
     private readonly productGroupProductViewerRepository: ProductGroupProductViewerRepository,
+    private readonly productGroupProductListerRepository: ProductGroupProductListerRepository,
     private readonly productGroupProductCreatorRepository: ProductGroupProductCreatorRepository,
     private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
     private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
@@ -157,8 +162,16 @@ export class ProductService {
     return this.productGroupViewerRepository.get(groupId);
   }
 
+  updateGroup = async (groupId: number, input: UpdateProductGroupBodyRequest) => {
+    return this.productGroupUpdaterRepository.update(groupId, input);
+  };
+
   findProductGroupProduct(groupId: number, productId: string) {
     return this.productGroupProductViewerRepository.view(groupId, productId);
+  }
+
+  listProductGroupProduct(groupId: number) {
+    return this.productGroupProductListerRepository.list(groupId);
   }
 
   addProductToGroup(groupId: number, productId: string) {

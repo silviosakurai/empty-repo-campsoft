@@ -19,6 +19,10 @@ export type ProductGroupProduct = {
   quantity: number;
 };
 
+export type ProductGroupProductList = {
+  productId: string | null;
+};
+
 export type ProductGroup = {
   product_group_id: number;
   name: string | null;

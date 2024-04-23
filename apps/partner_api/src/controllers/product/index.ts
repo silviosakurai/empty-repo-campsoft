@@ -7,6 +7,8 @@ import { createProductImage } from './methods/createProductImage';
 import { addProductToGroup } from './methods/addProductToGroup';
 import { deleteProductFromGroup } from './methods/deleteProductFromGroup';
 import { createProductGroupImage } from './methods/createProductGroupImage';
+import { viewGroup } from './methods/viewGroup';
+import { updateProductGroup } from './methods/updateProductGroup';
 
 @injectable()
 class ProductController {
@@ -15,6 +17,8 @@ class ProductController {
   public post = postProduct;
   public update = updateProduct;
   public createImage = createProductImage;
+  public viewGroup = viewGroup;
+  public putGroup = updateProductGroup;
   public addProductToGroup = addProductToGroup;
   public deleteProductFromGroup = deleteProductFromGroup;
   public createGroupImage = createProductGroupImage;

@@ -10,6 +10,8 @@ import {
   postAddProductSchema,
   deleteProductFromGroupSchema,
   createProductGroupImageSchema,
+  getProductGroupSchema,
+  putProductGroupSchema,
 } from '@core/validations/product';
 
 export default async function productRoutes(server: FastifyInstance) {
@@ -45,10 +47,22 @@ export default async function productRoutes(server: FastifyInstance) {
     handler: productController.createImage,
   });
 
+  server.get('/product_groups/:groupId', {
+    schema: getProductGroupSchema,
+    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.viewGroup,
+  });
+  
   server.post('/product_groups/:groupId/products', {
     schema: postAddProductSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.addProductToGroup,
+  });
+
+  server.put('/product_groups/:groupId', {
+    schema: putProductGroupSchema,
+    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.putGroup,
   });
 
   server.delete('/product_groups/:groupId/products/:productId', {

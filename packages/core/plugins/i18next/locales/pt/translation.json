@@ -61,6 +61,7 @@
   "product_update_not_allowed": "Atualização de produto não permitida.",
   "product_group_update_not_allowed":  "Atualização de grupo de produto não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
-  "error_update_product_group": "Error ao adicionar um produto ao grupo",
+  "error_update_product_group": "Erro ao atualizar o grupo de produto.",
+  "error_update_product_group_products": "Error ao adicionar um produto ao grupo",
   "token_not_found": "Token não encontrado."
 }
