@@ -1,4 +1,3 @@
-export * from "./access";
 export * from "./api";
 export * from "./banner";
 export * from "./client";
@@ -6,7 +5,6 @@ export * from "./company";
 export * from "./coupon";
 export * from "./email";
 export * from "./fi";
-export * from "./menu";
 export * from "./order";
 export * from "./pdv";
 export * from "./plan";
