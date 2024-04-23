@@ -3,18 +3,20 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { PayerCreditCardByOrderIdUseCase } from '@core/useCases/order/PayerCreditCardByOrderId.useCase';
+import { PayByCreditCardRequest } from '@core/useCases/order/dtos/PayByCreditCardRequest.dto';
 
 export const paymentByCreditCard = async (
   request: FastifyRequest<{
     Params: { orderNumber: string };
+    Body: PayByCreditCardRequest;
   }>,
   reply: FastifyReply
 ) => {
-  const { t, tokenKeyData, params } = request;
+  const { t, tokenKeyData, params, body } = request;
   const service = container.resolve(PayerCreditCardByOrderIdUseCase);
 
   try {
-    const result = await service.pay(t, tokenKeyData, params.orderNumber);
+    const result = await service.pay(t, tokenKeyData, params.orderNumber, body);
 
     // if (!result) {
     //   return sendResponse(reply, {
