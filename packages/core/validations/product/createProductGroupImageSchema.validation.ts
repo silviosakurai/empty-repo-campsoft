@@ -4,7 +4,7 @@ import { TagSwagger } from "@core/common/enums/TagSwagger";
 import {
   productGroupImageCreateBodySchema,
   productGroupImageCreateParamsSchema
-} from "@core/schema/product/ProductGroupImageCreateSchema";
+} from "@core/schema/product/productGroupImageCreateSchema";
 
 export const createProductGroupImageSchema = {
   description: "Adiciona imagem em grupo de produtos",
