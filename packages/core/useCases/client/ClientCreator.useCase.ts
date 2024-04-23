@@ -1,8 +1,6 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
 import { CreateClientRequestDto } from "@core/useCases/client/dtos/CreateClientRequest.dto";
-import { AccessService } from "@core/services/access.service";
-import { AccessType } from "@core/common/enums/models/access";
 import { encodePassword } from "@core/common/functions/encodePassword";
 import { InternalServerError } from "@core/common/exceptions/InternalServerError";
 import { TFAType } from "@core/common/enums/models/tfa";
@@ -20,7 +18,6 @@ import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 export class ClientCreatorUseCase {
   constructor(
     private readonly clientService: ClientService,
-    private readonly accessService: AccessService,
     private readonly emailService: EmailService,
     private readonly whatsappService: WhatsappService
   ) {}
@@ -61,12 +58,6 @@ export class ClientCreatorUseCase {
       email: input.email,
       phoneNumber: input.phone,
       status: ClientCompanyStatus.ACTIVE,
-    });
-
-    await this.accessService.create({
-      clientId: userCreated.user_id,
-      companyId: tokenKeyData.company_id,
-      accessTypeId: AccessType.GENERAL,
     });
 
     this.sendNotification(tokenKeyData, input);
