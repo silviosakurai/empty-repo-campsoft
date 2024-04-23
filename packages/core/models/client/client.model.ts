@@ -6,6 +6,7 @@ import {
   date,
   timestamp,
   binary,
+  int,
 } from "drizzle-orm/mysql-core";
 
 export const client = mysqlTable("cliente", {
@@ -30,6 +31,8 @@ export const client = mysqlTable("cliente", {
   senha: varchar("senha", { length: 65 }),
   sexo: mysqlEnum("sexo", [ClientGender.MALE, ClientGender.FEMALE]),
   obs: varchar("obs", { length: 50 }),
+  id_cliente_cadastro: binary("id_cliente_cadastro", { length: 16 }),
+  id_parceiro_cadastro: int("id_parceiro_cadastro"),
   created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

@@ -16,11 +16,10 @@ export const clientSignature = mysqlTable("assinatura_cliente", {
     .primaryKey(),
   id_cliente: varbinary("id_cliente", { length: 16 }),
   id_pedido: varbinary("id_pedido", { length: 16 }),
-  id_empresa: int("id_empresa"),
+  id_parceiro: int("id_parceiro").notNull(),
   ciclo: int("ciclo"),
   id_assinatura_status: int("id_assinatura_status").notNull(),
   id_plano: int("id_plano").notNull(),
-  pag_order_sub: varchar("pag_order_sub", { length: 32 }),
   recorrencia: mysqlEnum("recorrencia", [
     ClientSignatureRecorrencia.NO,
     ClientSignatureRecorrencia.YES,

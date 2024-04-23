@@ -9,9 +9,9 @@ import {
 import { sql } from "drizzle-orm";
 import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 
-export const clientCompanyData = mysqlTable("cliente_empresa_dados", {
+export const clientPartnerData = mysqlTable("cliente_parceiro_dados", {
   id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
-  id_empresa: int("id_empresa").notNull(),
+  id_parceiro: int("id_parceiro").notNull(),
   status: mysqlEnum("status", [
     ClientCompanyStatus.ACTIVE,
     ClientCompanyStatus.INACTIVE,

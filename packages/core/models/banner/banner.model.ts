@@ -14,7 +14,7 @@ export const banner = mysqlTable("banner", {
     .notNull()
     .default(BannerStatus.ACTIVE),
   local: varchar("local", { length: 20 }),
-  id_empresa: int("id_empresa"),
+  id_parceiro: int("id_parceiro"),
   id_banner_tipo: int("id_banner_tipo"),
   banner: varchar("banner", { length: 50 }),
   created_at: datetime("created_at", { mode: "string" }).default(

@@ -1,3 +1,4 @@
+import { PartnerStatus } from "@core/common/enums/models/partner";
 import {
   mysqlTable,
   int,
@@ -7,11 +8,12 @@ import {
   bigint,
 } from "drizzle-orm/mysql-core";
 
-export const company = mysqlTable("empresa", {
-  id_empresa: int("id_empresa").notNull().primaryKey(),
-  id_api_acesso: int("id_api_acesso"),
-  id_empresa_tipo: int("id_empresa_tipo"),
-  status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
+export const partner = mysqlTable("parceiro", {
+  id_parceiro: int("id_parceiro").notNull().primaryKey(),
+  id_parceiro_tipo: int("id_parceiro_tipo"),
+  status: mysqlEnum("status", [PartnerStatus.ACTIVE, PartnerStatus.INACTIVE])
+    .notNull()
+    .default(PartnerStatus.ACTIVE),
   nome_fantasia: varchar("nome_fantasia", { length: 50 }),
   razao_social: varchar("razao_social", { length: 50 }),
   nome_responsavel: varchar("nome_responsavel", { length: 50 }),

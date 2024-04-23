@@ -20,5 +20,4 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.update,
   });
-
 }
