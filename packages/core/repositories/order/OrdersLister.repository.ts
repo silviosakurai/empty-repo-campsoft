@@ -452,6 +452,7 @@ export class OrdersListerRepository {
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         company_id: order.id_empresa,
+        seller_id: order.id_vendedor,
         status_id: order.id_pedido_status,
         recurrence: order.recorrencia,
         recurrence_period: order.recorrencia_periodo,
@@ -463,6 +464,7 @@ export class OrdersListerRepository {
         total_installments: order.pedido_parcelas_vezes,
         total_installments_value: order.pedido_parcelas_valor,
         activation_immediate: order.ativacao_imediata,
+        observation: order.obs,
       })
       .from(order)
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))

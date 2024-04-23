@@ -1,21 +1,29 @@
-import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
-import { ResponseService } from '@core/common/interfaces/IResponseServices';
-import { generalEnvironment } from '@core/config/environments';
-import { ITransactionFullTicketRequest, ITransactionFullTicketResponse } from '@core/interfaces/services/zoop/ITransactionFullTicket';
-import { IZoopError } from '@core/interfaces/services/zoop/IZoopError';
-import axios from 'axios';
+import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
+import { PaymentType } from "@core/common/enums/PaymentType";
+import { ResponseService } from "@core/common/interfaces/IResponseServices";
+import { generalEnvironment } from "@core/config/environments";
+import {
+  ITransactionFullTicketRequest,
+  ITransactionFullTicketResponse,
+} from "@core/interfaces/services/payment/ITransactionFullTicket";
+import { IZoopError } from "@core/interfaces/services/payment/IZoopError";
+import axios from "axios";
 
-export async function createTransactionFullTicket(input: ITransactionFullTicketRequest): Promise<ResponseService<ITransactionFullTicketResponse>> {
+export async function createTransactionFullTicket(
+  input: ITransactionFullTicketRequest
+): Promise<ResponseService<ITransactionFullTicketResponse>> {
   try {
-    const response = await axios.post<ITransactionFullTicketResponse & IZoopError>(
-      `${generalEnvironment.zoopBaseUrl}marketplaces/${generalEnvironment.zoopMarketPlace}/transactions`,
+    const response = await axios.post<
+      ITransactionFullTicketResponse & IZoopError
+    >(
+      `${generalEnvironment.paymentApiBaseUrl}/v1/marketplaces/${generalEnvironment.paymentMarketPlace}/transactions`,
       {
         on_behalf_of: input.sellerId,
         customer: input.customerId,
         amount: input.amount,
-        currency: 'BRL',
+        currency: "BRL",
         description: input.description,
-        payment_type: 'boleto',
+        payment_type: PaymentType.boleto,
         reference_id: input.reference_id,
         logo: input.logo,
         payment_method: {
@@ -44,7 +52,7 @@ export async function createTransactionFullTicket(input: ITransactionFullTicketR
             }),
           },
         },
-      },
+      }
     );
 
     if (response.status === HTTPStatusCode.CREATED) {
