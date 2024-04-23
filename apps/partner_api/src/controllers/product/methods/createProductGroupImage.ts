@@ -17,14 +17,16 @@ export const createProductGroupImage = async (
   reply: FastifyReply
 ) => {
   const { t } = request;
-  const productGroupImageCreatorUseCase = container.resolve(ProductGroupImageCreatorUseCase);
+  const productGroupImageCreatorUseCase = container.resolve(
+    ProductGroupImageCreatorUseCase
+  );
 
   try {
     const response = await productGroupImageCreatorUseCase.create(
       t,
       request.params.groupId,
       request.params.type,
-      request.body.image,
+      request.body.image
     );
 
     if (!response) {

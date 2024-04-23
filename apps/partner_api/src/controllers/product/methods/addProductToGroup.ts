@@ -3,7 +3,7 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AddProductsToGroupUseCase } from '@core/useCases/product/AddProductsToGroup.useCase';
 import { container } from 'tsyringe';
-import { 
+import {
   AddProductToGroupBodyRequest,
   AddProductToGroupParamsRequest,
 } from '@core/useCases/product/dtos/AddProductToGroupRequest.dto';
@@ -23,7 +23,7 @@ export const addProductToGroup = async (
   try {
     const response = await addProductsToGroupUseCase.execute(
       request.params.groupId,
-      request.body,
+      request.body
     );
 
     if (!response) {

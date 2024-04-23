@@ -3,9 +3,7 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { DeleteProductFromGroupUseCase } from '@core/useCases/product/DeleteProductFromGroup.useCase';
 import { container } from 'tsyringe';
-import { 
-  DeleteProductFromGroupParamsRequest,
-} from '@core/useCases/product/dtos/DeleteProductFromGroupRequest.dto';
+import { DeleteProductFromGroupParamsRequest } from '@core/useCases/product/dtos/DeleteProductFromGroupRequest.dto';
 
 export const deleteProductFromGroup = async (
   request: FastifyRequest<{
@@ -21,7 +19,7 @@ export const deleteProductFromGroup = async (
   try {
     const response = await deleteProductFromGroupUseCase.execute(
       request.params.groupId,
-      request.params.productId,
+      request.params.productId
     );
 
     if (!response) {
