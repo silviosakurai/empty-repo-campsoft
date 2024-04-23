@@ -10,7 +10,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 export class ClientViewerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
-  ) {}
+  ) { }
 
   async view(
     tokenKeyData: ITokenKeyData,

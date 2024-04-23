@@ -44,6 +44,7 @@ import { ClientCardViewerRepository } from "@core/repositories/client/ClientCard
 import { ClientCardCreatorRepository } from "@core/repositories/client/ClientCardCreator.repository";
 import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/ClientCardDefaultUpdater.repository";
 import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
+import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 
 @injectable()
 export class ClientService {
@@ -125,6 +126,10 @@ export class ClientService {
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
     return this.clientUpdaterRepository.update(clientId, input);
+  };
+
+  updateById = async (clientId: string, input: UpdateClientByIdRequestDto) => {
+    return this.clientUpdaterRepository.updateById(clientId, input);
   };
 
   updatePhone = async (
