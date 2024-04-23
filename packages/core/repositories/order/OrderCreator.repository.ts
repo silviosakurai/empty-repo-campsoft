@@ -34,7 +34,7 @@ export class OrderCreatorRepository {
     const valuesObject: typeof schema.order.$inferInsert = {
       id_cliente:
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
-      id_parceiro: tokenKeyData.company_id,
+      id_parceiro: tokenKeyData.id_parceiro,
       id_pedido_status: OrderStatusEnum.PENDING,
       id_plano: payload.plan.plan_id ?? null,
       recorrencia: payload.subscribe
@@ -80,7 +80,7 @@ export class OrderCreatorRepository {
 
     const orderFounded = await this.findLastOrderByIdClient(
       tokenJwtData.clientId,
-      tokenKeyData.company_id
+      tokenKeyData.id_parceiro
     );
 
     if (!orderFounded) {

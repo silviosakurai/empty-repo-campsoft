@@ -31,7 +31,7 @@ export class SignatureCreatorRepository {
       .values({
         id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
-        id_parceiro: tokenKeyData.company_id,
+        id_parceiro: tokenKeyData.id_parceiro,
         ciclo: 0,
         id_assinatura_status: SignatureStatus.PENDING,
         id_plano: payload.plan.plan_id,
@@ -48,7 +48,7 @@ export class SignatureCreatorRepository {
 
     const signatureFounded = await this.findLastSignatureByIdClient(
       tokenJwtData.clientId,
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       orderId
     );
 

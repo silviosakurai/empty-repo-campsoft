@@ -29,7 +29,7 @@ export class PlanListerOrderRepository {
         and(
           eq(plan.id_plano, payload.plan.plan_id),
           eq(plan.status, Status.ACTIVE),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id),
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
           isNotNull(planItem.id_produto)
         )
       )

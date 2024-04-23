@@ -90,7 +90,7 @@ export class OrdersListerRepository {
       )
       .where(
         and(
-          eq(order.id_parceiro, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       )
@@ -122,7 +122,7 @@ export class OrdersListerRepository {
       .from(order)
       .where(
         and(
-          eq(order.id_parceiro, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       )
@@ -224,7 +224,7 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(plan.id_plano)
@@ -278,7 +278,7 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .execute();
@@ -314,7 +314,7 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)

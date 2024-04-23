@@ -27,7 +27,7 @@ export class ClientPasswordRecoveryMethodsRepository {
       .from(client)
       .where(
         and(
-          and(eq(client.id_parceiro_cadastro, tokenKeyData.company_id)),
+          and(eq(client.id_parceiro_cadastro, tokenKeyData.id_parceiro)),
           or(
             eq(client.cpf, login),
             eq(client.email, login),

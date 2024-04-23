@@ -37,7 +37,7 @@ export class VoucherEligibilityVerifierRepository {
           eq(couponRescueCode.status, CouponRescueCodeStatus.ACTIVE),
           gte(couponRescueCode.qnt_uso_faltante, 1),
           eq(couponRescue.status, CouponRescueStatus.ACTIVE),
-          eq(couponRescue.id_parceiro, tokenKeyData.company_id),
+          eq(couponRescue.id_parceiro, tokenKeyData.id_parceiro),
           gte(couponRescue.validade, validUntil)
         )
       )
@@ -85,7 +85,7 @@ export class VoucherEligibilityVerifierRepository {
           eq(couponRescueCode.status, CouponRescueCodeStatus.ACTIVE),
           gte(couponRescueCode.qnt_uso_faltante, 1),
           eq(couponRescue.status, CouponRescueStatus.ACTIVE),
-          eq(couponRescue.id_parceiro, tokenKeyData.company_id),
+          eq(couponRescue.id_parceiro, tokenKeyData.id_parceiro),
           inArray(couponRescueItem.id_produto, selectedProducts)
         )
       )

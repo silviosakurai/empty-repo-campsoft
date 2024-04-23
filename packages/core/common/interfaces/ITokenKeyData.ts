@@ -1,9 +1,7 @@
-import { ApiStatus } from "@core/common/enums/models/api";
-
 export interface ITokenKeyData {
-  api_key: string;
-  api_access_id: number;
-  name: string;
-  status: ApiStatus;
-  company_id: number;
+  acao: string;
+  id_api_key: number;
+  id_grupo: number | null;
+  id_parceiro: number;
+  id_cargo: number;
 }

@@ -54,7 +54,7 @@ export class PlanProductDetailsListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .execute();

@@ -34,7 +34,7 @@ export class CustomerVoucherRedemptionVerifierRepository {
             sql`UUID_TO_BIN(${tokenJwtData.clientId})`
           ),
           eq(order.cupom_resgatar_codigo, voucher),
-          eq(clientSignature.id_parceiro, tokenKeyData.company_id)
+          eq(clientSignature.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .execute();

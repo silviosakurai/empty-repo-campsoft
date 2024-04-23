@@ -120,7 +120,7 @@ export class AvailableVoucherPlansRepository {
           ),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_resgatar_codigo, voucher),
-          eq(clientSignature.id_parceiro, tokenKeyData.company_id),
+          eq(clientSignature.id_parceiro, tokenKeyData.id_parceiro),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(plan.status, Status.ACTIVE)
         )
@@ -193,7 +193,7 @@ export class AvailableVoucherPlansRepository {
           eq(couponRescueCode.cupom_resgatar_codigo, voucher),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(plan.status, Status.ACTIVE),
-          eq(couponRescue.id_parceiro, tokenKeyData.company_id)
+          eq(couponRescue.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(plan.id_plano)
@@ -247,7 +247,7 @@ export class AvailableVoucherPlansRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .execute();
@@ -283,7 +283,7 @@ export class AvailableVoucherPlansRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)

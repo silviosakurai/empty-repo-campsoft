@@ -46,7 +46,7 @@ export class PlanProductGroupDetailsListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)
@@ -86,14 +86,14 @@ export class PlanProductGroupDetailsListerRepository {
   ): Promise<PlanProduct[]> {
     let whereFind = and(
       eq(plan.id_plano, planId),
-      eq(planPartner.id_parceiro, tokenKeyData.company_id),
+      eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
       inArray(planItem.id_produto, selectedProducts)
     );
 
     if (selectedProducts.length > 0) {
       whereFind = and(
         eq(plan.id_plano, planId),
-        eq(planPartner.id_parceiro, tokenKeyData.company_id),
+        eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
         inArray(productGroupProduct.id_produto, selectedProducts),
         gte(productGroup.qtd_produtos_selecionaveis, selectedProducts.length)
       );

@@ -7,7 +7,7 @@ import {
   timestamp,
 } from "drizzle-orm/mysql-core";
 
-export const apiKey = mysqlTable("api_acesso", {
+export const apiKey = mysqlTable("api_key", {
   id_api_key: int("id_api_key").notNull().primaryKey(),
   api_nome: varbinary("api_nome", { length: 50 }),
   api_status: mysqlEnum("api_status", [ApiStatus.ACTIVE, ApiStatus.INACTIVE]),

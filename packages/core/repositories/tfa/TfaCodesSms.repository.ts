@@ -28,7 +28,7 @@ export class TfaCodesSms {
       .where(
         or(
           and(
-            eq(templateSms.id_parceiro, tokenKeyData.company_id),
+            eq(templateSms.id_parceiro, tokenKeyData.id_parceiro),
             eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
           ),
           and(

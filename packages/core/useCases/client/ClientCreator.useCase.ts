@@ -53,7 +53,7 @@ export class ClientCreatorUseCase {
 
     await this.clientService.connectClientAndCompany({
       clientId: userCreated.user_id,
-      companyId: tokenKeyData.company_id,
+      companyId: tokenKeyData.id_parceiro,
       cpf: input.cpf,
       email: input.email,
       phoneNumber: input.phone,

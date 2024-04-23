@@ -27,7 +27,7 @@ export class BannerReaderRepository {
   ) {
     let whereCondition = and(
       eq(banner.status, BannerStatus.ACTIVE),
-      eq(banner.id_parceiro, tokenKeyData.company_id)
+      eq(banner.id_parceiro, tokenKeyData.id_parceiro)
     );
 
     if (input.location) {

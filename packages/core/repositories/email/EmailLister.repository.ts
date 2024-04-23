@@ -58,7 +58,7 @@ export class EmailListerRepository {
       .where(
         or(
           and(
-            eq(templateEmail.id_parceiro, tokenKeyData.company_id),
+            eq(templateEmail.id_parceiro, tokenKeyData.id_parceiro),
             eq(templateModule.modulo, templateModulo)
           ),
           and(

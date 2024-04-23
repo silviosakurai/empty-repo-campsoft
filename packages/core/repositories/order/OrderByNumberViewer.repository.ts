@@ -64,7 +64,7 @@ export class OrderByNumberViewerRepository {
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderNumber})`),
-          eq(order.id_parceiro, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       );

@@ -33,7 +33,7 @@ export class ClientViewerRepository {
       .where(
         and(
           eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(client.id_parceiro_cadastro, tokenKeyData.company_id)
+          eq(client.id_parceiro_cadastro, tokenKeyData.id_parceiro)
         )
       )
       .execute();

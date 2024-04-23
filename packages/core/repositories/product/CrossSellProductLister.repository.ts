@@ -180,7 +180,7 @@ export class CrossSellProductListerRepository {
           eq(productCrossSell.id_plano, planId),
           eq(productCrossSell.meses, months),
           inArray(productCrossSell.id_produto, selectedProducts),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productCrossSell.id_produto)
@@ -213,7 +213,7 @@ export class CrossSellProductListerRepository {
           eq(productCrossSell.id_plano, planId),
           eq(productCrossSell.meses, months),
           inArray(productCrossSell.id_produto, selectedProducts),
-          eq(planPartner.id_parceiro, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productCrossSell.id_produto)

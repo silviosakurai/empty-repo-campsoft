@@ -16,7 +16,7 @@ export const listProduct = async (
 
   try {
     const response = await productListerUseCase.execute(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       request.query
     );
 

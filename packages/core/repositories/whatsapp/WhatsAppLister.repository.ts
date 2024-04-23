@@ -38,7 +38,7 @@ export class WhatsAppListerRepository {
       .where(
         or(
           and(
-            eq(templateWhatsApp.id_parceiro, tokenKeyData.company_id),
+            eq(templateWhatsApp.id_parceiro, tokenKeyData.id_parceiro),
             eq(templateModule.modulo, templateModulo)
           ),
           and(
