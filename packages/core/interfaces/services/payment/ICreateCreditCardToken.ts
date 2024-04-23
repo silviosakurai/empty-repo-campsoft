@@ -4,6 +4,7 @@ export interface ICreateCreditCardTokenRequest {
   expiration_year: string;
   card_number: string;
   security_code: string;
+  default?: boolean;
 }
 
 export interface ICreateCreditCardTokenResponse {

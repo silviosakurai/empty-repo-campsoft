@@ -6,7 +6,7 @@ import { paymentApiInstance } from "./paymentApiInstance";
 
 export async function createCreditCardToken(
   input: ICreateCreditCardTokenRequest
-) {
+): Promise<ICreateCreditCardTokenResponse> {
   try {
     const result =
       await paymentApiInstance.post<ICreateCreditCardTokenResponse>(
@@ -16,6 +16,6 @@ export async function createCreditCardToken(
 
     return result.data;
   } catch (error) {
-    return error;
+    throw error;
   }
 }

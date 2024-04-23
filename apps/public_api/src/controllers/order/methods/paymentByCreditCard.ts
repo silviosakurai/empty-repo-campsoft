@@ -18,12 +18,17 @@ export const paymentByCreditCard = async (
   try {
     const result = await service.pay(t, tokenKeyData, params.orderNumber, body);
 
-    // if (!result) {
-    //   return sendResponse(reply, {
-    //     data: result.data,
-    //     httpStatusCode: result.httpStatusCode,
-    //   });
-    // }
+    if (!result.status) {
+      return sendResponse(reply, {
+        data: result.data,
+        httpStatusCode: result.httpStatusCode,
+      });
+    }
+
+    return sendResponse(reply, {
+      data: result.data,
+      httpStatusCode: HTTPStatusCode.CREATED,
+    });
   } catch (error) {
     console.log(error);
 

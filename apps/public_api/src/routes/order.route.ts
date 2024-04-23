@@ -8,6 +8,7 @@ import {
   ordersByNumberParamSchema,
   createOrderSchema,
   postOrderPaymentBoletoSchema,
+  postOrderPaymentCardSchema,
 } from '@core/validations/order';
 
 export default async function orderRoutes(server: FastifyInstance) {
@@ -52,6 +53,6 @@ export default async function orderRoutes(server: FastifyInstance) {
   server.post('/orders/:orderNumber/payments/credit-card', {
     handler: orderController.paymentByCreditCard,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-    // schema: postOrderPaymentBoletoSchema,
+    schema: postOrderPaymentCardSchema,
   });
 }

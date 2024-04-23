@@ -42,24 +42,34 @@ interface Company {
 }
 
 export interface ClientListResponse {
-  user_id: string,
-  name: string | null,
-  first_name: string | null,
-  last_name: string | null,
-  birthday: string,
-  email: string | null,
-  phone: string | null,
-  cpf: string | null,
-  gender: string | null,
-  company_id: number,
-  company_name: string | null,
-  user_type: number | null,
+  user_id: string;
+  name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  birthday: string;
+  email: string | null;
+  phone: string | null;
+  cpf: string | null;
+  gender: string | null;
+  company_id: number;
+  company_name: string | null;
+  user_type: number | null;
 }
 
 export interface ClientWithCompaniesListResponse {
   user_id: string;
-  name: string,
-  first_name: string,
-  last_name: string,
+  name: string;
+  first_name: string;
+  last_name: string;
   companies: Company[] | null;
+}
+
+export interface ClientCardRepositoryInput {
+  expiration_month: number;
+  expiration_year: number;
+  externalId: string;
+  brand?: string;
+  default: boolean;
+  first4Digits: string;
+  last4Digits?: string;
 }
