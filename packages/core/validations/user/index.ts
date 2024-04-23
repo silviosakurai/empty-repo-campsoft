@@ -9,6 +9,7 @@ export * from "./userPhoneUpdaterSchema.validation";
 export * from "./userPasswordUpdaterSchema.validation";
 export * from "./userPasswordRecoveryMethodsSchema.validation";
 export * from "./userPasswordRecoveryUpdaterSchema.validation";
+export * from "./userSendSsoSchema.validation";
 export * from "./getUserVoucherSchema.validation";
 export * from "./createUserNewsletterSchema.validation";
 export * from "./getUserShippingAddressSchema.validation";

@@ -4,6 +4,7 @@ import {
   getUserByIdSchema,
   listUserWithCompaniesSchema,
   userDeleteByIdSchema,
+  userSendSsoSchema,
   userUpdaterByIdSchema,
 } from '@core/validations/user';
 import ClientController from '@/controllers/client';
@@ -21,6 +22,12 @@ export default async function clientRoutes(server: FastifyInstance) {
     schema: userUpdaterByIdSchema,
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.update,
+  });
+
+  server.patch('/users/:userId/send-sso', {
+    schema: userSendSsoSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: clientController.sendSso,
   });
 
   server.get('/users/:userId', {
