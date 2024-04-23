@@ -1,7 +1,13 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { plan, product, productType, planItem } from "@core/models";
+import {
+  plan,
+  product,
+  productType,
+  planItem,
+  planPartner,
+} from "@core/models";
 import { and, eq } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PlanProducts } from "@core/interfaces/repositories/voucher";
@@ -44,10 +50,11 @@ export class PlanProductDetailsListerRepository {
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.company_id)
         )
       )
       .execute();

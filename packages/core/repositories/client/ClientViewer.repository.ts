@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { client, access } from "@core/models";
+import { client } from "@core/models";
 import { eq, sql, and } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
@@ -10,7 +10,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 export class ClientViewerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
-  ) { }
+  ) {}
 
   async view(
     tokenKeyData: ITokenKeyData,
@@ -30,11 +30,10 @@ export class ClientViewerRepository {
         obs: client.obs,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(access.id_empresa, tokenKeyData.company_id)
+          eq(client.id_parceiro_cadastro, tokenKeyData.company_id)
         )
       )
       .execute();

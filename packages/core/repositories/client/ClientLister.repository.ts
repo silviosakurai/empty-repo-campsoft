@@ -12,6 +12,7 @@ import {
 import { eq, sql, and, SQLWrapper } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
+import { client, partner } from "@core/models";
 
 @injectable()
 export class ClientListerRepository {
@@ -27,35 +28,24 @@ export class ClientListerRepository {
 
     const allQuery = this.db
       .select({
-        user_id: sql`BIN_TO_UUID(${schema.client.id_cliente})`.mapWith(String),
-        status: schema.client.status,
-        name: schema.client.nome,
-        first_name: schema.client.nome,
-        last_name: schema.client.sobrenome,
+        user_id: sql`BIN_TO_UUID(${client.id_cliente})`.mapWith(String),
+        status: client.status,
+        name: client.nome,
+        first_name: client.nome,
+        last_name: client.sobrenome,
         birthday:
-          sql`DATE_FORMAT(${schema.client.data_nascimento}, "%Y-%m-%d")`.mapWith(
+          sql`DATE_FORMAT(${client.data_nascimento}, "%Y-%m-%d")`.mapWith(
             String
           ),
-        email: schema.client.email,
-        phone: schema.client.telefone,
-        cpf: schema.client.cpf,
-        gender: schema.client.sexo,
-        company_id: schema.company.id_empresa,
-        company_name: schema.company.nome_fantasia,
-        user_type: schema.access.id_acesso_tipo,
+        email: client.email,
+        phone: client.telefone,
+        cpf: client.cpf,
+        gender: client.sexo,
+        company_id: partner.id_parceiro,
+        company_name: partner.nome_fantasia,
       })
-      .from(schema.client)
-      .innerJoin(
-        schema.access,
-        eq(
-          sql`BIN_TO_UUID(${schema.access.id_cliente})`,
-          sql`BIN_TO_UUID(${schema.client.id_cliente})`
-        )
-      )
-      .innerJoin(
-        schema.company,
-        eq(schema.company.id_empresa, schema.access.id_empresa)
-      )
+      .from(client)
+      .innerJoin(partner, eq(partner.id_parceiro, client.id_parceiro_cadastro))
       .where(and(...filters))
       .groupBy();
 
@@ -92,21 +82,21 @@ export class ClientListerRepository {
 
     if (query.cpf || query.name || query.email) {
       if (query.cpf) {
-        filters.push(eq(schema.client.cpf, query.cpf));
+        filters.push(eq(client.cpf, query.cpf));
       }
 
       if (query.name) {
-        filters.push(eq(schema.client.nome, query.name));
+        filters.push(eq(client.nome, query.name));
       }
 
       if (query.email) {
-        filters.push(eq(schema.client.email, query.email));
+        filters.push(eq(client.email, query.email));
       }
 
       return filters;
     }
 
-    filters.push(eq(schema.company.id_empresa, companyId));
+    filters.push(eq(partner.id_parceiro, companyId));
 
     return filters;
   }
@@ -126,13 +116,11 @@ export class ClientListerRepository {
       clientsParsed[client?.user_id as string].companies.push({
         company_id: client.company_id,
         company_name: client.company_name,
-        user_type: client.user_type,
         leader_id: "",
       });
 
       delete clientsParsed[client.user_id as string].company_id;
       delete clientsParsed[client.user_id as string].company_name;
-      delete clientsParsed[client.user_id as string].user_type;
     });
 
     return Object.values(clientsParsed);

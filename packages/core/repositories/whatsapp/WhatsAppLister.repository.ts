@@ -38,19 +38,19 @@ export class WhatsAppListerRepository {
       .where(
         or(
           and(
-            eq(templateWhatsApp.id_empresa, tokenKeyData.company_id),
+            eq(templateWhatsApp.id_parceiro, tokenKeyData.company_id),
             eq(templateModule.modulo, templateModulo)
           ),
           and(
             eq(
-              templateWhatsApp.id_empresa,
-              sql`${templateWhatsApp.id_empresa} IS NULL`
+              templateWhatsApp.id_parceiro,
+              sql`${templateWhatsApp.id_parceiro} IS NULL`
             ),
             eq(templateModule.modulo, templateModulo)
           )
         )
       )
-      .orderBy(desc(templateWhatsApp.id_empresa))
+      .orderBy(desc(templateWhatsApp.id_parceiro))
       .limit(1)
       .execute();
 

@@ -31,7 +31,7 @@ export class SignatureCreatorRepository {
       .values({
         id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
-        id_empresa: tokenKeyData.company_id,
+        id_parceiro: tokenKeyData.company_id,
         ciclo: 0,
         id_assinatura_status: SignatureStatus.PENDING,
         id_plano: payload.plan.plan_id,
@@ -109,7 +109,7 @@ export class SignatureCreatorRepository {
         and(
           eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           eq(clientSignature.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(clientSignature.id_empresa, companyId)
+          eq(clientSignature.id_parceiro, companyId)
         )
       )
       .orderBy(desc(clientSignature.created_at))

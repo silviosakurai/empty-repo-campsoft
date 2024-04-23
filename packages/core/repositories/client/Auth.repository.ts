@@ -1,5 +1,5 @@
 import * as schema from "@core/models";
-import { access, client, clientMagicToken } from "@core/models";
+import { client, clientMagicToken } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq, or, and, sql } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
@@ -35,11 +35,9 @@ export class AuthRepository {
         photo: client.foto,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, tokenKeyData.company_id),
           or(
             eq(client.email, login),
             eq(client.cpf, login),
@@ -76,11 +74,9 @@ export class AuthRepository {
         photo: client.foto,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, tokenKeyData.company_id),
           eq(client.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           sql`SUBSTRING_INDEX(${client.senha}, ':', 1) = MD5(CONCAT(SUBSTRING_INDEX(${client.senha}, ':', -1), ${password}))`
         )
@@ -112,11 +108,9 @@ export class AuthRepository {
       })
       .from(clientMagicToken)
       .innerJoin(client, eq(client.id_cliente, clientMagicToken.id_cliente))
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, tokenKeyData.company_id),
           eq(clientMagicToken.token, token),
           eq(clientMagicToken.status, ClientMagicTokenStatus.YES)
         )

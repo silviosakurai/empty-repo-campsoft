@@ -2,7 +2,13 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
-import { plan, product, productType, productCrossSell } from "@core/models";
+import {
+  plan,
+  planPartner,
+  product,
+  productType,
+  productCrossSell,
+} from "@core/models";
 import {
   SQLWrapper,
   and,
@@ -168,12 +174,13 @@ export class CrossSellProductListerRepository {
       })
       .from(productCrossSell)
       .innerJoin(plan, eq(productCrossSell.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(productCrossSell.id_plano, planId),
           eq(productCrossSell.meses, months),
           inArray(productCrossSell.id_produto, selectedProducts),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.company_id)
         )
       )
       .groupBy(productCrossSell.id_produto)
@@ -199,13 +206,14 @@ export class CrossSellProductListerRepository {
       })
       .from(productCrossSell)
       .innerJoin(plan, eq(productCrossSell.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(product, eq(productCrossSell.id_produto, product.id_produto))
       .where(
         and(
           eq(productCrossSell.id_plano, planId),
           eq(productCrossSell.meses, months),
           inArray(productCrossSell.id_produto, selectedProducts),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.company_id)
         )
       )
       .groupBy(productCrossSell.id_produto)

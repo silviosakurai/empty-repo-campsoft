@@ -60,7 +60,7 @@ export class CouponListerRepository {
         and(
           eq(couponCartCode.cupom_carrinho_codigo, couponCode),
           eq(couponCart.status, CouponRescueStatus.ACTIVE),
-          eq(couponCart.id_empresa, tokenKeyData.company_id),
+          eq(couponCart.id_parceiro, tokenKeyData.company_id),
           gte(couponCartCode.qnt_uso_faltante, 1),
           gte(couponCart.validade, validUntil),
           or(wherePlansOrProducts)
@@ -97,7 +97,7 @@ export class CouponListerRepository {
           ),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_carrinho_codigo, couponCode),
-          eq(clientSignature.id_empresa, tokenKeyData.company_id)
+          eq(clientSignature.id_parceiro, tokenKeyData.company_id)
         )
       )
       .execute();

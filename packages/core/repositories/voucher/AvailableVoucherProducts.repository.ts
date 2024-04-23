@@ -132,7 +132,7 @@ export class AvailableVoucherProductsRepository {
           ),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_resgatar_codigo, voucher),
-          eq(clientSignature.id_empresa, tokenKeyData.company_id),
+          eq(clientSignature.id_parceiro, tokenKeyData.company_id),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(product.status, Status.ACTIVE)
         )
@@ -213,7 +213,7 @@ export class AvailableVoucherProductsRepository {
           eq(couponRescueCode.cupom_resgatar_codigo, voucher),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(product.status, Status.ACTIVE),
-          eq(couponRescue.id_empresa, tokenKeyData.company_id)
+          eq(couponRescue.id_parceiro, tokenKeyData.company_id)
         )
       )
       .groupBy(product.id_produto)

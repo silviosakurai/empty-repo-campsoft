@@ -13,7 +13,6 @@ export * from "./permission";
 export * from "./plan";
 export * from "./product";
 export * from "./role";
-export * from "./route";
 export * from "./signature";
 export * from "./sms";
 export * from "./supplier";

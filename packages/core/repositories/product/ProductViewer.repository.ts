@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { eq, and } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { product, productCompany, productType } from "@core/models";
+import { product, productPartner, productType } from "@core/models";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
@@ -48,8 +48,8 @@ export class ProductViewerRepository {
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
       .innerJoin(
         productType,
@@ -57,7 +57,7 @@ export class ProductViewerRepository {
       )
       .where(
         and(
-          eq(productCompany.id_empresa, companyId),
+          eq(productPartner.id_parceiro, companyId),
           eq(product.id_produto, sku)
         )
       )

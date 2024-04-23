@@ -8,6 +8,7 @@ import {
   clientSignature,
   order,
   planItem,
+  planPartner,
   product,
   productType,
   productGroup,
@@ -55,7 +56,7 @@ export class AvailableVoucherPlansRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -110,6 +111,7 @@ export class AvailableVoucherPlansRepository {
       )
       .innerJoin(plan, eq(couponRescueItem.id_plano, plan.id_plano))
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(
@@ -118,7 +120,7 @@ export class AvailableVoucherPlansRepository {
           ),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_resgatar_codigo, voucher),
-          eq(clientSignature.id_empresa, tokenKeyData.company_id),
+          eq(clientSignature.id_parceiro, tokenKeyData.company_id),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(plan.status, Status.ACTIVE)
         )
@@ -151,7 +153,7 @@ export class AvailableVoucherPlansRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -173,6 +175,7 @@ export class AvailableVoucherPlansRepository {
         redemption_date: sql<null>`null`,
       })
       .from(plan)
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(couponRescueItem, eq(plan.id_plano, couponRescueItem.id_plano))
       .innerJoin(
         couponRescueCode,
@@ -190,7 +193,7 @@ export class AvailableVoucherPlansRepository {
           eq(couponRescueCode.cupom_resgatar_codigo, voucher),
           eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(plan.status, Status.ACTIVE),
-          eq(couponRescue.id_empresa, tokenKeyData.company_id)
+          eq(couponRescue.id_parceiro, tokenKeyData.company_id)
         )
       )
       .groupBy(plan.id_plano)
@@ -235,6 +238,7 @@ export class AvailableVoucherPlansRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(product, eq(planItem.id_produto, product.id_produto))
       .innerJoin(
         productType,
@@ -243,7 +247,7 @@ export class AvailableVoucherPlansRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.company_id)
         )
       )
       .execute();
@@ -267,6 +271,7 @@ export class AvailableVoucherPlansRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(
         productGroup,
         eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
@@ -278,7 +283,7 @@ export class AvailableVoucherPlansRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.company_id)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)

@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { plan } from "@core/models";
+import { plan, planPartner } from "@core/models";
 import { eq, and, sql, inArray } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
@@ -29,7 +29,7 @@ export class PlanViewerByCompanyRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -38,7 +38,13 @@ export class PlanViewerByCompanyRepository {
         updated_at: plan.updated_at,
       })
       .from(plan)
-      .where(and(inArray(plan.id_empresa, companyIds), eq(plan.id_plano, planId)))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
+      .where(
+        and(
+          inArray(planPartner.id_parceiro, companyIds),
+          eq(plan.id_plano, planId)
+        )
+      )
       .execute();
 
     if (!result.length) {
@@ -62,10 +68,11 @@ export class PlanViewerByCompanyRepository {
     const pricesPromise = this.planPriceListerRepository.listByPlanId(
       plan.plan_id
     );
-    const productsPromise = this.productListerGroupedByCompanyRepository.listByIds(
-      companyIds,
-      productIds
-    );
+    const productsPromise =
+      this.productListerGroupedByCompanyRepository.listByIds(
+        companyIds,
+        productIds
+      );
     const productGroupsPromise =
       this.productGroupProductListerRepository.listByProductsIds(productIds);
 

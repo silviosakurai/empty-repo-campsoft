@@ -28,7 +28,7 @@ export class CancelSignatureRepository {
       .where(
         and(
           eq(clientSignature.id_pedido, sql`UUID_TO_BIN(${orderNumber})`),
-          eq(clientSignature.id_empresa, tokenKeyData.company_id),
+          eq(clientSignature.id_parceiro, tokenKeyData.company_id),
           eq(
             clientSignature.id_cliente,
             sql`UUID_TO_BIN(${tokenJwtData.clientId})`

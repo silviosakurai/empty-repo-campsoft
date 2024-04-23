@@ -13,7 +13,7 @@ import reviewRoutes from './review.route';
 
 export default async function (server: FastifyInstance) {
   await server.register(authRoutes);
-  await server.register(clientRoutes);
+  /* await server.register(clientRoutes);
   await server.register(tfaRoutes);
   await server.register(bannerRoutes);
   await server.register(productRoutes);
@@ -22,5 +22,5 @@ export default async function (server: FastifyInstance) {
   await server.register(cartRoutes);
   await server.register(vouchersRoutes);
   await server.register(healthRoutes);
-  await server.register(reviewRoutes);
+  await server.register(reviewRoutes); */
 }

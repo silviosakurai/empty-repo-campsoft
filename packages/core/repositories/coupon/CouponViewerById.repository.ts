@@ -24,7 +24,7 @@ export class CouponViewerByIdRepository {
       .where(
         and(
           eq(couponCart.id_cupom_carrinho, couponId),
-          eq(couponCart.id_empresa, companyId)
+          eq(couponCart.id_parceiro, companyId)
         )
       );
 

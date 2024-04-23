@@ -58,19 +58,19 @@ export class EmailListerRepository {
       .where(
         or(
           and(
-            eq(templateEmail.id_empresa, tokenKeyData.company_id),
+            eq(templateEmail.id_parceiro, tokenKeyData.company_id),
             eq(templateModule.modulo, templateModulo)
           ),
           and(
             eq(
-              templateEmail.id_empresa,
-              sql`${templateEmail.id_empresa} IS NULL`
+              templateEmail.id_parceiro,
+              sql`${templateEmail.id_parceiro} IS NULL`
             ),
             eq(templateModule.modulo, templateModulo)
           )
         )
       )
-      .orderBy(desc(templateEmail.id_empresa))
+      .orderBy(desc(templateEmail.id_parceiro))
       .limit(1)
       .execute();
 

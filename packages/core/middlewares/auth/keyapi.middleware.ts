@@ -47,8 +47,6 @@ async function authenticateKeyApi(
 
     const responseAuth = await apiKeyViewerUseCase.execute({
       keyApi: keyapi,
-      routePath,
-      routeMethod,
       routeModule,
     } as ViewApiKeyRequest);
 
