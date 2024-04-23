@@ -6,6 +6,8 @@
   "internal_server_error": "Erro interno do servidor",
   "client_not_found": "Cliente não encontrado",
   "product_not_found": "Produto não encontrado",
+  "product_group_not_found": "Grupo de Produto não encontrado",
+  "product_group_relation_not_found": "Relação de Produto com Grupo não encontrada",
   "error_send_code_verification": "Erro ao enviar o código de verificação",
   "previously_registered_user": "Usuário já cadastrado anteriormente.",
   "user_updated_successfully": "Usuário atualizado com sucesso.",
@@ -57,6 +59,8 @@
   "image_size_exceeded_5mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
   "product_update_not_allowed": "Atualização de produto não permitida.",
+  "product_group_update_not_allowed":  "Atualização de grupo de produto não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
+  "error_update_product_group": "Error ao adicionar um produto ao grupo",
   "token_not_found": "Token não encontrado."
 }

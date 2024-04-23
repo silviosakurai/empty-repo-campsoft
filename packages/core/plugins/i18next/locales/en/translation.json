@@ -6,6 +6,8 @@
   "internal_server_error": "Internal server error!",
   "client_not_found": "Client not found!",
   "product_not_found": "Product not found!",
+  "product_group_not_found": "Product Group not found!",
+  "product_group_relation_not_found": "Product Relation with Group not found!",
   "error_send_code_verification": "Error send code verification!",
   "previously_registered_user": "Previously registered user!",
   "user_updated_successfully": "User updated successfully!",
@@ -57,6 +59,8 @@
   "image_size_exceeded_5mb": "Image size exceeded 5MB!",
   "coupon_code_with_voucher_not_allowed": "Coupon code with voucher not allowed!",
   "product_update_not_allowed": "Product update not allowed!",
+  "product_group_update_not_allowed": "Product Group update not allowed!",
   "error_update_product": "Error update products!",
+  "error_update_product_group": "Error adding product to a group!",
   "token_not_found": "Token not found."
 }

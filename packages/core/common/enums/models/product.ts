@@ -38,3 +38,7 @@ export enum ProductVoucherStatus {
   ACTIVE = "active",
   EXPIRED = "expired",
 }
+
+export enum ProductGroupImageType {
+  ICON = "icon",
+}

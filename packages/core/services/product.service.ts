@@ -16,6 +16,11 @@ import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductR
 import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
 import { ProductImagesUrlUpdaterRepository } from "@core/repositories/product/ProductImagesUrlUpdater.repository";
 import { ProductImageRepositoryCreateInput } from "@core/interfaces/repositories/products";
+import { ProductGroupViewerRepository } from "@core/repositories/product/ProductGroupViewer.repository";
+import { ProductGroupProductCreatorRepository } from "@core/repositories/product/ProductGroupProductCreator.repository";
+import { ProductGroupProductDeleterRepository } from "@core/repositories/product/ProductGroupProductDeleter.repository";
+import { ProductGroupProductViewerRepository } from "@core/repositories/product/ProductGroupProductViewer.repository";
+import { ProductGroupImagesUrlUpdaterRepository } from "@core/repositories/product/ProductGroupImagesUrlUpdater.repository";
 
 @injectable()
 export class ProductService {
@@ -30,6 +35,11 @@ export class ProductService {
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
     private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
+    private readonly productGroupViewerRepository: ProductGroupViewerRepository,
+    private readonly productGroupProductViewerRepository: ProductGroupProductViewerRepository,
+    private readonly productGroupProductCreatorRepository: ProductGroupProductCreatorRepository,
+    private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
+    private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -141,5 +151,25 @@ export class ProductService {
 
   updateImagesUrl(productId: string, input: ProductImageRepositoryCreateInput) {
     return this.imagesUrlUpdaterRepository.update(productId, input);
+  }
+
+  findGroup(groupId: number) {
+    return this.productGroupViewerRepository.get(groupId);
+  }
+
+  findProductGroupProduct(groupId: number, productId: string) {
+    return this.productGroupProductViewerRepository.view(groupId, productId);
+  }
+
+  addProductToGroup(groupId: number, productId: string) {
+    return this.productGroupProductCreatorRepository.create(groupId, productId);
+  }
+
+  deleteProductFromGroup(groupId: number, productId: string) {
+    return this.productDeleterFromGroupRepository.delete(groupId, productId);
+  }
+
+  updateGroupsImagesUrl(groupId: number, url: string) {
+    return this.productGroupImagesUrlUpdaterRepository.update(groupId, url);
   }
 }

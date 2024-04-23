@@ -7,6 +7,9 @@ import {
   postProductSchema,
   updateProductSchema,
   createProductImageSchema,
+  postAddProductSchema,
+  deleteProductFromGroupSchema,
+  createProductGroupImageSchema,
 } from '@core/validations/product';
 
 export default async function productRoutes(server: FastifyInstance) {
@@ -31,14 +34,32 @@ export default async function productRoutes(server: FastifyInstance) {
   });
 
   server.put('/products/:sku', {
-    handler: productController.update,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     schema: updateProductSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.update,
   });
 
   server.post('/products/:sku/images/:type', {
-    handler: productController.createImage,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     schema: createProductImageSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.createImage,
+  });
+
+  server.post('/product_groups/:groupId/products', {
+    schema: postAddProductSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.addProductToGroup,
+  });
+
+  server.delete('/product_groups/:groupId/products/:productId', {
+    schema: deleteProductFromGroupSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.deleteProductFromGroup,
+  });
+
+  server.post('/product_groups/:groupId/images/:type', {
+    schema: createProductGroupImageSchema,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    handler: productController.createGroupImage,
   });
 }

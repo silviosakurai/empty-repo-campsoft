@@ -6,3 +6,6 @@ export * from "./postProductSchema.validation";
 export * from "./getProductPartnerSchema.validation";
 export * from "./updateProductSchema.validation";
 export * from "./createProductImageSchema.validation";
+export * from "./postAddProductSchema.validation";
+export * from "./deleteProductFromGroupSchema.validation";
+export * from "./createProductGroupImageSchema.validation";
