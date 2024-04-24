@@ -20,7 +20,7 @@ export class PlanViewerByCompanyRepository {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
-  async get(companyIds: number[], planId: number): Promise<Plan | null> {
+  async get(planId: number): Promise<Plan | null> {
     const result: ViewPlanRepositoryDTO[] = await this.db
       .select({
         plan_id: plan.id_plano,
@@ -39,26 +39,20 @@ export class PlanViewerByCompanyRepository {
       })
       .from(plan)
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
-      .where(
-        and(
-          inArray(planPartner.id_parceiro, companyIds),
-          eq(plan.id_plano, planId)
-        )
-      )
+      .where(and(eq(plan.id_plano, planId)))
       .execute();
 
     if (!result.length) {
       return null;
     }
 
-    const planCompleted = await this.getPlanRelactions(result[0], companyIds);
+    const planCompleted = await this.getPlanRelactions(result[0]);
 
     return planCompleted;
   }
 
   private getPlanRelactions = async (
-    plan: ViewPlanRepositoryDTO,
-    companyIds: number[]
+    plan: ViewPlanRepositoryDTO
   ): Promise<Plan> => {
     const planItems = await this.planItemListerRepository.listByPlanId(
       plan.plan_id
@@ -69,10 +63,7 @@ export class PlanViewerByCompanyRepository {
       plan.plan_id
     );
     const productsPromise =
-      this.productListerGroupedByCompanyRepository.listByIds(
-        companyIds,
-        productIds
-      );
+      this.productListerGroupedByCompanyRepository.listByIds(productIds);
     const productGroupsPromise =
       this.productGroupProductListerRepository.listByProductsIds(productIds);
 

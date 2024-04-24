@@ -29,7 +29,7 @@ export class ProductService {
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -44,11 +44,8 @@ export class ProductService {
     return this.productListerRepository.list(companyId, query);
   };
 
-  listByCompanyIds = async (
-    companyIds: number[],
-    query: ListProductRequest
-  ) => {
-    return this.productListerGroupedByCompanyRepository.list(companyIds, query);
+  listByCompanyIds = async (query: ListProductRequest) => {
+    return this.productListerGroupedByCompanyRepository.list(query);
   };
 
   listByIds = async (companyId: number, productIds: string[]) => {
@@ -59,8 +56,8 @@ export class ProductService {
     return this.productViewerRepository.get(companyId, sku);
   };
 
-  viewByCompanyIds = async (companyIds: number[], sku: string) => {
-    return this.productViewerGroupedByCompanyRepository.view(companyIds, sku);
+  viewByCompanyIds = async (sku: string) => {
+    return this.productViewerGroupedByCompanyRepository.view(sku);
   };
 
   findProductsByIds = async (companyId: number, productIds: string[]) => {

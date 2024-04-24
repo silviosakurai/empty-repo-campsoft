@@ -27,7 +27,6 @@ export class ProductListerGroupedByCompanyRepository {
   ) {}
 
   async list(
-    companyIds: number[],
     query: ListProductRequest
   ): Promise<ListProductGroupedByCompanyResponse | null> {
     const filters = this.setFilters(query);
@@ -79,7 +78,7 @@ export class ProductListerGroupedByCompanyRepository {
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(inArray(productPartner.id_parceiro, companyIds), ...filters));
+      .where(and(...filters));
 
     const totalResult = await allQuery.execute();
 
@@ -107,10 +106,7 @@ export class ProductListerGroupedByCompanyRepository {
     };
   }
 
-  async listByIds(
-    companyIds: number[],
-    productIds: string[]
-  ): Promise<ProductResponse[]> {
+  async listByIds(productIds: string[]): Promise<ProductResponse[]> {
     const products = await this.db
       .select({
         product_id: product.id_produto,
@@ -154,12 +150,7 @@ export class ProductListerGroupedByCompanyRepository {
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(
-        and(
-          inArray(productPartner.id_parceiro, companyIds),
-          inArray(product.id_produto, productIds)
-        )
-      )
+      .where(and(inArray(product.id_produto, productIds)))
       .execute();
 
     return products as unknown as ProductResponse[];

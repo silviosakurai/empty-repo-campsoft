@@ -15,10 +15,7 @@ export class ProductViewerGroupedByCompanyRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(
-    companyIds: number[],
-    sku: string
-  ): Promise<ListProductGroupedByCompany | null> {
+  async view(sku: string): Promise<ListProductGroupedByCompany | null> {
     const results = await this.db
       .select({
         product_id: product.id_produto,
@@ -65,12 +62,7 @@ export class ProductViewerGroupedByCompanyRepository {
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(
-        and(
-          inArray(productPartner.id_parceiro, companyIds),
-          eq(product.id_produto, sku)
-        )
-      )
+      .where(and(eq(product.id_produto, sku)))
       .execute();
 
     if (!results.length) {

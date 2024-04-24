@@ -14,17 +14,11 @@ export const listProduct = async (
   const productsListerByCompanyUseCase = container.resolve(
     ProductsListerByCompanyUseCase
   );
-  const { t, tokenJwtData } = request;
-
-  const companyIds: number[] = request.query.companies
-    ? request.query.companies.split(',').map(Number)
-    : [];
+  const { t } = request;
 
   try {
     const response = await productsListerByCompanyUseCase.execute(
-      tokenJwtData,
-      request.query,
-      companyIds
+      request.query
     );
 
     if (!response) {

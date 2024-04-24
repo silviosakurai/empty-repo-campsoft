@@ -31,10 +31,7 @@ export class PlanListerByCompanyRepository {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
-  async list(
-    companyIds: number[],
-    query: ListPlanRequest
-  ): Promise<ListPlanResponse | null> {
+  async list(query: ListPlanRequest): Promise<ListPlanResponse | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -56,7 +53,7 @@ export class PlanListerByCompanyRepository {
       .from(plan)
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(inArray(planPartner.id_parceiro, companyIds), ...filters));
+      .where(and(...filters));
 
     const totalResult: ViewPlanRepositoryDTO[] = await allQuery.execute();
 
@@ -69,7 +66,7 @@ export class PlanListerByCompanyRepository {
       return null;
     }
 
-    const plansCompleted = await this.getPlansRelactions(plans, companyIds);
+    const plansCompleted = await this.getPlansRelactions(plans);
 
     const paging = setPaginationData(
       plans.length,
@@ -106,7 +103,7 @@ export class PlanListerByCompanyRepository {
       .where(eq(planPartner.id_parceiro, companyId))
       .execute();
 
-    const plansCompleted = await this.getPlansRelactions(result, [companyId]);
+    const plansCompleted = await this.getPlansRelactions(result);
 
     return plansCompleted;
   }
@@ -176,10 +173,7 @@ export class PlanListerByCompanyRepository {
     return Object.values(groupedProducts);
   };
 
-  private getPlansRelactions = async (
-    plans: ViewPlanRepositoryDTO[],
-    companyIds: number[]
-  ) => {
+  private getPlansRelactions = async (plans: ViewPlanRepositoryDTO[]) => {
     const plansCompleted: Plan[] = [];
 
     for (const plan of plans) {
@@ -192,10 +186,7 @@ export class PlanListerByCompanyRepository {
         plan.plan_id
       );
       const productsPromise =
-        this.productListerGroupedByCompanyRepository.listByIds(
-          companyIds,
-          productIds
-        );
+        this.productListerGroupedByCompanyRepository.listByIds(productIds);
       const productGroupsPromise =
         this.productGroupProductListerRepository.listByProductsIds(productIds);
 
