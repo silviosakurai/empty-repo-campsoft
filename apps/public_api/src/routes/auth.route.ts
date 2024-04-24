@@ -2,7 +2,7 @@ import AuthController from '@/controllers/auth';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import { loginSchema, loginTokenSchema } from '@core/validations/auth';
-import { Permissions } from '@core/common/enums/Permissions';
+import { authLoginPermissions, authTokenPermissions } from '@/permissions';
 
 export default async function authRoutes(server: FastifyInstance) {
   const authController = container.resolve(AuthController);
@@ -12,9 +12,7 @@ export default async function authRoutes(server: FastifyInstance) {
     handler: authController.login,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.AUTHENTICATION_LOGIN,
-        ]),
+        server.authenticateKeyApi(request, reply, authLoginPermissions),
     ],
   });
 
@@ -23,9 +21,7 @@ export default async function authRoutes(server: FastifyInstance) {
     handler: authController.token,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.AUTHENTICATION_TOKEN,
-        ]),
+        server.authenticateKeyApi(request, reply, authTokenPermissions),
     ],
   });
 }

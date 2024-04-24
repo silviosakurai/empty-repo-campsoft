@@ -20,7 +20,24 @@ import {
   patchUserImageSchemaSchema,
   createUserNewsletterSchema,
 } from '@core/validations/user';
-import { Permissions } from '@core/common/enums/Permissions';
+import {
+  userAddressBillingUpdatePermissions,
+  userAddressBillingViewPermissions,
+  userAddressShippingPatchPermissions,
+  userAddressShippingUpdatePermissions,
+  userAddressShippingViewPermissions,
+  userCreatePermissions,
+  userDeletePermissions,
+  userImageUpdatePermissions,
+  userNewsletterSubscribePermissions,
+  userRecoveryPasswordPathPermissions,
+  userRecoveryPasswordPermissions,
+  userUpdatePasswordPermissions,
+  userUpdatePermissions,
+  userUpdatePhonePermissions,
+  userViewPermissions,
+  userVoucherPermissions,
+} from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
@@ -30,9 +47,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.view,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_VIEW,
-        ]),
+        server.authenticateKeyApi(request, reply, userViewPermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -42,9 +57,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.create,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_CREATE,
-        ]),
+        server.authenticateKeyApi(request, reply, userCreatePermissions),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
   });
@@ -54,9 +67,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.update,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_UPDATE,
-        ]),
+        server.authenticateKeyApi(request, reply, userUpdatePermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -66,9 +77,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.delete,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_DELETE,
-        ]),
+        server.authenticateKeyApi(request, reply, userDeletePermissions),
       (request, reply) => server.authenticateJwt(request, reply),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
@@ -79,9 +88,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.updatePhone,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_UPDATE_PHONE,
-        ]),
+        server.authenticateKeyApi(request, reply, userUpdatePhonePermissions),
       (request, reply) => server.authenticateJwt(request, reply),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
@@ -92,9 +99,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.updatePassword,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_UPDATE_PASSWORD,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userUpdatePasswordPermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
@@ -105,9 +114,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.passwordRecoveryMethods,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_RECOVERY_PASSWORD,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userRecoveryPasswordPermissions
+        ),
     ],
   });
 
@@ -116,9 +127,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.updatePasswordRecovery,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_RECOVERY_PASSWORD,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userRecoveryPasswordPathPermissions
+        ),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
   });
@@ -128,9 +141,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.viewVoucher,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_VOUCHER,
-        ]),
+        server.authenticateKeyApi(request, reply, userVoucherPermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -140,9 +151,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.getBillingAddress,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_ADDRESS_BILLING_VIEW,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressBillingViewPermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -152,9 +165,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.getShippingAddress,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_ADDRESS_SHIPPING_VIEW,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressShippingViewPermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -164,9 +179,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.putBillingAddress,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_ADDRESS_BILLING_UPDATE,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressBillingUpdatePermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -176,9 +193,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.putShippingAddress,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_ADDRESS_SHIPPING_UPDATE,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressShippingUpdatePermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -193,9 +212,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.patchShippingAddress,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_ADDRESS_SHIPPING_UPDATE,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressShippingPatchPermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -205,9 +226,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.patchImage,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_IMAGE_UPDATE,
-        ]),
+        server.authenticateKeyApi(request, reply, userImageUpdatePermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -217,9 +236,11 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.createClientNewsletter,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, [
-          Permissions.PUBLIC_USER_NEWSLETTER_SUBSCRIBE,
-        ]),
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userNewsletterSubscribePermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });

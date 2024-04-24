@@ -2,6 +2,10 @@ import TfaController from '@/controllers/tfa';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import { sendCodeSchema, validateCodeSchema } from '@core/validations/tfa';
+import {
+  tfaSendCodePermissions,
+  tfaValidateCodePermissions,
+} from '@/permissions';
 
 export default async function authRoutes(server: FastifyInstance) {
   const tfaController = container.resolve(TfaController);
@@ -10,7 +14,8 @@ export default async function authRoutes(server: FastifyInstance) {
     schema: sendCodeSchema,
     handler: tfaController.sendCode,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, tfaSendCodePermissions),
     ],
   });
 
@@ -18,7 +23,8 @@ export default async function authRoutes(server: FastifyInstance) {
     schema: validateCodeSchema,
     handler: tfaController.validateCode,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, tfaValidateCodePermissions),
     ],
   });
 }

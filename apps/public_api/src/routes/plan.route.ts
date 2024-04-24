@@ -6,6 +6,11 @@ import {
   listPlanSchema,
   upgradePlanSchema,
 } from '@core/validations/plan';
+import {
+  planNumberViewPermissions,
+  planUpgradesPermissions,
+  planViewPermissions,
+} from '@/permissions';
 
 export default async function planRoutes(server: FastifyInstance) {
   const planController = container.resolve(PlanController);
@@ -14,7 +19,8 @@ export default async function planRoutes(server: FastifyInstance) {
     schema: listPlanSchema,
     handler: planController.list,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, planViewPermissions),
     ],
   });
 
@@ -22,7 +28,8 @@ export default async function planRoutes(server: FastifyInstance) {
     schema: getPlanSchema,
     handler: planController.view,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, planNumberViewPermissions),
     ],
   });
 
@@ -30,7 +37,8 @@ export default async function planRoutes(server: FastifyInstance) {
     schema: upgradePlanSchema,
     handler: planController.upgrade,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, planUpgradesPermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });

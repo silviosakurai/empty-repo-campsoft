@@ -8,6 +8,13 @@ import {
   ordersByNumberParamSchema,
   createOrderSchema,
 } from '@core/validations/order';
+import {
+  orderCreatePermissions,
+  orderNumberCancelPermissions,
+  orderNumberPaymentViewPermissions,
+  orderNumberViewPermissions,
+  orderViewPermissions,
+} from '@/permissions';
 
 export default async function orderRoutes(server: FastifyInstance) {
   const orderController = container.resolve(OrderController);
@@ -16,7 +23,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: ordersSchema,
     handler: orderController.list,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderViewPermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -25,7 +33,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: createOrderSchema,
     handler: orderController.create,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderCreatePermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -34,7 +43,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: ordersByNumberParamSchema,
     handler: orderController.findByNumber,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderNumberViewPermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -43,7 +53,12 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: getPaymentsSchema,
     handler: orderController.listPayments,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          orderNumberPaymentViewPermissions
+        ),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
@@ -52,7 +67,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: postCancelOrderSchema,
     handler: orderController.cancelOrder,
     preHandler: [
-      (request, reply) => server.authenticateKeyApi(request, reply, null),
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderNumberCancelPermissions),
       (request, reply) => server.authenticateJwt(request, reply),
     ],
   });
