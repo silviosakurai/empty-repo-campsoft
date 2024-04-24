@@ -9,15 +9,8 @@ export class ApiKeyViewerUseCase {
 
   async execute({
     keyApi,
-    routePath,
-    routeMethod,
     routeModule,
   }: ViewApiKeyRequest): Promise<ITokenKeyData | null> {
-    return this.apiService.findApiByKey(
-      keyApi,
-      routePath,
-      routeMethod,
-      routeModule
-    );
+    return this.apiService.findApiByKey(keyApi, routeModule);
   }
 }

@@ -6,6 +6,7 @@ import {
   productGroupProduct,
   productGroup,
   planItem,
+  planPartner,
 } from "@core/models";
 import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
@@ -37,6 +38,7 @@ export class PlanProductGroupDetailsListerRepository {
         productGroup,
         eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
       )
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .leftJoin(
         productGroupProduct,
         eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
@@ -44,7 +46,7 @@ export class PlanProductGroupDetailsListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)
@@ -84,14 +86,14 @@ export class PlanProductGroupDetailsListerRepository {
   ): Promise<PlanProduct[]> {
     let whereFind = and(
       eq(plan.id_plano, planId),
-      eq(plan.id_empresa, tokenKeyData.company_id),
+      eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
       inArray(planItem.id_produto, selectedProducts)
     );
 
     if (selectedProducts.length > 0) {
       whereFind = and(
         eq(plan.id_plano, planId),
-        eq(plan.id_empresa, tokenKeyData.company_id),
+        eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
         inArray(productGroupProduct.id_produto, selectedProducts),
         gte(productGroup.qtd_produtos_selecionaveis, selectedProducts.length)
       );
@@ -105,6 +107,7 @@ export class PlanProductGroupDetailsListerRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .leftJoin(
         productGroup,
         eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)

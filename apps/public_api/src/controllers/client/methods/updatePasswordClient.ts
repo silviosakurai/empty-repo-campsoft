@@ -14,7 +14,7 @@ export const updatePasswordClient = async (
   const clientPasswordUpdaterUseCase = container.resolve(
     ClientPasswordUpdaterUseCase
   );
-  const { t, tokenKeyData, tokenJwtData, tokenTfaData } = request;
+  const { t, tokenJwtData, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
     return sendResponse(reply, {
@@ -27,7 +27,6 @@ export const updatePasswordClient = async (
     const response = await clientPasswordUpdaterUseCase.update(
       tokenJwtData.clientId,
       request.body,
-      tokenKeyData,
       tokenTfaData
     );
 

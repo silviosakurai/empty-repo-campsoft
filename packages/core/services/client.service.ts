@@ -17,7 +17,6 @@ import {
   FindClientByEmailPhoneInput,
 } from "@core/interfaces/repositories/client";
 import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientByEmailPhone.repository";
 import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
@@ -76,8 +75,8 @@ export class ClientService {
     private readonly cardListerByClientIdRepository: ClientCardListerByClientIdRepository
   ) {}
 
-  view = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    return this.clientViewerRepository.view(tokenKeyData, userId);
+  view = async (userId: string) => {
+    return this.clientViewerRepository.view(userId);
   };
 
   viewBilling = async (userId: string) => {
@@ -167,12 +166,8 @@ export class ClientService {
     );
   };
 
-  passwordRecoveryMethods = async (
-    tokenKeyData: ITokenKeyData,
-    login: string
-  ) => {
+  passwordRecoveryMethods = async (login: string) => {
     return this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
-      tokenKeyData,
       login
     );
   };

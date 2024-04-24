@@ -1,9 +1,14 @@
-import { ApiStatus } from "@core/common/enums/models/api";
-
+import { Permissions } from "@core/common/enums/Permissions";
 export interface ITokenKeyData {
-  api_key: string;
-  api_access_id: number;
-  name: string;
-  status: ApiStatus;
-  company_id: number;
+  acoes: Permissions[];
+  id_api_key: number;
+  id_parceiro: number;
+  id_cargo: number;
+}
+
+export interface FindApiByKey {
+  acao: string;
+  id_api_key: number;
+  id_parceiro: number;
+  id_cargo: number;
 }

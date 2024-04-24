@@ -1,10 +1,4 @@
-import {
-  mysqlTable,
-  int,
-  datetime,
-  varchar,
-  mysqlEnum,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, int, datetime, varchar } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const fiZoopSellerAccount = mysqlTable("fi_zoop_vendedor_conta", {
@@ -15,7 +9,6 @@ export const fiZoopSellerAccount = mysqlTable("fi_zoop_vendedor_conta", {
     .primaryKey(),
   id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 }),
   id_fi_contas: int("id_fi_contas"),
-  sandbox: mysqlEnum("sandbox", ["Y", "N"]).notNull().default("Y"),
   holder_name: varchar("holder_name", { length: 50 }),
   bank_code: varchar("bank_code", { length: 50 }),
   routing_number: varchar("routing_number", { length: 50 }),

@@ -8,10 +8,9 @@ export class LoginAuthUseCase {
   constructor(private readonly authService: AuthService) {}
 
   async execute({
-    tokenKeyData,
     login,
     password,
   }: LoginRequest): Promise<LoginResponse | null> {
-    return this.authService.authenticate(tokenKeyData, login, password);
+    return this.authService.authenticate(login, password);
   }
 }

@@ -1,7 +1,6 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
 import { UpdatePhoneClientRequestDto } from "./dtos/UpdatePhoneClientRequest.dto";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientPhoneUpdaterUseCase {
@@ -9,10 +8,9 @@ export class ClientPhoneUpdaterUseCase {
 
   async update(
     clientId: string,
-    input: UpdatePhoneClientRequestDto,
-    tokenKeyData: ITokenKeyData
+    input: UpdatePhoneClientRequestDto
   ): Promise<boolean | null> {
-    const userFounded = await this.clientService.view(tokenKeyData, clientId);
+    const userFounded = await this.clientService.view(clientId);
 
     if (!userFounded) {
       return null;

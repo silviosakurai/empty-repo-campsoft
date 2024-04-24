@@ -51,7 +51,7 @@ export class CancelOrderUseCase {
     }
 
     const products = await this.productService.listByIds(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       onlyProducts
     );
 

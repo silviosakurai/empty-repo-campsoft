@@ -13,12 +13,11 @@ export const updateClient = async (
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientByIdUpdaterUseCase);
-  const { t, tokenKeyData } = request;
+  const { t } = request;
   try {
     const response = await clientUseCase.update(
       request.params.userId,
-      request.body,
-      tokenKeyData
+      request.body
     );
 
     if (!response) {
