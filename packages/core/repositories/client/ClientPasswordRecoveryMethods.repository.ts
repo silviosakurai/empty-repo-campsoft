@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import { client } from "@core/models";
 import { eq, sql, and, or } from "drizzle-orm";
 import { IPasswordRecoveryMethods } from "@core/interfaces/repositories/client";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientPasswordRecoveryMethodsRepository {
@@ -13,7 +12,6 @@ export class ClientPasswordRecoveryMethodsRepository {
   ) {}
 
   async passwordRecoveryMethods(
-    tokenKeyData: ITokenKeyData,
     login: string
   ): Promise<IPasswordRecoveryMethods | null> {
     const result = await this.db
@@ -27,7 +25,6 @@ export class ClientPasswordRecoveryMethodsRepository {
       .from(client)
       .where(
         and(
-          and(eq(client.id_parceiro_cadastro, tokenKeyData.id_parceiro)),
           or(
             eq(client.cpf, login),
             eq(client.email, login),

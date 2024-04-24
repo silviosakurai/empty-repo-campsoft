@@ -11,4 +11,5 @@ export interface CreateClientRequestDto {
   password: string;
   gender: ClientGender;
   obs: string;
+  companyId: number;
 }
