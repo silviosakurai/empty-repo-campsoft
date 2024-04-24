@@ -76,6 +76,7 @@ async function authenticateJwt(
     const selectPermissios = responseAuth.access.map(
       (access: ITokenJwtAccess) => access.acao
     );
+
     const hasPermission = hasRequiredPermission(selectPermissios, permissions);
 
     if (!hasPermission) {
