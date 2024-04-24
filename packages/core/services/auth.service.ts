@@ -1,5 +1,4 @@
 import { generateRandomString } from "@core/common/functions/generateRandomString";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AuthRepository } from "@core/repositories/client/Auth.repository";
 import { ClientMagicTokenRepository } from "@core/repositories/client/ClientMagicToken.repository";
 import { injectable } from "tsyringe";
@@ -15,16 +14,8 @@ export class AuthService {
     return this.authRepository.authenticate(login, password);
   };
 
-  authenticateByClientId = async (
-    tokenKeyData: ITokenKeyData,
-    clientId: string,
-    password: string
-  ) => {
-    return this.authRepository.authenticateByClientId(
-      tokenKeyData,
-      clientId,
-      password
-    );
+  authenticateByClientId = async (clientId: string, password: string) => {
+    return this.authRepository.authenticateByClientId(clientId, password);
   };
 
   authenticateByMagicToken = async (magicToken: string) => {

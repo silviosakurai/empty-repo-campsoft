@@ -8,7 +8,6 @@ import {
   ClientStatus,
 } from "@core/common/enums/models/client";
 import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class AuthRepository {
@@ -55,7 +54,6 @@ export class AuthRepository {
   };
 
   authenticateByClientId = async (
-    tokenKeyData: ITokenKeyData,
     clientId: string,
     password: string
   ): Promise<LoginResponse | null> => {
