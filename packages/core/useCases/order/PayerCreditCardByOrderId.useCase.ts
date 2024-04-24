@@ -83,7 +83,7 @@ export class PayerCreditCardByOrderIdUseCase {
     }
 
     if (input.credit_card) {
-      const client = await this.clientService.view(tokenKey, clientId);
+      const client = await this.clientService.view(clientId);
 
       if (!client) {
         return;

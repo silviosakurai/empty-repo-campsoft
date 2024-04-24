@@ -25,6 +25,8 @@ export enum Permissions {
   ORDER_PAYMENTS_VIEW = "order_payments_view",
   ORDER_CANCEL = "order_cancel",
   ORDER_PAYMENT_BOLETO = "order_payment_boleto",
+  ORDER_PAYMENT_CREDIT_CARD = "order_payment_credit_card",
+  ORDER_PAYMENT_PIX = "order_payment_pix",
   PLAN_LIST = "plan_list",
   PLAN_VIEW = "plan_view",
   PLAN_UPGRADES = "plan_upgrades",

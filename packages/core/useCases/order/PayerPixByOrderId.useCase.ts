@@ -19,36 +19,34 @@ export class PayerPixByOrderIdUseCase {
     tokenKey: ITokenKeyData,
     orderId: string
   ) {
-    const { order, externalId, sellerId } =
-      await this.orderWithPaymentReaderUseCase.view(t, tokenKey, orderId);
+    const { order, sellerId } = await this.orderWithPaymentReaderUseCase.view(
+      t,
+      tokenKey,
+      orderId
+    );
 
-    const result =
-      await this.paymentGatewayService.createTransactionSimpleTicket({
-        amount: +order.total_price * 100,
-        customerId: externalId,
-        description: order.observation,
-        reference_id: order.order_id,
-        sellerId,
-      });
+    const result = await this.paymentGatewayService.createTransactionPix({
+      amount: +order.total_price * 100,
+      description: order.observation,
+      sellerId,
+    });
 
     if (!result.data) {
       return result;
     }
 
-    await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-      paymentTransactionId: result.data.id,
-      paymentLink: result.data.payment_method.url,
-      dueDate: result.data.payment_method.expiration_date,
-      barcode: result.data.payment_method.barcode,
-    });
-
-    console.log(result);
+    // await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
+    //   paymentTransactionId: result.data.id,
+    //   paymentLink: result.data.payment_method.url,
+    //   dueDate: result.data.payment_method.expiration_date,
+    //   barcode: result.data.payment_method.barcode,
+    // });
 
     return {
       data: {
-        url: "http://xxxxx",
-        code: "10000 0000 00000 0000 000000 00000",
-        expire_at: new Date(),
+        url: result.data.payment_method.qr_code.emv,
+        code: result.data.payment_method.qr_code.emv, //transformar isso em qrcode base64
+        expire_at: result.data.payment_method.expiration_date,
       },
       status: true,
     } as ResponseService;

@@ -37,7 +37,7 @@ export class OrderWithPaymentReaderUseCase {
       throw new Error(t("seller_not_found"));
     }
 
-    const client = await this.clientService.view(tokenKey, order.client_id);
+    const client = await this.clientService.view(order.client_id);
 
     if (!client) {
       throw new Error(t("client_not_found"));

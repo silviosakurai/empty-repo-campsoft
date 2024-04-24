@@ -16,7 +16,7 @@ export class PaymentSellerViewerByEmailRepository {
         sellerId: fiZoopSeller.id_fi_zoop_vendedor,
       })
       .from(fiZoopSeller)
-      .where(eq(fiZoopSeller.email, email));
+      .where(eq(fiZoopSeller.business_email, email));
 
     if (!result.length) return null;
 

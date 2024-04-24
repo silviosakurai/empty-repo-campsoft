@@ -13,3 +13,9 @@ export const orderNumberPaymentViewPermissions = [
 export const orderNumberCancelPermissions = [Permissions.ORDER_CANCEL];
 
 export const orderPaymentBoletoPermissions = [Permissions.ORDER_PAYMENT_BOLETO];
+
+export const orderPaymentCreditCardPermissions = [
+  Permissions.ORDER_PAYMENT_CREDIT_CARD,
+];
+
+export const orderPaymentPixPermissions = [Permissions.ORDER_PAYMENT_PIX];

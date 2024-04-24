@@ -35,10 +35,11 @@ export async function createTransactionPix(
       httpStatusCode: response.status,
       message: response.data.error.message,
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       status: false,
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+      data: error.response.data,
     };
   }
 }
