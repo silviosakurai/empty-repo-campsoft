@@ -12,7 +12,7 @@ import {
 import { eq, sql, and, SQLWrapper } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { client, partner } from "@core/models";
+import { client, order, partner } from "@core/models";
 
 @injectable()
 export class ClientListerRepository {
@@ -45,7 +45,8 @@ export class ClientListerRepository {
         company_name: partner.nome_fantasia,
       })
       .from(client)
-      .innerJoin(partner, eq(partner.id_parceiro, client.id_parceiro_cadastro))
+      .innerJoin(order, eq(order.id_cliente, client.id_cliente))
+      .innerJoin(partner, eq(partner.id_parceiro, order.id_parceiro))
       .where(and(...filters))
       .groupBy();
 
