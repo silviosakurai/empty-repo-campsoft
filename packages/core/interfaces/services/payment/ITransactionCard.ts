@@ -6,7 +6,7 @@ export interface ITransactionCardRequest extends IHeaderTransactionRequest {
   expirationMonth: string;
   expirationYear: string;
   securityCode: string;
-  instaments: number;
+  installments: number;
   usage: string;
 }
 

@@ -63,5 +63,7 @@
   "error_update_product": "Erro ao atualizar o produto.",
   "error_update_product_group": "Erro ao atualizar o grupo de produto.",
   "error_update_product_group_products": "Error ao adicionar um produto ao grupo",
-  "token_not_found": "Token não encontrado."
+  "token_not_found": "Token não encontrado.",
+  "seller_not_found": "Vendedor não encontrado.",
+  "creation_customer_to_payment_failed": "Falha na criação do cliente para pagamento"
 }

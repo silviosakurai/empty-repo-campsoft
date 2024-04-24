@@ -64,4 +64,6 @@
   "error_update_product_group": "Error update products groups!",
   "error_update_product_group_products": "Error adding product to a group!",
   "token_not_found": "Token not found."
+  "seller_not_found": "Seller Not Found.",
+  "creation_customer_to_payment_failed": "Creation customer to payment failed"
 }

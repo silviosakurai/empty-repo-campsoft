@@ -17,14 +17,16 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
+import { PaymentSellerViewerByEmailRepository } from "@core/repositories/payment/PaymentSellerViewerByEmail.repository";
 
 @injectable()
 export class PaymentService {
   constructor(
+    private readonly orderService: OrderService,
     private readonly voucherService: VoucherService,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private readonly signatureService: SignatureService,
-    private readonly orderService: OrderService
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
+    private readonly sellerViewerByEmailRepository: PaymentSellerViewerByEmailRepository
   ) {}
 
   private voucherIsValid = async (
@@ -222,5 +224,9 @@ export class PaymentService {
       order.order_id_previous,
       order.activation_immediate
     );
+  };
+
+  sellerViewByEmail = async (email: string) => {
+    return this.sellerViewerByEmailRepository.view(email);
   };
 }

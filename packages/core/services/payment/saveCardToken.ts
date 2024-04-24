@@ -1,11 +1,11 @@
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { generalEnvironment } from "@core/config/environments";
-import { IZoopError } from "@core/interfaces/services/zoop/IZoopError";
+import { IZoopError } from "@core/interfaces/services/payment/IZoopError";
 import {
   ISaveCardTokenRequest,
   ISaveCardTokenResponse,
-} from "@core/interfaces/services/zoop/ISaveCardToken";
+} from "@core/interfaces/services/payment/ISaveCardToken";
 import axios from "axios";
 
 export async function saveCardToken(
@@ -13,7 +13,7 @@ export async function saveCardToken(
 ): Promise<ResponseService<ISaveCardTokenResponse>> {
   try {
     const response = await axios.post<ISaveCardTokenResponse & IZoopError>(
-      `${generalEnvironment.zoopBaseUrl}/marketplaces/${generalEnvironment.zoopMarketPlace}}/transactions`,
+      `${generalEnvironment.paymentApiBaseUrl}/v1/marketplaces/${generalEnvironment.paymentMarketPlace}}/transactions`,
       {
         holder_name: input.holderName,
         expiration_month: input.expirationMonth,
