@@ -14,11 +14,10 @@ export const login = async (
 ) => {
   const loginAuthUseCase = container.resolve(LoginAuthUseCase);
   const { login, password } = request.body;
-  const { t, tokenKeyData } = request;
+  const { t } = request;
 
   try {
     const responseAuth = await loginAuthUseCase.execute({
-      tokenKeyData,
       login,
       password,
     });

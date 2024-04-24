@@ -11,16 +11,8 @@ export class AuthService {
     private readonly clientMagicTokenRepository: ClientMagicTokenRepository
   ) {}
 
-  authenticate = async (
-    tokenKeyData: ITokenKeyData,
-    login: string,
-    password: string
-  ) => {
-    return this.authRepository.authenticate(
-      tokenKeyData,
-      login,
-      password
-    );
+  authenticate = async (login: string, password: string) => {
+    return this.authRepository.authenticate(login, password);
   };
 
   authenticateByClientId = async (

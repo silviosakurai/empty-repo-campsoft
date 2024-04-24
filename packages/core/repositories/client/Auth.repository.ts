@@ -17,7 +17,6 @@ export class AuthRepository {
   ) {}
 
   authenticate = async (
-    tokenKeyData: ITokenKeyData,
     login: string,
     password: string
   ): Promise<LoginResponse | null> => {
