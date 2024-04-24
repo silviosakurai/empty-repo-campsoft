@@ -15,7 +15,7 @@ import {
 import { currentTime } from "@core/common/functions/currentTime";
 
 @injectable()
-export class BannerListerRepository {
+export class BannerListerByCompaniesRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}

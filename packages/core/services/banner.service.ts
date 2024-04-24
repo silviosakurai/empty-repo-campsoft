@@ -7,7 +7,7 @@ import { BannerItemCreatorRepository } from "@core/repositories/banner/BannerIte
 import { BannerItemDeleterRepository } from "@core/repositories/banner/BannerItemDeleter.repository";
 import { BannerItemImageUpdaterRepository } from "@core/repositories/banner/BannerItemImageUpdater.repository";
 import { BannerItemUpdaterRepository } from "@core/repositories/banner/BannerItemUpdater.repository";
-import { BannerListerRepository } from "@core/repositories/banner/BannerLister.repository";
+import { BannerListerByCompaniesRepository } from "@core/repositories/banner/BannerListerByCompanies.repository";
 import { BannerReaderRepository } from "@core/repositories/banner/BannerReader.repository";
 import { BannerUpdaterRepository } from "@core/repositories/banner/BannerUpdater.repository";
 import { BannerViewerRepository } from "@core/repositories/banner/BannerViewer.repository";
@@ -21,7 +21,7 @@ import { injectable } from "tsyringe";
 export class BannerService {
   constructor(
     private readonly bannerReaderRepository: BannerReaderRepository,
-    private readonly bannerListerRepository: BannerListerRepository,
+    private readonly bannerListerRepository: BannerListerByCompaniesRepository,
     private readonly bannerViewerRepository: BannerViewerRepository,
     private readonly bannerCreatorRepository: BannerCreatorRepository,
     private readonly bannerItemCreatorRepository: BannerItemCreatorRepository,
