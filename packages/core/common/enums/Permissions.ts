@@ -21,6 +21,7 @@ export enum Permissions {
   ORDER_CREATE = "order_create",
   ORDER_PAYMENTS_VIEW = "order_payments_view",
   ORDER_CANCEL = "order_cancel",
+  ORDER_PAYMENT_BOLETO = "order_payment_boleto",
   PLAN_VIEW = "plan_view",
   PLAN_UPGRADES = "plan_upgrades",
   PRODUCT_VIEW = "product_view",

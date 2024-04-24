@@ -14,6 +14,7 @@ import {
   orderNumberCancelPermissions,
   orderNumberPaymentViewPermissions,
   orderNumberViewPermissions,
+  orderPaymentBoletoPermissions,
   orderViewPermissions,
 } from '@/permissions';
 
@@ -85,7 +86,16 @@ export default async function orderRoutes(server: FastifyInstance) {
 
   server.post('/orders/:orderNumber/payments/boleto', {
     handler: orderController.paymentByBoleto,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     schema: postOrderPaymentBoletoSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          orderPaymentBoletoPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderPaymentBoletoPermissions),
+    ],
   });
 }

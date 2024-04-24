@@ -11,3 +11,5 @@ export const orderNumberPaymentViewPermissions = [
 ];
 
 export const orderNumberCancelPermissions = [Permissions.ORDER_CANCEL];
+
+export const orderPaymentBoletoPermissions = [Permissions.ORDER_PAYMENT_BOLETO];
