@@ -8,8 +8,8 @@ import {
 } from '@core/validations/product';
 import {
   productCrossSellPermissions,
-  productNumberViewPermissions,
   productViewPermissions,
+  productListPermissions,
 } from '@/permissions';
 
 export default async function productRoutes(server: FastifyInstance) {
@@ -20,7 +20,7 @@ export default async function productRoutes(server: FastifyInstance) {
     handler: productController.list,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, productViewPermissions),
+        server.authenticateKeyApi(request, reply, productListPermissions),
     ],
   });
 
@@ -29,7 +29,7 @@ export default async function productRoutes(server: FastifyInstance) {
     handler: productController.view,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, productNumberViewPermissions),
+        server.authenticateKeyApi(request, reply, productViewPermissions),
     ],
   });
 

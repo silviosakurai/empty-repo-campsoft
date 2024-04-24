@@ -13,9 +13,9 @@ import {
   orderCreatePermissions,
   orderNumberCancelPermissions,
   orderNumberPaymentViewPermissions,
-  orderNumberViewPermissions,
-  orderPaymentBoletoPermissions,
   orderViewPermissions,
+  orderPaymentBoletoPermissions,
+  orderListPermissions,
 } from '@/permissions';
 
 export default async function orderRoutes(server: FastifyInstance) {
@@ -26,9 +26,9 @@ export default async function orderRoutes(server: FastifyInstance) {
     handler: orderController.list,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, orderViewPermissions),
+        server.authenticateKeyApi(request, reply, orderListPermissions),
       (request, reply) =>
-        server.authenticateJwt(request, reply, orderViewPermissions),
+        server.authenticateJwt(request, reply, orderListPermissions),
     ],
   });
 
@@ -48,9 +48,9 @@ export default async function orderRoutes(server: FastifyInstance) {
     handler: orderController.findByNumber,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, orderNumberViewPermissions),
+        server.authenticateKeyApi(request, reply, orderViewPermissions),
       (request, reply) =>
-        server.authenticateJwt(request, reply, orderNumberViewPermissions),
+        server.authenticateJwt(request, reply, orderViewPermissions),
     ],
   });
 

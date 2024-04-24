@@ -7,9 +7,9 @@ import {
   upgradePlanSchema,
 } from '@core/validations/plan';
 import {
-  planNumberViewPermissions,
-  planUpgradesPermissions,
   planViewPermissions,
+  planUpgradesPermissions,
+  planListPermissions,
 } from '@/permissions';
 
 export default async function planRoutes(server: FastifyInstance) {
@@ -20,7 +20,7 @@ export default async function planRoutes(server: FastifyInstance) {
     handler: planController.list,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, planViewPermissions),
+        server.authenticateKeyApi(request, reply, planListPermissions),
     ],
   });
 
@@ -29,7 +29,7 @@ export default async function planRoutes(server: FastifyInstance) {
     handler: planController.view,
     preHandler: [
       (request, reply) =>
-        server.authenticateKeyApi(request, reply, planNumberViewPermissions),
+        server.authenticateKeyApi(request, reply, planViewPermissions),
     ],
   });
 
