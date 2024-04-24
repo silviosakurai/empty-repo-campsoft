@@ -2,8 +2,11 @@ import * as schema from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { eq, and, inArray } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { product, productCompany, productType, company } from "@core/models";
-import { ProductDto, ProductDtoResponse } from "@core/interfaces/repositories/products";
+import { product, productPartner, productType, partner } from "@core/models";
+import {
+  ProductDto,
+  ProductDtoResponse,
+} from "@core/interfaces/repositories/products";
 import { ListProductGroupedByCompany } from "@core/useCases/product/dtos/ListProductResponse.dto";
 
 @injectable()
@@ -12,10 +15,7 @@ export class ProductViewerGroupedByCompanyRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(
-    companyIds: number[],
-    sku: string,
-  ): Promise<ListProductGroupedByCompany | null> {
+  async view(sku: string): Promise<ListProductGroupedByCompany | null> {
     const results = await this.db
       .select({
         product_id: product.id_produto,
@@ -49,28 +49,20 @@ export class ProductViewerGroupedByCompanyRepository {
         },
         created_at: product.created_at,
         updated_at: product.updated_at,
-        company_id: productCompany.id_empresa,
-        company_name: company.nome_fantasia,
+        company_id: productPartner.id_parceiro,
+        company_name: partner.nome_fantasia,
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
-      .innerJoin(
-        company,
-        eq(company.id_empresa, productCompany.id_empresa)
-      )
+      .innerJoin(partner, eq(partner.id_parceiro, productPartner.id_parceiro))
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(
-        and(
-          inArray(productCompany.id_empresa, companyIds),
-          eq(product.id_produto, sku),
-        )
-      )
+      .where(and(eq(product.id_produto, sku)))
       .execute();
 
     if (!results.length) {
@@ -83,9 +75,9 @@ export class ProductViewerGroupedByCompanyRepository {
   }
 
   private parseCompany(products: ProductDto[]): ProductDtoResponse[] {
-    const productsParsed: any  = {};
+    const productsParsed: any = {};
 
-    products.forEach(product => {
+    products.forEach((product) => {
       if (!productsParsed[product.product_id]) {
         productsParsed[product.product_id] = {
           ...product,
@@ -94,11 +86,11 @@ export class ProductViewerGroupedByCompanyRepository {
       }
       productsParsed[product.product_id].companies.push({
         company_id: product.company_id,
-        company_name: product.company_name
+        company_name: product.company_name,
       });
 
-      delete productsParsed[product.product_id].company_id
-      delete productsParsed[product.product_id].company_name
+      delete productsParsed[product.product_id].company_id;
+      delete productsParsed[product.product_id].company_name;
     });
 
     return Object.values(productsParsed);

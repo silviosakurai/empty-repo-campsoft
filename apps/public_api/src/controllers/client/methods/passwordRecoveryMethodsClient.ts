@@ -11,12 +11,11 @@ export const passwordRecoveryMethodsClient = async (
   const clientPasswordRecoveryMethodsUseCase = container.resolve(
     ClientPasswordRecoveryMethodsUseCase
   );
-  const { t, tokenKeyData } = request;
+  const { t } = request;
   const { login } = request.params as { login: string };
 
   try {
     const response = await clientPasswordRecoveryMethodsUseCase.execute({
-      tokenKeyData,
       login,
     });
 

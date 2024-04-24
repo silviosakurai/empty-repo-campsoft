@@ -17,7 +17,7 @@ export const updateProduct = async (
   const { t, tokenKeyData } = request;
 
   try {
-    const response = await service.update(t, tokenKeyData.company_id, {
+    const response = await service.update(t, tokenKeyData.id_parceiro, {
       productId: request.params.sku,
       request: request.body,
     });

@@ -18,7 +18,7 @@ export const couponRescue = mysqlTable("cupom_resgatar", {
     CouponRescueStatus.INACTIVE,
   ]).default(CouponRescueStatus.ACTIVE),
   cupom_resgatar: varchar("cupom_resgatar", { length: 30 }).notNull(),
-  id_empresa: int("id_empresa"),
+  id_parceiro: int("id_parceiro"),
   validade: datetime("validade", { mode: "string" }).default(
     sql`CURRENT_TIMESTAMP`
   ),

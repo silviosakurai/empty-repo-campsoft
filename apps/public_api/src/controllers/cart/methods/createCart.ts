@@ -15,7 +15,7 @@ export const createCart = async (
   try {
     const data = await service.create(
       request.body,
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       tokenJwtData.clientId
     );
 

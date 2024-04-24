@@ -6,7 +6,6 @@ import { updateClient } from './methods/updateClient';
 class ClientController {
   public list = listClient;
   public update = updateClient;
-
 }
 
 export default ClientController;

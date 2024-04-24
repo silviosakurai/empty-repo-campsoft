@@ -29,16 +29,16 @@ export class PlanService {
     return this.planListerRepository.list(companyId, query);
   };
 
-  listByCompany = async (companyIds: number[], query: ListPlanRequest) => {
-    return this.planListerByCompanyRepository.list(companyIds, query);
+  listByCompany = async (query: ListPlanRequest) => {
+    return this.planListerByCompanyRepository.list(query);
   };
 
   view = async (companyId: number, planId: number) => {
     return this.planViewerRepository.get(companyId, planId);
   };
 
-  viewByCompany = async (companyIds: number[], planId: number) => {
-    return this.planViewerByCompanyRepository.get(companyIds, planId);
+  viewByCompany = async (planId: number) => {
+    return this.planViewerByCompanyRepository.get(planId);
   };
 
   upgrade = async (
