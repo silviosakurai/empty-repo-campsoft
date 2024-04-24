@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, sql, inArray } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";

@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, asc, desc, SQLWrapper, sql, inArray } from "drizzle-orm";
+import { eq, and, asc, desc, SQLWrapper, sql } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import {
