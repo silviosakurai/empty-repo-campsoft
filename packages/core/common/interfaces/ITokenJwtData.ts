@@ -1,6 +1,10 @@
+import { Permissions } from "@core/common/enums/Permissions";
+
 export interface ITokenJwtAccess {
-  companyId: number;
-  accessTypeId: number;
+  acao: Permissions;
+  id_grupo: number | null;
+  id_parceiro: number | null;
+  id_cargo: number;
 }
 
 export interface ITokenJwtData {

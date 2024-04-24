@@ -39,7 +39,8 @@ export default async function productRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, productCrossSellPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productCrossSellPermissions),
     ],
   });
 }

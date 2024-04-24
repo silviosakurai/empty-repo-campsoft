@@ -13,7 +13,8 @@ export default async function cartRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, cartCreatePermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, cartCreatePermissions),
     ],
   });
 }

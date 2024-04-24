@@ -39,7 +39,8 @@ export default async function planRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, planUpgradesPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, planUpgradesPermissions),
     ],
   });
 }

@@ -1,15 +1,12 @@
-import { ITokenKeyData } from "../interfaces/ITokenKeyData";
 import { Permissions } from "@core/common/enums/Permissions";
 
 export function hasRequiredPermission(
-  responseAuth: ITokenKeyData | null,
+  actions: Permissions[],
   permissions: Permissions[]
 ): boolean {
-  if (!responseAuth || responseAuth.acoes.length === 0) {
+  if (!permissions || !permissions.length || !actions || !actions.length) {
     return false;
   }
 
-  return permissions.some((permission) =>
-    responseAuth.acoes.includes(permission)
-  );
+  return permissions.some((permission) => actions.includes(permission));
 }

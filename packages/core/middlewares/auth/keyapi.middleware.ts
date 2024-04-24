@@ -69,7 +69,11 @@ async function authenticateKeyApi(
       });
     }
 
-    const hasPermission = hasRequiredPermission(responseAuth, permissions);
+    const hasPermission = hasRequiredPermission(
+      responseAuth.acoes,
+      permissions
+    );
+
     if (!hasPermission) {
       return sendResponse(reply, {
         message: t("not_authorized"),

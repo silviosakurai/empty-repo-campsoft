@@ -48,7 +48,8 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, userViewPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userViewPermissions),
     ],
   });
 
@@ -68,7 +69,8 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, userUpdatePermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePermissions),
     ],
   });
 
@@ -78,7 +80,8 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, userDeletePermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userDeletePermissions),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
   });
@@ -89,7 +92,8 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, userUpdatePhonePermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePhonePermissions),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
   });
@@ -104,7 +108,8 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userUpdatePasswordPermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePasswordPermissions),
       (request, reply) => server.authenticateTfa(request, reply),
     ],
   });
@@ -142,7 +147,8 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, userVoucherPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userVoucherPermissions),
     ],
   });
 
@@ -156,7 +162,12 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userAddressBillingViewPermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressBillingViewPermissions
+        ),
     ],
   });
 
@@ -170,7 +181,12 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userAddressShippingViewPermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressShippingViewPermissions
+        ),
     ],
   });
 
@@ -184,7 +200,12 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userAddressBillingUpdatePermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressBillingUpdatePermissions
+        ),
     ],
   });
 
@@ -198,7 +219,12 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userAddressShippingUpdatePermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressShippingUpdatePermissions
+        ),
     ],
   });
 
@@ -217,7 +243,12 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userAddressShippingPatchPermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressShippingPatchPermissions
+        ),
     ],
   });
 
@@ -227,7 +258,8 @@ export default async function clientRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, userImageUpdatePermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userImageUpdatePermissions),
     ],
   });
 
@@ -241,7 +273,12 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userNewsletterSubscribePermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userNewsletterSubscribePermissions
+        ),
     ],
   });
 }

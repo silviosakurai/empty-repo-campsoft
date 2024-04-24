@@ -18,7 +18,11 @@ declare module "fastify" {
       reply: FastifyReply,
       permissions: Permissions[] | null
     ) => void;
-    authenticateJwt: (request: FastifyRequest, reply: FastifyReply) => void;
+    authenticateJwt: (
+      request: FastifyRequest,
+      reply: FastifyReply,
+      permissions: Permissions[] | null
+    ) => void;
     authenticateTfa: (request: FastifyRequest, reply: FastifyReply) => void;
     decodeToken: (token: string) => Promise<null | string | object>;
     verifyToken: (token: string) => Promise<null | string | object>;

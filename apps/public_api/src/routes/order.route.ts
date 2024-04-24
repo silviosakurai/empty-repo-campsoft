@@ -25,7 +25,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, orderViewPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderViewPermissions),
     ],
   });
 
@@ -35,7 +36,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, orderCreatePermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderCreatePermissions),
     ],
   });
 
@@ -45,7 +47,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, orderNumberViewPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderNumberViewPermissions),
     ],
   });
 
@@ -59,7 +62,12 @@ export default async function orderRoutes(server: FastifyInstance) {
           reply,
           orderNumberPaymentViewPermissions
         ),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          orderNumberPaymentViewPermissions
+        ),
     ],
   });
 
@@ -69,7 +77,8 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, orderNumberCancelPermissions),
-      (request, reply) => server.authenticateJwt(request, reply),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderNumberCancelPermissions),
     ],
   });
 }

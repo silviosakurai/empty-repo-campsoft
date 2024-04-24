@@ -19,7 +19,10 @@ import {
   ITokenKeyData,
 } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import {
+  ITokenJwtAccess,
+  ITokenJwtData,
+} from "@core/common/interfaces/ITokenJwtData";
 import { Permissions } from "@core/common/enums/Permissions";
 
 @injectable()
@@ -89,14 +92,30 @@ export class ApiRepository {
     return this.actionPermissionKey(result);
   }
 
+  private actionPermissionJwt(
+    result: ITokenJwtAccess[],
+    clientId: string
+  ): ITokenJwtData | null {
+    const accessList: ITokenJwtAccess[] = result.map((item) => ({
+      acao: item.acao,
+      id_grupo: item.id_grupo,
+      id_parceiro: item.id_parceiro,
+      id_cargo: item.id_cargo,
+    }));
+
+    return {
+      clientId: clientId,
+      access: accessList,
+    };
+  }
+
   async findApiByJwt(
     clientId: string,
     routeModule: RouteModule
   ): Promise<ITokenJwtData | null> {
-    const result = await this.db
+    const result = (await this.db
       .select({
-        id_api_key: permission.id_api_key,
-        id_cliente: permission.id_cliente,
+        acao: action.acao,
         id_grupo: permission.id_grupo,
         id_parceiro: permission.id_parceiro,
         id_cargo: permission.id_cargo,
@@ -106,7 +125,6 @@ export class ApiRepository {
       .innerJoin(role, eq(role.id_cargo, permission.id_cargo))
       .innerJoin(roleAction, eq(roleAction.id_cargo, role.id_cargo))
       .innerJoin(action, eq(action.id_acao, roleAction.id_acao))
-      .innerJoin(apiKey, eq(apiKey.id_api_key, permission.id_api_key))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
@@ -114,13 +132,19 @@ export class ApiRepository {
           eq(action.modulo, routeModule)
         )
       )
-      .execute();
+      .groupBy(
+        action.acao,
+        permission.id_grupo,
+        permission.id_parceiro,
+        permission.id_cargo
+      )
+      .execute()) as ITokenJwtAccess[];
 
     if (!result || result.length === 0) {
       return null;
     }
 
-    return result as unknown as ITokenJwtData;
+    return this.actionPermissionJwt(result, clientId);
   }
 
   async findApiByTfa(token: string): Promise<ITokenTfaData | null> {
