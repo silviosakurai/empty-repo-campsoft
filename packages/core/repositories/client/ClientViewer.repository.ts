@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import { client } from "@core/models";
 import { eq, sql, and } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class ClientViewerRepository {
@@ -12,10 +11,7 @@ export class ClientViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(
-    tokenKeyData: ITokenKeyData,
-    userId: string
-  ): Promise<ViewClientResponse | null> {
+  async view(userId: string): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
@@ -30,12 +26,7 @@ export class ClientViewerRepository {
         obs: client.obs,
       })
       .from(client)
-      .where(
-        and(
-          eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(client.id_parceiro_cadastro, tokenKeyData.id_parceiro)
-        )
-      )
+      .where(and(eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`)))
       .execute();
 
     if (!result.length) {

@@ -9,7 +9,7 @@ export const deleteClient = async (
   reply: FastifyReply
 ) => {
   const clientEraserUseCase = container.resolve(ClientEraserUseCase);
-  const { t, tokenKeyData, tokenJwtData, tokenTfaData } = request;
+  const { t, tokenJwtData, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
     request.server.logger.warn(tokenTfaData, request.id);
@@ -21,10 +21,7 @@ export const deleteClient = async (
   }
 
   try {
-    const response = await clientEraserUseCase.delete(
-      tokenJwtData,
-      tokenKeyData
-    );
+    const response = await clientEraserUseCase.delete(tokenJwtData);
 
     if (!response) {
       request.server.logger.warn(response, request.id);

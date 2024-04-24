@@ -63,8 +63,8 @@ export class ClientService {
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
   ) {}
 
-  view = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    return this.clientViewerRepository.view(tokenKeyData, userId);
+  view = async (userId: string) => {
+    return this.clientViewerRepository.view(userId);
   };
 
   viewBilling = async (userId: string) => {
