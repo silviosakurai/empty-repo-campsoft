@@ -4,7 +4,7 @@ export function hasRequiredPermission(
   actions: Permissions[],
   permissions: Permissions[]
 ): boolean {
-  if (!permissions || !permissions.length || !actions || !actions.length) {
+  if (!permissions?.length || !actions?.length) {
     return false;
   }
 

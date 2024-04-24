@@ -2,7 +2,6 @@ import {
   mysqlTable,
   int,
   datetime,
-  varchar,
   mysqlEnum,
   varbinary,
 } from "drizzle-orm/mysql-core";

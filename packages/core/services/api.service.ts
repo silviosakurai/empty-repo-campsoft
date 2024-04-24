@@ -1,4 +1,4 @@
-import { RouteMethod, RouteModule } from "@core/common/enums/models/route";
+import { RouteModule } from "@core/common/enums/models/route";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ApiRepository } from "@core/repositories/api/Api.repository";
 import { injectable } from "tsyringe";
