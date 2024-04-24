@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { DeleteProductFromGroupUseCase } from '@core/useCases/product/DeleteProductFromGroup.useCase';
+import { ProductFromGroupDeleterUseCase } from '@core/useCases/product/ProductFromGroupDeleter.useCase';
 import { container } from 'tsyringe';
 import { DeleteProductFromGroupParamsRequest } from '@core/useCases/product/dtos/DeleteProductFromGroupRequest.dto';
 
@@ -11,13 +11,13 @@ export const deleteProductFromGroup = async (
   }>,
   reply: FastifyReply
 ) => {
-  const deleteProductFromGroupUseCase = container.resolve(
-    DeleteProductFromGroupUseCase
+  const productFromGroupDeleterUseCase = container.resolve(
+    ProductFromGroupDeleterUseCase
   );
   const { t } = request;
 
   try {
-    const response = await deleteProductFromGroupUseCase.execute(
+    const response = await productFromGroupDeleterUseCase.execute(
       request.params.groupId,
       request.params.productId
     );

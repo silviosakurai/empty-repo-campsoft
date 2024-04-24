@@ -2,7 +2,7 @@ import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 
 @injectable()
-export class DeleteProductFromGroupUseCase {
+export class ProductFromGroupDeleterUseCase {
   constructor(
     private readonly productService: ProductService,
   ) {}

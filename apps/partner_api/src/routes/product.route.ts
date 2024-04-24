@@ -49,7 +49,7 @@ export default async function productRoutes(server: FastifyInstance) {
 
   server.get('/product_groups/:groupId', {
     schema: getProductGroupSchema,
-    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.viewGroup,
   });
   
@@ -61,7 +61,7 @@ export default async function productRoutes(server: FastifyInstance) {
 
   server.put('/product_groups/:groupId', {
     schema: putProductGroupSchema,
-    // preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.putGroup,
   });
 

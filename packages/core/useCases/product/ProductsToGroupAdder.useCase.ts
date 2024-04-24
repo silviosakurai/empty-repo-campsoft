@@ -3,7 +3,7 @@ import { injectable } from "tsyringe";
 import { AddProductToGroupBodyRequest } from "./dtos/AddProductToGroupRequest.dto";
 
 @injectable()
-export class AddProductsToGroupUseCase {
+export class ProductsToGroupAdderUseCase {
   constructor(
     private readonly productService: ProductService,
   ) {}
