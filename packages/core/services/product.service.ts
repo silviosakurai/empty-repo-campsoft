@@ -44,8 +44,14 @@ export class ProductService {
     return this.productListerRepository.list(companyId, query);
   };
 
-  listByCompanyIds = async (query: ListProductRequest) => {
-    return this.productListerGroupedByCompanyRepository.list(query);
+  listByCompanyIds = async (
+    query: ListProductRequest,
+    listPartnersIds: number[]
+  ) => {
+    return this.productListerGroupedByCompanyRepository.list(
+      query,
+      listPartnersIds
+    );
   };
 
   listByIds = async (companyId: number, productIds: string[]) => {

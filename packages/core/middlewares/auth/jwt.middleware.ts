@@ -89,6 +89,7 @@ async function authenticateJwt(
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
     request.tokenJwtData = responseAuth;
+    request.permissionsRoute = permissions;
 
     return;
   } catch (error) {

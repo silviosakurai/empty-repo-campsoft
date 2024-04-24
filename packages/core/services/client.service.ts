@@ -39,6 +39,7 @@ import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientP
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
+import { SQL } from "drizzle-orm";
 
 @injectable()
 export class ClientService {
@@ -86,8 +87,14 @@ export class ClientService {
     return this.clientByCpfEmailPhoneRepository.find(input);
   };
 
-  listWithCompanies = async (companyId: number, query: ListClientRequest) => {
-    return this.clientListerRepository.listWithCompanies(companyId, query);
+  listWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.listWithCompanies(
+      filterClientByPermission,
+      query
+    );
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {

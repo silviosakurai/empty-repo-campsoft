@@ -22,7 +22,6 @@ export const userUpdaterByIdSchema = {
     ),
   }),
   body: Type.Object({
-    user_type: Type.Number(),
     leader_id: Type.Optional(Type.String()),
     status: Type.String({ enum: Object.values(ClientStatus) }),
     first_name: Type.String(),

@@ -9,7 +9,7 @@ import {
   ListClientGroupedByCompany,
   ListClienttGroupedByCompanyResponse,
 } from "@core/useCases/client/dtos/ListClientResponse.dto";
-import { eq, sql, and, SQLWrapper } from "drizzle-orm";
+import { eq, sql, and, SQLWrapper, SQL, or } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { client, order, partner } from "@core/models";
@@ -21,10 +21,10 @@ export class ClientListerRepository {
   ) {}
 
   async listWithCompanies(
-    companyId: number,
+    filterClientByPermission: SQL<unknown> | undefined,
     query: ListClientRequest
   ): Promise<ListClienttGroupedByCompanyResponse | null> {
-    const filters = this.setFilters(query, companyId);
+    const filters = this.setFilters(query);
 
     const allQuery = this.db
       .select({
@@ -45,9 +45,15 @@ export class ClientListerRepository {
         company_name: partner.nome_fantasia,
       })
       .from(client)
-      .innerJoin(order, eq(order.id_cliente, client.id_cliente))
-      .innerJoin(partner, eq(partner.id_parceiro, order.id_parceiro))
-      .where(and(...filters))
+      .leftJoin(order, eq(order.id_cliente, client.id_cliente))
+      .innerJoin(
+        partner,
+        or(
+          eq(partner.id_parceiro, order.id_parceiro),
+          eq(partner.id_parceiro, client.id_parceiro_cadastro)
+        )
+      )
+      .where(and(...filters, filterClientByPermission))
       .groupBy();
 
     const paginatedQuery = allQuery
@@ -75,10 +81,7 @@ export class ClientListerRepository {
     };
   }
 
-  private setFilters(
-    query: ListClientRequest,
-    companyId: number
-  ): SQLWrapper[] {
+  private setFilters(query: ListClientRequest): SQLWrapper[] {
     const filters: SQLWrapper[] = [];
 
     if (query.cpf || query.name || query.email) {
@@ -96,8 +99,6 @@ export class ClientListerRepository {
 
       return filters;
     }
-
-    filters.push(eq(partner.id_parceiro, companyId));
 
     return filters;
   }

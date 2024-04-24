@@ -62,3 +62,8 @@ export interface ClientWithCompaniesListResponse {
   last_name: string;
   companies: Company[] | null;
 }
+
+export interface ListClientByGroupAndPartner {
+  id_cliente: string;
+  id_parceiro: number;
+}

@@ -13,3 +13,5 @@ export interface ITokenJwtData {
   clientId: string;
   access: ITokenJwtAccess[];
 }
+
+export type UniqueAccessPermission = Omit<ITokenJwtAccess, "acao">;

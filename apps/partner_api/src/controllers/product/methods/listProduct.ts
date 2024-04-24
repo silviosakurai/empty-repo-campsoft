@@ -14,10 +14,11 @@ export const listProduct = async (
   const productsListerByCompanyUseCase = container.resolve(
     ProductsListerByCompanyUseCase
   );
-  const { t } = request;
+  const { t, tokenJwtData } = request;
 
   try {
     const response = await productsListerByCompanyUseCase.execute(
+      tokenJwtData,
       request.query
     );
 

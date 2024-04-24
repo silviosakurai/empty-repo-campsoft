@@ -32,6 +32,7 @@ declare module "fastify" {
     tokenKeyData: ITokenKeyData;
     tokenJwtData: ITokenJwtData;
     tokenTfaData: ITokenTfaData;
+    permissionsRoute: Permissions[];
     module: RouteModule;
   }
 }
