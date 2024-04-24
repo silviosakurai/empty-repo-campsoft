@@ -55,4 +55,9 @@ export default async function orderRoutes(server: FastifyInstance) {
     preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     schema: postOrderPaymentCardSchema,
   });
+
+  server.post('/orders/:orderNumber/payments/pix', {
+    handler: orderController.paymentByPix,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+  });
 }
