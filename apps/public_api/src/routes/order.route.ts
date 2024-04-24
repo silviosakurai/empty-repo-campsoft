@@ -7,6 +7,7 @@ import {
   postCancelOrderSchema,
   ordersByNumberParamSchema,
   createOrderSchema,
+  postOrderPaymentBoletoSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -80,5 +81,11 @@ export default async function orderRoutes(server: FastifyInstance) {
       (request, reply) =>
         server.authenticateJwt(request, reply, orderNumberCancelPermissions),
     ],
+  });
+
+  server.post('/orders/:orderNumber/payments/boleto', {
+    handler: orderController.paymentByBoleto,
+    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
+    schema: postOrderPaymentBoletoSchema,
   });
 }

@@ -8,3 +8,4 @@ export * from "./clientEmailType.model";
 export * from "./clientDeleted.model";
 export * from "./clientMagicToken.model";
 export * from "./clientGroupsTree.model";
+export * from "./clientPayment.model";
