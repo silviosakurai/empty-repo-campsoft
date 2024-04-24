@@ -1,4 +1,3 @@
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ClientService, OrderService } from "@core/services";
 import { PaymentService } from "@core/services/payment.service";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
@@ -17,11 +16,7 @@ export class PayerByBoletoByOrderIdUseCase {
     private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
-  async pay(
-    t: TFunction<"translation", undefined>,
-    tokenKey: ITokenKeyData,
-    orderId: string
-  ) {
+  async pay(t: TFunction<"translation", undefined>, orderId: string) {
     const order = await this.orderService.listOrderById(orderId);
 
     if (!order) {
@@ -40,7 +35,7 @@ export class PayerByBoletoByOrderIdUseCase {
       throw new Error(t("seller_not_found"));
     }
 
-    const client = await this.clientService.view(tokenKey, order.client_id);
+    const client = await this.clientService.view(order.client_id);
 
     if (!client) {
       throw new Error(t("client_not_found"));
