@@ -1,4 +1,3 @@
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AuthService } from "@core/services/auth.service";
 import { injectable } from "tsyringe";
 import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
@@ -7,14 +6,8 @@ import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 export class TokenAuthUseCase {
   constructor(private readonly authService: AuthService) {}
 
-  async execute(
-    tokenKeyData: ITokenKeyData,
-    loginToken: string
-  ): Promise<LoginResponse | null> {
-    const client = await this.authService.authenticateByMagicToken(
-      tokenKeyData,
-      loginToken
-    );
+  async execute(loginToken: string): Promise<LoginResponse | null> {
+    const client = await this.authService.authenticateByMagicToken(loginToken);
 
     if (!client) {
       return null;

@@ -23,7 +23,7 @@ export const client = mysqlTable("cliente", {
     .default(ClientStatus.ACTIVE),
   nome: varchar("nome", { length: 50 }),
   sobrenome: varchar("sobrenome", { length: 50 }),
-  data_nascimento: date("data_nascimento"),
+  data_nascimento: date("data_nascimento", { mode: "string" }),
   foto: varchar("foto", { length: 500 }),
   email: varchar("email", { length: 100 }),
   telefone: varchar("telefone", { length: 11 }).notNull(),

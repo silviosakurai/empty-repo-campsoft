@@ -27,14 +27,8 @@ export class AuthService {
     );
   };
 
-  authenticateByMagicToken = async (
-    tokenKeyData: ITokenKeyData,
-    magicToken: string
-  ) => {
-    return this.authRepository.authenticateByMagicToken(
-      tokenKeyData,
-      magicToken
-    );
+  authenticateByMagicToken = async (magicToken: string) => {
+    return this.authRepository.authenticateByMagicToken(magicToken);
   };
 
   async generateAndVerifyMagicToken(): Promise<string> {

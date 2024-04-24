@@ -51,7 +51,7 @@ export class AuthRepository {
       return null;
     }
 
-    return result[0] as unknown as LoginResponse;
+    return result[0] as LoginResponse;
   };
 
   authenticateByClientId = async (
@@ -86,11 +86,10 @@ export class AuthRepository {
       return null;
     }
 
-    return result[0] as unknown as LoginResponse;
+    return result[0] as LoginResponse;
   };
 
   authenticateByMagicToken = async (
-    tokenKeyData: ITokenKeyData,
     token: string
   ): Promise<LoginResponse | null> => {
     const result = await this.db
@@ -104,6 +103,7 @@ export class AuthRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
+        photo: client.foto,
       })
       .from(clientMagicToken)
       .innerJoin(client, eq(client.id_cliente, clientMagicToken.id_cliente))
@@ -120,6 +120,6 @@ export class AuthRepository {
       return null;
     }
 
-    return result[0] as unknown as LoginResponse;
+    return result[0] as LoginResponse;
   };
 }
