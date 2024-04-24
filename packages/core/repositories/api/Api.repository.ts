@@ -101,6 +101,7 @@ export class ApiRepository {
       id_grupo: item.id_grupo,
       id_parceiro: item.id_parceiro,
       id_cargo: item.id_cargo,
+      contexto: item.contexto,
     }));
 
     return {
@@ -119,6 +120,7 @@ export class ApiRepository {
         id_grupo: permission.id_grupo,
         id_parceiro: permission.id_parceiro,
         id_cargo: permission.id_cargo,
+        contexto: roleAction.contexto,
       })
       .from(permission)
       .innerJoin(client, eq(client.id_cliente, permission.id_cliente))
@@ -136,7 +138,8 @@ export class ApiRepository {
         action.acao,
         permission.id_grupo,
         permission.id_parceiro,
-        permission.id_cargo
+        permission.id_cargo,
+        roleAction.contexto
       )
       .execute()) as ITokenJwtAccess[];
 
