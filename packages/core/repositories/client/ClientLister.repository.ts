@@ -1,5 +1,8 @@
 import * as schema from "@core/models";
-import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import {
+  ListClientRequest,
+  SetOrderByFunction,
+} from "@core/useCases/client/dtos/ListClientRequest.dto";
 import { eq, sql, and, SQL, count, asc, desc } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
@@ -125,73 +128,54 @@ export class ClientListerRepository {
   }
 
   private setOrderBy(query: ListClientRequest): SQL<unknown> {
-    let orderBy =
-      query.sort_order === SortOrder.ASC
-        ? asc(client.created_at)
-        : desc(client.created_at);
-
-    if (query.sort_by === ClientFields.company_id) {
-      orderBy =
+    const orderByMapping: {
+      [key in ClientFields | "default"]: SetOrderByFunction;
+    } = {
+      [ClientFields.company_id]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(permission.id_parceiro)
-          : desc(permission.id_parceiro);
-    }
-
-    if (query.sort_by === ClientFields.cpf) {
-      orderBy =
-        query.sort_order === SortOrder.ASC ? asc(client.cpf) : desc(client.cpf);
-    }
-
-    if (query.sort_by === ClientFields.email) {
-      orderBy =
+          : desc(permission.id_parceiro),
+      [ClientFields.cpf]: () =>
+        query.sort_order === SortOrder.ASC ? asc(client.cpf) : desc(client.cpf),
+      [ClientFields.email]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.email)
-          : desc(client.email);
-    }
-
-    if (query.sort_by === ClientFields.gender) {
-      orderBy =
+          : desc(client.email),
+      [ClientFields.gender]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.sexo)
-          : desc(client.sexo);
-    }
-
-    if (query.sort_by === ClientFields.name) {
-      orderBy =
+          : desc(client.sexo),
+      [ClientFields.name]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.nome)
-          : desc(client.nome);
-    }
-
-    if (query.sort_by === ClientFields.phone) {
-      orderBy =
+          : desc(client.nome),
+      [ClientFields.phone]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.telefone)
-          : desc(client.telefone);
-    }
-
-    if (query.sort_by === ClientFields.position_id) {
-      orderBy =
+          : desc(client.telefone),
+      [ClientFields.position_id]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(permission.id_cargo)
-          : desc(permission.id_cargo);
-    }
-
-    if (query.sort_by === ClientFields.status) {
-      orderBy =
+          : desc(permission.id_cargo),
+      [ClientFields.status]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.status)
-          : desc(client.status);
-    }
-
-    if (query.sort_by === ClientFields.user_id) {
-      orderBy =
+          : desc(client.status),
+      [ClientFields.user_id]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.id_cliente)
-          : desc(client.id_cliente);
-    }
+          : desc(client.id_cliente),
+      [ClientFields.created_at]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(client.created_at)
+          : desc(client.created_at),
+      default: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(client.created_at)
+          : desc(client.created_at),
+    };
 
-    return orderBy;
+    return orderByMapping[query.sort_by ?? "default"]();
   }
 
   private setFilters(

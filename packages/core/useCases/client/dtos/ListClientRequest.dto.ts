@@ -1,5 +1,6 @@
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { ClientFields, ClientStatus } from "@core/common/enums/models/client";
+import { SQL } from "drizzle-orm";
 
 export interface ListClientRequest {
   status?: ClientStatus;
@@ -13,3 +14,5 @@ export interface ListClientRequest {
   per_page: number;
   current_page: number;
 }
+
+export type SetOrderByFunction = () => SQL<unknown>;
