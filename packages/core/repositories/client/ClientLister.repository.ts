@@ -1,6 +1,6 @@
 import * as schema from "@core/models";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
-import { eq, sql, and, SQLWrapper, SQL, or, count } from "drizzle-orm";
+import { eq, sql, and, SQL, count, or, is, asc, desc } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { client, order, partner, permission, role } from "@core/models";
@@ -8,6 +8,8 @@ import {
   ClientResponse,
   ListWithCompanies,
 } from "@core/useCases/client/dtos/ClientResponse.dto";
+import { ClientFields } from "@core/common/enums/models/client";
+import { SortOrder } from "@core/common/enums/SortOrder";
 
 @injectable()
 export class ClientListerRepository {
@@ -19,7 +21,8 @@ export class ClientListerRepository {
     filterClientByPermission: SQL<unknown> | undefined,
     query: ListClientRequest
   ): Promise<ClientResponse[] | null> {
-    const filters = this.setFilters(query);
+    const filters = this.setFilters(query, filterClientByPermission);
+    const orderByApply = this.setOrderBy(query);
 
     const allQuery = this.db
       .select({
@@ -40,9 +43,10 @@ export class ClientListerRepository {
         obs: client.obs,
       })
       .from(client)
+      .innerJoin(permission, eq(permission.id_cliente, client.id_cliente))
       .leftJoin(order, eq(order.id_cliente, client.id_cliente))
-      .where(and(...filters, filterClientByPermission))
-      .groupBy();
+      .where(filters)
+      .orderBy(orderByApply);
 
     const paginatedQuery = allQuery
       .limit(query.per_page)
@@ -61,15 +65,16 @@ export class ClientListerRepository {
     filterClientByPermission: SQL<unknown> | undefined,
     query: ListClientRequest
   ): Promise<number> {
-    const filters = this.setFilters(query);
+    const filters = this.setFilters(query, filterClientByPermission);
 
     const countResult = await this.db
       .select({
         count: count(),
       })
       .from(client)
+      .innerJoin(permission, eq(permission.id_cliente, client.id_cliente))
       .leftJoin(order, eq(order.id_cliente, client.id_cliente))
-      .where(and(...filters, filterClientByPermission))
+      .where(filters)
       .execute();
 
     return countResult[0].count;
@@ -119,25 +124,128 @@ export class ClientListerRepository {
     return positionsQuery;
   }
 
-  private setFilters(query: ListClientRequest): SQLWrapper[] {
-    const filters: SQLWrapper[] = [];
+  private setOrderBy(query: ListClientRequest): SQL<unknown> {
+    let orderBy =
+      query.sort_order === SortOrder.ASC
+        ? asc(client.created_at)
+        : desc(client.created_at);
 
-    if (query.cpf || query.name || query.email) {
-      if (query.cpf) {
-        filters.push(eq(client.cpf, query.cpf));
-      }
-
-      if (query.name) {
-        filters.push(eq(client.nome, query.name));
-      }
-
-      if (query.email) {
-        filters.push(eq(client.email, query.email));
-      }
-
-      return filters;
+    if (query.sort_by === ClientFields.company_id) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(permission.id_parceiro)
+          : desc(permission.id_parceiro);
     }
 
-    return filters;
+    if (query.sort_by === ClientFields.cpf) {
+      orderBy =
+        query.sort_order === SortOrder.ASC ? asc(client.cpf) : desc(client.cpf);
+    }
+
+    if (query.sort_by === ClientFields.email) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(client.email)
+          : desc(client.email);
+    }
+
+    if (query.sort_by === ClientFields.gender) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(client.sexo)
+          : desc(client.sexo);
+    }
+
+    if (query.sort_by === ClientFields.name) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(client.nome)
+          : desc(client.nome);
+    }
+
+    if (query.sort_by === ClientFields.phone) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(client.telefone)
+          : desc(client.telefone);
+    }
+
+    if (query.sort_by === ClientFields.position_id) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(permission.id_cargo)
+          : desc(permission.id_cargo);
+    }
+
+    if (query.sort_by === ClientFields.status) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(client.status)
+          : desc(client.status);
+    }
+
+    if (query.sort_by === ClientFields.user_id) {
+      orderBy =
+        query.sort_order === SortOrder.ASC
+          ? asc(client.id_cliente)
+          : desc(client.id_cliente);
+    }
+
+    return orderBy;
+  }
+
+  private setFilters(
+    query: ListClientRequest,
+    filterClientByPermission: SQL<unknown> | undefined
+  ): SQL<unknown> | undefined {
+    let filters = and();
+    let isFilterApplied = false;
+
+    if (query.cpf) {
+      filters = and(filters, eq(client.cpf, query.cpf));
+      isFilterApplied = true;
+    }
+
+    if (query.email) {
+      filters = and(filters, eq(client.email, query.email));
+      isFilterApplied = true;
+    }
+
+    if (query.name) {
+      filters = and(filters, eq(client.nome, query.name));
+      isFilterApplied = true;
+    }
+
+    if (query.position_id) {
+      filters = isFilterApplied
+        ? and(filters, eq(permission.id_cargo, query.position_id))
+        : and(
+            filterClientByPermission,
+            eq(permission.id_cargo, query.position_id)
+          );
+
+      isFilterApplied = true;
+    }
+
+    if (query.company_id) {
+      filters = isFilterApplied
+        ? and(filters, eq(permission.id_parceiro, query.company_id))
+        : and(
+            filterClientByPermission,
+            eq(permission.id_parceiro, query.company_id)
+          );
+
+      isFilterApplied = true;
+    }
+
+    if (query.status) {
+      filters = isFilterApplied
+        ? and(filters, eq(client.status, query.status))
+        : and(filterClientByPermission, eq(client.status, query.status));
+
+      isFilterApplied = true;
+    }
+
+    return isFilterApplied ? filters : filterClientByPermission;
   }
 }

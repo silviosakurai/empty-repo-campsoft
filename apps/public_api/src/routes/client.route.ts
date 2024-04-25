@@ -30,6 +30,7 @@ import {
   userDeletePermissions,
   userImageUpdatePermissions,
   userNewsletterSubscribePermissions,
+  userRecoveryPasswordPathPermissions,
   userRecoveryPasswordPermissions,
   userUpdatePasswordPermissions,
   userUpdatePermissions,
@@ -129,7 +130,15 @@ export default async function clientRoutes(server: FastifyInstance) {
   server.patch('/user/recovery-password', {
     schema: userPasswordRecoveryUpdaterSchema,
     handler: clientController.updatePasswordRecovery,
-    preHandler: [(request, reply) => server.authenticateTfa(request, reply)],
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userRecoveryPasswordPathPermissions
+        ),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.get('/user/vouchers/:voucherCode', {
