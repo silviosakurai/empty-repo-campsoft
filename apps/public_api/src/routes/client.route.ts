@@ -19,6 +19,7 @@ import {
   patchUserShippingAddressSchema,
   patchUserImageSchemaSchema,
   createUserNewsletterSchema,
+  createUserCreditCardSchema,
 } from '@core/validations/user';
 import {
   userAddressBillingUpdatePermissions,
@@ -27,6 +28,7 @@ import {
   userAddressShippingUpdatePermissions,
   userAddressShippingViewPermissions,
   userCreatePermissions,
+  userCreditCardCreatePermissions,
   userDeletePermissions,
   userImageUpdatePermissions,
   userNewsletterSubscribePermissions,
@@ -279,6 +281,21 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userNewsletterSubscribePermissions
         ),
+    ],
+  });
+
+  server.post('/user/credit-card', {
+    schema: createUserCreditCardSchema,
+    handler: clientController.createCardClient,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardCreatePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userCreditCardCreatePermissions),
     ],
   });
 }
