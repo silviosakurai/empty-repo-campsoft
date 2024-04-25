@@ -35,17 +35,20 @@ export class PayerPixByOrderIdUseCase {
       return result;
     }
 
-    // await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-    //   paymentTransactionId: result.data.id,
-    //   paymentLink: result.data.payment_method.url,
-    //   dueDate: result.data.payment_method.expiration_date,
-    //   barcode: result.data.payment_method.barcode,
-    // });
+    await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
+      paymentTransactionId: result.data.id,
+      paymentLink: result.data.payment_method.qr_code.emv,
+      dueDate: result.data.payment_method.expiration_date,
+    });
+
+    const pixCodeAsBase64 = Buffer.from(
+      result.data.payment_method.qr_code.emv
+    ).toString("base64");
 
     return {
       data: {
         url: result.data.payment_method.qr_code.emv,
-        code: result.data.payment_method.qr_code.emv, //transformar isso em qrcode base64
+        code: pixCodeAsBase64,
         expire_at: result.data.payment_method.expiration_date,
       },
       status: true,
