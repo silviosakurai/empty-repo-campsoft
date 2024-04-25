@@ -15,7 +15,7 @@ export async function createCreditCardToken(
       );
 
     return result.data;
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    throw new Error(error.response.data.error.message);
   }
 }

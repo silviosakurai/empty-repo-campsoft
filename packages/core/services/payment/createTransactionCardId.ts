@@ -41,10 +41,7 @@ export async function createTransactionCardId(
       httpStatusCode: response.status,
       message: response.data.error.message,
     };
-  } catch (error) {
-    return {
-      status: false,
-      httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
-    };
+  } catch (error: any) {
+    throw new Error(error.response.data.error.message);
   }
 }
