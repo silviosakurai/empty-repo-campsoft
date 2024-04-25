@@ -20,6 +20,7 @@ import {
   patchUserImageSchemaSchema,
   createUserNewsletterSchema,
   createUserCreditCardSchema,
+  updateUserCreditCardDefaultSchema,
 } from '@core/validations/user';
 import {
   userAddressBillingUpdatePermissions,
@@ -39,6 +40,7 @@ import {
   userUpdatePhonePermissions,
   userViewPermissions,
   userVoucherPermissions,
+  userCreditCardDefaultUpdatePermissions,
 } from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -296,6 +298,25 @@ export default async function clientRoutes(server: FastifyInstance) {
         ),
       (request, reply) =>
         server.authenticateJwt(request, reply, userCreditCardCreatePermissions),
+    ],
+  });
+
+  server.patch('/user/credit-card/:id/default', {
+    schema: updateUserCreditCardDefaultSchema,
+    handler: clientController.updateUserCreditCardDefault,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardDefaultUpdatePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userCreditCardDefaultUpdatePermissions
+        ),
     ],
   });
 }
