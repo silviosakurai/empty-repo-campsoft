@@ -1,5 +1,5 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const userListPermissions = [Permissions.USER_LIST];
+export const userListPermissions = [PermissionsRoles.USER_LIST];
 
-export const userViewPermissions = [Permissions.USER_VIEW];
+export const userViewPermissions = [PermissionsRoles.USER_VIEW];

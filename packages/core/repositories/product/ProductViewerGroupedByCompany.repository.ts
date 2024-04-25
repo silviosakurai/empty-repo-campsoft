@@ -1,6 +1,6 @@
 import * as schema from "@core/models";
 import { inject, injectable } from "tsyringe";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { product, productPartner, productType, partner } from "@core/models";
 import {

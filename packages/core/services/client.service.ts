@@ -44,6 +44,7 @@ import { ClientCardCreatorRepository } from "@core/repositories/client/ClientCar
 import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/ClientCardDefaultUpdater.repository";
 import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
+import { SQL } from "drizzle-orm";
 
 @injectable()
 export class ClientService {
@@ -95,8 +96,24 @@ export class ClientService {
     return this.clientByCpfEmailPhoneRepository.find(input);
   };
 
-  listWithCompanies = async (companyId: number, query: ListClientRequest) => {
-    return this.clientListerRepository.listWithCompanies(companyId, query);
+  listWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.listWithCompanies(
+      filterClientByPermission,
+      query
+    );
+  };
+
+  countTotalClientWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.countTotalClientWithCompanies(
+      filterClientByPermission,
+      query
+    );
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {

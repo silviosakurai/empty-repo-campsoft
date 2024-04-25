@@ -61,5 +61,6 @@
   "token_not_found": "Token não encontrado.",
   "seller_not_found": "Vendedor não encontrado.",
   "creation_customer_to_payment_failed": "Falha na criação do cliente para pagamento",
-  "something_went_wrong_to_generate_credit_card": "Falha na criação do cartão de crédito"
+  "something_went_wrong_to_generate_credit_card": "Falha na criação do cartão de crédito",
+  "plans_not_found": "Planos não encontrados"
 }

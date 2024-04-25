@@ -1,6 +1,6 @@
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 export interface ITokenKeyData {
-  acoes: Permissions[];
+  acoes: PermissionsRoles[];
   id_api_key: number;
   id_parceiro: number;
   id_cargo: number;

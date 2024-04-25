@@ -47,8 +47,8 @@ export default async function productRoutes(server: FastifyInstance) {
   });
 
   server.put('/products/:sku', {
-    handler: productController.update,
     schema: updateProductSchema,
+    handler: productController.update,
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(request, reply, productUpdatePermissions),
@@ -56,8 +56,8 @@ export default async function productRoutes(server: FastifyInstance) {
   });
 
   server.post('/products/:sku/images/:type', {
-    handler: productController.createImage,
     schema: createProductImageSchema,
+    handler: productController.createImage,
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(

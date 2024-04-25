@@ -73,3 +73,8 @@ export interface ClientCardRepositoryInput {
   first4Digits: string;
   last4Digits?: string;
 }
+
+export interface ListClientByGroupAndPartner {
+  id_cliente: string;
+  id_parceiro: number;
+}
