@@ -8,7 +8,6 @@ export const userPasswordRecoveryUpdaterSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateTfa: [],
     },
   ],
