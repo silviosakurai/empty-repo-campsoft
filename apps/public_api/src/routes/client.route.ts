@@ -30,7 +30,6 @@ import {
   userDeletePermissions,
   userImageUpdatePermissions,
   userNewsletterSubscribePermissions,
-  userRecoveryPasswordPathPermissions,
   userRecoveryPasswordPermissions,
   userUpdatePasswordPermissions,
   userUpdatePermissions,

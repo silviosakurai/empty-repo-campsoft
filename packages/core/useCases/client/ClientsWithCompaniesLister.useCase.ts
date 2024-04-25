@@ -1,10 +1,14 @@
 import { ClientService } from "@core/services";
-import { ListClienttGroupedByCompanyResponse } from "./dtos/ListClientResponse.dto";
-import { ListClientRequest } from "./dtos/ListClientRequest.dto";
+import {
+  ListClientGroupedByCompany,
+  ListClienttGroupedByCompanyResponse,
+} from "@core/useCases/client/dtos/ListClientResponse.dto";
+import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 import { injectable } from "tsyringe";
 import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { setPaginationData } from "@core/common/functions/createPaginationData";
 
 @injectable()
 export class ClientsWithCompaniesListerUseCase {
@@ -24,9 +28,37 @@ export class ClientsWithCompaniesListerUseCase {
         permissionsRoute
       );
 
-    return this.clientService.listWithCompanies(
-      filterClientByPermission,
-      query
+    const [listClientCompanies, count] = await Promise.all([
+      this.clientService.listWithCompanies(filterClientByPermission, query),
+      this.clientService.countTotalClientWithCompanies(
+        filterClientByPermission,
+        query
+      ),
+    ]);
+
+    if (!listClientCompanies || !listClientCompanies.length) {
+      return this.emptyResult(query);
+    }
+
+    const paging = setPaginationData(
+      listClientCompanies.length,
+      count,
+      query.per_page,
+      query.current_page
     );
+
+    return {
+      paging,
+      results: listClientCompanies as ListClientGroupedByCompany[],
+    };
+  }
+
+  private emptyResult(input: ListClientRequest) {
+    const paging = setPaginationData(0, 0, input.per_page, input.current_page);
+
+    return {
+      paging,
+      results: [],
+    };
   }
 }

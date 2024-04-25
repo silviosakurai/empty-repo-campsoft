@@ -1,18 +1,13 @@
-import { setPaginationData } from "@core/common/functions/createPaginationData";
-import {
-  ClientListResponse,
-  ClientWithCompaniesListResponse,
-} from "@core/interfaces/repositories/client";
 import * as schema from "@core/models";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
-import {
-  ListClientGroupedByCompany,
-  ListClienttGroupedByCompanyResponse,
-} from "@core/useCases/client/dtos/ListClientResponse.dto";
-import { eq, sql, and, SQLWrapper, SQL, or } from "drizzle-orm";
+import { eq, sql, and, SQLWrapper, SQL, or, count } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { client, order, partner } from "@core/models";
+import {
+  ClientResponse,
+  ListWithCompanies,
+} from "@core/useCases/client/dtos/ClientResponse.dto";
 
 @injectable()
 export class ClientListerRepository {
@@ -23,7 +18,7 @@ export class ClientListerRepository {
   async listWithCompanies(
     filterClientByPermission: SQL<unknown> | undefined,
     query: ListClientRequest
-  ): Promise<ListClienttGroupedByCompanyResponse | null> {
+  ): Promise<ClientResponse[] | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -41,8 +36,8 @@ export class ClientListerRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
-        company_id: partner.id_parceiro,
-        company_name: partner.nome_fantasia,
+        photo: client.foto,
+        obs: client.obs,
       })
       .from(client)
       .leftJoin(order, eq(order.id_cliente, client.id_cliente))
@@ -66,19 +61,52 @@ export class ClientListerRepository {
       return null;
     }
 
-    const bodyWithCompany = this.parseCompany(totalPaginated);
+    return await this.enrichCompanyClient(totalPaginated);
+  }
 
-    const paging = setPaginationData(
-      bodyWithCompany.length,
-      bodyWithCompany.length,
-      query.per_page,
-      query.current_page
+  async countTotalClientWithCompanies(
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ): Promise<number> {
+    const filters = this.setFilters(query);
+
+    const countResult = await this.db
+      .select({
+        count: count(),
+      })
+      .from(client)
+      .leftJoin(order, eq(order.id_cliente, client.id_cliente))
+      .where(and(...filters, filterClientByPermission))
+      .execute();
+
+    return countResult[0].count;
+  }
+
+  private async enrichCompanyClient(result: ListWithCompanies[]) {
+    const enrichCompanyPromises = result.map(
+      async (client: ListWithCompanies) => ({
+        ...client,
+        companies: await this.fetchCompanyClient(client.user_id),
+      })
     );
 
-    return {
-      paging,
-      results: bodyWithCompany as unknown as ListClientGroupedByCompany[],
-    };
+    const enrichCompanyAll = await Promise.all(enrichCompanyPromises);
+
+    return enrichCompanyAll;
+  }
+
+  private async fetchCompanyClient(clientId: string) {
+    const companiesQuery = this.db
+      .select({
+        company_id: partner.id_parceiro,
+        company_name: partner.nome_fantasia,
+        seller_id: sql`BIN_TO_UUID(${order.id_vendedor})`.mapWith(String),
+      })
+      .from(partner)
+      .innerJoin(order, eq(order.id_parceiro, partner.id_parceiro))
+      .where(eq(order.id_cliente, sql`UUID_TO_BIN(${clientId})`));
+
+    return companiesQuery.execute();
   }
 
   private setFilters(query: ListClientRequest): SQLWrapper[] {
@@ -101,30 +129,5 @@ export class ClientListerRepository {
     }
 
     return filters;
-  }
-
-  private parseCompany(
-    clients: ClientListResponse[]
-  ): ClientWithCompaniesListResponse[] {
-    const clientsParsed: any = {};
-
-    clients.forEach((client) => {
-      if (!clientsParsed[client.user_id as string]) {
-        clientsParsed[client.user_id as string] = {
-          ...client,
-          companies: [] as any,
-        };
-      }
-      clientsParsed[client?.user_id as string].companies.push({
-        company_id: client.company_id,
-        company_name: client.company_name,
-        leader_id: "",
-      });
-
-      delete clientsParsed[client.user_id as string].company_id;
-      delete clientsParsed[client.user_id as string].company_name;
-    });
-
-    return Object.values(clientsParsed);
   }
 }

@@ -97,6 +97,16 @@ export class ClientService {
     );
   };
 
+  countTotalClientWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.countTotalClientWithCompanies(
+      filterClientByPermission,
+      query
+    );
+  };
+
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
     return this.clientByEmailPhoneRepository.find(input);
   };
