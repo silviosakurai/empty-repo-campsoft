@@ -1,6 +1,6 @@
 import * as schema from "@core/models";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
-import { eq, sql, and, SQL, count, or, is, asc, desc } from "drizzle-orm";
+import { eq, sql, and, SQL, count, asc, desc } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { client, order, partner, permission, role } from "@core/models";

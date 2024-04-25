@@ -28,7 +28,7 @@ export class ClientsWithCompaniesListerUseCase {
         permissionsRoute
       );
 
-    const [listClientCompanies, count] = await Promise.all([
+    const [listClientCompanies, total] = await Promise.all([
       this.clientService.listWithCompanies(filterClientByPermission, query),
       this.clientService.countTotalClientWithCompanies(
         filterClientByPermission,
@@ -42,7 +42,7 @@ export class ClientsWithCompaniesListerUseCase {
 
     const paging = setPaginationData(
       listClientCompanies.length,
-      count,
+      total,
       query.per_page,
       query.current_page
     );
