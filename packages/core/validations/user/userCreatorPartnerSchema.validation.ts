@@ -1,6 +1,6 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
-import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
+import { ClientGender } from "@core/common/enums/models/client";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { userCreatorResponseSchema } from "@core/schema/user/userCreatorResponseSchema";
 

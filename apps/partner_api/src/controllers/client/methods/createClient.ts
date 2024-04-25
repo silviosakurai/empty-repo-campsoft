@@ -11,7 +11,6 @@ export async function createClient(
 ) {
   try {
     const clientUseCase = container.resolve(ClientCreatorPartnerUseCase);
-    const {} = request;
 
     const response = await clientUseCase.create([], request.body);
 
