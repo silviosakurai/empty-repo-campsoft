@@ -36,7 +36,7 @@ export class ClientsWithCompaniesListerUseCase {
       ),
     ]);
 
-    if (!listClientCompanies || !listClientCompanies.length) {
+    if (!listClientCompanies?.length) {
       return this.emptyResult(query);
     }
 
