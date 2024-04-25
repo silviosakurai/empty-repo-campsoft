@@ -39,10 +39,7 @@ export class CreateOrderUseCase {
   ) {
     await this.validatePaymentMethod(t, tokenJwtData, payload);
 
-    const userFounded = await this.clientService.view(
-      tokenKeyData,
-      tokenJwtData.clientId
-    );
+    const userFounded = await this.clientService.view(tokenJwtData.clientId);
 
     if (!userFounded) {
       throw new Error(t("client_not_found"));

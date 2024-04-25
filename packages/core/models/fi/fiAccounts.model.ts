@@ -9,7 +9,7 @@ import {
 export const fiAccounts = mysqlTable("fi_contas", {
   id_fi_contas: int("id_fi_contas").notNull().primaryKey(),
   fi_conta_nome: varchar("fi_conta_nome", { length: 30 }),
-  id_empresa: int("id_empresa").default(1),
+  id_parceiro: int("id_parceiro"),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
   tipo: mysqlEnum("tipo", ["pessoa", "empresa"]).default("empresa"),
   cpf_cnpj_conta: varchar("cpf_cnpj_conta", { length: 25 }),

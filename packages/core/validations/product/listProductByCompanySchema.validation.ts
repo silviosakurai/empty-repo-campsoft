@@ -13,7 +13,6 @@ export const listProductByCompanySchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

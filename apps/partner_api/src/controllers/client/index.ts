@@ -7,7 +7,10 @@ import { viewClient } from './methods/viewClient';
 class ClientController {
   public list = listClient;
   public update = updateClient;
+<<<<<<< HEAD
   public view = viewClient;
+=======
+>>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
 }
 
 export default ClientController;

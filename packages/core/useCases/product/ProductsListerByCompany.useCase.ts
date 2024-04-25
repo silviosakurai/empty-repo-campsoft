@@ -2,30 +2,23 @@ import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
 import { ListProductGroupedByCompanyResponse } from "./dtos/ListProductResponse.dto";
+import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { AccessType } from "@core/common/enums/models/access";
-import { checkIfCompanyHasAccess } from "@core/common/functions/checkIfCompanyHasAccess";
 
 @injectable()
 export class ProductsListerByCompanyUseCase {
   constructor(
     private readonly productService: ProductService,
+    private readonly controlAccessService: ControlAccessService
   ) {}
 
   async execute(
     tokenJwtData: ITokenJwtData,
-    query: ListProductRequest,
-    companyIdsToFilter: number[],
+    query: ListProductRequest
   ): Promise<ListProductGroupedByCompanyResponse | null> {
-    const companyIdsAllowed = checkIfCompanyHasAccess(tokenJwtData.access, AccessType.PRODUCT_MANAGEMENT)
+    const listPartnersIds =
+      this.controlAccessService.listPartnersIds(tokenJwtData);
 
-    let filteredCompanyIds = companyIdsAllowed
-
-    if (companyIdsToFilter.length > 0) {
-      filteredCompanyIds = 
-        companyIdsAllowed.filter((companyId) => companyIdsToFilter.includes(companyId))
-    }
-
-    return this.productService.listByCompanyIds(filteredCompanyIds, query);
+    return this.productService.listByCompanyIds(query, listPartnersIds);
   }
 }

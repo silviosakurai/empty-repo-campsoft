@@ -58,5 +58,8 @@
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
   "product_update_not_allowed": "Atualização de produto não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
-  "token_not_found": "Token não encontrado."
+  "token_not_found": "Token não encontrado.",
+  "seller_not_found": "Vendedor não encontrado.",
+  "creation_customer_to_payment_failed": "Falha na criação do cliente para pagamento",
+  "plans_not_found": "Planos não encontrados"
 }

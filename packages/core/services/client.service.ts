@@ -16,7 +16,6 @@ import {
   FindClientByEmailPhoneInput,
 } from "@core/interfaces/repositories/client";
 import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientByEmailPhone.repository";
 import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
@@ -35,9 +34,12 @@ import { ClientAddressCreatorRepository } from "@core/repositories/client/Client
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 import { ClientEmailActivatorRepository } from "@core/repositories/client/ClientEmailActivator.repository";
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
+import { ClientPaymentCreatorRepository } from "@core/repositories/client/ClientPaymentCreator.repository";
+import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
+import { SQL } from "drizzle-orm";
 
 @injectable()
 export class ClientService {
@@ -60,11 +62,13 @@ export class ClientService {
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
-    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
+    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
+    private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
+    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository
   ) {}
 
-  view = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    return this.clientViewerRepository.view(tokenKeyData, userId);
+  view = async (userId: string) => {
+    return this.clientViewerRepository.view(userId);
   };
 
   viewById = async (tokenKeyData: ITokenKeyData, userId: string) => {
@@ -87,8 +91,24 @@ export class ClientService {
     return this.clientByCpfEmailPhoneRepository.find(input);
   };
 
-  listWithCompanies = async (companyId: number, query: ListClientRequest) => {
-    return this.clientListerRepository.listWithCompanies(companyId, query);
+  listWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.listWithCompanies(
+      filterClientByPermission,
+      query
+    );
+  };
+
+  countTotalClientWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.countTotalClientWithCompanies(
+      filterClientByPermission,
+      query
+    );
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
@@ -158,12 +178,8 @@ export class ClientService {
     );
   };
 
-  passwordRecoveryMethods = async (
-    tokenKeyData: ITokenKeyData,
-    login: string
-  ) => {
+  passwordRecoveryMethods = async (login: string) => {
     return this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
-      tokenKeyData,
       login
     );
   };
@@ -199,5 +215,16 @@ export class ClientService {
 
   updateImage = async (clientId: string, storageUrl: string) => {
     return this.clientImageUpdaterRepository.update(clientId, storageUrl);
+  };
+
+  createPaymentClient = async (clientId: string, clientExternalId: string) => {
+    return this.clientPaymentCreatorRepository.create(
+      clientId,
+      clientExternalId
+    );
+  };
+
+  viewPaymentClient = async (clientId: string) => {
+    return this.clientPaymentViewerRepository.view(clientId);
   };
 }

@@ -9,6 +9,7 @@ import {
   orderPaymentStatus,
   plan,
   planPrice,
+  planPartner,
   product,
   productType,
   productGroup,
@@ -89,7 +90,7 @@ export class OrdersListerRepository {
       )
       .where(
         and(
-          eq(order.id_empresa, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       )
@@ -121,7 +122,7 @@ export class OrdersListerRepository {
       .from(order)
       .where(
         and(
-          eq(order.id_empresa, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       )
@@ -210,7 +211,7 @@ export class OrdersListerRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -219,10 +220,11 @@ export class OrdersListerRepository {
       .from(plan)
       .innerJoin(order, eq(order.id_plano, plan.id_plano))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(plan.id_plano)
@@ -267,6 +269,7 @@ export class OrdersListerRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(product, eq(planItem.id_produto, product.id_produto))
       .innerJoin(
         productType,
@@ -275,7 +278,7 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .execute();
@@ -299,6 +302,7 @@ export class OrdersListerRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(
         productGroup,
         eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
@@ -310,7 +314,7 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)
@@ -451,7 +455,8 @@ export class OrdersListerRepository {
         order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
-        company_id: order.id_empresa,
+        company_id: order.id_parceiro,
+        seller_id: order.id_vendedor,
         status_id: order.id_pedido_status,
         recurrence: order.recorrencia,
         recurrence_period: order.recorrencia_periodo,
@@ -463,6 +468,7 @@ export class OrdersListerRepository {
         total_installments: order.pedido_parcelas_vezes,
         total_installments_value: order.pedido_parcelas_valor,
         activation_immediate: order.ativacao_imediata,
+        observation: order.obs,
       })
       .from(order)
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))

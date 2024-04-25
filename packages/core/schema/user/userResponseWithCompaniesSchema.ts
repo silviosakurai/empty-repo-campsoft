@@ -17,7 +17,10 @@ export const userResponseWithCompaniesSchema = Type.Object({
     Type.Object({
       company_id: Type.Number(),
       company_name: Type.String(),
+<<<<<<< HEAD
       user_type: Type.Number(),
+=======
+>>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
       leader_id: Type.String(),
     })
   ),

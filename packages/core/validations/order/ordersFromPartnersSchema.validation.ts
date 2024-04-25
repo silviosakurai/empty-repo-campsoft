@@ -10,7 +10,6 @@ export const ordersFromPartnersSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

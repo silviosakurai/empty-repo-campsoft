@@ -26,6 +26,7 @@ export class ClientCreatorRepository {
         sobrenome: input.last_name,
         sexo: input.gender,
         obs: input.obs,
+        id_parceiro_cadastro: input.companyId,
         status: input.status,
         senha: input.password,
       })

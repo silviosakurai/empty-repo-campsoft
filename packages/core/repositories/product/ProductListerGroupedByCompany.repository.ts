@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { product, productCompany, productType, company } from "@core/models";
+import { product, productPartner, productType, partner } from "@core/models";
 import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
@@ -9,9 +9,15 @@ import {
   ProductFields,
   ProductFieldsToOrder,
 } from "@core/common/enums/models/product";
-import { ListProductGroupedByCompany, ListProductGroupedByCompanyResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
+import {
+  ListProductGroupedByCompany,
+  ListProductGroupedByCompanyResponse,
+} from "@core/useCases/product/dtos/ListProductResponse.dto";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
-import { ProductDto, ProductDtoResponse } from "@core/interfaces/repositories/products";
+import {
+  ProductDto,
+  ProductDtoResponse,
+} from "@core/interfaces/repositories/products";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
@@ -21,8 +27,8 @@ export class ProductListerGroupedByCompanyRepository {
   ) {}
 
   async list(
-    companyIds: number[],
-    query: ListProductRequest
+    query: ListProductRequest,
+    listPartnersIds: number[]
   ): Promise<ListProductGroupedByCompanyResponse | null> {
     const filters = this.setFilters(query);
 
@@ -59,28 +65,22 @@ export class ProductListerGroupedByCompanyRepository {
         },
         created_at: product.created_at,
         updated_at: product.updated_at,
-        company_id: productCompany.id_empresa,
-        company_name: company.nome_fantasia,
+        company_id: productPartner.id_parceiro,
+        company_name: partner.nome_fantasia,
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
-      .innerJoin(
-        company,
-        eq(company.id_empresa, productCompany.id_empresa)
-      )
+      .innerJoin(partner, eq(partner.id_parceiro, productPartner.id_parceiro))
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
       .where(
-        and(
-          inArray(productCompany.id_empresa, companyIds),
-          ...filters
-        )
+        and(inArray(productPartner.id_parceiro, listPartnersIds), ...filters)
       );
 
     const totalResult = await allQuery.execute();
@@ -95,7 +95,7 @@ export class ProductListerGroupedByCompanyRepository {
     }
 
     const bodyWithCompany = this.parseCompany(totalPaginated);
-    
+
     const paging = setPaginationData(
       totalPaginated.length,
       totalResult.length,
@@ -109,10 +109,7 @@ export class ProductListerGroupedByCompanyRepository {
     };
   }
 
-  async listByIds(
-    companyIds: number[],
-    productIds: string[]
-  ): Promise<ProductResponse[]> {
+  async listByIds(productIds: string[]): Promise<ProductResponse[]> {
     const products = await this.db
       .select({
         product_id: product.id_produto,
@@ -149,19 +146,14 @@ export class ProductListerGroupedByCompanyRepository {
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(
-        and(
-          inArray(productCompany.id_empresa, companyIds),
-          inArray(product.id_produto, productIds)
-        )
-      )
+      .where(and(inArray(product.id_produto, productIds)))
       .execute();
 
     return products as unknown as ProductResponse[];
@@ -220,9 +212,9 @@ export class ProductListerGroupedByCompanyRepository {
   }
 
   private parseCompany(products: ProductDto[]): ProductDtoResponse[] {
-    const productsParsed: any  = {};
+    const productsParsed: any = {};
 
-    products.forEach(product => {
+    products.forEach((product) => {
       if (!productsParsed[product.product_id]) {
         productsParsed[product.product_id] = {
           ...product,
@@ -231,11 +223,11 @@ export class ProductListerGroupedByCompanyRepository {
       }
       productsParsed[product.product_id].companies.push({
         company_id: product.company_id,
-        company_name: product.company_name
+        company_name: product.company_name,
       });
 
-      delete productsParsed[product.product_id].company_id
-      delete productsParsed[product.product_id].company_name
+      delete productsParsed[product.product_id].company_id;
+      delete productsParsed[product.product_id].company_name;
     });
 
     return Object.values(productsParsed);

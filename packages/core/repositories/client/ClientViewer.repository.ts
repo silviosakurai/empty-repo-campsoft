@@ -1,15 +1,18 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { client, access } from "@core/models";
+import { client } from "@core/models";
 import { eq, sql, and } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
+<<<<<<< HEAD
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 import {
   ClientWithCompaniesResponse,
   ClientWithListCompaniesResponse,
 } from "@core/interfaces/repositories/client";
+=======
+>>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
 
 @injectable()
 export class ClientViewerRepository {
@@ -17,10 +20,7 @@ export class ClientViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(
-    tokenKeyData: ITokenKeyData,
-    userId: string
-  ): Promise<ViewClientResponse | null> {
+  async view(userId: string): Promise<ViewClientResponse | null> {
     const result = await this.db
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
@@ -35,13 +35,7 @@ export class ClientViewerRepository {
         obs: client.obs,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
-      .where(
-        and(
-          eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`),
-          eq(access.id_empresa, tokenKeyData.company_id)
-        )
-      )
+      .where(and(eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`)))
       .execute();
 
     if (!result.length) {

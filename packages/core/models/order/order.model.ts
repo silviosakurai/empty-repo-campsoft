@@ -20,7 +20,7 @@ export const order = mysqlTable("pedido", {
   id_pedido_anterior: varbinary("id_pedido_anterior", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
   id_vendedor: varbinary("id_vendedor", { length: 16 }),
-  id_empresa: int("id_empresa").notNull(),
+  id_parceiro: int("id_parceiro").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
   id_plano: int("id_plano"),
   recorrencia: mysqlEnum("recorrencia", [

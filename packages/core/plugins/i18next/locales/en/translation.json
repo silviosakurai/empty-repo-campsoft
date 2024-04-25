@@ -58,5 +58,8 @@
   "coupon_code_with_voucher_not_allowed": "Coupon code with voucher not allowed!",
   "product_update_not_allowed": "Product update not allowed!",
   "error_update_product": "Error update products!",
-  "token_not_found": "Token not found."
+  "token_not_found": "Token not found.",
+  "seller_not_found": "Seller Not Found.",
+  "creation_customer_to_payment_failed": "Creation customer to payment failed",
+  "plans_not_found": "Plans not found!"
 }
