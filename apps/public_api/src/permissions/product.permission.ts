@@ -1,7 +1,9 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const productListPermissions = [Permissions.PRODUCT_LIST];
+export const productListPermissions = [PermissionsRoles.PRODUCT_LIST];
 
-export const productViewPermissions = [Permissions.PRODUCT_VIEW];
+export const productViewPermissions = [PermissionsRoles.PRODUCT_VIEW];
 
-export const productCrossSellPermissions = [Permissions.PRODUCT_CROSS_SELL];
+export const productCrossSellPermissions = [
+  PermissionsRoles.PRODUCT_CROSS_SELL,
+];

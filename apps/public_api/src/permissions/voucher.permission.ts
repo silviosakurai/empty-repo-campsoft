@@ -1,3 +1,3 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const voucherViewPermissions = [Permissions.VOUCHER_VIEW];
+export const voucherViewPermissions = [PermissionsRoles.VOUCHER_VIEW];

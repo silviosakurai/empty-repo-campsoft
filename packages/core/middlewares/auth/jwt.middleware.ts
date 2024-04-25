@@ -7,7 +7,7 @@ import { container } from "tsyringe";
 import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto";
 import { createCacheKey } from "@core/common/functions/createCacheKey";
 import { getRootPath } from "@core/common/functions/getRootPath";
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { hasRequiredPermission } from "@core/common/functions/hasRequiredPermission";
 import { FastifyRedis } from "@fastify/redis";
 import { ITokenJwtAccess } from "@core/common/interfaces/ITokenJwtData";
@@ -39,7 +39,7 @@ async function handleApiKeyCache(
 async function authenticateJwt(
   request: FastifyRequest,
   reply: FastifyReply,
-  permissions: Permissions[] | null
+  permissions: PermissionsRoles[] | null
 ): Promise<void> {
   const { t } = request;
   const { redis } = request.server;
@@ -106,7 +106,7 @@ export default fp(async (fastify) => {
     async (
       request: FastifyRequest,
       reply: FastifyReply,
-      permissions: Permissions[] | null = null
+      permissions: PermissionsRoles[] | null = null
     ) => authenticateJwt(request, reply, permissions)
   );
 });

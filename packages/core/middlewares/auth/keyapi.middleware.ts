@@ -7,7 +7,7 @@ import { ViewApiKeyRequest } from "@core/useCases/api/dtos/ViewApiKeyRequest.dto
 import { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import { container } from "tsyringe";
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { hasRequiredPermission } from "@core/common/functions/hasRequiredPermission";
 import { FastifyRedis } from "@fastify/redis";
 
@@ -38,7 +38,7 @@ async function handleApiKeyCache(
 async function authenticateKeyApi(
   request: FastifyRequest,
   reply: FastifyReply,
-  permissions: Permissions[] | null
+  permissions: PermissionsRoles[] | null
 ): Promise<void> {
   const { t } = request;
   const { redis } = request.server;
@@ -98,7 +98,7 @@ export default fp(async (fastify) => {
     async (
       request: FastifyRequest,
       reply: FastifyReply,
-      permissions: Permissions[] | null = null
+      permissions: PermissionsRoles[] | null = null
     ) => authenticateKeyApi(request, reply, permissions)
   );
 });

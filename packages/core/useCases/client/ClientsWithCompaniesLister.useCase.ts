@@ -2,7 +2,7 @@ import { ClientService } from "@core/services";
 import { ListClienttGroupedByCompanyResponse } from "./dtos/ListClientResponse.dto";
 import { ListClientRequest } from "./dtos/ListClientRequest.dto";
 import { injectable } from "tsyringe";
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
@@ -15,7 +15,7 @@ export class ClientsWithCompaniesListerUseCase {
 
   async execute(
     tokenJwtData: ITokenJwtData,
-    permissionsRoute: Permissions[],
+    permissionsRoute: PermissionsRoles[],
     query: ListClientRequest
   ): Promise<ListClienttGroupedByCompanyResponse | null> {
     const filterClientByPermission =

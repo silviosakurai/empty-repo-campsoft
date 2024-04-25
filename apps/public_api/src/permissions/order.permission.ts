@@ -1,15 +1,17 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const orderListPermissions = [Permissions.ORDER_LIST];
+export const orderListPermissions = [PermissionsRoles.ORDER_LIST];
 
-export const orderCreatePermissions = [Permissions.ORDER_CREATE];
+export const orderCreatePermissions = [PermissionsRoles.ORDER_CREATE];
 
-export const orderViewPermissions = [Permissions.ORDER_VIEW];
+export const orderViewPermissions = [PermissionsRoles.ORDER_VIEW];
 
 export const orderNumberPaymentViewPermissions = [
-  Permissions.ORDER_PAYMENTS_VIEW,
+  PermissionsRoles.ORDER_PAYMENTS_VIEW,
 ];
 
-export const orderNumberCancelPermissions = [Permissions.ORDER_CANCEL];
+export const orderNumberCancelPermissions = [PermissionsRoles.ORDER_CANCEL];
 
-export const orderPaymentBoletoPermissions = [Permissions.ORDER_PAYMENT_BOLETO];
+export const orderPaymentBoletoPermissions = [
+  PermissionsRoles.ORDER_PAYMENT_BOLETO,
+];

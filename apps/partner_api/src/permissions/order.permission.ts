@@ -1,3 +1,3 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const orderListPermissions = [Permissions.ORDER_LIST];
+export const orderListPermissions = [PermissionsRoles.ORDER_LIST];

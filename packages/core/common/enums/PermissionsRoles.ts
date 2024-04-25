@@ -1,4 +1,4 @@
-export enum Permissions {
+export enum PermissionsRoles {
   AUTHENTICATION_LOGIN = "authentication_login",
   AUTHENTICATION_TOKEN = "authentication_token",
   BANNER_LIST = "banner_list",

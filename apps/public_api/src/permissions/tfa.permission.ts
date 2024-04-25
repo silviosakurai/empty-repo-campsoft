@@ -1,5 +1,5 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const tfaSendCodePermissions = [Permissions.TFA_SEND_CODE];
+export const tfaSendCodePermissions = [PermissionsRoles.TFA_SEND_CODE];
 
-export const tfaValidateCodePermissions = [Permissions.TFA_VALIDATE_CODE];
+export const tfaValidateCodePermissions = [PermissionsRoles.TFA_VALIDATE_CODE];

@@ -23,7 +23,7 @@ import {
   ITokenJwtAccess,
   ITokenJwtData,
 } from "@core/common/interfaces/ITokenJwtData";
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 
 @injectable()
 export class ApiRepository {
@@ -41,14 +41,14 @@ export class ApiRepository {
     }
 
     const keyData = {
-      acoes: [] as Permissions[],
+      acoes: [] as PermissionsRoles[],
       id_api_key: result[0].id_api_key as number,
       id_parceiro: result[0].id_parceiro as number,
       id_cargo: result[0].id_cargo as number,
     } as ITokenKeyData;
 
     result.forEach((row) => {
-      keyData.acoes.push(row.acao as Permissions);
+      keyData.acoes.push(row.acao as PermissionsRoles);
     });
 
     return keyData;
