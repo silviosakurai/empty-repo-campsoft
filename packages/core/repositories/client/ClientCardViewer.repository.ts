@@ -17,8 +17,8 @@ export class ClientCardViewerRepository {
         external_id: clientCards.id_externo,
         brand: clientCards.brand,
         first_digits: clientCards.first_digits,
-        expiration_month: sql`clientCards.expiration_month`.mapWith(Number),
-        expiration_year: sql`clientCards.expiration_year`.mapWith(Number),
+        expiration_month: sql`${clientCards.expiration_month}`.mapWith(Number),
+        expiration_year: sql`${clientCards.expiration_year}`.mapWith(Number),
       })
       .from(clientCards)
       .where(eq(clientCards.card_id, sql`UUID_TO_BIN(${cardId})`));

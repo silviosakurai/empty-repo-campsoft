@@ -2,8 +2,7 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { clientCards } from "@core/models";
-import { eq, sql } from "drizzle-orm";
-import { desc } from "drizzle-orm";
+import { eq, sql, desc } from "drizzle-orm";
 
 @injectable()
 export class ClientCardListerByClientIdRepository {
@@ -18,8 +17,8 @@ export class ClientCardListerByClientIdRepository {
         external_id: clientCards.id_externo,
         brand: clientCards.brand,
         first_digits: clientCards.first_digits,
-        expiration_month: sql`clientCards.expiration_month`.mapWith(Number),
-        expiration_year: sql`clientCards.expiration_year`.mapWith(Number),
+        expiration_month: sql`${clientCards.expiration_month}`.mapWith(Number),
+        expiration_year: sql`${clientCards.expiration_year}`.mapWith(Number),
       })
       .from(clientCards)
       .orderBy(desc(clientCards.created_at))
