@@ -1,6 +1,7 @@
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { Type } from "@sinclair/typebox";
-import { companySchemaWithUserAndLeader } from "../company/companySchemaWithUserAndLeader";
+import { companySchemaWithUserAndSellers } from "../company/companySchemaWithUserAndSellers";
+import { companySchemaWithUserAndCompanies } from "../company/companySchemaWithUserAndCompanies";
 
 export const userDetailsGroupedByCompanySchema = Type.Object({
   user_id: Type.String({ format: "uuid" }),
@@ -17,5 +18,6 @@ export const userDetailsGroupedByCompanySchema = Type.Object({
     Type.Null(),
   ]),
   photo: Type.Union([Type.String(), Type.Null()]),
-  companies: Type.Array(companySchemaWithUserAndLeader),
+  sellers: Type.Array(companySchemaWithUserAndSellers),
+  companies: Type.Array(companySchemaWithUserAndCompanies),
 });

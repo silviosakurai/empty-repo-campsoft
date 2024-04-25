@@ -3,7 +3,7 @@ import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.
 import { eq, sql, and, SQLWrapper, SQL, or, count } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { client, order, partner } from "@core/models";
+import { client, order, partner, permission, role } from "@core/models";
 import {
   ClientResponse,
   ListWithCompanies,
@@ -41,13 +41,6 @@ export class ClientListerRepository {
       })
       .from(client)
       .leftJoin(order, eq(order.id_cliente, client.id_cliente))
-      .innerJoin(
-        partner,
-        or(
-          eq(partner.id_parceiro, order.id_parceiro),
-          eq(partner.id_parceiro, client.id_parceiro_cadastro)
-        )
-      )
       .where(and(...filters, filterClientByPermission))
       .groupBy();
 
@@ -86,7 +79,8 @@ export class ClientListerRepository {
     const enrichCompanyPromises = result.map(
       async (client: ListWithCompanies) => ({
         ...client,
-        companies: await this.fetchCompanyClient(client.user_id),
+        sellers: await this.fetchSellersClient(client.user_id),
+        companies: await this.fetchCompaniesClient(client.user_id),
       })
     );
 
@@ -95,7 +89,7 @@ export class ClientListerRepository {
     return enrichCompanyAll;
   }
 
-  private async fetchCompanyClient(clientId: string) {
+  private async fetchSellersClient(clientId: string) {
     const companiesQuery = this.db
       .select({
         company_id: partner.id_parceiro,
@@ -107,6 +101,22 @@ export class ClientListerRepository {
       .where(eq(order.id_cliente, sql`UUID_TO_BIN(${clientId})`));
 
     return companiesQuery.execute();
+  }
+
+  private async fetchCompaniesClient(clientId: string) {
+    const positionsQuery = this.db
+      .select({
+        company_id: permission.id_parceiro,
+        company_name: partner.nome_fantasia,
+        position_id: role.id_cargo,
+        position_name: role.cargo,
+      })
+      .from(permission)
+      .innerJoin(role, eq(role.id_cargo, permission.id_cargo))
+      .leftJoin(partner, eq(partner.id_parceiro, permission.id_parceiro))
+      .where(eq(permission.id_cliente, sql`UUID_TO_BIN(${clientId})`));
+
+    return positionsQuery;
   }
 
   private setFilters(query: ListClientRequest): SQLWrapper[] {
