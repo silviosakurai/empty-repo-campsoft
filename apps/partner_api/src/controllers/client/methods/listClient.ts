@@ -14,11 +14,12 @@ export const listClient = async (
   const clientListWithCompaniesUseCase = container.resolve(
     ClientsWithCompaniesListerUseCase
   );
-  const { t, tokenKeyData } = request;
+  const { t, tokenJwtData, permissionsRoute } = request;
 
   try {
     const response = await clientListWithCompaniesUseCase.execute(
-      tokenKeyData.id_parceiro,
+      tokenJwtData,
+      permissionsRoute,
       request.query
     );
 

@@ -10,7 +10,6 @@ export const postProductSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

@@ -1,3 +1,3 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const cartCreatePermissions = [Permissions.CART_CREATE];
+export const cartCreatePermissions = [PermissionsRoles.CART_CREATE];

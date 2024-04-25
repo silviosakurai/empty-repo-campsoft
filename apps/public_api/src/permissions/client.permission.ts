@@ -1,49 +1,51 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const userViewPermissions = [Permissions.USER_VIEW];
+export const userViewPermissions = [PermissionsRoles.USER_VIEW];
 
-export const userCreatePermissions = [Permissions.USER_CREATE];
+export const userCreatePermissions = [PermissionsRoles.USER_CREATE];
 
-export const userUpdatePermissions = [Permissions.USER_UPDATE];
+export const userUpdatePermissions = [PermissionsRoles.USER_UPDATE];
 
-export const userDeletePermissions = [Permissions.USER_DELETE];
+export const userDeletePermissions = [PermissionsRoles.USER_DELETE];
 
-export const userUpdatePhonePermissions = [Permissions.USER_UPDATE_PHONE];
+export const userUpdatePhonePermissions = [PermissionsRoles.USER_UPDATE_PHONE];
 
-export const userUpdatePasswordPermissions = [Permissions.USER_UPDATE_PASSWORD];
+export const userUpdatePasswordPermissions = [
+  PermissionsRoles.USER_UPDATE_PASSWORD,
+];
 
 export const userRecoveryPasswordPermissions = [
-  Permissions.USER_RECOVERY_PASSWORD,
+  PermissionsRoles.USER_RECOVERY_PASSWORD,
 ];
 
 export const userRecoveryPasswordPathPermissions = [
-  Permissions.USER_RECOVERY_PASSWORD,
+  PermissionsRoles.USER_RECOVERY_PASSWORD,
 ];
 
-export const userVoucherPermissions = [Permissions.USER_VOUCHER];
+export const userVoucherPermissions = [PermissionsRoles.USER_VOUCHER];
 
 export const userAddressBillingViewPermissions = [
-  Permissions.USER_ADDRESS_BILLING_VIEW,
+  PermissionsRoles.USER_ADDRESS_BILLING_VIEW,
 ];
 
 export const userAddressShippingViewPermissions = [
-  Permissions.USER_ADDRESS_SHIPPING_VIEW,
+  PermissionsRoles.USER_ADDRESS_SHIPPING_VIEW,
 ];
 
 export const userAddressBillingUpdatePermissions = [
-  Permissions.USER_ADDRESS_BILLING_UPDATE,
+  PermissionsRoles.USER_ADDRESS_BILLING_UPDATE,
 ];
 
 export const userAddressShippingUpdatePermissions = [
-  Permissions.USER_ADDRESS_SHIPPING_UPDATE,
+  PermissionsRoles.USER_ADDRESS_SHIPPING_UPDATE,
 ];
 
 export const userAddressShippingPatchPermissions = [
-  Permissions.USER_ADDRESS_SHIPPING_UPDATE,
+  PermissionsRoles.USER_ADDRESS_SHIPPING_UPDATE,
 ];
 
-export const userImageUpdatePermissions = [Permissions.USER_IMAGE_UPDATE];
+export const userImageUpdatePermissions = [PermissionsRoles.USER_IMAGE_UPDATE];
 
 export const userNewsletterSubscribePermissions = [
-  Permissions.USER_NEWSLETTER_SUBSCRIBE,
+  PermissionsRoles.USER_NEWSLETTER_SUBSCRIBE,
 ];

@@ -1,8 +1,8 @@
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 
 export function hasRequiredPermission(
-  actions: Permissions[],
-  permissions: Permissions[]
+  actions: PermissionsRoles[],
+  permissions: PermissionsRoles[]
 ): boolean {
   if (!permissions?.length || !actions?.length) {
     return false;

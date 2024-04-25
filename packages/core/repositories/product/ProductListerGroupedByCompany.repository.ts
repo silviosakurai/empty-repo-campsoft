@@ -27,7 +27,8 @@ export class ProductListerGroupedByCompanyRepository {
   ) {}
 
   async list(
-    query: ListProductRequest
+    query: ListProductRequest,
+    listPartnersIds: number[]
   ): Promise<ListProductGroupedByCompanyResponse | null> {
     const filters = this.setFilters(query);
 
@@ -78,7 +79,9 @@ export class ProductListerGroupedByCompanyRepository {
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(...filters));
+      .where(
+        and(inArray(productPartner.id_parceiro, listPartnersIds), ...filters)
+      );
 
     const totalResult = await allQuery.execute();
 

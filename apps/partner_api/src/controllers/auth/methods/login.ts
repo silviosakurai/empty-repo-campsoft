@@ -22,28 +22,33 @@ export const login = async (
       password,
     });
 
-    if (responseAuth) {
-      const payload = {
-        clientId: responseAuth.client_id,
-      } as ViewApiJwtRequest;
-
-      const token = await reply.jwtSign(payload);
+    if (!responseAuth) {
+      request.server.logger.info(responseAuth, request.id);
 
       return sendResponse(reply, {
-        message: t('login_success'),
-        httpStatusCode: HTTPStatusCode.OK,
-        data: {
-          result: responseAuth,
-          token,
-        },
+        message: t('login_invalid'),
+        httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
       });
     }
 
-    request.server.logger.info(responseAuth, request.id);
+    const permissions = await loginAuthUseCase.getPermissions(
+      responseAuth.client_id
+    );
+
+    const payload = {
+      clientId: responseAuth.client_id,
+    } as ViewApiJwtRequest;
+
+    const token = await reply.jwtSign(payload);
 
     return sendResponse(reply, {
-      message: t('login_invalid'),
-      httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      message: t('login_success'),
+      httpStatusCode: HTTPStatusCode.OK,
+      data: {
+        result: responseAuth,
+        permissions,
+        token,
+      },
     });
   } catch (error) {
     request.server.logger.error(error, request.id);

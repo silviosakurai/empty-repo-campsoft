@@ -6,7 +6,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { LoggerService } from "@core/services/logger.service";
-import { Permissions } from "@core/common/enums/Permissions";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -16,12 +16,12 @@ declare module "fastify" {
     authenticateKeyApi: (
       request: FastifyRequest,
       reply: FastifyReply,
-      permissions: Permissions[] | null
+      permissions: PermissionsRoles[] | null
     ) => void;
     authenticateJwt: (
       request: FastifyRequest,
       reply: FastifyReply,
-      permissions: Permissions[] | null
+      permissions: PermissionsRoles[] | null
     ) => void;
     authenticateTfa: (request: FastifyRequest, reply: FastifyReply) => void;
     decodeToken: (token: string) => Promise<null | string | object>;
@@ -32,6 +32,7 @@ declare module "fastify" {
     tokenKeyData: ITokenKeyData;
     tokenJwtData: ITokenJwtData;
     tokenTfaData: ITokenTfaData;
+    permissionsRoute: PermissionsRoles[];
     module: RouteModule;
   }
 }

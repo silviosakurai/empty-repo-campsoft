@@ -1,3 +1,3 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const bannerListPermissions = [Permissions.BANNER_LIST];
+export const bannerListPermissions = [PermissionsRoles.BANNER_LIST];

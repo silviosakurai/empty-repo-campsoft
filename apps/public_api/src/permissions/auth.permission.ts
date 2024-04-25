@@ -1,5 +1,5 @@
-import { Permissions } from '@core/common/enums/Permissions';
+import { PermissionsRoles } from '@core/common/enums/PermissionsRoles';
 
-export const authLoginPermissions = [Permissions.AUTHENTICATION_LOGIN];
+export const authLoginPermissions = [PermissionsRoles.AUTHENTICATION_LOGIN];
 
-export const authTokenPermissions = [Permissions.AUTHENTICATION_TOKEN];
+export const authTokenPermissions = [PermissionsRoles.AUTHENTICATION_TOKEN];
