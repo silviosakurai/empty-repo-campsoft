@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { product, productPartner, productType, partner } from "@core/models";
-import { eq, and, inArray, count, SQL, asc, desc } from "drizzle-orm";
+import { eq, and, inArray, SQL, asc, desc } from "drizzle-orm";
 import {
   ListProductGroupedByCompany,
   ProductList,
@@ -80,7 +80,7 @@ export class ProductListerGroupedByCompanyRepository {
       .offset((query.current_page - 1) * query.per_page);
     const totalPaginated = await paginatedQuery.execute();
 
-    if (!totalPaginated.length) {
+    if (!totalPaginated?.length) {
       return [] as ListProductGroupedByCompany[];
     }
 
@@ -145,7 +145,7 @@ export class ProductListerGroupedByCompanyRepository {
 
     const countResult = await this.db
       .select({
-        count: count(),
+        product_id: product.id_produto,
       })
       .from(product)
       .innerJoin(
@@ -161,7 +161,11 @@ export class ProductListerGroupedByCompanyRepository {
       .groupBy(product.id_produto)
       .execute();
 
-    return countResult[0].count;
+    if (!countResult?.length) {
+      return 0;
+    }
+
+    return countResult.length;
   }
 
   private async enrichCompany(
@@ -268,6 +272,11 @@ export class ProductListerGroupedByCompanyRepository {
         query.sort_order === SortOrder.ASC
           ? asc(product.conteudista_nome)
           : desc(product.conteudista_nome),
+
+      [ProductOrderPartner.created_at]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.created_at)
+          : desc(product.created_at),
 
       default: () =>
         query.sort_order === SortOrder.ASC

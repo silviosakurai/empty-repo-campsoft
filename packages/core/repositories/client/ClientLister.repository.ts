@@ -80,6 +80,10 @@ export class ClientListerRepository {
       .where(filters)
       .execute();
 
+    if (!countResult?.length) {
+      return 0;
+    }
+
     return countResult[0].count;
   }
 

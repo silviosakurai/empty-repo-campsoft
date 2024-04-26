@@ -42,7 +42,7 @@ export const listProductByCompanySchema = {
     sort_by: Type.Optional(
       Type.String({
         enum: Object.values(ProductOrderPartner),
-        default: ProductOrderPartner.product_id,
+        default: ProductOrderPartner.created_at,
       })
     ),
     sort_order: Type.Optional(
