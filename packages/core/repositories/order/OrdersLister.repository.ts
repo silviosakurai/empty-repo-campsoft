@@ -128,6 +128,10 @@ export class OrdersListerRepository {
       )
       .execute();
 
+    if (!countResult?.length) {
+      return 0;
+    }
+
     return countResult[0].count;
   }
 
@@ -489,6 +493,10 @@ export class OrdersListerRepository {
       .from(order)
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
+
+    if (!result?.length) {
+      return false;
+    }
 
     return result[0].count > 0;
   }

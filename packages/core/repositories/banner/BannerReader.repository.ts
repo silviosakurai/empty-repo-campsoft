@@ -128,6 +128,10 @@ export class BannerReaderRepository {
       .where(whereCondition)
       .execute();
 
+    if (!countResult?.length) {
+      return 0;
+    }
+
     return countResult[0].count;
   }
 
