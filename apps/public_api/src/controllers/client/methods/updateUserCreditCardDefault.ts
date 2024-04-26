@@ -15,7 +15,7 @@ export const updateUserCreditCardDefault = async (
   const { t, params, tokenJwtData, body } = request;
 
   try {
-    const result = await service.update({
+    const result = await service.update(t, {
       cardId: params.id,
       clientId: tokenJwtData.clientId,
       default: body.default,
@@ -33,6 +33,13 @@ export const updateUserCreditCardDefault = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+
+    if (error instanceof Error) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     return sendResponse(reply, {
       message: t('internal_server_error'),
