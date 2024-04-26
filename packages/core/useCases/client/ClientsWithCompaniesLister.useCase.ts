@@ -9,6 +9,7 @@ import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
+import { FastifyRedis } from "@fastify/redis";
 
 @injectable()
 export class ClientsWithCompaniesListerUseCase {
@@ -20,12 +21,14 @@ export class ClientsWithCompaniesListerUseCase {
   async execute(
     tokenJwtData: ITokenJwtData,
     permissionsRoute: PermissionsRoles[],
-    query: ListClientRequest
+    query: ListClientRequest,
+    redis: FastifyRedis
   ): Promise<ListClienttGroupedByCompanyResponse | null> {
     const filterClientByPermission =
       await this.controlAccessService.filterClientByPermission(
         tokenJwtData,
-        permissionsRoute
+        permissionsRoute,
+        redis
       );
 
     const [listClientCompanies, total] = await Promise.all([

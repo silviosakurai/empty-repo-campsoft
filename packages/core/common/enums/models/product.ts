@@ -45,4 +45,5 @@ export enum ProductOrderPartner {
   slug = "slug",
   status = "status",
   content_provider_name = "content_provider_name",
+  created_at = "created_at",
 }

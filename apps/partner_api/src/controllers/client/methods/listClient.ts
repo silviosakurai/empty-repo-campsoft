@@ -15,12 +15,14 @@ export const listClient = async (
     ClientsWithCompaniesListerUseCase
   );
   const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
 
   try {
     const response = await clientListWithCompaniesUseCase.execute(
       tokenJwtData,
       permissionsRoute,
-      request.query
+      request.query,
+      redis
     );
 
     if (!response) {
