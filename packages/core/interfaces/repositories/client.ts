@@ -53,6 +53,7 @@ export interface ClientListResponse {
   gender: string | null;
   company_id: number;
   company_name: string | null;
+  user_type?: number | null;
 }
 
 export interface ClientWithCompaniesListResponse {
@@ -61,6 +62,16 @@ export interface ClientWithCompaniesListResponse {
   first_name: string;
   last_name: string;
   companies: Company[] | null;
+}
+
+export interface ClientCardRepositoryInput {
+  expiration_month: number;
+  expiration_year: number;
+  externalId: string;
+  brand?: string;
+  default: boolean;
+  first4Digits: string;
+  last4Digits?: string;
 }
 
 export interface ListClientByGroupAndPartner {

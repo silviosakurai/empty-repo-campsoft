@@ -61,5 +61,6 @@
   "token_not_found": "Token not found.",
   "seller_not_found": "Seller Not Found.",
   "creation_customer_to_payment_failed": "Creation customer to payment failed",
+  "something_went_wrong_to_generate_credit_card": "Something went went wrong to generate credit card",
   "plans_not_found": "Plans not found!"
 }

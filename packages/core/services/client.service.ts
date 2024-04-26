@@ -11,6 +11,7 @@ import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientR
 import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import {
+  ClientCardRepositoryInput,
   ClientEmailCreatorInput,
   FindClientByCpfEmailPhoneInput,
   FindClientByEmailPhoneInput,
@@ -38,6 +39,10 @@ import { ClientPaymentCreatorRepository } from "@core/repositories/client/Client
 import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { ClientCardViewerRepository } from "@core/repositories/client/ClientCardViewer.repository";
+import { ClientCardCreatorRepository } from "@core/repositories/client/ClientCardCreator.repository";
+import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/ClientCardDefaultUpdater.repository";
+import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 import { SQL } from "drizzle-orm";
 
@@ -64,7 +69,11 @@ export class ClientService {
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
     private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
-    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository
+    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository,
+    private readonly clientCardViewerRepository: ClientCardViewerRepository,
+    private readonly clientCardCreatorRepository: ClientCardCreatorRepository,
+    private readonly cardDefaultUpdaterRepository: ClientCardDefaultUpdaterRepository,
+    private readonly cardListerByClientIdRepository: ClientCardListerByClientIdRepository
   ) {}
 
   view = async (userId: string) => {
@@ -222,5 +231,28 @@ export class ClientService {
 
   viewPaymentClient = async (clientId: string) => {
     return this.clientPaymentViewerRepository.view(clientId);
+  };
+
+  viewCreditCard = async (cardId: string) => {
+    return this.clientCardViewerRepository.view(cardId);
+  };
+
+  createCreditCard = async (
+    clientId: string,
+    input: ClientCardRepositoryInput
+  ) => {
+    return this.clientCardCreatorRepository.create(clientId, input);
+  };
+
+  updateDefaultCard = async (input: {
+    clientId: string;
+    cardId: string;
+    default: boolean;
+  }) => {
+    return this.cardDefaultUpdaterRepository.create(input);
+  };
+
+  listCreditCards = async (clientId: string) => {
+    return this.cardListerByClientIdRepository.list(clientId);
   };
 }

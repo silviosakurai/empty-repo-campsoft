@@ -7,7 +7,7 @@ import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
 
 @injectable()
-export class PayerByBoletoByOrderIdUseCase {
+export class PayerPixByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
@@ -19,17 +19,17 @@ export class PayerByBoletoByOrderIdUseCase {
     tokenKey: ITokenKeyData,
     orderId: string
   ) {
-    const { order, externalId, sellerId } =
-      await this.orderWithPaymentReaderUseCase.view(t, tokenKey, orderId);
+    const { order, sellerId } = await this.orderWithPaymentReaderUseCase.view(
+      t,
+      tokenKey,
+      orderId
+    );
 
-    const result =
-      await this.paymentGatewayService.createTransactionSimpleTicket({
-        amount: +order.total_price * 100,
-        customerId: externalId,
-        description: order.observation,
-        reference_id: order.order_id,
-        sellerId,
-      });
+    const result = await this.paymentGatewayService.createTransactionPix({
+      amount: +order.total_price * 100,
+      description: order.observation,
+      sellerId,
+    });
 
     if (!result.data) {
       return result;
@@ -37,15 +37,19 @@ export class PayerByBoletoByOrderIdUseCase {
 
     await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
       paymentTransactionId: result.data.id,
-      paymentLink: result.data.payment_method.url,
+      paymentLink: result.data.payment_method.qr_code.emv,
       dueDate: result.data.payment_method.expiration_date,
-      barcode: result.data.payment_method.barcode,
     });
+
+    const pixCodeAsBase64 = Buffer.from(
+      result.data.payment_method.qr_code.emv
+    ).toString("base64");
 
     return {
       data: {
-        url: result.data.payment_method.url,
-        code: result.data.payment_method.barcode,
+        url: result.data.payment_method.qr_code.emv,
+        code: pixCodeAsBase64,
+        expire_at: result.data.payment_method.expiration_date,
       },
       status: true,
     } as ResponseService;

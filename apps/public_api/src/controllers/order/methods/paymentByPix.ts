@@ -1,16 +1,16 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import { PayerByBoletoByOrderIdUseCase } from '@core/useCases/order/PayerBoletoByOrderId.useCase';
+import { PayerPixByOrderIdUseCase } from '@core/useCases/order/PayerPixByOrderId.useCase';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 
-export const paymentByBoleto = async (
+export const paymentByPix = async (
   request: FastifyRequest<{
     Params: { orderNumber: string };
   }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(PayerByBoletoByOrderIdUseCase);
+  const service = container.resolve(PayerPixByOrderIdUseCase);
 
   const { t, params, tokenKeyData } = request;
 
@@ -30,7 +30,7 @@ export const paymentByBoleto = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
-
+    console.log(error);
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

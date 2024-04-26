@@ -12,7 +12,8 @@ export interface ITransactionCardRequest extends IHeaderTransactionRequest {
 
 export interface ITransactionCardIdRequest extends IHeaderTransactionRequest {
   cardId: string;
-  usage: string;
+  usage: "single_use";
+  reference_id: string;
 }
 
 export interface ITransactionCardResponse {
