@@ -7,5 +7,6 @@ export default async function webhooksRoutes(server: FastifyInstance) {
 
   server.post('/webhook/payments', {
     handler: controller.paymentWebhook,
+    websocket: true,
   });
 }
