@@ -4,27 +4,29 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { BannerItemUpdaterUseCase } from '@core/useCases/banner/BannerItemUpdater.usecase';
 import {
+  BannerItemUpdaterParamsQueryDto,
   BannerItemUpdaterParamsRequestDto,
-  BannerItemUpdaterRequestDto
+  BannerItemUpdaterRequestDto,
 } from '@core/useCases/banner/dtos/BannerItemUpdaterRequest.dto';
 
 export const updateBannerItem = async (
   request: FastifyRequest<{
     Body: BannerItemUpdaterRequestDto;
     Params: BannerItemUpdaterParamsRequestDto;
+    Querystring: BannerItemUpdaterParamsQueryDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t, tokenJwtData } = request;
+  const { t } = request;
   const bannerItemUpdaterUseCase = container.resolve(BannerItemUpdaterUseCase);
 
   try {
     const response = await bannerItemUpdaterUseCase.update(
       t,
-      tokenJwtData,
+      request.query.company_id,
       parseInt(request.params.bannerId),
       parseInt(request.params.bannerItemId),
-      request.body,
+      request.body
     );
 
     if (!response) {

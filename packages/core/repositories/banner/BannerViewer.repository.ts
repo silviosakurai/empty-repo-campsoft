@@ -34,7 +34,7 @@ export class BannerViewerRepository {
       .from(banner)
       .where(and(
         eq(banner.status, BannerStatus.ACTIVE),
-        inArray(banner.id_empresa, companyIds),
+        inArray(banner.id_parceiro, companyIds),
         eq(banner.id_banner, bannerId),
       ))
       .execute();

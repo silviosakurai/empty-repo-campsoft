@@ -11,6 +11,8 @@ import { ClientListerGroupTreeRepository } from "@core/repositories/client/Clien
 import { ListClientByGroupAndPartner } from "@core/interfaces/repositories/client";
 import { FastifyRedis } from "@fastify/redis";
 import { createCacheKey } from "@core/common/functions/createCacheKey";
+import { createSha256Hash } from "@core/common/functions/createSha256Hash";
+import { convertSqlToString } from "@core/common/functions/convertSqlToString";
 
 @injectable()
 export class ControlAccessService {
@@ -79,7 +81,9 @@ export class ControlAccessService {
     clientId: string,
     redis: FastifyRedis
   ): Promise<ListClientByGroupAndPartner[]> => {
-    const cacheGroup = createCacheKey("clientGroup", clientId);
+    const sqlString = convertSqlToString(whereConditionGroupContext);
+    const hashOfCondition = createSha256Hash(sqlString);
+    const cacheGroup = createCacheKey("clientGroup", clientId, hashOfCondition);
 
     const cacheClientsGroups = await redis.get(cacheGroup);
     if (cacheClientsGroups) {

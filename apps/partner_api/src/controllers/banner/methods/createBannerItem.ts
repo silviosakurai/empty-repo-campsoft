@@ -19,7 +19,7 @@ export const createBannerItem = async (
   try {
     const response = await bannerItemCreatorUseCase.create(
       parseInt(request.params.bannerId),
-      request.body,
+      request.body
     );
 
     if (!response) {

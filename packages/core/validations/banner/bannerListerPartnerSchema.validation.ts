@@ -27,6 +27,7 @@ export const bannerListerPartnerSchema = {
     ...pagingRequestSchema.properties,
     location: Type.Optional(Type.String()),
     type: Type.Optional(Type.Integer({ minimum: 0 })),
+    company_id: Type.Array(Type.Number()),
   }),
   response: {
     200: Type.Object(

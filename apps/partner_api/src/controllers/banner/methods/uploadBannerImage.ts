@@ -6,26 +6,30 @@ import { BannerImageUploaderUseCase } from '@core/useCases/banner/BannerImageUpl
 import {
   BannerImageRequestParamsDto,
   BannerImageRequestBodyDto,
+  BannerImageRequestQueryDto,
 } from '@core/useCases/banner/dtos/BannerImageUploaderRequest.dto';
 
 export const uploadBannerImage = async (
   request: FastifyRequest<{
     Params: BannerImageRequestParamsDto;
     Body: BannerImageRequestBodyDto;
+    Querystring: BannerImageRequestQueryDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t, tokenJwtData } = request;
-  const bannerImageUploaderUseCase = container.resolve(BannerImageUploaderUseCase);
+  const { t } = request;
+  const bannerImageUploaderUseCase = container.resolve(
+    BannerImageUploaderUseCase
+  );
 
   try {
     const response = await bannerImageUploaderUseCase.upload(
       t,
-      tokenJwtData,
+      request.query.company_id,
       parseInt(request.params.bannerId),
       parseInt(request.params.bannerItemId),
       request.params.type,
-      request.body,
+      request.body
     );
 
     if (!response) {
@@ -41,7 +45,7 @@ export const uploadBannerImage = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.log('error:', error)
+    console.log('error:', error);
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {
