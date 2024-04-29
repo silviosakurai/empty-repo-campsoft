@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { setPaginationData } from "@core/common/functions/createPaginationData";
-import {
-  ClientWithListCompaniesResponse,
-  ClientWithCompaniesResponse,
-} from "@core/interfaces/repositories/client";
-=======
->>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
 import * as schema from "@core/models";
 import {
   ListClientRequest,
@@ -205,54 +197,6 @@ export class ClientListerRepository {
 
     if (query.name) {
       filters = and(filters, eq(client.nome, query.name));
-      isFilterApplied = true;
-    }
-
-<<<<<<< HEAD
-  private parseCompany(
-    clients: ClientWithCompaniesResponse[]
-  ): ClientWithListCompaniesResponse[] {
-    const clientsParsed: any = {};
-
-    clients.forEach((client) => {
-      if (!clientsParsed[client.user_id]) {
-        clientsParsed[client.user_id] = {
-          ...client,
-          companies: [] as any,
-        };
-      }
-      clientsParsed[client?.user_id].companies.push({
-        company_id: client.company_id,
-        company_name: client.company_name,
-        user_type: client.user_type,
-        leader_id: "",
-      });
-
-      delete clientsParsed[client.user_id].company_id;
-      delete clientsParsed[client.user_id].company_name;
-      delete clientsParsed[client.user_id].user_type;
-    });
-=======
-    if (query.position_id) {
-      filters = isFilterApplied
-        ? and(filters, eq(permission.id_cargo, query.position_id))
-        : and(
-            filterClientByPermission,
-            eq(permission.id_cargo, query.position_id)
-          );
-
-      isFilterApplied = true;
-    }
-
-    if (query.company_id) {
-      filters = isFilterApplied
-        ? and(filters, eq(permission.id_parceiro, query.company_id))
-        : and(
-            filterClientByPermission,
-            eq(permission.id_parceiro, query.company_id)
-          );
->>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
-
       isFilterApplied = true;
     }
 

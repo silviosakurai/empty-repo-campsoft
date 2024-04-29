@@ -2,17 +2,15 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { client } from "@core/models";
-import { eq, sql, and } from "drizzle-orm";
+import { eq, sql, and, SQL } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-<<<<<<< HEAD
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 import {
-  ClientWithCompaniesResponse,
-  ClientWithListCompaniesResponse,
+  ClientListResponse,
+  ClientWithCompaniesListResponse,
+  CompanyResponse,
 } from "@core/interfaces/repositories/client";
-=======
->>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
 
 @injectable()
 export class ClientViewerRepository {
@@ -45,7 +43,10 @@ export class ClientViewerRepository {
     return result[0] as unknown as ViewClientResponse;
   }
 
-  async viewById(userId: string): Promise<ViewClientByIdResponse | null> {
+  async viewById(
+    filterClientByPermission: SQL<unknown> | undefined,
+    userId: string
+  ): Promise<ViewClientByIdResponse | null> {
     const result = await this.db
       .select({
         user_id: sql`BIN_TO_UUID(${schema.client.id_cliente})`.mapWith(String),
@@ -61,44 +62,77 @@ export class ClientViewerRepository {
         phone: schema.client.telefone,
         cpf: schema.client.cpf,
         gender: schema.client.sexo,
-        company_id: schema.company.id_empresa,
-        company_name: schema.company.nome_fantasia,
-        user_type: schema.access.id_acesso_tipo,
+        photo: client.foto,
+        obs: client.obs,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
-      .innerJoin(
-        schema.company,
-        eq(schema.access.id_empresa, schema.company.id_empresa)
+      .leftJoin(schema.order, eq(schema.order.id_cliente, client.id_cliente))
+      .where(
+        and(
+          filterClientByPermission,
+          eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`)
+        )
       )
-      .where(eq(client.id_cliente, sql`UUID_TO_BIN(${userId})`))
       .execute();
-    console.log(userId);
+
     if (!result.length) {
       return null;
     }
 
-    const resultWithCompanies = this.parseCompany(result);
+    const resultWithCompanies = await this.enrichCompanyClient(result);
     return resultWithCompanies as unknown as ViewClientByIdResponse;
   }
 
-  private parseCompany(
-    clients: ClientWithCompaniesResponse[]
-  ): ClientWithListCompaniesResponse {
-    const clientParsed = {
-      ...clients[0],
-      companies: [] as any,
+  private async enrichCompanyClient(
+    client: ClientListResponse[]
+  ): Promise<ClientWithCompaniesListResponse> {
+    const clientWithCompanies = {
+      ...client[0],
+      sellers: await this.fetchSellersClient(client[0].user_id),
+      companies: await this.fetchCompaniesClient(client[0].user_id),
     };
 
-    clients.forEach((client) => {
-      clientParsed.companies.push({
-        company_id: client.company_id,
-        company_name: client.company_name,
-        user_type: client.user_type,
-        leader_id: "",
-      });
-    });
+    return clientWithCompanies;
+  }
 
-    return clientParsed;
+  private async fetchCompaniesClient(clientId: string) {
+    const positionsQuery = this.db
+      .select({
+        company_id: schema.permission.id_parceiro,
+        company_name: schema.partner.nome_fantasia,
+        position_id: schema.role.id_cargo,
+        position_name: schema.role.cargo,
+      })
+      .from(schema.permission)
+      .innerJoin(
+        schema.role,
+        eq(schema.role.id_cargo, schema.permission.id_cargo)
+      )
+      .leftJoin(
+        schema.partner,
+        eq(schema.partner.id_parceiro, schema.permission.id_parceiro)
+      )
+      .where(eq(schema.permission.id_cliente, sql`UUID_TO_BIN(${clientId})`));
+
+    return positionsQuery;
+  }
+
+  private async fetchSellersClient(clientId: string) {
+    const companiesQuery = this.db
+      .select({
+        company_id: schema.partner.id_parceiro,
+        company_name: schema.partner.nome_fantasia,
+        seller_id: sql`BIN_TO_UUID(${schema.order.id_vendedor})`.mapWith(
+          String
+        ),
+      })
+      .from(schema.partner)
+      .innerJoin(
+        schema.order,
+        eq(schema.order.id_parceiro, schema.partner.id_parceiro)
+      )
+      .where(eq(schema.order.id_cliente, sql`UUID_TO_BIN(${clientId})`));
+
+    return companiesQuery.execute();
   }
 }

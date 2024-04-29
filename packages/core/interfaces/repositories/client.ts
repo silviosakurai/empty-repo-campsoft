@@ -1,3 +1,5 @@
+import { ClientStatus } from "@core/common/enums/models/client";
+
 export interface FindClientByCpfEmailPhoneInput {
   cpf: string;
   email: string;
@@ -36,51 +38,41 @@ export interface IUserExistsFunction {
   phone: string;
 }
 
-interface Company {
-  company_id: number;
-  company_name: string;
+export interface CompanyResponse {
+  company_id: number | null;
+  company_name: string | null;
+  position_id: number | null;
+  position_name: string | null;
 }
 
-<<<<<<< HEAD
-export interface ClientWithCompaniesResponse {
-=======
 export interface ClientListResponse {
->>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3
   user_id: string;
+  status: ClientStatus;
   name: string | null;
   first_name: string | null;
   last_name: string | null;
-  birthday: string;
+  birthday: string | null;
   email: string | null;
   phone: string | null;
   cpf: string | null;
   gender: string | null;
-  company_id: number;
-  company_name: string | null;
-<<<<<<< HEAD
-  user_type: number | null;
-}
-
-export interface ClientWithListCompaniesResponse {
-  user_id: string | null;
-  name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  companies: Company[] | null;
-}
-=======
 }
 
 export interface ClientWithCompaniesListResponse {
   user_id: string;
-  name: string;
-  first_name: string;
-  last_name: string;
-  companies: Company[] | null;
+  status: ClientStatus;
+  name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  birthday: string | null;
+  email: string | null;
+  phone: string | null;
+  cpf: string | null;
+  gender: string | null;
+  companies: CompanyResponse[];
 }
 
 export interface ListClientByGroupAndPartner {
   id_cliente: string;
   id_parceiro: number;
 }
->>>>>>> e9bac1769e682718ba4994a18357fc2e3e4d39e3

@@ -71,8 +71,14 @@ export class ClientService {
     return this.clientViewerRepository.view(userId);
   };
 
-  viewById = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    return this.clientViewerRepository.viewById(userId);
+  viewById = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    userId: string
+  ) => {
+    return this.clientViewerRepository.viewById(
+      filterClientByPermission,
+      userId
+    );
   };
 
   viewBilling = async (userId: string) => {
