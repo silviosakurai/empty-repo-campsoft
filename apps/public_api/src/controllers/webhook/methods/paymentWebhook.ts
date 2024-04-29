@@ -6,6 +6,8 @@ export const paymentWebhook = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
+  request.server.logger.trace(JSON.stringify(request), 'payment-webhook');
+
   console.log(request.body);
   console.log(request.params);
   console.log(request.query);
