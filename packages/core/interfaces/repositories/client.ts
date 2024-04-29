@@ -56,9 +56,6 @@ export interface ClientListResponse {
   phone: string | null;
   cpf: string | null;
   gender: string | null;
-  company_id: number;
-  company_name: string | null;
-  user_type?: number | null;
 }
 
 export interface ClientWithCompaniesListResponse {

@@ -4,6 +4,7 @@ import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { ViewClientByIdResponse } from "./dtos/ViewClientByIdResponse.dto";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ControlAccessService } from "@core/services/controlAccess.service";
+import { FastifyRedis } from "@fastify/redis";
 
 @injectable()
 export class ClientByIdViewerUseCase {
@@ -15,12 +16,14 @@ export class ClientByIdViewerUseCase {
   async execute(
     tokenJwtData: ITokenJwtData,
     permissionsRoute: PermissionsRoles[],
-    userId: string
+    userId: string,
+    redis: FastifyRedis
   ): Promise<ViewClientByIdResponse | null> {
     const filterClientByPermission =
       await this.controlAccessService.filterClientByPermission(
         tokenJwtData,
-        permissionsRoute
+        permissionsRoute,
+        redis
       );
 
     return this.clientService.viewById(filterClientByPermission, userId);

@@ -12,12 +12,14 @@ export const viewClient = async (
 ) => {
   const clientViewerUseCase = container.resolve(ClientByIdViewerUseCase);
   const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
 
   try {
     const response = await clientViewerUseCase.execute(
       tokenJwtData,
       permissionsRoute,
-      request.params.userId
+      request.params.userId,
+      redis
     );
 
     if (!response) {
