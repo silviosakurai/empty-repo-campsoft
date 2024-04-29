@@ -27,6 +27,9 @@ export const bannerItemUpdaterPartnerSchema = {
     bannerId: Type.String(),
     bannerItemId: Type.String(),
   }),
+  querystring: Type.Object({
+    company_id: Type.Array(Type.Number()),
+  }),
   body: bannerItemUpdaterRequestSchema,
   response: {
     200: Type.Object(

@@ -2,9 +2,6 @@ import { injectable } from "tsyringe";
 import { BannerService } from "@core/services/banner.service";
 import { BannerItemUpdaterRequestDto } from "./dtos/BannerItemUpdaterRequest.dto";
 import { TFunction } from "i18next";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { checkIfCompanyHasAccess } from "@core/common/functions/checkIfCompanyHasAccess";
-import { AccessType } from "@core/common/enums/models/access";
 import { BannerNotFoundError } from "@core/common/exceptions/BannerNotFoundError";
 import { BannerItemNotFoundError } from "@core/common/exceptions/BannerItemNotFoundError";
 
@@ -14,14 +11,12 @@ export class BannerItemUpdaterUseCase {
 
   async update(
     t: TFunction<"translation", undefined>,
-    tokenJwtData: ITokenJwtData,
+    companyIds: number[],
     bannerId: number,
     bannerItemId: number,
     bannerBody: BannerItemUpdaterRequestDto,
   ): Promise<boolean> {
-    const companyIdsAllowed = checkIfCompanyHasAccess(tokenJwtData.access, AccessType.PRODUCT_MANAGEMENT);
-
-    const banner = await this.bannerService.viewByPartner(companyIdsAllowed, bannerId);
+    const banner = await this.bannerService.viewByPartner(companyIds, bannerId);
 
     if (!banner) {
       throw new BannerNotFoundError(t("banner_not_found"));

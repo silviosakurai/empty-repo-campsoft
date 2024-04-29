@@ -15,9 +15,7 @@ export const createBanner = async (
   const bannerCreatorUseCase = container.resolve(BannerCreatorUseCase);
 
   try {
-    const response = await bannerCreatorUseCase.create(
-      request.body,
-    );
+    const response = await bannerCreatorUseCase.create(request.body);
 
     if (!response) {
       request.server.logger.warn(response, request.id);

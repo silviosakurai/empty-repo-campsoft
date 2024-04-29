@@ -5,22 +5,17 @@ import {
   BannerReaderResponseItem,
 } from "./dtos/BannerReaderResponse.dto";
 import { BannerService } from "@core/services/banner.service";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { AccessType } from "@core/common/enums/models/access";
-import { checkIfCompanyHasAccess } from "@core/common/functions/checkIfCompanyHasAccess";
 
 @injectable()
 export class BannerListerUseCase {
   constructor(private readonly bannerService: BannerService) {}
 
   async list(
-    tokenJwtData: ITokenJwtData,
+    companyIds: number[],
     input: BannerReaderRequestDto
   ): Promise<BannerReaderResponseDto | null> {
-    const companyIdsAllowed = checkIfCompanyHasAccess(tokenJwtData.access, AccessType.PRODUCT_MANAGEMENT);
-
-    const bannersResult = await this.bannerService.listByPartner(companyIdsAllowed, input);
-    const count = await this.bannerService.countTotalByPartner(companyIdsAllowed, input);
+    const bannersResult = await this.bannerService.listByPartner(companyIds, input);
+    const count = await this.bannerService.countTotalByPartner(companyIds, input);
 
     if (!bannersResult.length) {
       return this.emptyResult(input);

@@ -15,7 +15,7 @@ export class BannerCreatorRepository {
       .insert(banner)
       .values({
         local: input.location,
-        id_empresa: input.business_id,
+        id_parceiro: input.business_id,
         id_banner_tipo: input.type,
         banner: input.banner_name,
       })

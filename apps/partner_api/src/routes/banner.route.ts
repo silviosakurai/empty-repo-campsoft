@@ -12,61 +12,89 @@ import {
   bannerItemDeleterPartnerSchema,
   bannerImageUploaderPartnerSchema,
 } from '@core/validations/banner';
+import { bannerCreatePermissions, bannerDeletePermissions, bannerListPermissions, bannerUpdatePermissions, bannerViewPermissions } from '@/permissions';
 
 export default async function bannerRoutes(server: FastifyInstance) {
   const bannerController = container.resolve(BannerController);
 
   server.get('/banners', {
     schema: bannerListerPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.list,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerListPermissions),
+    ],
   });
 
   server.get('/banners/:bannerId', {
     schema: bannerViewerPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.view,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerViewPermissions),
+    ],
   });
 
   server.post('/banners', {
     schema: bannerCreatorPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.create,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerCreatePermissions),
+    ],
   });
 
   server.post('/banners/:bannerId/items', {
     schema: bannerItemCreatorPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.createItem,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerCreatePermissions),
+    ],
   });
 
   server.post('/banners/:bannerId/items/:bannerItemId/images/:type', {
     schema: bannerImageUploaderPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.uploadBannerImage,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerCreatePermissions),
+    ],
   });
 
   server.put('/banners/:bannerId', {
     schema: bannerUpdaterPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.update,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerUpdatePermissions),
+    ],
   });
 
   server.put('/banners/:bannerId/items/:bannerItemId', {
     schema: bannerItemUpdaterPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.updateItem,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerUpdatePermissions),
+    ],
   });
 
   server.delete('/banners/:bannerId', {
     schema: bannerDeleterPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.delete,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerDeletePermissions),
+    ],
   });
 
   server.delete('/banners/:bannerId/items/:bannerItemId', {
     schema: bannerItemDeleterPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: bannerController.deleteItem,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, bannerDeletePermissions),
+    ],
   });
 }
