@@ -56,6 +56,9 @@ export interface ClientListResponse {
   phone: string | null;
   cpf: string | null;
   gender: string | null;
+  company_id: number;
+  company_name: string | null;
+  user_type?: number | null;
 }
 
 export interface ClientWithCompaniesListResponse {
@@ -70,6 +73,16 @@ export interface ClientWithCompaniesListResponse {
   cpf: string | null;
   gender: string | null;
   companies: CompanyResponse[];
+}
+
+export interface ClientCardRepositoryInput {
+  expiration_month: number;
+  expiration_year: number;
+  externalId: string;
+  brand?: string;
+  default: boolean;
+  first4Digits: string;
+  last4Digits?: string;
 }
 
 export interface ListClientByGroupAndPartner {

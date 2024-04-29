@@ -4,12 +4,10 @@ import { createTransactionFullTicket } from "./payment/createTransactionFullTick
 import { createTransactionSimpleTicket } from "./payment/createTransactionSimpleTicket";
 import { createTransactionCard } from "./payment/createTransactionCard";
 import { createTransactionCardId } from "./payment/createTransactionCardId";
-import { saveCardToken } from "./payment/saveCardToken";
 import { createCustomer } from "./payment/createCustomer";
 
 @injectable()
 export class PaymentGatewayService {
-  saveCardToken = saveCardToken;
   createTransactionPix = createTransactionPix;
   createTransactionFullTicket = createTransactionFullTicket;
   createTransactionSimpleTicket = createTransactionSimpleTicket;

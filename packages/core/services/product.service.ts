@@ -16,6 +16,7 @@ import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductR
 import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
 import { ProductImagesUrlUpdaterRepository } from "@core/repositories/product/ProductImagesUrlUpdater.repository";
 import { ProductImageRepositoryCreateInput } from "@core/interfaces/repositories/products";
+import { ListProductByCompanyRequest } from "@core/useCases/product/dtos/ListProductByCompanyRequest.dto";
 
 @injectable()
 export class ProductService {
@@ -45,10 +46,20 @@ export class ProductService {
   };
 
   listByCompanyIds = async (
-    query: ListProductRequest,
+    query: ListProductByCompanyRequest,
     listPartnersIds: number[]
   ) => {
     return this.productListerGroupedByCompanyRepository.list(
+      query,
+      listPartnersIds
+    );
+  };
+
+  countTotalCompanies = async (
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
+  ) => {
+    return this.productListerGroupedByCompanyRepository.countTotalCompanies(
       query,
       listPartnersIds
     );

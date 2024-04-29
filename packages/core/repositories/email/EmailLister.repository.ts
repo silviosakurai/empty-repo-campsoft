@@ -34,6 +34,10 @@ export class EmailListerRepository {
         )
       );
 
+    if (!results?.length) {
+      return false;
+    }
+
     return results[0].total > 0;
   }
 

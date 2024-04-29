@@ -156,6 +156,10 @@ export class FindSignatureByOrderNumber {
         )
       );
 
+    if (!response?.length) {
+      return false;
+    }
+
     return response[0].total > 0;
   }
 

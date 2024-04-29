@@ -16,15 +16,8 @@ import {
   ITransactionCardRequest,
   ITransactionCardResponse,
 } from "./payment/ITransactionCard";
-import {
-  ISaveCardTokenRequest,
-  ISaveCardTokenResponse,
-} from "./payment/ISaveCardToken";
 
 export interface IZoopGatewayService {
-  saveCardToken: (
-    input: ISaveCardTokenRequest
-  ) => Promise<ResponseService<ISaveCardTokenResponse>>;
   createTransactionPix: (
     input: ITransactionPixRequest
   ) => Promise<ResponseService<ITransactionPixResponse>>;

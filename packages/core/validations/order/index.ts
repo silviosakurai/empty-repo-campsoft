@@ -5,3 +5,4 @@ export * from "./postCancelOrderSchema.validation";
 export * from "./createOrderSchema.validation";
 export * from "./ordersFromPartnersSchema.validation";
 export * from "./createOrderPaymentBoletoSchema.validation";
+export * from "./createOrderPaymentCardSchema.validation";

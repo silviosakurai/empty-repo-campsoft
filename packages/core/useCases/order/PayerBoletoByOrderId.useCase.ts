@@ -1,53 +1,26 @@
-import { ClientService, OrderService } from "@core/services";
-import { PaymentService } from "@core/services/payment.service";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
-import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
-    private readonly clientService: ClientService,
-    private readonly paymentService: PaymentService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
-  async pay(t: TFunction<"translation", undefined>, orderId: string) {
-    const order = await this.orderService.listOrderById(orderId);
-
-    if (!order) {
-      throw new Error(t("order_not_found"));
-    }
-
-    const sellerId = order.seller_id
-      ? order.seller_id
-      : (
-          await this.paymentService.sellerViewByEmail(
-            "ricardo@maniadeapp.com.br"
-          )
-        )?.sellerId;
-
-    if (!sellerId) {
-      throw new Error(t("seller_not_found"));
-    }
-
-    const client = await this.clientService.view(order.client_id);
-
-    if (!client) {
-      throw new Error(t("client_not_found"));
-    }
-
-    const clientPayment = await this.clientService.viewPaymentClient(
-      client.client_id
-    );
-
-    const externalId = clientPayment
-      ? clientPayment.external_id
-      : await this.paymentExternalGeneratorUseCase.generate(t, client);
+  async pay(
+    t: TFunction<"translation", undefined>,
+    tokenKey: ITokenKeyData,
+    orderId: string
+  ) {
+    const { order, externalId, sellerId } =
+      await this.orderWithPaymentReaderUseCase.view(t, tokenKey, orderId);
 
     const result =
       await this.paymentGatewayService.createTransactionSimpleTicket({
