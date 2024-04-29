@@ -18,3 +18,4 @@ export * from "./patchUserShippingAddressSchema.validation";
 export * from "./patchUserImageSchema.validation";
 export * from "./listUserWithCompaniesSchema.validation";
 export * from "./createUserCreditCardSchema.validation";
+export * from "./updateUserCreditCardDefaultSchema.validation";

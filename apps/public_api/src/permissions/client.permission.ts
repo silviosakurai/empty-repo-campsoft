@@ -53,3 +53,7 @@ export const userNewsletterSubscribePermissions = [
 export const userCreditCardCreatePermissions = [
   PermissionsRoles.USER_CREDIT_CARD_CREATE,
 ];
+
+export const userCreditCardDefaultUpdatePermissions = [
+  PermissionsRoles.USER_CREDIT_CARD_DEFAULT_UPDATE,
+];
