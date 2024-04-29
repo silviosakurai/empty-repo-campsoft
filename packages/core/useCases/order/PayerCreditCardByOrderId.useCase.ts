@@ -52,9 +52,6 @@ export class PayerCreditCardByOrderIdUseCase {
       usage: "single_use",
     });
 
-    console.log("result of credit card paid");
-    console.log(result);
-
     if (!result.data) {
       return result;
     }
