@@ -36,6 +36,7 @@ export class PayerCreditCardByOrderIdUseCase {
       order.client_id,
       externalCustomerId,
       tokenKey,
+      t,
       input
     );
 
@@ -76,6 +77,7 @@ export class PayerCreditCardByOrderIdUseCase {
     clientId: string,
     externalCustomerId: string,
     tokenKey: ITokenKeyData,
+    t: TFunction<"translation", undefined>,
     input: PayByCreditCardRequest
   ) {
     if (input.credit_card_id) {
@@ -89,14 +91,19 @@ export class PayerCreditCardByOrderIdUseCase {
         return;
       }
 
-      await this.cardCreatorUseCase.create(clientId, externalCustomerId, {
-        card_number: input.credit_card.number,
-        expiration_month: input.credit_card.expire_month.toString(),
-        expiration_year: input.credit_card.expire_year.toString(),
-        holder_name: `${client.first_name} ${client.last_name}`,
-        security_code: input.credit_card.cvv,
-        default: true,
-      });
+      await this.cardCreatorUseCase.create(
+        clientId,
+        t,
+        {
+          card_number: input.credit_card.number,
+          expiration_month: input.credit_card.expire_month.toString(),
+          expiration_year: input.credit_card.expire_year.toString(),
+          holder_name: `${client.first_name} ${client.last_name}`,
+          security_code: input.credit_card.cvv,
+          default: true,
+        },
+        externalCustomerId
+      );
 
       const [creditCard] = await this.clientService.listCreditCards(clientId);
 
