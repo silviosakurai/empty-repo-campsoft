@@ -6,13 +6,19 @@ import { container } from 'tsyringe';
 export default async function webhooksRoutes(app: FastifyInstance) {
   const controller = container.resolve(WebhookController);
 
+  app.post('/webhook/payments', {
+    handler: controller.paymentWebhook,
+  });
+
   app.get(
     '/webhook/payments',
     {
       websocket: true,
     },
     (socket, request) => {
-      controller.paymentWebhook(socket, request);
+      socket.on('message', (message) => {
+        socket.send('hi from server');
+      });
     }
   );
 
