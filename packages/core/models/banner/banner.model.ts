@@ -9,7 +9,7 @@ import { sql } from "drizzle-orm";
 import { BannerStatus } from "@core/common/enums/models/banner";
 
 export const banner = mysqlTable("banner", {
-  id_banner: int("id_banner").notNull().primaryKey(),
+  id_banner: int("id_banner").autoincrement().notNull().primaryKey(),
   status: mysqlEnum("status", [BannerStatus.ACTIVE, BannerStatus.INACTIVE])
     .notNull()
     .default(BannerStatus.ACTIVE),
