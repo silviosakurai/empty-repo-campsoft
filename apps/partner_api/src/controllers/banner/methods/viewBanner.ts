@@ -5,7 +5,7 @@ import { container } from 'tsyringe';
 import { BannerViewerUseCase } from '@core/useCases/banner/BannerViewer.usecase';
 import {
   BannerViewerRequestDto,
-  BannerViewerRequestQueryDto
+  BannerViewerRequestQueryDto,
 } from '@core/useCases/banner/dtos/BannerViewerRequest.dto';
 
 export const viewBanner = async (

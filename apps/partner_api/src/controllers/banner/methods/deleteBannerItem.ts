@@ -5,13 +5,13 @@ import { container } from 'tsyringe';
 import { BannerItemDeleterUseCase } from '@core/useCases/banner/BannerItemDeleter.usecase';
 import {
   BannerItemDeleterRequestParamsDto,
-  BannerItemDeleterRequestQueryDto
+  BannerItemDeleterRequestQueryDto,
 } from '@core/useCases/banner/dtos/BannerItemDeleterRequest.dto';
 
 export const deleteBannerItem = async (
   request: FastifyRequest<{
     Params: BannerItemDeleterRequestParamsDto;
-    Querystring: BannerItemDeleterRequestQueryDto,
+    Querystring: BannerItemDeleterRequestQueryDto;
   }>,
   reply: FastifyReply
 ) => {

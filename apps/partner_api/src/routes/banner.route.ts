@@ -12,7 +12,13 @@ import {
   bannerItemDeleterPartnerSchema,
   bannerImageUploaderPartnerSchema,
 } from '@core/validations/banner';
-import { bannerCreatePermissions, bannerDeletePermissions, bannerListPermissions, bannerUpdatePermissions, bannerViewPermissions } from '@/permissions';
+import {
+  bannerCreatePermissions,
+  bannerDeletePermissions,
+  bannerListPermissions,
+  bannerUpdatePermissions,
+  bannerViewPermissions,
+} from '@/permissions';
 
 export default async function bannerRoutes(server: FastifyInstance) {
   const bannerController = container.resolve(BannerController);
