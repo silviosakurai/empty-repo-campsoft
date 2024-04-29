@@ -11,10 +11,16 @@ export const deleteClient = async (
   reply: FastifyReply
 ) => {
   const clientEraserUseCase = container.resolve(ClientByIdEraserUseCase);
-  const { t } = request;
+  const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
 
   try {
-    const response = await clientEraserUseCase.delete(request.params.userId);
+    const response = await clientEraserUseCase.delete(
+      tokenJwtData,
+      permissionsRoute,
+      request.params.userId,
+      redis
+    );
 
     if (!response) {
       request.server.logger.warn(response, request.id);

@@ -13,7 +13,6 @@ export const listUserWithCompaniesSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
@@ -28,7 +27,6 @@ export const listUserWithCompaniesSchema = {
   }),
   querystring: Type.Object({
     ...pagingRequestSchema.properties,
-    id: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({
         enum: Object.values(ClientStatus),
@@ -38,10 +36,12 @@ export const listUserWithCompaniesSchema = {
     email: Type.Optional(Type.String({ format: "email" })),
     name: Type.Optional(Type.String()),
     cpf: Type.Optional(Type.String({ minLength: 11, maxLength: 11 })),
+    position_id: Type.Optional(Type.Number()),
+    company_id: Type.Optional(Type.Number()),
     sort_by: Type.Optional(
       Type.String({
         enum: Object.values(ClientFields),
-        default: ClientFields.user_id,
+        default: ClientFields.created_at,
       })
     ),
     sort_order: Type.Optional(

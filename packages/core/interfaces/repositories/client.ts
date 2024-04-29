@@ -1,3 +1,5 @@
+import { ClientStatus } from "@core/common/enums/models/client";
+
 export interface FindClientByCpfEmailPhoneInput {
   cpf: string;
   email: string;
@@ -36,30 +38,51 @@ export interface IUserExistsFunction {
   phone: string;
 }
 
-interface Company {
-  company_id: number;
-  company_name: string;
+export interface CompanyResponse {
+  company_id: number | null;
+  company_name: string | null;
+  position_id: number | null;
+  position_name: string | null;
 }
 
-export interface ClientWithCompaniesResponse {
+export interface ClientListResponse {
   user_id: string;
+  status: ClientStatus;
   name: string | null;
   first_name: string | null;
   last_name: string | null;
-  birthday: string;
+  birthday: string | null;
   email: string | null;
   phone: string | null;
   cpf: string | null;
   gender: string | null;
-  company_id: number;
-  company_name: string | null;
-  user_type: number | null;
 }
 
-export interface ClientWithListCompaniesResponse {
-  user_id: string | null;
+export interface ClientWithCompaniesListResponse {
+  user_id: string;
+  status: ClientStatus;
   name: string | null;
   first_name: string | null;
   last_name: string | null;
-  companies: Company[] | null;
+  birthday: string | null;
+  email: string | null;
+  phone: string | null;
+  cpf: string | null;
+  gender: string | null;
+  companies: CompanyResponse[];
+}
+
+export interface ClientCardRepositoryInput {
+  expiration_month: number;
+  expiration_year: number;
+  externalId: string;
+  brand?: string;
+  default: boolean;
+  first4Digits: string;
+  last4Digits?: string;
+}
+
+export interface ListClientByGroupAndPartner {
+  id_cliente: string;
+  id_parceiro: number;
 }

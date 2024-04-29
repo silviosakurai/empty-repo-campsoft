@@ -16,15 +16,10 @@ export const listProduct = async (
   );
   const { t, tokenJwtData } = request;
 
-  const companyIds: number[] = request.query.companies
-    ? request.query.companies.split(',').map(Number)
-    : [];
-
   try {
     const response = await productsListerByCompanyUseCase.execute(
       tokenJwtData,
-      request.query,
-      companyIds
+      request.query
     );
 
     if (!response) {

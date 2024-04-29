@@ -2,7 +2,7 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { and, eq, sql } from "drizzle-orm";
 import * as schema from "@core/models";
-import { plan, order, planPrice } from "@core/models";
+import { plan, order, planPrice, planPartner } from "@core/models";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PricesByPlanIdListerRepository } from "../plan/PricesByPlanIdLister.repository";
@@ -32,7 +32,7 @@ export class OrderPlansByOrderIdViewerRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -41,10 +41,11 @@ export class OrderPlansByOrderIdViewerRepository {
       .from(plan)
       .innerJoin(order, eq(order.id_plano, plan.id_plano))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(plan.id_plano)

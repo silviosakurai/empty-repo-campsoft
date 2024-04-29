@@ -8,7 +8,6 @@ export const userDeleteByIdSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

@@ -1,8 +1,8 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { plan } from "@core/models";
-import { eq, and, sql, inArray } from "drizzle-orm";
+import { plan, planPartner } from "@core/models";
+import { eq, and, sql } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
@@ -20,7 +20,7 @@ export class PlanViewerByCompanyRepository {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
-  async get(companyIds: number[], planId: number): Promise<Plan | null> {
+  async get(planId: number): Promise<Plan | null> {
     const result: ViewPlanRepositoryDTO[] = await this.db
       .select({
         plan_id: plan.id_plano,
@@ -29,7 +29,7 @@ export class PlanViewerByCompanyRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -38,21 +38,21 @@ export class PlanViewerByCompanyRepository {
         updated_at: plan.updated_at,
       })
       .from(plan)
-      .where(and(inArray(plan.id_empresa, companyIds), eq(plan.id_plano, planId)))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
+      .where(and(eq(plan.id_plano, planId)))
       .execute();
 
     if (!result.length) {
       return null;
     }
 
-    const planCompleted = await this.getPlanRelactions(result[0], companyIds);
+    const planCompleted = await this.getPlanRelactions(result[0]);
 
     return planCompleted;
   }
 
   private getPlanRelactions = async (
-    plan: ViewPlanRepositoryDTO,
-    companyIds: number[]
+    plan: ViewPlanRepositoryDTO
   ): Promise<Plan> => {
     const planItems = await this.planItemListerRepository.listByPlanId(
       plan.plan_id
@@ -62,10 +62,8 @@ export class PlanViewerByCompanyRepository {
     const pricesPromise = this.planPriceListerRepository.listByPlanId(
       plan.plan_id
     );
-    const productsPromise = this.productListerGroupedByCompanyRepository.listByIds(
-      companyIds,
-      productIds
-    );
+    const productsPromise =
+      this.productListerGroupedByCompanyRepository.listByIds(productIds);
     const productGroupsPromise =
       this.productGroupProductListerRepository.listByProductsIds(productIds);
 

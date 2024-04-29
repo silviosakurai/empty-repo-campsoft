@@ -11,13 +11,16 @@ export const viewClient = async (
   reply: FastifyReply
 ) => {
   const clientViewerUseCase = container.resolve(ClientByIdViewerUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
 
   try {
-    const response = await clientViewerUseCase.execute({
-      tokenKeyData,
-      userId: request.params.userId,
-    });
+    const response = await clientViewerUseCase.execute(
+      tokenJwtData,
+      permissionsRoute,
+      request.params.userId,
+      redis
+    );
 
     if (!response) {
       request.server.logger.warn(response, request.id);

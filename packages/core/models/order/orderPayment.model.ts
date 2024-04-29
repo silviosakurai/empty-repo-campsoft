@@ -46,9 +46,10 @@ export const orderPayment = mysqlTable("pedido_pagamento", {
   pag_transaction: varchar("pag_transaction", { length: 500 }),
   pag_transaction_raw: json("pag_transaction_raw"),
   pag_info_adicional: varchar("pag_info_adicional", { length: 2000 }),
-  pag_customer_id: varchar("pag_customer_id", { length: 32 }),
+  codigo_barra: varchar("codigo_barra", { length: 32 }),
   taxa_meio_pagamento: double("taxa_meio_pagamento"),
   obs: varchar("obs", { length: 200 }),
+  due_date: timestamp("data_vencimento", { mode: "string" }),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()
     .defaultNow(),

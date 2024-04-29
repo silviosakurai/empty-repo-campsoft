@@ -16,7 +16,7 @@ export const viewProduct = async (
 
   try {
     const response = await productViewerUseCase.execute(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       request.params.sku
     );
 

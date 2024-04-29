@@ -19,7 +19,7 @@ export const couponCart = mysqlTable("cupom_carrinho", {
   cupom_carrinho: varchar("cupom_carrinho", { length: 50 })
     .notNull()
     .default("0"),
-  id_empresa: int("id_empresa").default(1),
+  id_parceiro: int("id_parceiro").notNull(),
   validade: datetime("validade", { mode: "string" }),
   obs: varchar("obs", { length: 200 }).notNull().default(""),
   created_at: datetime("created_at", { mode: "string" })

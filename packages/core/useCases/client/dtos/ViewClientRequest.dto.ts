@@ -1,6 +1,8 @@
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
+import { ITokenJwtAccess } from "@core/common/interfaces/ITokenJwtData";
 
 export interface ViewClientRequest {
-  tokenKeyData: ITokenKeyData;
+  tokenJwtData: ITokenJwtAccess;
+  permissionRoles: PermissionsRoles[];
   userId: string;
 }
