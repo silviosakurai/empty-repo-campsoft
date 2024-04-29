@@ -4,12 +4,10 @@ import { inject, injectable } from "tsyringe";
 import { client } from "@core/models";
 import { eq, sql, and, SQL } from "drizzle-orm";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 import {
   ClientListResponse,
   ClientWithCompaniesListResponse,
-  CompanyResponse,
 } from "@core/interfaces/repositories/client";
 
 @injectable()

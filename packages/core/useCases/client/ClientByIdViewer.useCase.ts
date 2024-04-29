@@ -1,7 +1,6 @@
 import { ClientService } from "@core/services/client.service";
 import { injectable } from "tsyringe";
 import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
-import { ViewClientRequest } from "@core/useCases/client/dtos/ViewClientRequest.dto";
 import { ViewClientByIdResponse } from "./dtos/ViewClientByIdResponse.dto";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ControlAccessService } from "@core/services/controlAccess.service";
