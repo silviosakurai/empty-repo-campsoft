@@ -6,10 +6,10 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import { BannerItemStatus } from "@core/common/enums/models/banner";
+import { BannerItemFormat, BannerItemStatus } from "@core/common/enums/models/banner";
 
 export const bannerItem = mysqlTable("banner_item", {
-  id_banner_item: int("id_banner_item").notNull().primaryKey(),
+  id_banner_item: int("id_banner_item").autoincrement().notNull().primaryKey(),
   id_banner: int("id_banner"),
   status: mysqlEnum("status", [
     BannerItemStatus.ACTIVE,
@@ -20,7 +20,7 @@ export const bannerItem = mysqlTable("banner_item", {
   banner_item: varchar("banner_item", { length: 50 }),
   descricao: varchar("descricao", { length: 200 }),
   ordem: int("ordem"),
-  formato: mysqlEnum("formato", ["HTML", "IMG"]),
+  formato: mysqlEnum("formato", [BannerItemFormat.HTML, BannerItemFormat.IMG]),
   banner_data_in: datetime("banner_data_in", { mode: "string" }),
   banner_data_fim: datetime("banner_data_fim", { mode: "string" }),
   url_img_desk: varchar("url_img_desk", { length: 255 }),

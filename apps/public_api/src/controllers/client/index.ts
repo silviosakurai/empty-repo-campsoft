@@ -16,6 +16,8 @@ import { activateClientEmail } from './methods/activateClientEmail';
 import { patchShippingAddress } from './methods/patchShippingAddress';
 import { patchImage } from './methods/patchImage';
 import { createClientNewsletter } from './methods/createClientNewsletter';
+import { createCardClient } from './methods/createCardClient';
+import { updateUserCreditCardDefault } from './methods/updateUserCreditCardDefault';
 
 @injectable()
 class ClientController {
@@ -36,6 +38,8 @@ class ClientController {
   public patchShippingAddress = patchShippingAddress;
   public patchImage = patchImage;
   public createClientNewsletter = createClientNewsletter;
+  public createCardClient = createCardClient;
+  public updateUserCreditCardDefault = updateUserCreditCardDefault;
 }
 
 export default ClientController;
