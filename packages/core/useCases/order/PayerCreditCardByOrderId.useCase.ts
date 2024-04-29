@@ -48,9 +48,12 @@ export class PayerCreditCardByOrderIdUseCase {
       description: order.observation,
       reference_id: order.order_id,
       sellerId,
-      cardId: creditCard.card_id,
+      cardId: creditCard.external_id,
       usage: "single_use",
     });
+
+    console.log("result of credit card paid");
+    console.log(result);
 
     if (!result.data) {
       return result;

@@ -20,11 +20,12 @@ export class ClientCardCreatorUseCase {
       default: input.default ?? false,
       expiration_month: +input.expiration_month,
       expiration_year: +input.expiration_year,
-      externalId: creditCard.id,
+      externalId: creditCard.card.id,
       first4Digits: creditCard.card.first4_digits.toLocaleString("en-us", {
         minimumIntegerDigits: 4,
       }),
       brand: creditCard.card.card_brand,
+      tokenId: creditCard.id,
     });
 
     const cards = await this.clientService.listCreditCards(clientId);
