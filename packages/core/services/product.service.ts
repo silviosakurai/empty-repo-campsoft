@@ -24,6 +24,7 @@ import { ProductGroupImagesUrlUpdaterRepository } from "@core/repositories/produ
 import { ProductGroupProductListerRepository } from "@core/repositories/product/ProductGroupProductLister.repository";
 import { ProductGroupUpdaterRepository } from "@core/repositories/product/ProductGroupUpdater.repository";
 import { UpdateProductGroupBodyRequest } from "@core/useCases/product/dtos/UpdateProductGroupRequest.dto";
+import { ListProductByCompanyRequest } from "@core/useCases/product/dtos/ListProductByCompanyRequest.dto";
 
 @injectable()
 export class ProductService {
@@ -45,6 +46,7 @@ export class ProductService {
     private readonly productGroupProductCreatorRepository: ProductGroupProductCreatorRepository,
     private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
     private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -60,10 +62,23 @@ export class ProductService {
   };
 
   listByCompanyIds = async (
-    companyIds: number[],
-    query: ListProductRequest
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
   ) => {
-    return this.productListerGroupedByCompanyRepository.list(companyIds, query);
+    return this.productListerGroupedByCompanyRepository.list(
+      query,
+      listPartnersIds
+    );
+  };
+
+  countTotalCompanies = async (
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
+  ) => {
+    return this.productListerGroupedByCompanyRepository.countTotalCompanies(
+      query,
+      listPartnersIds
+    );
   };
 
   listByIds = async (companyId: number, productIds: string[]) => {
@@ -74,8 +89,8 @@ export class ProductService {
     return this.productViewerRepository.get(companyId, sku);
   };
 
-  viewByCompanyIds = async (companyIds: number[], sku: string) => {
-    return this.productViewerGroupedByCompanyRepository.view(companyIds, sku);
+  viewByCompanyIds = async (sku: string) => {
+    return this.productViewerGroupedByCompanyRepository.view(sku);
   };
 
   findProductsByIds = async (companyId: number, productIds: string[]) => {

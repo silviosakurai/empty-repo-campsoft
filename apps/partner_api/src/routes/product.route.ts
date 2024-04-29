@@ -13,38 +13,64 @@ import {
   getProductGroupSchema,
   putProductGroupSchema,
 } from '@core/validations/product';
+import {
+  productCreatePermissions,
+  productImageGroupUpdatePermissions,
+  productListPermissions,
+  productUpdatePermissions,
+  productViewPermissions,
+} from '@/permissions';
 
 export default async function productRoutes(server: FastifyInstance) {
   const productController = container.resolve(ProductController);
 
   server.get('/products', {
     schema: listProductByCompanySchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.list,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productListPermissions),
+    ],
   });
 
   server.get('/products/:sku', {
     schema: getProductPartnerSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.view,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productViewPermissions),
+    ],
   });
 
   server.post('/products', {
     schema: postProductSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.post,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productCreatePermissions),
+    ],
   });
 
   server.put('/products/:sku', {
     schema: updateProductSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.update,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productUpdatePermissions),
+    ],
   });
 
   server.post('/products/:sku/images/:type', {
     schema: createProductImageSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.createImage,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          productImageGroupUpdatePermissions
+        ),
+    ],
   });
 
   server.get('/product_groups/:groupId', {

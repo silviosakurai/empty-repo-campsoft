@@ -17,7 +17,6 @@ export const plan = mysqlTable("plano", {
     PlanVisivelSite.YES,
     PlanVisivelSite.NO,
   ]).default(PlanVisivelSite.YES),
-  id_empresa: int("id_empresa"),
   plano: varchar("plano", { length: 50 }),
   imagem: varchar("imagem", { length: 200 }),
   icon: varchar("icon", { length: 200 }),

@@ -28,16 +28,19 @@ export class TfaCodesSms {
       .where(
         or(
           and(
-            eq(templateSms.id_empresa, tokenKeyData.company_id),
+            eq(templateSms.id_parceiro, tokenKeyData.id_parceiro),
             eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
           ),
           and(
-            eq(templateSms.id_empresa, sql`${templateSms.id_empresa} IS NULL`),
+            eq(
+              templateSms.id_parceiro,
+              sql`${templateSms.id_parceiro} IS NULL`
+            ),
             eq(templateModule.modulo, TemplateModulo.CODIGO_TFA)
           )
         )
       )
-      .orderBy(desc(templateSms.id_empresa))
+      .orderBy(desc(templateSms.id_parceiro))
       .limit(1)
       .execute();
 

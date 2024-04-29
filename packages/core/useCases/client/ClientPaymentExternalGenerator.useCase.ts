@@ -17,6 +17,10 @@ export class ClientPaymentExternalGeneratorUseCase {
   ) {
     const address = await this.clientService.viewBilling(client.client_id);
 
+    if (!address) {
+      throw new Error(t("billing_address_not_found"));
+    }
+
     const clientWithAddress = {
       ...client,
       address,

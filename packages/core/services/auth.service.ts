@@ -1,5 +1,4 @@
 import { generateRandomString } from "@core/common/functions/generateRandomString";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { AuthRepository } from "@core/repositories/client/Auth.repository";
 import { ClientMagicTokenRepository } from "@core/repositories/client/ClientMagicToken.repository";
 import { injectable } from "tsyringe";
@@ -11,38 +10,16 @@ export class AuthService {
     private readonly clientMagicTokenRepository: ClientMagicTokenRepository
   ) {}
 
-  authenticate = async (
-    tokenKeyData: ITokenKeyData,
-    login: string,
-    password: string
-  ) => {
-    return this.authRepository.authenticate(
-      tokenKeyData,
-      login,
-      password
-    );
+  authenticate = async (login: string, password: string) => {
+    return this.authRepository.authenticate(login, password);
   };
 
-  authenticateByClientId = async (
-    tokenKeyData: ITokenKeyData,
-    clientId: string,
-    password: string
-  ) => {
-    return this.authRepository.authenticateByClientId(
-      tokenKeyData,
-      clientId,
-      password
-    );
+  authenticateByClientId = async (clientId: string, password: string) => {
+    return this.authRepository.authenticateByClientId(clientId, password);
   };
 
-  authenticateByMagicToken = async (
-    tokenKeyData: ITokenKeyData,
-    magicToken: string
-  ) => {
-    return this.authRepository.authenticateByMagicToken(
-      tokenKeyData,
-      magicToken
-    );
+  authenticateByMagicToken = async (magicToken: string) => {
+    return this.authRepository.authenticateByMagicToken(magicToken);
   };
 
   async generateAndVerifyMagicToken(): Promise<string> {

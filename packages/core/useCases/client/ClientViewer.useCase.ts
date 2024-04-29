@@ -8,9 +8,8 @@ export class ClientViewerUseCase {
   constructor(private readonly clientService: ClientService) {}
 
   async execute({
-    tokenKeyData,
     userId,
   }: ViewClientRequest): Promise<ViewClientResponse | null> {
-    return this.clientService.view(tokenKeyData, userId);
+    return this.clientService.view(userId);
   }
 }

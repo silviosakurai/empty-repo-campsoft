@@ -5,10 +5,10 @@ import { injectable } from "tsyringe";
 @injectable()
 export class ReviewService {
   constructor(
-    private readonly reviewListerRepository: ReviewListerRepository,
+    private readonly reviewListerRepository: ReviewListerRepository
   ) {}
 
-  async list({ company_id }: ITokenKeyData) {
-    return this.reviewListerRepository.list(company_id);
+  async list({ id_parceiro }: ITokenKeyData) {
+    return this.reviewListerRepository.list(id_parceiro);
   }
 }

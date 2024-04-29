@@ -17,7 +17,7 @@ export const updatePasswordRecoveryClient = async (
   const clientPasswordRecoveryUpdaterUseCase = container.resolve(
     ClientPasswordRecoveryUpdaterUseCase
   );
-  const { t, tokenKeyData, tokenTfaData } = request;
+  const { t, tokenTfaData } = request;
 
   if (!tokenTfaData.clientId) {
     request.server.logger.warn(tokenTfaData, request.id);
@@ -31,7 +31,6 @@ export const updatePasswordRecoveryClient = async (
   try {
     const response = await clientPasswordRecoveryUpdaterUseCase.update(
       tokenTfaData,
-      tokenKeyData,
       request.body
     );
 

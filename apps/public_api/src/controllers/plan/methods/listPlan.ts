@@ -16,7 +16,7 @@ export const listPlan = async (
 
   try {
     const response = await planListerUseCase.execute(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       request.query
     );
 

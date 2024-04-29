@@ -16,7 +16,7 @@ export const postProduct = async (
 
   try {
     const response = await productsCreatorUseCase.execute(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       request.body
     );
 

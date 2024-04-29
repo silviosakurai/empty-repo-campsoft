@@ -8,6 +8,8 @@
   "product_not_found": "Produto não encontrado",
   "product_group_not_found": "Grupo de Produto não encontrado",
   "product_group_relation_not_found": "Relação de Produto com Grupo não encontrada",
+  "banner_not_found": "Banner não encontrado",
+  "banner_item_not_found": "Banner item não encontrado",
   "error_send_code_verification": "Erro ao enviar o código de verificação",
   "previously_registered_user": "Usuário já cadastrado anteriormente.",
   "user_updated_successfully": "Usuário atualizado com sucesso.",
@@ -60,10 +62,15 @@
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
   "product_update_not_allowed": "Atualização de produto não permitida.",
   "product_group_update_not_allowed":  "Atualização de grupo de produto não permitida.",
+  "banner_update_not_allowed": "Atualização de Banner não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
   "error_update_product_group": "Erro ao atualizar o grupo de produto.",
   "error_update_product_group_products": "Error ao adicionar um produto ao grupo",
   "token_not_found": "Token não encontrado.",
   "seller_not_found": "Vendedor não encontrado.",
-  "creation_customer_to_payment_failed": "Falha na criação do cliente para pagamento"
+  "creation_customer_to_payment_failed": "Falha na criação do cliente para pagamento",
+  "something_went_wrong_to_generate_credit_card": "Falha na criação do cartão de crédito",
+  "plans_not_found": "Planos não encontrados",
+  "client_must_have_a_card_as_default": "O cliente deve ter um cartão como padrão",
+  "card_not_found": "Cartão não encontrado"
 }

@@ -9,12 +9,12 @@ import { sql } from "drizzle-orm";
 import { BannerStatus } from "@core/common/enums/models/banner";
 
 export const banner = mysqlTable("banner", {
-  id_banner: int("id_banner").notNull().primaryKey(),
+  id_banner: int("id_banner").autoincrement().notNull().primaryKey(),
   status: mysqlEnum("status", [BannerStatus.ACTIVE, BannerStatus.INACTIVE])
     .notNull()
     .default(BannerStatus.ACTIVE),
   local: varchar("local", { length: 20 }),
-  id_empresa: int("id_empresa"),
+  id_parceiro: int("id_parceiro"),
   id_banner_tipo: int("id_banner_tipo"),
   banner: varchar("banner", { length: 50 }),
   created_at: datetime("created_at", { mode: "string" }).default(

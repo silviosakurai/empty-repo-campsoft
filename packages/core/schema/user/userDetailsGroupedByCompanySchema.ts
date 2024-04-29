@@ -1,17 +1,23 @@
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { Type } from "@sinclair/typebox";
-import { companySchemaWithUserAndLeader } from "../company/companySchemaWithUserAndLeader";
+import { companySchemaWithUserAndSellers } from "../company/companySchemaWithUserAndSellers";
+import { companySchemaWithUserAndCompanies } from "../company/companySchemaWithUserAndCompanies";
 
 export const userDetailsGroupedByCompanySchema = Type.Object({
-    user_id: Type.String({ format: "uuid" }),
-    status: Type.String({ enum: Object.values(ClientStatus) }),
-    name: Type.String(),
-    first_name: Type.String(),
-    last_name: Type.String(),
-    birthday: Type.String(),
-    email: Type.String(),
-    phone: Type.String(),
-    cpf: Type.String(),
-    gender: Type.String({ enum: Object.values(ClientGender) }),
-    companies: Type.Array(companySchemaWithUserAndLeader),
-})
+  user_id: Type.String({ format: "uuid" }),
+  status: Type.String({ enum: Object.values(ClientStatus) }),
+  name: Type.Union([Type.String(), Type.Null()]),
+  first_name: Type.Union([Type.String(), Type.Null()]),
+  last_name: Type.Union([Type.String(), Type.Null()]),
+  birthday: Type.String(),
+  email: Type.Union([Type.String(), Type.Null()]),
+  phone: Type.String(),
+  cpf: Type.Union([Type.String(), Type.Null()]),
+  gender: Type.Union([
+    Type.String({ enum: Object.values(ClientGender) }),
+    Type.Null(),
+  ]),
+  photo: Type.Union([Type.String(), Type.Null()]),
+  sellers: Type.Array(companySchemaWithUserAndSellers),
+  companies: Type.Array(companySchemaWithUserAndCompanies),
+});

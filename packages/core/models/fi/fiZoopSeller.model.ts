@@ -1,10 +1,4 @@
-import {
-  mysqlTable,
-  json,
-  datetime,
-  varchar,
-  smallint,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, json, datetime, varchar } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 export const fiZoopSeller = mysqlTable("fi_zoop_vendedor", {
@@ -12,11 +6,7 @@ export const fiZoopSeller = mysqlTable("fi_zoop_vendedor", {
     .notNull()
     .primaryKey(),
   id_api_acesso: varchar("id_api_acesso", { length: 32 }).notNull(),
-  sandbox: smallint("sandbox").notNull().default(0),
   nome: varchar("nome", { length: 50 }),
-  first_name: varchar("#first_name", { length: 50 }),
-  last_name: varchar("#last_name", { length: 50 }),
-  email: varchar("#email", { length: 150 }),
   business_name: varchar("business_name", { length: 50 }),
   business_phone: varchar("business_phone", { length: 50 }),
   business_email: varchar("business_email", { length: 50 }),

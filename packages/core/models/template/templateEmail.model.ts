@@ -12,7 +12,7 @@ export const templateEmail = mysqlTable("template_email", {
     .notNull()
     .primaryKey()
     .autoincrement(),
-  id_empresa: int("id_empresa").notNull(),
+  id_parceiro: int("id_parceiro").notNull(),
   id_template_tipo: int("id_template_tipo").notNull(),
   id_template_modulo: int("id_template_modulo").notNull(),
   template_nome: varchar("template_nome", { length: 50 }),

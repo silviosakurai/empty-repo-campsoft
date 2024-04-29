@@ -46,3 +46,12 @@ export enum ProductVoucherStatus {
 export enum ProductGroupImageType {
   ICON = "icon",
 }
+
+export enum ProductOrderPartner {
+  product_id = "product_id",
+  name = "name",
+  slug = "slug",
+  status = "status",
+  content_provider_name = "content_provider_name",
+  created_at = "created_at",
+}

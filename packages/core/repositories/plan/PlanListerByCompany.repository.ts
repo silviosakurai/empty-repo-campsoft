@@ -1,8 +1,8 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { plan } from "@core/models";
-import { eq, and, asc, desc, SQLWrapper, sql, inArray } from "drizzle-orm";
+import { plan, planPartner } from "@core/models";
+import { eq, and, asc, desc, SQLWrapper, sql } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import {
@@ -31,10 +31,7 @@ export class PlanListerByCompanyRepository {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
-  async list(
-    companyIds: number[],
-    query: ListPlanRequest
-  ): Promise<ListPlanResponse | null> {
+  async list(query: ListPlanRequest): Promise<ListPlanResponse | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -45,7 +42,7 @@ export class PlanListerByCompanyRepository {
             WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
             ELSE false
           END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -54,8 +51,9 @@ export class PlanListerByCompanyRepository {
         updated_at: plan.updated_at,
       })
       .from(plan)
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(inArray(plan.id_empresa, companyIds), ...filters));
+      .where(and(...filters));
 
     const totalResult: ViewPlanRepositoryDTO[] = await allQuery.execute();
 
@@ -68,7 +66,7 @@ export class PlanListerByCompanyRepository {
       return null;
     }
 
-    const plansCompleted = await this.getPlansRelactions(plans, companyIds);
+    const plansCompleted = await this.getPlansRelactions(plans);
 
     const paging = setPaginationData(
       plans.length,
@@ -92,7 +90,7 @@ export class PlanListerByCompanyRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -101,10 +99,11 @@ export class PlanListerByCompanyRepository {
         updated_at: plan.updated_at,
       })
       .from(plan)
-      .where(eq(plan.id_empresa, companyId))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
+      .where(eq(planPartner.id_parceiro, companyId))
       .execute();
 
-    const plansCompleted = await this.getPlansRelactions(result, [companyId]);
+    const plansCompleted = await this.getPlansRelactions(result);
 
     return plansCompleted;
   }
@@ -174,10 +173,7 @@ export class PlanListerByCompanyRepository {
     return Object.values(groupedProducts);
   };
 
-  private getPlansRelactions = async (
-    plans: ViewPlanRepositoryDTO[],
-    companyIds: number[]
-  ) => {
+  private getPlansRelactions = async (plans: ViewPlanRepositoryDTO[]) => {
     const plansCompleted: Plan[] = [];
 
     for (const plan of plans) {
@@ -189,10 +185,8 @@ export class PlanListerByCompanyRepository {
       const pricesPromise = this.planPriceListerRepository.listByPlanId(
         plan.plan_id
       );
-      const productsPromise = this.productListerGroupedByCompanyRepository.listByIds(
-        companyIds,
-        productIds
-      );
+      const productsPromise =
+        this.productListerGroupedByCompanyRepository.listByIds(productIds);
       const productGroupsPromise =
         this.productGroupProductListerRepository.listByProductsIds(productIds);
 
