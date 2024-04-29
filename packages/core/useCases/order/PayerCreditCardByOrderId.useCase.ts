@@ -116,8 +116,8 @@ export class PayerCreditCardByOrderIdUseCase {
     }
 
     const cardIsValid = checkIfDateIsAfterOfCurrent(
-      result.expiration_month,
-      result.expiration_year
+      +result.expiration_month,
+      +result.expiration_year
     );
 
     if (!cardIsValid) return;
