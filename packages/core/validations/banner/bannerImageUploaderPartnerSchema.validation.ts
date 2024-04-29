@@ -27,6 +27,9 @@ export const bannerImageUploaderPartnerSchema = {
   }),
   params: bannerImageUploaderParamsSchema,
   body: bannerImageUploaderBodySchema,
+  querystring: Type.Object({
+    company_id: Type.Array(Type.Number()),
+  }),
   response: {
     200: Type.Object(
       {

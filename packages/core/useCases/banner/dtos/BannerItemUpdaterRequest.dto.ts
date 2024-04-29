@@ -5,6 +5,10 @@ export interface BannerItemUpdaterParamsRequestDto {
   bannerItemId: string;
 }
 
+export interface BannerItemUpdaterParamsQueryDto {
+  company_id: number[];
+}
+
 export interface BannerItemUpdaterRequestDto {
   item_name: string;
   description: string;

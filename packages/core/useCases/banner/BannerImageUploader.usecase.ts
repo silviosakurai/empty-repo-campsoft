@@ -4,9 +4,6 @@ import { TFunction } from "i18next";
 import { BannerImageRequestBodyDto } from "./dtos/BannerImageUploaderRequest.dto";
 import { BannerImageType } from "@core/common/enums/models/banner";
 import { validateImage } from "@core/common/functions/validateImage";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { checkIfCompanyHasAccess } from "@core/common/functions/checkIfCompanyHasAccess";
-import { AccessType } from "@core/common/enums/models/access";
 import { BannerNotFoundError } from "@core/common/exceptions/BannerNotFoundError";
 import { StorageService } from "@core/services/storage.service";
 import { BannerItemNotFoundError } from "@core/common/exceptions/BannerItemNotFoundError";
@@ -20,7 +17,7 @@ export class BannerImageUploaderUseCase {
 
   async upload(
     t: TFunction<"translation", undefined>,
-    tokenJwtData: ITokenJwtData,
+    companyIds: number[],
     bannerId: number,
     bannerItemId: number,
     type: BannerImageType,
@@ -28,9 +25,7 @@ export class BannerImageUploaderUseCase {
   ): Promise<boolean> {
     validateImage(t, input.image);
 
-    const companyIdsAllowed = checkIfCompanyHasAccess(tokenJwtData.access, AccessType.PRODUCT_MANAGEMENT);
-
-    const banner = await this.bannerService.viewByPartner(companyIdsAllowed, bannerId);
+    const banner = await this.bannerService.viewByPartner(companyIds, bannerId);
 
     if (!banner) {
       throw new BannerNotFoundError(t("banner_not_found"));

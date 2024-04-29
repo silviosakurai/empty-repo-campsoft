@@ -11,13 +11,13 @@ export const listBanner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t, tokenJwtData } = request;
+  const { t } = request;
   const bannerListerUseCase = container.resolve(BannerListerUseCase);
 
   try {
     const response = await bannerListerUseCase.list(
-      tokenJwtData,
-      request.query,
+      request.query.company_id,
+      request.query
     );
 
     return sendResponse(reply, {

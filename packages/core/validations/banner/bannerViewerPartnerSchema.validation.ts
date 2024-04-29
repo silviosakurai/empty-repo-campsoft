@@ -25,6 +25,9 @@ export const bannerViewerPartnerSchema = {
   params: Type.Object({
     bannerId: Type.String(),
   }),
+  querystring: Type.Object({
+    company_id: Type.Array(Type.Number()),
+  }),
   response: {
     200: Type.Object(
       {

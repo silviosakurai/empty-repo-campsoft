@@ -75,31 +75,46 @@ export default async function productRoutes(server: FastifyInstance) {
 
   server.get('/product_groups/:groupId', {
     schema: getProductGroupSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.viewGroup,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productViewPermissions),
+    ],
   });
-  
+
   server.post('/product_groups/:groupId/products', {
     schema: postAddProductSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.addProductToGroup,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productCreatePermissions),
+    ],
   });
 
   server.put('/product_groups/:groupId', {
     schema: putProductGroupSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.putGroup,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productUpdatePermissions),
+    ],
   });
 
   server.delete('/product_groups/:groupId/products/:productId', {
     schema: deleteProductFromGroupSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.deleteProductFromGroup,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productUpdatePermissions),
+    ],
   });
 
   server.post('/product_groups/:groupId/images/:type', {
     schema: createProductGroupImageSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.createGroupImage,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productUpdatePermissions),
+    ],
   });
 }

@@ -18,7 +18,7 @@ export const viewGroup = async (
 
   try {
     const response = await productGroupViewerUseCase.execute(
-      request.params.groupId,
+      request.params.groupId
     );
 
     if (!response) {

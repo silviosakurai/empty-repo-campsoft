@@ -46,7 +46,6 @@ export class ProductService {
     private readonly productGroupProductCreatorRepository: ProductGroupProductCreatorRepository,
     private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
     private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
   ) {}
 
   create = async (input: CreateProductRequest) => {

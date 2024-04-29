@@ -16,7 +16,9 @@ export const updateProductGroup = async (
   }>,
   reply: FastifyReply
 ) => {
-  const productsGroupUpdaterUseCase = container.resolve(ProductsGroupUpdaterUseCase);
+  const productsGroupUpdaterUseCase = container.resolve(
+    ProductsGroupUpdaterUseCase
+  );
   const { t } = request;
 
   try {

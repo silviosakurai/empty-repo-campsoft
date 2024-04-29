@@ -3,21 +3,25 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { BannerViewerUseCase } from '@core/useCases/banner/BannerViewer.usecase';
-import { BannerViewerRequestDto } from '@core/useCases/banner/dtos/BannerViewerRequest.dto';
+import {
+  BannerViewerRequestDto,
+  BannerViewerRequestQueryDto
+} from '@core/useCases/banner/dtos/BannerViewerRequest.dto';
 
 export const viewBanner = async (
   request: FastifyRequest<{
     Params: BannerViewerRequestDto;
+    Querystring: BannerViewerRequestQueryDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t, tokenJwtData } = request;
+  const { t } = request;
   const bannerUseCase = container.resolve(BannerViewerUseCase);
 
   try {
     const response = await bannerUseCase.view(
-      tokenJwtData,
-      parseInt(request.params.bannerId),
+      request.query.company_id,
+      parseInt(request.params.bannerId)
     );
 
     if (!response) {
