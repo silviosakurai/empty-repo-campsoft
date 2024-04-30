@@ -1,15 +1,14 @@
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
-import { ClientService, OrderService } from "@core/services";
-import { PaymentService } from "@core/services/payment.service";
+import { ClientService, OrderService, SellerService } from "@core/services";
 import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 
 @injectable()
 export class OrderWithPaymentReaderUseCase {
   constructor(
     private readonly orderService: OrderService,
+    private readonly sellerService: SellerService,
     private readonly clientService: ClientService,
-    private readonly paymentService: PaymentService,
     private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
@@ -22,11 +21,8 @@ export class OrderWithPaymentReaderUseCase {
 
     const sellerId = order.seller_id
       ? order.seller_id
-      : (
-          await this.paymentService.sellerViewByEmail(
-            "ricardo@maniadeapp.com.br"
-          )
-        )?.sellerId;
+      : (await this.sellerService.viewByEmail("ricardo@maniadeapp.com.br"))
+          ?.sellerId;
 
     if (!sellerId) {
       throw new Error(t("seller_not_found"));
