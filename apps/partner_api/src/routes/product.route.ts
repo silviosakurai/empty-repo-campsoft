@@ -2,7 +2,7 @@ import ProductController from '@/controllers/product';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
-  getProductPartnerSchema,
+  getProductManagerSchema,
   listProductByCompanySchema,
   postProductSchema,
   updateProductDetailHowToAccessSchema,
@@ -16,6 +16,8 @@ import {
 } from '@core/validations/product';
 import {
   productCreatePermissions,
+  productDeleteHowToAccessPermissions,
+  productEditHowToAccessPermissions,
   productImageGroupUpdatePermissions,
   productListPermissions,
   productUpdatePermissions,
@@ -35,7 +37,7 @@ export default async function productRoutes(server: FastifyInstance) {
   });
 
   server.get('/products/:sku', {
-    schema: getProductPartnerSchema,
+    schema: getProductManagerSchema,
     handler: productController.view,
     preHandler: [
       (request, reply) =>
@@ -54,14 +56,28 @@ export default async function productRoutes(server: FastifyInstance) {
 
   server.put('/products/:sku/how-to-access', {
     schema: updateProductDetailHowToAccessSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.updateDetail,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          productEditHowToAccessPermissions
+        ),
+    ],
   });
 
   server.delete('/products/:sku/how-to-access', {
     schema: updateProductDetailHowToAccessSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.updateDetail,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          productDeleteHowToAccessPermissions
+        ),
+    ],
   });
 
   server.put('/products/:sku', {

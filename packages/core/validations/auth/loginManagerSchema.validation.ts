@@ -1,18 +1,13 @@
+import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { orderListResponseSchema } from "@core/schema/order/orderListResponseSchema";
-import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
-import { Type } from "@sinclair/typebox";
+import { loginResponsePartnerSchema } from "@core/schema/login/loginResponsePartnerSchema";
+import { permissionUserLoginSchema } from "@core/schema/permission/permissionUserLoginSchema";
 
-export const ordersFromPartnersSchema = {
-  description: "Seleciona todos os pedidos do usuário",
-  tags: [TagSwagger.order],
+export const loginManagerSchema = {
+  description: "Autentica o usuário e gera um token de acesso JWT",
+  tags: [TagSwagger.authentication],
   produces: ["application/json"],
-  security: [
-    {
-      authenticateJwt: [],
-    },
-  ],
   headers: Type.Object({
     "Accept-Language": Type.Optional(
       Type.String({
@@ -22,13 +17,20 @@ export const ordersFromPartnersSchema = {
       })
     ),
   }),
-  querystring: pagingRequestSchema,
+  body: Type.Object({
+    login: Type.String(),
+    password: Type.String({ minLength: 6 }),
+  }),
   response: {
     200: Type.Object(
       {
-        status: Type.Boolean(),
+        status: Type.Boolean({ const: true }),
         message: Type.String(),
-        data: orderListResponseSchema,
+        data: Type.Object({
+          result: loginResponsePartnerSchema,
+          permissions: Type.Array(permissionUserLoginSchema),
+          token: Type.String(),
+        }),
       },
       { description: "Successful" }
     ),
@@ -39,14 +41,6 @@ export const ordersFromPartnersSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
-    ),
-    404: Type.Object(
-      {
-        status: Type.Boolean({ default: false }),
-        message: Type.String(),
-        data: Type.Null(),
-      },
-      { description: "Not Found" }
     ),
     500: Type.Object(
       {

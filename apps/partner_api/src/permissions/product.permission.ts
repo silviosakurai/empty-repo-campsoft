@@ -11,3 +11,11 @@ export const productUpdatePermissions = [PermissionsRoles.PRODUCT_UPDATE];
 export const productImageGroupUpdatePermissions = [
   PermissionsRoles.PRODUCT_IMAGE_GROUP_UPDATE,
 ];
+
+export const productEditHowToAccessPermissions = [
+  PermissionsRoles.PRODUCT_EDIT_HOW_TO_ACCESS,
+];
+
+export const productDeleteHowToAccessPermissions = [
+  PermissionsRoles.PRODUCT_DELETE_HOW_TO_ACCESS,
+];

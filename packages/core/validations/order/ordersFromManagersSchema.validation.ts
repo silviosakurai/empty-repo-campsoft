@@ -1,16 +1,15 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { Type } from "@fastify/type-provider-typebox";
-import { bannerUpdaterRequestSchema } from "@core/schema/banner/bannerUpdaterRequestSchema";
-import { bannerUpdaterResponseSchema } from "@core/schema/banner/bannerUpdaterResponseSchema";
+import { orderListResponseSchema } from "@core/schema/order/orderListResponseSchema";
+import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
+import { Type } from "@sinclair/typebox";
 
-export const bannerUpdaterPartnerSchema = {
-  description: "Atualiza um banner",
-  tags: [TagSwagger.banner],
+export const ordersFromManagersSchema = {
+  description: "Seleciona todos os pedidos do usuário",
+  tags: [TagSwagger.order],
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
@@ -23,19 +22,13 @@ export const bannerUpdaterPartnerSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    bannerId: Type.String(),
-  }),
-  querystring: Type.Object({
-    company_id: Type.Array(Type.Number()),
-  }),
-  body: bannerUpdaterRequestSchema,
+  querystring: pagingRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: bannerUpdaterResponseSchema,
+        data: orderListResponseSchema,
       },
       { description: "Successful" }
     ),
@@ -46,6 +39,14 @@ export const bannerUpdaterPartnerSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {

@@ -1,1 +1,1 @@
-# `partner`
+# `manager`

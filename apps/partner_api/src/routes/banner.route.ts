@@ -2,15 +2,15 @@ import BannerController from '@/controllers/banner';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
-  bannerListerPartnerSchema,
-  bannerViewerPartnerSchema,
-  bannerCreatorPartnerSchema,
-  bannerItemCreatorPartnerSchema,
-  bannerUpdaterPartnerSchema,
-  bannerItemUpdaterPartnerSchema,
-  bannerDeleterPartnerSchema,
-  bannerItemDeleterPartnerSchema,
-  bannerImageUploaderPartnerSchema,
+  bannerListerManagerSchema,
+  bannerViewerManagerSchema,
+  bannerCreatorManagerSchema,
+  bannerItemCreatorManagerSchema,
+  bannerUpdaterManagerSchema,
+  bannerItemUpdaterManagerSchema,
+  bannerDeleterManagerSchema,
+  bannerItemDeleterManagerSchema,
+  bannerImageUploaderManagerSchema,
 } from '@core/validations/banner';
 import {
   bannerCreatePermissions,
@@ -24,7 +24,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   const bannerController = container.resolve(BannerController);
 
   server.get('/banners', {
-    schema: bannerListerPartnerSchema,
+    schema: bannerListerManagerSchema,
     handler: bannerController.list,
     preHandler: [
       (request, reply) =>
@@ -33,7 +33,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.get('/banners/:bannerId', {
-    schema: bannerViewerPartnerSchema,
+    schema: bannerViewerManagerSchema,
     handler: bannerController.view,
     preHandler: [
       (request, reply) =>
@@ -42,7 +42,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.post('/banners', {
-    schema: bannerCreatorPartnerSchema,
+    schema: bannerCreatorManagerSchema,
     handler: bannerController.create,
     preHandler: [
       (request, reply) =>
@@ -51,7 +51,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.post('/banners/:bannerId/items', {
-    schema: bannerItemCreatorPartnerSchema,
+    schema: bannerItemCreatorManagerSchema,
     handler: bannerController.createItem,
     preHandler: [
       (request, reply) =>
@@ -60,7 +60,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.post('/banners/:bannerId/items/:bannerItemId/images/:type', {
-    schema: bannerImageUploaderPartnerSchema,
+    schema: bannerImageUploaderManagerSchema,
     handler: bannerController.uploadBannerImage,
     preHandler: [
       (request, reply) =>
@@ -69,7 +69,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.put('/banners/:bannerId', {
-    schema: bannerUpdaterPartnerSchema,
+    schema: bannerUpdaterManagerSchema,
     handler: bannerController.update,
     preHandler: [
       (request, reply) =>
@@ -78,7 +78,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.put('/banners/:bannerId/items/:bannerItemId', {
-    schema: bannerItemUpdaterPartnerSchema,
+    schema: bannerItemUpdaterManagerSchema,
     handler: bannerController.updateItem,
     preHandler: [
       (request, reply) =>
@@ -87,7 +87,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.delete('/banners/:bannerId', {
-    schema: bannerDeleterPartnerSchema,
+    schema: bannerDeleterManagerSchema,
     handler: bannerController.delete,
     preHandler: [
       (request, reply) =>
@@ -96,7 +96,7 @@ export default async function bannerRoutes(server: FastifyInstance) {
   });
 
   server.delete('/banners/:bannerId/items/:bannerItemId', {
-    schema: bannerItemDeleterPartnerSchema,
+    schema: bannerItemDeleterManagerSchema,
     handler: bannerController.deleteItem,
     preHandler: [
       (request, reply) =>

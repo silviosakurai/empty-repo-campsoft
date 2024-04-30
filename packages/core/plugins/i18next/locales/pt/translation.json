@@ -62,7 +62,7 @@
   "image_size_exceeded_5mb": "Tamanho da imagem excedido. Tamanho máximo permitido: 2MB",
   "coupon_code_with_voucher_not_allowed": "Código de cupom com voucher não permitido",
   "product_update_not_allowed": "Atualização de produto não permitida.",
-  "product_group_update_not_allowed":  "Atualização de grupo de produto não permitida.",
+  "product_group_update_not_allowed": "Atualização de grupo de produto não permitida.",
   "banner_update_not_allowed": "Atualização de Banner não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
   "error_update_product_group": "Erro ao atualizar o grupo de produto.",

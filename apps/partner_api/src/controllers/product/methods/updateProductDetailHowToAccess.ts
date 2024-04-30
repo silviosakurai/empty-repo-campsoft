@@ -13,17 +13,13 @@ export const updateProductDetailHowToAccess = async (
   reply: FastifyReply
 ) => {
   const service = container.resolve(ProductsDetailHowToAccessUpdaterUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenJwtData } = request;
 
   try {
-    const response = await service.updateDetailsHowToAccess(
-      t,
-      tokenKeyData.company_id,
-      {
-        productId: request.params.sku,
-        request: request.body,
-      }
-    );
+    const response = await service.updateDetailsHowToAccess(t, tokenJwtData, {
+      productId: request.params.sku,
+      request: request.body,
+    });
 
     if (!response) {
       request.server.logger.warn(response, request.id);

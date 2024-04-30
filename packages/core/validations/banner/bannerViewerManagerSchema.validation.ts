@@ -1,13 +1,18 @@
-import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { loginResponsePartnerSchema } from "@core/schema/login/loginResponsePartnerSchema";
-import { permissionUserLoginSchema } from "@core/schema/permission/permissionUserLoginSchema";
+import { Type } from "@fastify/type-provider-typebox";
+import { bannerItemSchema } from "@core/schema/banner/bannerItemSchema";
 
-export const loginPartnerSchema = {
-  description: "Autentica o usuário e gera um token de acesso JWT",
-  tags: [TagSwagger.authentication],
+export const bannerViewerManagerSchema = {
+  description: "Retorna um banner",
+  tags: [TagSwagger.banner],
   produces: ["application/json"],
+  security: [
+    {
+      authenticateKeyApi: [],
+      authenticateJwt: [],
+    },
+  ],
   headers: Type.Object({
     "Accept-Language": Type.Optional(
       Type.String({
@@ -17,20 +22,18 @@ export const loginPartnerSchema = {
       })
     ),
   }),
-  body: Type.Object({
-    login: Type.String(),
-    password: Type.String({ minLength: 6 }),
+  params: Type.Object({
+    bannerId: Type.String(),
+  }),
+  querystring: Type.Object({
+    company_id: Type.Array(Type.Number()),
   }),
   response: {
     200: Type.Object(
       {
-        status: Type.Boolean({ const: true }),
+        status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Object({
-          result: loginResponsePartnerSchema,
-          permissions: Type.Array(permissionUserLoginSchema),
-          token: Type.String(),
-        }),
+        data: bannerItemSchema,
       },
       { description: "Successful" }
     ),

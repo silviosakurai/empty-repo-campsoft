@@ -14,20 +14,20 @@ RUN npm install -g pnpm
 RUN pnpm add -g turbo
 RUN pnpm install
 
-RUN turbo run build --filter=partner
+RUN turbo run build --filter=manager
 
 FROM node:20.11.1
 
 WORKDIR /app
 
-COPY --from=builder /app/apps/partner_api/dist /app
+COPY --from=builder /app/apps/manager_api/dist /app
 COPY --from=builder /app/node_modules /app/node_modules
 
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/apps/partner_api/package*.json ./apps/partner_api
+COPY --from=builder /app/apps/manager_api/package*.json ./apps/manager_api
 
 EXPOSE 3000
 
-WORKDIR /app/apps/partner_api/src
+WORKDIR /app/apps/manager_api/src
 
 CMD ["node", "index.js"]

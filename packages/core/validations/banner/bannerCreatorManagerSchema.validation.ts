@@ -4,7 +4,7 @@ import { Type } from "@fastify/type-provider-typebox";
 import { bannerCreatorRequestSchema } from "@core/schema/banner/bannerCreatorRequestSchema";
 import { bannerCreatorResponseSchema } from "@core/schema/banner/bannerCreatorResponseSchema";
 
-export const bannerCreatorPartnerSchema = {
+export const bannerCreatorManagerSchema = {
   description: "Cadastra um banner",
   tags: [TagSwagger.banner],
   produces: ["application/json"],

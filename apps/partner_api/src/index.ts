@@ -24,7 +24,7 @@ server.addHook('preValidation', requestHook);
 server.addHook('onSend', responseHook);
 server.addHook('onError', errorHook);
 
-server.decorateRequest('module', RouteModule.PARTNER);
+server.decorateRequest('module', RouteModule.MANAGER);
 
 server.register(dbConnector);
 server.register(loggerServicePlugin);

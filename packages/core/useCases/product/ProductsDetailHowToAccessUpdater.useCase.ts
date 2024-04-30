@@ -4,23 +4,35 @@ import { UpdateParams } from "@core/useCases/product/dtos/ProductDetaiHowToAcces
 import { ProductService } from "@core/services";
 import { TFunction } from "i18next";
 import { ProductHowToAccessType } from "@core/common/enums/models/product";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { ControlAccessService } from "@core/services/controlAccess.service";
 
 @injectable()
 export class ProductsDetailHowToAccessUpdaterUseCase {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly controlAccessService: ControlAccessService
+  ) {}
 
   async updateDetailsHowToAccess(
     t: TFunction<"translation", undefined>,
-    companyId: number,
+    tokenJwtData: ITokenJwtData,
     input: {
       productId: string;
       request: UpdateProductDetailHowToAccessRequest;
     }
   ) {
+    const listPartnersIds =
+      this.controlAccessService.listPartnersIds(tokenJwtData);
+
     const productCompany = await this.productService.productCompanyViewer(
       input.productId,
-      companyId
+      listPartnersIds
     );
+
+    if (!productCompany) {
+      return t("product_not_found");
+    }
 
     const updateParams = this.buildUpdateParams(input.request);
 

@@ -1,13 +1,9 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { Type } from "@fastify/type-provider-typebox";
-import {
-  bannerImageUploaderBodySchema,
-  bannerImageUploaderParamsSchema
-} from "@core/schema/banner/bannerImageUploaderSchema";
 
-export const bannerImageUploaderPartnerSchema = {
-  description: "Adiciona imagem em grupo de produtos",
+export const bannerDeleterManagerSchema = {
+  description: "Exclui um banner",
   tags: [TagSwagger.banner],
   produces: ["application/json"],
   security: [
@@ -25,8 +21,9 @@ export const bannerImageUploaderPartnerSchema = {
       })
     ),
   }),
-  params: bannerImageUploaderParamsSchema,
-  body: bannerImageUploaderBodySchema,
+  params: Type.Object({
+    bannerId: Type.String(),
+  }),
   querystring: Type.Object({
     company_id: Type.Array(Type.Number()),
   }),

@@ -1,14 +1,16 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { productDetailsWithPricesAndDatesGroupedByCompanySchema } from "@core/schema/product/productDetailsWithPricesAndDatesGroupedByCompany";
-import { Type } from "@sinclair/typebox";
+import { Type } from "@fastify/type-provider-typebox";
+import { bannerItemCreatorRequestSchema } from "@core/schema/banner/bannerItemCreatorRequestSchema";
+import { bannerItemCreatorResponseSchema } from "@core/schema/banner/bannerItemCreatorResponseSchema";
 
-export const getProductPartnerSchema = {
-  description: "Lista produto por id",
-  tags: [TagSwagger.product],
+export const bannerItemCreatorManagerSchema = {
+  description: "Adiciona item ao banner",
+  tags: [TagSwagger.banner],
   produces: ["application/json"],
   security: [
     {
+      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
@@ -22,14 +24,15 @@ export const getProductPartnerSchema = {
     ),
   }),
   params: Type.Object({
-    sku: Type.String(),
+    bannerId: Type.String(),
   }),
+  body: bannerItemCreatorRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: productDetailsWithPricesAndDatesGroupedByCompanySchema,
+        data: bannerItemCreatorResponseSchema,
       },
       { description: "Successful" }
     ),
@@ -40,14 +43,6 @@ export const getProductPartnerSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
-    ),
-    404: Type.Object(
-      {
-        status: Type.Boolean({ default: false }),
-        message: Type.String(),
-        data: Type.Null(),
-      },
-      { description: "Not Found" }
     ),
     500: Type.Object(
       {

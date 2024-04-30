@@ -1,11 +1,13 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { Type } from "@fastify/type-provider-typebox";
-import { bannerItemCreatorRequestSchema } from "@core/schema/banner/bannerItemCreatorRequestSchema";
-import { bannerItemCreatorResponseSchema } from "@core/schema/banner/bannerItemCreatorResponseSchema";
+import {
+  bannerImageUploaderBodySchema,
+  bannerImageUploaderParamsSchema,
+} from "@core/schema/banner/bannerImageUploaderSchema";
 
-export const bannerItemCreatorPartnerSchema = {
-  description: "Adiciona item ao banner",
+export const bannerImageUploaderManagerSchema = {
+  description: "Adiciona imagem em grupo de produtos",
   tags: [TagSwagger.banner],
   produces: ["application/json"],
   security: [
@@ -23,16 +25,17 @@ export const bannerItemCreatorPartnerSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    bannerId: Type.String(),
+  params: bannerImageUploaderParamsSchema,
+  body: bannerImageUploaderBodySchema,
+  querystring: Type.Object({
+    company_id: Type.Array(Type.Number()),
   }),
-  body: bannerItemCreatorRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: bannerItemCreatorResponseSchema,
+        data: Type.Null(),
       },
       { description: "Successful" }
     ),

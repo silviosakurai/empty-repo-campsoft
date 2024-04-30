@@ -1,9 +1,11 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { Type } from "@fastify/type-provider-typebox";
+import { bannerUpdaterRequestSchema } from "@core/schema/banner/bannerUpdaterRequestSchema";
+import { bannerUpdaterResponseSchema } from "@core/schema/banner/bannerUpdaterResponseSchema";
 
-export const bannerDeleterPartnerSchema = {
-  description: "Exclui um banner",
+export const bannerUpdaterManagerSchema = {
+  description: "Atualiza um banner",
   tags: [TagSwagger.banner],
   produces: ["application/json"],
   security: [
@@ -27,12 +29,13 @@ export const bannerDeleterPartnerSchema = {
   querystring: Type.Object({
     company_id: Type.Array(Type.Number()),
   }),
+  body: bannerUpdaterRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Null(),
+        data: bannerUpdaterResponseSchema,
       },
       { description: "Successful" }
     ),

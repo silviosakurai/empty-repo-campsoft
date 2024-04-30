@@ -4,7 +4,7 @@ import { bannerReaderResponseSchema } from "@core/schema/banner/bannerReaderResp
 import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
 import { Type } from "@fastify/type-provider-typebox";
 
-export const bannerListerPartnerSchema = {
+export const bannerListerManagerSchema = {
   description: "Lista os banners disponíveis",
   tags: [TagSwagger.banner],
   produces: ["application/json"],
