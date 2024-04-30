@@ -41,26 +41,10 @@ export const paymentByCreditCard = async (
     }
 
     if (error instanceof Error) {
-      if (error.message === 'invalid_card_number') {
-        return sendResponse(reply, {
-          message: t('invalid_card_number'),
-          httpStatusCode: HTTPStatusCode.BAD_REQUEST,
-        });
-      }
-
-      if (error.message === 'expired_card_error') {
-        return sendResponse(reply, {
-          message: t('expired_card_error'),
-          httpStatusCode: HTTPStatusCode.BAD_REQUEST,
-        });
-      }
-
-      if (error.message === t('something_went_wrong_to_generate_credit_card')) {
-        return sendResponse(reply, {
-          message: t('something_went_wrong_to_generate_credit_card'),
-          httpStatusCode: HTTPStatusCode.BAD_REQUEST,
-        });
-      }
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
     }
 
     return sendResponse(reply, {

@@ -18,6 +18,8 @@ import {
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
 import { PaymentSellerViewerByEmailRepository } from "@core/repositories/payment/PaymentSellerViewerByEmail.repository";
+import { PayerCreditCardByOrderIdUseCase } from "@core/useCases/order/PayerCreditCardByOrderId.useCase";
+import { PayByCreditCardRequest } from "@core/useCases/order/dtos/PayByCreditCardRequest.dto";
 
 @injectable()
 export class PaymentService {
@@ -26,7 +28,8 @@ export class PaymentService {
     private readonly voucherService: VoucherService,
     private readonly signatureService: SignatureService,
     private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
-    private readonly sellerViewerByEmailRepository: PaymentSellerViewerByEmailRepository
+    private readonly sellerViewerByEmailRepository: PaymentSellerViewerByEmailRepository,
+    private readonly payerCreditCardByOrderIdUseCase: PayerCreditCardByOrderIdUseCase
   ) {}
 
   private voucherIsValid = async (
@@ -219,7 +222,16 @@ export class PaymentService {
       throw new Error(t("order_not_found"));
     }
 
-    // this.payerCreditCardByOrderIdUseCase.pay(t, orderId, payment);
+    const creditCardPayment = {
+      credit_card: payment?.credit_card,
+      credit_card_id: payment?.credit_card_id,
+    } as PayByCreditCardRequest;
+
+    await this.payerCreditCardByOrderIdUseCase.pay(
+      t,
+      orderId,
+      creditCardPayment
+    );
 
     await this.signatureService.activePaidSignature(
       order.order_id,
