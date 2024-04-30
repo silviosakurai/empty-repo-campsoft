@@ -9,6 +9,7 @@ import {
   createOrderSchema,
   postOrderPaymentBoletoSchema,
   postOrderPaymentCardSchema,
+  postOrderPaymentPixSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -129,5 +130,6 @@ export default async function orderRoutes(server: FastifyInstance) {
       (request, reply) =>
         server.authenticateJwt(request, reply, orderPaymentPixPermissions),
     ],
+    schema: postOrderPaymentPixSchema,
   });
 }

@@ -14,11 +14,7 @@ export class OrderWithPaymentReaderUseCase {
     private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
-  async view(
-    t: TFunction<"translation", undefined>,
-    tokenKey: ITokenKeyData,
-    orderId: string
-  ) {
+  async view(t: TFunction<"translation", undefined>, orderId: string) {
     const order = await this.orderService.listOrderById(orderId);
 
     if (!order) {
