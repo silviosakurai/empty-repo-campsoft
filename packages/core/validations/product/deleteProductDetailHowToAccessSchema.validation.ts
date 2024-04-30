@@ -1,11 +1,10 @@
+import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { Type } from "@fastify/type-provider-typebox";
-import { bannerItemSchema } from "@core/schema/banner/bannerItemSchema";
 
-export const bannerViewerManagerSchema = {
-  description: "Retorna um banner",
-  tags: [TagSwagger.banner],
+export const deleteProductDetailHowToAccessSchema = {
+  description: "Deleta detalhes de como acessar de um produto",
+  tags: [TagSwagger.product],
   produces: ["application/json"],
   security: [
     {
@@ -22,19 +21,24 @@ export const bannerViewerManagerSchema = {
     ),
   }),
   params: Type.Object({
-    bannerId: Type.String(),
-  }),
-  querystring: Type.Object({
-    company_id: Type.Array(Type.Number()),
+    sku: Type.String(),
   }),
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: bannerItemSchema,
+        data: Type.Null(),
       },
       { description: "Successful" }
+    ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
     ),
     401: Type.Object(
       {
@@ -43,6 +47,24 @@ export const bannerViewerManagerSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
+    ),
+    403: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      {
+        description: "Forbidden",
+      }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {

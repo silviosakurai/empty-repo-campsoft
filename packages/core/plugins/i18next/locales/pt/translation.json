@@ -75,5 +75,6 @@
   "client_must_have_a_card_as_default": "O cliente deve ter um cartão como padrão",
   "card_not_found": "Cartão não encontrado",
   "how_to_access_product_delete_not_allowed": "Exclusão de como acessar produto não permitida",
-  "how_to_access_product_update_not_allowed": "Atualização de como acessar produto não permitida"
+  "how_to_access_product_update_not_allowed": "Atualização de como acessar produto não permitida",
+  "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida"
 }

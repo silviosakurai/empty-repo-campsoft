@@ -10,7 +10,6 @@ export const bannerListerManagerSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

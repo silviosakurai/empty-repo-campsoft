@@ -9,7 +9,6 @@ export const updateProductDetailHowToAccessSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
@@ -34,6 +33,14 @@ export const updateProductDetailHowToAccessSchema = {
         data: Type.Null(),
       },
       { description: "Successful" }
+    ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
     ),
     401: Type.Object(
       {

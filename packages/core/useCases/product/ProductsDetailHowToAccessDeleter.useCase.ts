@@ -31,7 +31,7 @@ export class ProductsDetailHowToAccessDeleterUseCase {
     );
 
     if (!productCompany) {
-      return t("how_to_access_product_delete_not_allowed");
+      return Error(t("how_to_access_product_delete_not_allowed"));
     }
 
     const updateParams = this.buildUpdateParams(input.request);

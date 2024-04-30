@@ -8,7 +8,6 @@ export const bannerDeleterManagerSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

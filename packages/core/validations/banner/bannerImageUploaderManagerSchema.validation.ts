@@ -12,7 +12,6 @@ export const bannerImageUploaderManagerSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

@@ -12,14 +12,21 @@ export const updateProductDetailHowToAccess = async (
   }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(ProductsDetailHowToAccessUpdaterUseCase);
+  const productsDetailHowToAccessUpdaterUseCase = container.resolve(
+    ProductsDetailHowToAccessUpdaterUseCase
+  );
   const { t, tokenJwtData } = request;
 
   try {
-    const response = await service.updateDetailsHowToAccess(t, tokenJwtData, {
-      productId: request.params.sku,
-      request: request.body,
-    });
+    const response =
+      await productsDetailHowToAccessUpdaterUseCase.updateDetailsHowToAccess(
+        t,
+        tokenJwtData,
+        {
+          productId: request.params.sku,
+          request: request.body,
+        }
+      );
 
     if (!response) {
       request.server.logger.warn(response, request.id);
@@ -35,6 +42,13 @@ export const updateProductDetailHowToAccess = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+
+    if (error instanceof Error) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     return sendResponse(reply, {
       message: t('internal_server_error'),

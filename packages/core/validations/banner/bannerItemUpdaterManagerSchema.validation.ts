@@ -10,7 +10,6 @@ export const bannerItemUpdaterManagerSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

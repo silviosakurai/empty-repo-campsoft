@@ -13,6 +13,7 @@ import {
   createProductGroupImageSchema,
   getProductGroupSchema,
   putProductGroupSchema,
+  deleteProductDetailHowToAccessSchema,
 } from '@core/validations/product';
 import {
   productCreatePermissions,
@@ -68,8 +69,8 @@ export default async function productRoutes(server: FastifyInstance) {
   });
 
   server.delete('/products/:sku/how-to-access', {
-    schema: updateProductDetailHowToAccessSchema,
-    handler: productController.updateDetail,
+    schema: deleteProductDetailHowToAccessSchema,
+    handler: productController.deleteDetail,
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(

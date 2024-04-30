@@ -75,5 +75,6 @@
   "client_must_have_a_card_as_default": "The client must have a card as default",
   "card_not_found": "Card not found",
   "how_to_access_product_delete_not_allowed": "How to access product delete not allowed",
-  "how_to_access_product_update_not_allowed": "How to access product update not allowed"
+  "how_to_access_product_update_not_allowed": "How to access product update not allowed",
+  "how_to_access_product_update_or_delete_not_allowed": "How to access product update or delete not allowed"
 }

@@ -12,14 +12,21 @@ export const deleteProductDetailHowToAccess = async (
   }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(ProductsDetailHowToAccessDeleterUseCase);
+  const productsDetailHowToAccessDeleterUseCase = container.resolve(
+    ProductsDetailHowToAccessDeleterUseCase
+  );
   const { t, tokenJwtData } = request;
 
   try {
-    const response = await service.deleteDetailsHowToAccess(t, tokenJwtData, {
-      productId: request.params.sku,
-      request: request.body,
-    });
+    const response =
+      await productsDetailHowToAccessDeleterUseCase.deleteDetailsHowToAccess(
+        t,
+        tokenJwtData,
+        {
+          productId: request.params.sku,
+          request: request.body,
+        }
+      );
 
     if (!response) {
       request.server.logger.warn(response, request.id);
