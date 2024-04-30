@@ -31,7 +31,7 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
     );
 
     if (!productCompany) {
-      return t("product_not_found");
+      return t("how_to_access_product_update_not_allowed");
     }
 
     const updateParams = this.buildUpdateParams(input.request);

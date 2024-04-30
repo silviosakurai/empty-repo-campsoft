@@ -31,7 +31,7 @@ export class ProductsDetailHowToAccessDeleterUseCase {
     );
 
     if (!productCompany) {
-      return t("product_not_found");
+      return t("how_to_access_product_delete_not_allowed");
     }
 
     const updateParams = this.buildUpdateParams(input.request);
@@ -49,49 +49,37 @@ export class ProductsDetailHowToAccessDeleterUseCase {
   private buildUpdateParams(
     request: UpdateProductDetailHowToAccessRequest
   ): UpdateParams | null {
-    let como_acessar_mob: string | null = null;
-    let como_acessar_url_and: string | null = null;
-    let como_acessar_url_ios: string | null = null;
-    let como_acessar_url: string | null = null;
-    let como_acessar_desk: string | null = null;
-
     switch (request.type) {
       case ProductHowToAccessType.ANDROID:
-        como_acessar_mob = "";
-        como_acessar_url_and = "";
-        break;
+        return this.createUpdateParamsForAndroid();
       case ProductHowToAccessType.IOS:
-        como_acessar_mob = "";
-        como_acessar_url_ios = "";
-        break;
+        return this.createUpdateParamsForIOS();
       case ProductHowToAccessType.WEB:
-        como_acessar_url = "";
-        como_acessar_desk = "";
-        break;
       case ProductHowToAccessType.DESKTOP:
-        como_acessar_url = "";
-        como_acessar_desk = "";
-        break;
+        return this.createUpdateParamsForWebDesktop();
       default:
         return null;
     }
-    const updateParams: UpdateParams = {};
+  }
 
-    if (como_acessar_mob === "") {
-      updateParams.como_acessar_mob = como_acessar_mob;
-    }
-    if (como_acessar_url_and === "") {
-      updateParams.como_acessar_url_and = como_acessar_url_and;
-    }
-    if (como_acessar_url_ios === "") {
-      updateParams.como_acessar_url_ios = como_acessar_url_ios;
-    }
-    if (como_acessar_url === "") {
-      updateParams.como_acessar_url = como_acessar_url;
-    }
-    if (como_acessar_desk === "") {
-      updateParams.como_acessar_desk = como_acessar_desk;
-    }
-    return updateParams;
+  private createUpdateParamsForAndroid(): UpdateParams {
+    return {
+      como_acessar_mob: "",
+      como_acessar_url_and: "",
+    };
+  }
+
+  private createUpdateParamsForIOS(): UpdateParams {
+    return {
+      como_acessar_mob: "",
+      como_acessar_url_ios: "",
+    };
+  }
+
+  private createUpdateParamsForWebDesktop(): UpdateParams {
+    return {
+      como_acessar_url: "",
+      como_acessar_desk: "",
+    };
   }
 }

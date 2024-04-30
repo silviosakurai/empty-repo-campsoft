@@ -73,5 +73,7 @@
   "something_went_wrong_to_generate_credit_card": "Something went went wrong to generate credit card",
   "plans_not_found": "Plans not found!",
   "client_must_have_a_card_as_default": "The client must have a card as default",
-  "card_not_found": "Card not found"
+  "card_not_found": "Card not found",
+  "how_to_access_product_delete_not_allowed": "How to access product delete not allowed",
+  "how_to_access_product_update_not_allowed": "How to access product update not allowed"
 }

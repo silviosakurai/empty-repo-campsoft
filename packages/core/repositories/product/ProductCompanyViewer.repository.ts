@@ -2,8 +2,7 @@ import * as schema from "@core/models";
 import { productPartner } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { and, eq } from "drizzle-orm";
-import { inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 @injectable()
 export class ProductCompanyViewerRepository {
