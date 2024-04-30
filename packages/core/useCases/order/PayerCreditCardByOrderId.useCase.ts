@@ -8,12 +8,14 @@ import { PayByCreditCardRequest } from "./dtos/PayByCreditCardRequest.dto";
 import { ClientCardCreatorUseCase } from "../client/ClientCardCreator.useCase";
 import CreditCardExpirationDateIsInvalidError from "@core/common/exceptions/CreditCardExpirationDateIsInvalidError";
 import { checkIfDateIsAfterOfCurrent } from "@core/common/functions/checkIfDateIsAfterOfCurrent";
+import { SignatureService } from "@core/services/signature.service";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly clientService: ClientService,
+    private readonly signatureService: SignatureService,
     private readonly cardCreatorUseCase: ClientCardCreatorUseCase,
     private readonly paymentGatewayService: PaymentGatewayService,
     private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
@@ -54,9 +56,16 @@ export class PayerCreditCardByOrderIdUseCase {
       return result;
     }
 
-    await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-      paymentTransactionId: result.data.id,
-    });
+    await Promise.all([
+      this.signatureService.activePaidSignature(
+        order.order_id,
+        order.order_id_previous,
+        order.activation_immediate
+      ),
+      this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
+        paymentTransactionId: result.data.id,
+      }),
+    ]);
 
     const formatCreditCard = `${result.data.payment_method.first4_digits}xxxxxxxxxx${result.data.payment_method.last4_digits}`;
 
