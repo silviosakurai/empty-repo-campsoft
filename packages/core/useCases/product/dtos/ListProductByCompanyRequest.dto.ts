@@ -1,6 +1,6 @@
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
-import { ProductOrderPartner } from "@core/common/enums/models/product";
+import { ProductOrderManager } from "@core/common/enums/models/product";
 
 export interface ListProductByCompanyRequest {
   id?: string;
@@ -10,7 +10,7 @@ export interface ListProductByCompanyRequest {
   description?: string;
   product_type_id?: number;
   slug?: string;
-  sort_by?: ProductOrderPartner;
+  sort_by?: ProductOrderManager;
   sort_order?: SortOrder;
   per_page: number;
   current_page: number;

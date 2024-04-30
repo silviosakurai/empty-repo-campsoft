@@ -8,7 +8,6 @@ export const deleteProductFromGroupSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
