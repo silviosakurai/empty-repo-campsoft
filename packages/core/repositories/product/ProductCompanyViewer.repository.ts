@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { productPartner } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 @injectable()
 export class ProductCompanyViewerRepository {
@@ -10,7 +10,7 @@ export class ProductCompanyViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(productId: string, companyId: number) {
+  async view(productId: string, listPartnersIds: number[]) {
     const results = await this.db
       .select({
         productId: productPartner.id_produto,
@@ -20,7 +20,7 @@ export class ProductCompanyViewerRepository {
       .where(
         and(
           eq(productPartner.id_produto, productId),
-          eq(productPartner.id_parceiro, companyId)
+          inArray(productPartner.id_parceiro, listPartnersIds)
         )
       )
       .execute();

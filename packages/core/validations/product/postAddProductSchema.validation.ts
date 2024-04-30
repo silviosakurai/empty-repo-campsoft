@@ -1,9 +1,7 @@
 import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import {
-  addProductToProductGroupSchema
-} from "@core/schema/product/addProductToProductGroupSchema";
+import { addProductToProductGroupSchema } from "@core/schema/product/addProductToProductGroupSchema";
 
 export const postAddProductSchema = {
   description: "Adiciona um produto à um grupo de produtos",
@@ -11,7 +9,6 @@ export const postAddProductSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

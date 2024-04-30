@@ -42,6 +42,6 @@ export async function createTransactionCardId(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    throw new Error(error.response.data.error.message);
+    throw new Error(error.response.data.error.category);
   }
 }

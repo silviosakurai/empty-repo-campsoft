@@ -25,12 +25,17 @@ export const postOrderPaymentCardSchema = {
   params: Type.Object({
     orderNumber: Type.String({ format: "uuid" }),
   }),
+  body: paymentCreditCardSchema,
   response: {
     201: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: paymentCreditCardSchema,
+        data: Type.Object({
+          brand: Type.String(),
+          number: Type.String(),
+          credit_card_id: Type.String(),
+        }),
       },
       { description: "Created" }
     ),
