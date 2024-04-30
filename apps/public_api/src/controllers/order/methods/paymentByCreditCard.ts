@@ -41,6 +41,18 @@ export const paymentByCreditCard = async (
     }
 
     if (error instanceof Error) {
+      if (
+        error.message === 'invalid_card_number' ||
+        error.message === 'expired_card_error' ||
+        error.message === 'service_request_timeout' ||
+        error.message === 'something_went_wrong_to_generate_credit_card'
+      ) {
+        return sendResponse(reply, {
+          message: t(error.message),
+          httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        });
+      }
+
       return sendResponse(reply, {
         message: error.message,
         httpStatusCode: HTTPStatusCode.BAD_REQUEST,

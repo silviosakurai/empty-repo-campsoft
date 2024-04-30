@@ -86,5 +86,6 @@
   "credit_card_number_invalid": "Número de cartão de crédito inválido",
   "credit_card_name_invalid": "Nome do cartão de crédito inválido",
   "select_credit_card_or_credit_card_id": "Selecione cartão de crédito ou ID de cartão de crédito",
-  "months_required_by_methods": "Meses é obrigatório para este método"
+  "months_required_by_methods": "Meses é obrigatório para este método",
+  "service_request_timeout": "Tempo limite da solicitação de serviço"
 }
