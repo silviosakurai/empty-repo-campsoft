@@ -1,7 +1,7 @@
 import { Type } from "@sinclair/typebox";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 
-export const loginResponsePartnerSchema = Type.Object({
+export const loginResponseManagerSchema = Type.Object({
   client_id: Type.String({ format: "uuid" }),
   status: Type.String({ enum: Object.values(ClientStatus) }),
   name: Type.String(),

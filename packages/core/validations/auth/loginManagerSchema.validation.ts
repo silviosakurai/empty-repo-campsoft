@@ -1,7 +1,7 @@
 import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { loginResponsePartnerSchema } from "@core/schema/login/loginResponsePartnerSchema";
+import { loginResponseManagerSchema } from "@core/schema/login/loginResponseManagerSchema";
 import { permissionUserLoginSchema } from "@core/schema/permission/permissionUserLoginSchema";
 
 export const loginManagerSchema = {
@@ -27,7 +27,7 @@ export const loginManagerSchema = {
         status: Type.Boolean({ const: true }),
         message: Type.String(),
         data: Type.Object({
-          result: loginResponsePartnerSchema,
+          result: loginResponseManagerSchema,
           permissions: Type.Array(permissionUserLoginSchema),
           token: Type.String(),
         }),
