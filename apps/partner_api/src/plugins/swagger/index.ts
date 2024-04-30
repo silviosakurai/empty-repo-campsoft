@@ -54,6 +54,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           name: TagSwagger.user,
           description: 'End-points relacionados ao usuário',
         },
+        {
+          name: TagSwagger.banner,
+          description: 'End-points relacionados a banner',
+        },
       ],
     },
   });

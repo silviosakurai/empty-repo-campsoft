@@ -25,7 +25,7 @@ export class ClientCardDefaultUpdaterRepository {
       .set({
         default: input.default ? 1 : 0,
       })
-      .where(eq(clientCards.card_id, input.cardId));
+      .where(eq(clientCards.card_id, sql`UUID_TO_BIN(${input.cardId})`));
 
     if (!result.affectedRows) {
       return false;

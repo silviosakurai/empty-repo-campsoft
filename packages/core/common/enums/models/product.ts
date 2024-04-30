@@ -19,6 +19,10 @@ export type ProductGroupProduct = {
   quantity: number;
 };
 
+export type ProductGroupProductList = {
+  productId: string | null;
+};
+
 export type ProductGroup = {
   product_group_id: number;
   name: string | null;
@@ -37,6 +41,17 @@ export enum ProductVoucherStatus {
   IN_ADDITION = "in_addition",
   ACTIVE = "active",
   EXPIRED = "expired",
+};
+
+export enum ProductHowToAccessType {
+  ANDROID = "android",
+  IOS = "ios",
+  WEB = "web",
+  DESKTOP = "desktop",
+}
+
+export enum ProductGroupImageType {
+  ICON = "icon",
 }
 
 export enum ProductOrderPartner {
