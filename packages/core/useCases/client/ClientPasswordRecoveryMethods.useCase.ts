@@ -9,13 +9,10 @@ export class ClientPasswordRecoveryMethodsUseCase {
   constructor(private readonly clientService: ClientService) {}
 
   async execute({
-    tokenKeyData,
     login,
   }: PasswordRecoveryMethodsClientRequest): Promise<PasswordRecoveryMethodsClientResponse | null> {
-    const recoveryMethods = await this.clientService.passwordRecoveryMethods(
-      tokenKeyData,
-      login
-    );
+    const recoveryMethods =
+      await this.clientService.passwordRecoveryMethods(login);
 
     if (!recoveryMethods) {
       return null;

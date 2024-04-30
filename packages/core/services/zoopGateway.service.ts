@@ -1,18 +1,20 @@
-import { injectable } from 'tsyringe';
-import { IZoopGatewayService } from '@core/interfaces/services/IZoopGateway.service';
-import { createTransactionPix } from './zoop/createTransactionPix';
-import { createTransactionFullTicket } from './zoop/createTransactionFullTicket';
-import { createTransactionSimpleTicket } from './zoop/createTransactionSimpleTicket';
-import { createTransactionCard } from './zoop/createTransactionCard';
-import { createTransactionCardId } from './zoop/createTransactionCardId';
-import { saveCardToken } from './zoop/saveCardToken';
+import { injectable } from "tsyringe";
+import { IZoopGatewayService } from "@core/interfaces/services/IZoopGateway.service";
+import { createTransactionPix } from "./payment/createTransactionPix";
+import { createTransactionFullTicket } from "./payment/createTransactionFullTicket";
+import { createTransactionSimpleTicket } from "./payment/createTransactionSimpleTicket";
+import { createTransactionCard } from "./payment/createTransactionCard";
+import { createTransactionCardId } from "./payment/createTransactionCardId";
+import { createCreditCardToken } from "./payment/createCreditCardToken";
+import { linkCardTokenWithCustomer } from "./payment/linkCardTokenWithCustomer";
 
 @injectable()
 export class ZoopGatewayService implements IZoopGatewayService {
-  saveCardToken = saveCardToken;
   createTransactionPix = createTransactionPix;
   createTransactionFullTicket = createTransactionFullTicket;
   createTransactionSimpleTicket = createTransactionSimpleTicket;
   createTransactionCard = createTransactionCard;
   createTransactionCardId = createTransactionCardId;
+  createCreditCardToken = createCreditCardToken;
+  linkCardTokenWithCustomer = linkCardTokenWithCustomer;
 }

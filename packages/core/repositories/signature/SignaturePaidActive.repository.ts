@@ -446,6 +446,10 @@ export class SignaturePaidActiveRepository {
       )
       .execute();
 
+    if (!result?.length) {
+      return false;
+    }
+
     return result[0].total > 0;
   }
 

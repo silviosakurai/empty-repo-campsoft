@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { plan } from "@core/models";
+import { plan, planPartner } from "@core/models";
 import { eq, and, asc, desc, SQLWrapper, sql } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
@@ -45,7 +45,7 @@ export class PlanListerRepository {
             WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
             ELSE false
           END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -54,8 +54,9 @@ export class PlanListerRepository {
         updated_at: plan.updated_at,
       })
       .from(plan)
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(eq(plan.id_empresa, companyId), ...filters));
+      .where(and(eq(planPartner.id_parceiro, companyId), ...filters));
 
     const totalResult: ViewPlanRepositoryDTO[] = await allQuery.execute();
 
@@ -92,7 +93,7 @@ export class PlanListerRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -101,7 +102,8 @@ export class PlanListerRepository {
         updated_at: plan.updated_at,
       })
       .from(plan)
-      .where(eq(plan.id_empresa, companyId))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
+      .where(eq(planPartner.id_parceiro, companyId))
       .execute();
 
     const plansCompleted = await this.getPlansRelactions(result, companyId);

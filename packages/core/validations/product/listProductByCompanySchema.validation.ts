@@ -1,5 +1,5 @@
 import { Language } from "@core/common/enums/Language";
-import { ProductFields } from "@core/common/enums/models/product";
+import { ProductOrderManager } from "@core/common/enums/models/product";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
@@ -13,7 +13,6 @@ export const listProductByCompanySchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
@@ -29,7 +28,7 @@ export const listProductByCompanySchema = {
   querystring: Type.Object({
     ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
-    companies: Type.Optional(Type.String()),
+    company_id: Type.Optional(Type.Array(Type.Number())),
     status: Type.Optional(
       Type.String({
         enum: Object.values(Status),
@@ -38,12 +37,12 @@ export const listProductByCompanySchema = {
     ),
     name: Type.Optional(Type.String()),
     description: Type.Optional(Type.String()),
-    product_type: Type.Optional(Type.String()),
+    product_type_id: Type.Optional(Type.Number()),
     slug: Type.Optional(Type.String()),
     sort_by: Type.Optional(
       Type.String({
-        enum: Object.values(ProductFields),
-        default: ProductFields.product_id,
+        enum: Object.values(ProductOrderManager),
+        default: ProductOrderManager.created_at,
       })
     ),
     sort_order: Type.Optional(

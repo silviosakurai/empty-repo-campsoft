@@ -20,7 +20,7 @@ export const upgradePlan = async (
 
   try {
     const response = await planUpgraderUseCase.execute(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       tokenJwtData.clientId,
       productIds
     );

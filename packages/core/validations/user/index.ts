@@ -1,8 +1,8 @@
 export * from "./getUserSchema.validation";
 export * from "./getUserByIdSchema.validation";
 export * from "./userCreatorSchema.validation";
-export * from "./userUpdaterSchema.validation";
-export * from "./userUpdaterByIdSchema.validation";
+export * from "./userUpdateSchema.validation";
+export * from "./userUpdateByIdSchema.validation";
 export * from "./userDeleteSchema.validation";
 export * from "./userDeleteByIdSchema.validation";
 export * from "./userPhoneUpdaterSchema.validation";
@@ -20,3 +20,5 @@ export * from "./userActivatePasswordSchema.validation";
 export * from "./patchUserShippingAddressSchema.validation";
 export * from "./patchUserImageSchema.validation";
 export * from "./listUserWithCompaniesSchema.validation";
+export * from "./createUserCreditCardSchema.validation";
+export * from "./updateUserCreditCardDefaultSchema.validation";

@@ -33,7 +33,7 @@ export class ClientUpdaterRepository {
   }
 
   async updateById(clientId: string, input: UpdateClientByIdRequestDto) {
-    const [resultClient, resultAccess] = await Promise.all([
+    const [resultClient] = await Promise.all([
       this.db
         .update(schema.client)
         .set({
@@ -48,14 +48,9 @@ export class ClientUpdaterRepository {
         })
         .where(eq(schema.client.id_cliente, sql`UUID_TO_BIN(${clientId})`))
         .execute(),
-      this.db
-        .update(schema.access)
-        .set({ id_acesso_tipo: input.user_type })
-        .where(eq(schema.access.id_cliente, sql`UUID_TO_BIN(${clientId})`))
-        .execute(),
     ]);
 
-    if (!resultClient[0].affectedRows || !resultAccess[0].affectedRows) {
+    if (!resultClient[0].affectedRows) {
       return null;
     }
 

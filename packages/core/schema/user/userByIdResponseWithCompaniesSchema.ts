@@ -11,12 +11,21 @@ export const userByIdResponseWithCompaniesSchema = Type.Object({
   phone: Type.String(),
   cpf: Type.String(),
   gender: Type.String({ enum: Object.values(ClientGender) }),
+  photo: Type.String(),
+  obs: Type.String(),
+  sellers: Type.Array(
+    Type.Object({
+      company_id: Type.Number(),
+      company_name: Type.String(),
+      seller_id: Type.String(),
+    })
+  ),
   companies: Type.Array(
     Type.Object({
       company_id: Type.Number(),
       company_name: Type.String(),
-      user_type: Type.Number(),
-      leader_id: Type.String(),
+      position_id: Type.Number(),
+      position_name: Type.String(),
     })
   ),
 });

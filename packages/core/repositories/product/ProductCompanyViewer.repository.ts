@@ -1,8 +1,8 @@
 import * as schema from "@core/models";
-import { productCompany } from "@core/models";
+import { productPartner } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 @injectable()
 export class ProductCompanyViewerRepository {
@@ -10,17 +10,17 @@ export class ProductCompanyViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(productId: string, companyId: number) {
+  async view(productId: string, listPartnersIds: number[]) {
     const results = await this.db
       .select({
-        productId: productCompany.id_produto,
-        companyId: productCompany.id_empresa,
+        productId: productPartner.id_produto,
+        companyId: productPartner.id_parceiro,
       })
-      .from(productCompany)
+      .from(productPartner)
       .where(
         and(
-          eq(productCompany.id_produto, productId),
-          eq(productCompany.id_empresa, companyId)
+          eq(productPartner.id_produto, productId),
+          inArray(productPartner.id_parceiro, listPartnersIds)
         )
       )
       .execute();

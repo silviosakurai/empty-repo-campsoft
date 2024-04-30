@@ -1,8 +1,8 @@
 import { Type } from "@sinclair/typebox";
 
 export const imagesProductSchema = Type.Object({
-  main_image: Type.String(),
-  icon: Type.String(),
-  logo: Type.String(),
-  background_image: Type.String(),
+  main_image: Type.Union([Type.String(), Type.Null()]),
+  icon: Type.Union([Type.String(), Type.Null()]),
+  logo: Type.Union([Type.String(), Type.Null()]),
+  background_image: Type.Union([Type.String(), Type.Null()]),
 });

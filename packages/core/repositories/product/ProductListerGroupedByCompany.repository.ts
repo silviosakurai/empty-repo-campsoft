@@ -1,18 +1,17 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { product, productCompany, productType, company } from "@core/models";
-import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
-import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
-import { SortOrder } from "@core/common/enums/SortOrder";
+import { product, productPartner, productType, partner } from "@core/models";
+import { eq, and, inArray, SQL, asc, desc } from "drizzle-orm";
 import {
-  ProductFields,
-  ProductFieldsToOrder,
-} from "@core/common/enums/models/product";
-import { ListProductGroupedByCompany, ListProductGroupedByCompanyResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
-import { setPaginationData } from "@core/common/functions/createPaginationData";
-import { ProductDto, ProductDtoResponse } from "@core/interfaces/repositories/products";
+  ListProductGroupedByCompany,
+  ProductList,
+} from "@core/useCases/product/dtos/ListProductResponse.dto";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { ListProductByCompanyRequest } from "@core/useCases/product/dtos/ListProductByCompanyRequest.dto";
+import { SetOrderByFunction } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { ProductOrderManager } from "@core/common/enums/models/product";
+import { SortOrder } from "@core/common/enums/SortOrder";
 
 @injectable()
 export class ProductListerGroupedByCompanyRepository {
@@ -21,10 +20,11 @@ export class ProductListerGroupedByCompanyRepository {
   ) {}
 
   async list(
-    companyIds: number[],
-    query: ListProductRequest
-  ): Promise<ListProductGroupedByCompanyResponse | null> {
-    const filters = this.setFilters(query);
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
+  ): Promise<ListProductGroupedByCompany[]> {
+    const filters = this.setFilters(query, listPartnersIds);
+    const orderBy = this.setOrderBy(query);
 
     const allQuery = this.db
       .select({
@@ -57,62 +57,37 @@ export class ProductListerGroupedByCompanyRepository {
           face_value: product.preco_face,
           price: product.preco,
         },
+        obs: product.obs,
         created_at: product.created_at,
         updated_at: product.updated_at,
-        company_id: productCompany.id_empresa,
-        company_name: company.nome_fantasia,
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
-      .innerJoin(
-        company,
-        eq(company.id_empresa, productCompany.id_empresa)
-      )
+      .innerJoin(partner, eq(partner.id_parceiro, productPartner.id_parceiro))
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(
-        and(
-          inArray(productCompany.id_empresa, companyIds),
-          ...filters
-        )
-      );
-
-    const totalResult = await allQuery.execute();
+      .where(filters)
+      .orderBy(orderBy)
+      .groupBy(product.id_produto);
 
     const paginatedQuery = allQuery
       .limit(query.per_page)
       .offset((query.current_page - 1) * query.per_page);
     const totalPaginated = await paginatedQuery.execute();
 
-    if (!totalPaginated.length) {
-      return null;
+    if (!totalPaginated?.length) {
+      return [] as ListProductGroupedByCompany[];
     }
 
-    const bodyWithCompany = this.parseCompany(totalPaginated);
-    
-    const paging = setPaginationData(
-      totalPaginated.length,
-      totalResult.length,
-      query.per_page,
-      query.current_page
-    );
-
-    return {
-      paging,
-      results: bodyWithCompany as unknown as ListProductGroupedByCompany[],
-    };
+    return this.enrichCompany(totalPaginated, listPartnersIds);
   }
 
-  async listByIds(
-    companyIds: number[],
-    productIds: string[]
-  ): Promise<ProductResponse[]> {
+  async listByIds(productIds: string[]): Promise<ProductResponse[]> {
     const products = await this.db
       .select({
         product_id: product.id_produto,
@@ -149,95 +124,166 @@ export class ProductListerGroupedByCompanyRepository {
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
-      .where(
-        and(
-          inArray(productCompany.id_empresa, companyIds),
-          inArray(product.id_produto, productIds)
-        )
-      )
+      .where(and(inArray(product.id_produto, productIds)))
       .execute();
 
     return products as unknown as ProductResponse[];
   }
 
-  private setFilters(query: ListProductRequest): SQLWrapper[] {
-    const filters: SQLWrapper[] = [];
+  async countTotalCompanies(
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
+  ): Promise<number> {
+    const filters = this.setFilters(query, listPartnersIds);
+
+    const countResult = await this.db
+      .select({
+        product_id: product.id_produto,
+      })
+      .from(product)
+      .innerJoin(
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
+      )
+      .innerJoin(partner, eq(partner.id_parceiro, productPartner.id_parceiro))
+      .innerJoin(
+        productType,
+        eq(product.id_produto_tipo, productType.id_produto_tipo)
+      )
+      .where(filters)
+      .groupBy(product.id_produto)
+      .execute();
+
+    if (!countResult?.length) {
+      return 0;
+    }
+
+    return countResult.length;
+  }
+
+  private async enrichCompany(
+    result: ProductList[],
+    listPartnersIds: number[]
+  ) {
+    const enrichCompanyPromises = result.map(async (product: ProductList) => ({
+      ...product,
+      companies: await this.fetchCompanies(product.product_id, listPartnersIds),
+    }));
+
+    return Promise.all(enrichCompanyPromises);
+  }
+
+  private async fetchCompanies(productId: string, listPartnersIds: number[]) {
+    const positionsQuery = this.db
+      .select({
+        company_id: partner.id_parceiro,
+        company_name: partner.nome_fantasia,
+      })
+      .from(partner)
+      .innerJoin(
+        productPartner,
+        eq(productPartner.id_parceiro, partner.id_parceiro)
+      )
+      .where(
+        and(
+          inArray(productPartner.id_parceiro, listPartnersIds),
+          eq(productPartner.id_produto, productId)
+        )
+      );
+
+    return positionsQuery;
+  }
+
+  private setFilters(
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
+  ): SQL<unknown> | undefined {
+    let filters = and(inArray(productPartner.id_parceiro, listPartnersIds));
 
     if (query.id) {
-      filters.push(eq(product.id_produto, query.id));
+      filters = and(filters, eq(product.id_produto, query.id));
+    }
+
+    if (query.company_id) {
+      filters = and(
+        filters,
+        inArray(productPartner.id_parceiro, query.company_id)
+      );
     }
 
     if (query.status) {
-      filters.push(eq(product.status, query.status));
+      filters = and(filters, eq(product.status, query.status));
     }
 
     if (query.name) {
-      filters.push(eq(product.produto, query.name));
+      filters = and(filters, eq(product.produto, query.name));
     }
 
     if (query.description) {
-      filters.push(eq(product.descricao, query.description));
+      filters = and(filters, eq(product.descricao, query.description));
     }
 
-    if (query.product_type) {
-      filters.push(eq(productType.produto_tipo, query.product_type));
+    if (query.product_type_id) {
+      filters = and(
+        filters,
+        eq(product.id_produto_tipo, query.product_type_id)
+      );
     }
 
     if (query.slug) {
-      filters.push(eq(product.url_caminho, query.slug));
+      filters = and(filters, eq(product.url_caminho, query.slug));
     }
 
     return filters;
   }
 
-  private setOrderBy(sortBy?: ProductFields, sortOrder?: SortOrder) {
-    const defaultOrderBy = asc(
-      product[ProductFieldsToOrder[ProductFields.name]]
-    );
+  private setOrderBy(query: ListProductByCompanyRequest): SQL<unknown> {
+    const orderByMapping: {
+      [key in ProductOrderManager | "default"]: SetOrderByFunction;
+    } = {
+      [ProductOrderManager.product_id]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.id_produto)
+          : desc(product.id_produto),
 
-    if (!sortBy) {
-      return defaultOrderBy;
-    }
+      [ProductOrderManager.name]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.produto)
+          : desc(product.produto),
 
-    const fieldToOrder = ProductFieldsToOrder[sortBy];
+      [ProductOrderManager.slug]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.url_caminho)
+          : desc(product.url_caminho),
 
-    if (sortOrder === SortOrder.ASC) {
-      return asc(product[fieldToOrder]);
-    }
+      [ProductOrderManager.status]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.status)
+          : desc(product.status),
 
-    if (sortOrder === SortOrder.DESC) {
-      return desc(product[fieldToOrder]);
-    }
+      [ProductOrderManager.content_provider_name]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.conteudista_nome)
+          : desc(product.conteudista_nome),
 
-    return defaultOrderBy;
-  }
+      [ProductOrderManager.created_at]: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.created_at)
+          : desc(product.created_at),
 
-  private parseCompany(products: ProductDto[]): ProductDtoResponse[] {
-    const productsParsed: any  = {};
+      default: () =>
+        query.sort_order === SortOrder.ASC
+          ? asc(product.created_at)
+          : desc(product.created_at),
+    };
 
-    products.forEach(product => {
-      if (!productsParsed[product.product_id]) {
-        productsParsed[product.product_id] = {
-          ...product,
-          companies: [] as any,
-        };
-      }
-      productsParsed[product.product_id].companies.push({
-        company_id: product.company_id,
-        company_name: product.company_name
-      });
-
-      delete productsParsed[product.product_id].company_id
-      delete productsParsed[product.product_id].company_name
-    });
-
-    return Object.values(productsParsed);
+    return orderByMapping[query.sort_by ?? "default"]();
   }
 }

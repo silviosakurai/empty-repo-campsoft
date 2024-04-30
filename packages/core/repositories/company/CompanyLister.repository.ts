@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { clientCompanyData } from "@core/models";
+import { clientPartnerData } from "@core/models";
 import { eq, sql } from "drizzle-orm";
 
 @injectable()
@@ -10,17 +10,13 @@ export class CompanyListerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async list(
-    clientId: string,
-  ): Promise<number[] | null> {
+  async list(clientId: string): Promise<number[] | null> {
     const result = await this.db
       .select({
-        company_id: clientCompanyData.id_empresa,
+        company_id: clientPartnerData.id_parceiro,
       })
-      .from(clientCompanyData)
-      .where(
-        eq(clientCompanyData.id_cliente, sql`UUID_TO_BIN(${clientId})`)
-      )
+      .from(clientPartnerData)
+      .where(eq(clientPartnerData.id_cliente, sql`UUID_TO_BIN(${clientId})`))
       .execute();
 
     if (!result.length) {

@@ -41,7 +41,10 @@ async function authenticateTfa(
     if (cacheAuth) {
       request.tokenTfaData = JSON.parse(cacheAuth);
 
-      if (checkClientIdsAndAuthorize(request.tokenTfaData, tokenJwtData)) {
+      if (
+        tokenJwtData &&
+        checkClientIdsAndAuthorize(request.tokenTfaData, tokenJwtData)
+      ) {
         return sendResponse(reply, {
           message: t("not_authorized"),
           httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
@@ -64,7 +67,10 @@ async function authenticateTfa(
       });
     }
 
-    if (checkClientIdsAndAuthorize(responseAuth, tokenJwtData)) {
+    if (
+      tokenJwtData &&
+      checkClientIdsAndAuthorize(responseAuth, tokenJwtData)
+    ) {
       return sendResponse(reply, {
         message: t("not_authorized"),
         httpStatusCode: HTTPStatusCode.UNAUTHORIZED,

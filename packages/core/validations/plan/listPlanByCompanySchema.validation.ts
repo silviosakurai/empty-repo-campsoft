@@ -13,7 +13,6 @@ export const listPlanByCompanySchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
