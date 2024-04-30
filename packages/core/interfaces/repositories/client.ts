@@ -68,6 +68,7 @@ export interface ClientCardRepositoryInput {
   expiration_month: number;
   expiration_year: number;
   externalId: string;
+  tokenId: string;
   brand?: string;
   default: boolean;
   first4Digits: string;

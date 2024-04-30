@@ -72,6 +72,8 @@
   "creation_customer_to_payment_failed": "Falha na criação do cliente para pagamento",
   "something_went_wrong_to_generate_credit_card": "Falha na criação do cartão de crédito",
   "plans_not_found": "Planos não encontrados",
+  "invalid_card_number": "Número de cartão inválido.",
+  "expired_card_error": "Cartão de crédito expirado.",
   "client_must_have_a_card_as_default": "O cliente deve ter um cartão como padrão",
   "card_not_found": "Cartão não encontrado",
   "how_to_access_product_delete_not_allowed": "Exclusão de como acessar produto não permitida",

@@ -15,6 +15,7 @@ export const clientCards = mysqlTable("cliente_cartoes", {
     .primaryKey(),
   id_cliente: varbinary("id_cliente", { length: 16 }).notNull(),
   id_externo: varchar("id_externo", { length: 50 }).notNull(),
+  token_id: varchar("token_id", { length: 50 }).notNull(),
   fingerprint: char("fingerprint", { length: 30 }),
   valid: tinyint("valid"),
   brand: char("brand", { length: 20 }),
