@@ -49,7 +49,7 @@ export class PayerCreditCardByOrderIdUseCase {
       description: order.observation,
       reference_id: order.order_id,
       sellerId,
-      cardId: creditCard.card_id,
+      cardId: creditCard.external_id,
       usage: "single_use",
     });
 
@@ -123,8 +123,8 @@ export class PayerCreditCardByOrderIdUseCase {
     }
 
     const cardIsValid = checkIfDateIsAfterOfCurrent(
-      result.expiration_month,
-      result.expiration_year
+      +result.expiration_month,
+      +result.expiration_year
     );
 
     if (!cardIsValid) return;

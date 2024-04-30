@@ -14,6 +14,7 @@ export class ClientCardCreatorRepository {
   async create(clientId: string, input: ClientCardRepositoryInput) {
     const [result] = await this.db.insert(clientCards).values({
       id_externo: input.externalId,
+      token_id: input.tokenId,
       brand: input.brand,
       default: input.default ? 1 : 0,
       expiration_month: input.expiration_month.toLocaleString("en-us", {

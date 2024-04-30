@@ -1,5 +1,5 @@
 import { Language } from "@core/common/enums/Language";
-import { ProductOrderPartner } from "@core/common/enums/models/product";
+import { ProductOrderManager } from "@core/common/enums/models/product";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
@@ -41,8 +41,8 @@ export const listProductByCompanySchema = {
     slug: Type.Optional(Type.String()),
     sort_by: Type.Optional(
       Type.String({
-        enum: Object.values(ProductOrderPartner),
-        default: ProductOrderPartner.created_at,
+        enum: Object.values(ProductOrderManager),
+        default: ProductOrderManager.created_at,
       })
     ),
     sort_order: Type.Optional(

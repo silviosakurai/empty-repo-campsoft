@@ -27,6 +27,7 @@
   "payment_not_found": "Payment not found!",
   "email_registered_previously": "Email already registered previously!",
   "product_not_eligible_for_plan": "Product not eligible for plan!",
+  "product_how_to_access_type_not_found": "Product how to access type not found!",
   "plan_price_not_found": "Plan price not found!",
   "installments_not_calculated": "Installments not calculated!",
   "coupon_not_eligible": "Coupon not eligible!",
@@ -66,11 +67,16 @@
   "error_update_product": "Error update products!",
   "error_update_product_group": "Error update products groups!",
   "error_update_product_group_products": "Error adding product to a group!",
-  "token_not_found": "Token not found."
+  "token_not_found": "Token not found.",
   "seller_not_found": "Seller Not Found.",
   "creation_customer_to_payment_failed": "Creation customer to payment failed",
   "something_went_wrong_to_generate_credit_card": "Something went went wrong to generate credit card",
   "plans_not_found": "Plans not found!",
+  "invalid_card_number": "Invalid card number",
+  "expired_card_error": "The credit card has expired.",
   "client_must_have_a_card_as_default": "The client must have a card as default",
-  "card_not_found": "Card not found"
+  "card_not_found": "Card not found",
+  "how_to_access_product_delete_not_allowed": "How to access product delete not allowed",
+  "how_to_access_product_update_not_allowed": "How to access product update not allowed",
+  "how_to_access_product_update_or_delete_not_allowed": "How to access product update or delete not allowed"
 }
