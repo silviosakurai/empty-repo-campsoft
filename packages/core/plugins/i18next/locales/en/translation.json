@@ -27,6 +27,7 @@
   "payment_not_found": "Payment not found!",
   "email_registered_previously": "Email already registered previously!",
   "product_not_eligible_for_plan": "Product not eligible for plan!",
+  "product_how_to_access_type_not_found": "Product how to access type not found!",
   "plan_price_not_found": "Plan price not found!",
   "installments_not_calculated": "Installments not calculated!",
   "coupon_not_eligible": "Coupon not eligible!",

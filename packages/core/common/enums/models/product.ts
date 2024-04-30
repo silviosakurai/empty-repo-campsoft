@@ -41,6 +41,13 @@ export enum ProductVoucherStatus {
   IN_ADDITION = "in_addition",
   ACTIVE = "active",
   EXPIRED = "expired",
+};
+
+export enum ProductHowToAccessType {
+  ANDROID = "android",
+  IOS = "ios",
+  WEB = "web",
+  DESKTOP = "desktop",
 }
 
 export enum ProductGroupImageType {
