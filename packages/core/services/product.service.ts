@@ -144,7 +144,7 @@ export class ProductService {
     const planProductCrossSell = await this.findPlanProductCrossSell(
       tokenKeyData,
       payload.plan.plan_id,
-      payload.months,
+      payload.months ?? 0,
       selectedProducts
     );
 

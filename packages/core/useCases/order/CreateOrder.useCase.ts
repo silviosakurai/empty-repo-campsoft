@@ -55,7 +55,7 @@ export class CreateOrderUseCase {
       this.voucherService.isProductsVoucherEligible(
         tokenKeyData,
         payload.payment?.voucher,
-        payload.products
+        payload?.products
       ),
     ]);
 
@@ -198,7 +198,14 @@ export class CreateOrderUseCase {
       throw new Error(t("payment_method_invalid"));
     }
 
-    if (payload.previous_order_id) {
+    if (
+      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.VOUCHER &&
+      payload.months
+    ) {
+      throw new Error(t("months_not_allowed"));
+    }
+
+    if (payload?.previous_order_id) {
       const orderIsExists = await this.orderService.orderIsExists(
         payload.previous_order_id
       );
@@ -222,13 +229,70 @@ export class CreateOrderUseCase {
 
     if (
       payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.VOUCHER &&
-      payload.activate_now === false
+      payload?.activate_now === false
     ) {
       throw new Error(t("voucher_activate_now_false"));
     }
 
     if (payload.coupon_code && payload.payment.voucher) {
       throw new Error(t("coupon_code_with_voucher_not_allowed"));
+    }
+
+    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
+      this.validatePaymentMethodCard(t, payload);
+    }
+
+    throw new Error("test");
+  }
+
+  private validatePaymentMethodCard(
+    t: TFunction<"translation", undefined>,
+    payload: CreateOrderRequestDto
+  ) {
+    if (
+      payload.payment.credit_card &&
+      payload.payment.credit_card?.cvv.length !== 3
+    ) {
+      throw new Error(t("cvv_invalid"));
+    }
+
+    if (
+      payload.payment.credit_card &&
+      payload.payment.credit_card?.expire_month < 1
+    ) {
+      throw new Error(t("expire_month_invalid"));
+    }
+
+    if (
+      payload.payment.credit_card &&
+      payload.payment.credit_card?.expire_year < new Date().getFullYear()
+    ) {
+      throw new Error(t("expire_year_invalid"));
+    }
+
+    if (
+      payload.payment.credit_card &&
+      payload.payment.credit_card?.installments < 1
+    ) {
+      throw new Error(t("installments_invalid"));
+    }
+
+    if (
+      payload.payment.credit_card &&
+      payload.payment.credit_card?.number.length !== 16
+    ) {
+      throw new Error(t("credit_card_number_invalid"));
+    }
+
+    if (payload.payment.credit_card && !payload.payment.credit_card?.name) {
+      throw new Error(t("credit_card_name_invalid"));
+    }
+
+    if (payload.payment.credit_card && payload.payment.credit_card_id) {
+      throw new Error(t("select_credit_card_or_credit_card_id"));
+    }
+
+    if (payload.payment.credit_card_id) {
     }
   }
 

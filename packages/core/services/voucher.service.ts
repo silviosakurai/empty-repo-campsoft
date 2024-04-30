@@ -108,7 +108,7 @@ export class VoucherService {
   isProductsVoucherEligible = async (
     tokenKeyData: ITokenKeyData,
     voucher: string | null | undefined,
-    selectedProducts: string[] | null
+    selectedProducts: string[] | null | undefined
   ) => {
     return this.voucherEligibilityVerifierRepository.isProductsVoucherEligible(
       tokenKeyData,

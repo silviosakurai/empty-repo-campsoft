@@ -78,5 +78,13 @@
   "card_not_found": "Card not found",
   "how_to_access_product_delete_not_allowed": "How to access product delete not allowed",
   "how_to_access_product_update_not_allowed": "How to access product update not allowed",
-  "how_to_access_product_update_or_delete_not_allowed": "How to access product update or delete not allowed"
+  "how_to_access_product_update_or_delete_not_allowed": "How to access product update or delete not allowed",
+  "cvv_invalid": "CVV invalid",
+  "expire_month_invalid": "Expire month invalid",
+  "expire_year_invalid": "Expire year invalid",
+  "installments_invalid": "Installments invalid",
+  "credit_card_number_invalid": "Credit card number invalid",
+  "credit_card_name_invalid": "Credit card name invalid",
+  "select_credit_card_or_credit_card_id": "Select credit card or credit card id",
+  "months_not_allowed": "Months not allowed"
 }

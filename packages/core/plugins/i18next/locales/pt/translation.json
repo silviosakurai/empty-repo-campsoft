@@ -78,5 +78,13 @@
   "card_not_found": "Cartão não encontrado",
   "how_to_access_product_delete_not_allowed": "Exclusão de como acessar produto não permitida",
   "how_to_access_product_update_not_allowed": "Atualização de como acessar produto não permitida",
-  "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida"
+  "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida",
+  "cvv_invalid": "CVV inválido",
+  "expire_month_invalid": "Mês de expiração inválido",
+  "expire_year_invalid": "Ano de expiração inválido",
+  "installments_invalid": "Parcelas inválidas",
+  "credit_card_number_invalid": "Número de cartão de crédito inválido",
+  "credit_card_name_invalid": "Nome do cartão de crédito inválido",
+  "select_credit_card_or_credit_card_id": "Selecione cartão de crédito ou ID de cartão de crédito",
+  "months_not_allowed": "Meses não permitidos"
 }
