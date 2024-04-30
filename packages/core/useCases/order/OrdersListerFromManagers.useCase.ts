@@ -6,7 +6,7 @@ import { ListOrderResponseDto } from "@core/useCases/order/dtos/ListOrderRespons
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 
 @injectable()
-export class OrdersListerFromPartnersUseCase {
+export class OrdersListerFromManagersUseCase {
   constructor(private readonly orderService: OrderService) {}
 
   async execute(
