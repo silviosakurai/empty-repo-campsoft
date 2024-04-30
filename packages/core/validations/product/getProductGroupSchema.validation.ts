@@ -9,7 +9,6 @@ export const getProductGroupSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

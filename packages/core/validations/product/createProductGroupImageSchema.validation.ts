@@ -3,7 +3,7 @@ import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import {
   productGroupImageCreateBodySchema,
-  productGroupImageCreateParamsSchema
+  productGroupImageCreateParamsSchema,
 } from "@core/schema/product/productGroupImageCreateSchema";
 
 export const createProductGroupImageSchema = {
@@ -12,7 +12,6 @@ export const createProductGroupImageSchema = {
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],

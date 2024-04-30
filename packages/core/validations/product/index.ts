@@ -4,7 +4,7 @@ export * from "./getProductCrossSellSchema.validation";
 export * from "./listProductByCompanySchema.validation";
 export * from "./postProductSchema.validation";
 export * from "./updateProductDetailHowToAccessSchema.validation";
-export * from "./getProductPartnerSchema.validation";
+export * from "./getProductManagerSchema.validation";
 export * from "./updateProductSchema.validation";
 export * from "./createProductImageSchema.validation";
 export * from "./postAddProductSchema.validation";
@@ -12,4 +12,4 @@ export * from "./deleteProductFromGroupSchema.validation";
 export * from "./createProductGroupImageSchema.validation";
 export * from "./getProductGroupSchema.validation";
 export * from "./putProductGroupSchema.validation";
-
+export * from "./deleteProductDetailHowToAccessSchema.validation";

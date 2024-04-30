@@ -41,7 +41,7 @@ export enum ProductVoucherStatus {
   IN_ADDITION = "in_addition",
   ACTIVE = "active",
   EXPIRED = "expired",
-};
+}
 
 export enum ProductHowToAccessType {
   ANDROID = "android",
@@ -54,7 +54,7 @@ export enum ProductGroupImageType {
   ICON = "icon",
 }
 
-export enum ProductOrderPartner {
+export enum ProductOrderManager {
   product_id = "product_id",
   name = "name",
   slug = "slug",

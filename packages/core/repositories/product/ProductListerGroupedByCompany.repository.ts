@@ -10,7 +10,7 @@ import {
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductByCompanyRequest } from "@core/useCases/product/dtos/ListProductByCompanyRequest.dto";
 import { SetOrderByFunction } from "@core/useCases/client/dtos/ListClientRequest.dto";
-import { ProductOrderPartner } from "@core/common/enums/models/product";
+import { ProductOrderManager } from "@core/common/enums/models/product";
 import { SortOrder } from "@core/common/enums/SortOrder";
 
 @injectable()
@@ -246,34 +246,34 @@ export class ProductListerGroupedByCompanyRepository {
 
   private setOrderBy(query: ListProductByCompanyRequest): SQL<unknown> {
     const orderByMapping: {
-      [key in ProductOrderPartner | "default"]: SetOrderByFunction;
+      [key in ProductOrderManager | "default"]: SetOrderByFunction;
     } = {
-      [ProductOrderPartner.product_id]: () =>
+      [ProductOrderManager.product_id]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(product.id_produto)
           : desc(product.id_produto),
 
-      [ProductOrderPartner.name]: () =>
+      [ProductOrderManager.name]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(product.produto)
           : desc(product.produto),
 
-      [ProductOrderPartner.slug]: () =>
+      [ProductOrderManager.slug]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(product.url_caminho)
           : desc(product.url_caminho),
 
-      [ProductOrderPartner.status]: () =>
+      [ProductOrderManager.status]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(product.status)
           : desc(product.status),
 
-      [ProductOrderPartner.content_provider_name]: () =>
+      [ProductOrderManager.content_provider_name]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(product.conteudista_nome)
           : desc(product.conteudista_nome),
 
-      [ProductOrderPartner.created_at]: () =>
+      [ProductOrderManager.created_at]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(product.created_at)
           : desc(product.created_at),
