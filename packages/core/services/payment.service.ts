@@ -17,7 +17,6 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
-import { PaymentSellerViewerByEmailRepository } from "@core/repositories/payment/PaymentSellerViewerByEmail.repository";
 import { PayerCreditCardByOrderIdUseCase } from "@core/useCases/order/PayerCreditCardByOrderId.useCase";
 import { PayByCreditCardRequest } from "@core/useCases/order/dtos/PayByCreditCardRequest.dto";
 
@@ -28,7 +27,6 @@ export class PaymentService {
     private readonly voucherService: VoucherService,
     private readonly signatureService: SignatureService,
     private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
-    private readonly sellerViewerByEmailRepository: PaymentSellerViewerByEmailRepository,
     private readonly payerCreditCardByOrderIdUseCase: PayerCreditCardByOrderIdUseCase
   ) {}
 
@@ -238,9 +236,5 @@ export class PaymentService {
       order.order_id_previous,
       order.activation_immediate
     );
-  };
-
-  sellerViewByEmail = async (email: string) => {
-    return this.sellerViewerByEmailRepository.view(email);
   };
 }
