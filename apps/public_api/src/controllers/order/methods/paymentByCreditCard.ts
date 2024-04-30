@@ -5,6 +5,8 @@ import { container } from 'tsyringe';
 import { PayerCreditCardByOrderIdUseCase } from '@core/useCases/order/PayerCreditCardByOrderId.useCase';
 import { PayByCreditCardRequest } from '@core/useCases/order/dtos/PayByCreditCardRequest.dto';
 import CreditCardExpirationDateIsInvalidError from '@core/common/exceptions/CreditCardExpirationDateIsInvalidError';
+import { OrderService } from '@core/services';
+import { OrderStatusEnum } from '@core/common/enums/models/order';
 
 export const paymentByCreditCard = async (
   request: FastifyRequest<{
@@ -13,11 +15,17 @@ export const paymentByCreditCard = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t, params, body } = request;
+  const { t, params, body, tokenJwtData } = request;
   const service = container.resolve(PayerCreditCardByOrderIdUseCase);
+  const handleOrderStatus = container.resolve(OrderService);
 
   try {
-    const result = await service.pay(t, params.orderNumber, body);
+    const result = await service.pay(
+      t,
+      tokenJwtData.clientId,
+      params.orderNumber,
+      body
+    );
 
     if (!result.status) {
       return sendResponse(reply, {
@@ -32,6 +40,11 @@ export const paymentByCreditCard = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+
+    await handleOrderStatus.updateStatusByOrderId(
+      params.orderNumber,
+      OrderStatusEnum.FAILED
+    );
 
     if (error instanceof CreditCardExpirationDateIsInvalidError) {
       return sendResponse(reply, {
