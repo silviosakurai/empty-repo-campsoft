@@ -86,5 +86,5 @@
   "credit_card_number_invalid": "Credit card number invalid",
   "credit_card_name_invalid": "Credit card name invalid",
   "select_credit_card_or_credit_card_id": "Select credit card or credit card id",
-  "months_not_allowed": "Months not allowed"
+  "months_required_by_methods": "Months required by methods"
 }
