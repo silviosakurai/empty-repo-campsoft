@@ -15,17 +15,12 @@ export const paymentByCreditCard = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t, params, body, tokenJwtData } = request;
+  const { t, params, body } = request;
   const service = container.resolve(PayerCreditCardByOrderIdUseCase);
   const handleOrderStatus = container.resolve(OrderService);
 
   try {
-    const result = await service.pay(
-      t,
-      tokenJwtData.clientId,
-      params.orderNumber,
-      body
-    );
+    const result = await service.pay(t, params.orderNumber, body);
 
     if (!result.status) {
       return sendResponse(reply, {

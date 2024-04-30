@@ -23,7 +23,6 @@ export class PayerCreditCardByOrderIdUseCase {
 
   async pay(
     t: TFunction<"translation", undefined>,
-    clientId: string,
     orderId: string,
     input: PayByCreditCardRequest
   ) {
@@ -34,7 +33,7 @@ export class PayerCreditCardByOrderIdUseCase {
     } = await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
     const creditCard = await this.validateCreditCard(
-      clientId,
+      order.client_id,
       externalCustomerId,
       t,
       input
