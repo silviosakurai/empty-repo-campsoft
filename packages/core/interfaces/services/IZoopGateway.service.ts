@@ -2,29 +2,22 @@ import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import {
   ITransactionFullTicketRequest,
   ITransactionFullTicketResponse,
-} from "./zoop/ITransactionFullTicket";
+} from "./payment/ITransactionFullTicket";
 import {
   ITransactionSimpleTicketRequest,
   ITransactionSimpleTicketResponse,
-} from "./zoop/ITransactionSimpleTicket";
+} from "./payment/ITransactionSimpleTicket";
 import {
   ITransactionPixRequest,
   ITransactionPixResponse,
-} from "./zoop/ITransactionPix";
+} from "./payment/ITransactionPix";
 import {
   ITransactionCardIdRequest,
   ITransactionCardRequest,
   ITransactionCardResponse,
-} from "./zoop/ITransactionCard";
-import {
-  ISaveCardTokenRequest,
-  ISaveCardTokenResponse,
-} from "./zoop/ISaveCardToken";
+} from "./payment/ITransactionCard";
 
 export interface IZoopGatewayService {
-  saveCardToken: (
-    input: ISaveCardTokenRequest
-  ) => Promise<ResponseService<ISaveCardTokenResponse>>;
   createTransactionPix: (
     input: ITransactionPixRequest
   ) => Promise<ResponseService<ITransactionPixResponse>>;

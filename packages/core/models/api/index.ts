@@ -1,1 +1,1 @@
-export * from "./apiAccess.model";
+export * from "./apiKey.model";

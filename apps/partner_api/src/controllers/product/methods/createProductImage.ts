@@ -20,7 +20,7 @@ export const createProductImage = async (
   const service = container.resolve(ProductImageCreatorUseCase);
 
   try {
-    const response = await service.create(t, tokenKeyData.company_id, {
+    const response = await service.create(t, tokenKeyData.id_parceiro, {
       ...request.params,
       ...request.body,
     });

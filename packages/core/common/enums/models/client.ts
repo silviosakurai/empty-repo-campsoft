@@ -33,3 +33,16 @@ export enum ClientShippingAddress {
   YES = "Y",
   NO = "N",
 }
+
+export enum ClientFields {
+  user_id = "user_id",
+  name = "name",
+  email = "email",
+  phone = "phone",
+  cpf = "cpf",
+  gender = "gender",
+  position_id = "position_id",
+  company_id = "company_id",
+  status = "status",
+  created_at = "created_at",
+}

@@ -10,7 +10,7 @@ import {
 
 export const reviews = mysqlTable("depoimentos", {
   id_depoimento: int("id_depoimento").notNull().primaryKey(),
-  id_empresa: int("id_empresa"),
+  id_parceiro: int("id_parceiro"),
   status: mysqlEnum("status", [Status.ACTIVE, Status.INACTIVE]).notNull(),
   nome: varchar("nome", { length: 60 }).notNull(),
   depoimento: varchar("depoimento", { length: 250 }).notNull(),

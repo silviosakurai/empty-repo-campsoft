@@ -2,10 +2,14 @@ import { Type } from "@sinclair/typebox";
 import { productsAvailableHowToAccessSchema } from "../product/productsAvailableHowToAccessSchema";
 import { pricesMonthSchema } from "../price/pricesMonthSchema";
 import { productDetailPlanProductsHowToAccessSchema } from "../product/productDetailPlanProductsHowToAccessSchema";
+import { Status } from "@core/common/enums/Status";
 
 export const planDetailsWithProductsAvailableSchema = Type.Object({
   plan_id: Type.Number(),
-  status: Type.Union([Type.String(), Type.Null()]),
+  status: Type.Union([
+    Type.String({ enum: Object.values(Status) }),
+    Type.Null(),
+  ]),
   visible_site: Type.Boolean(),
   business_id: Type.Union([Type.Number(), Type.Null()]),
   plan: Type.Union([Type.String(), Type.Null()]),
@@ -15,6 +19,6 @@ export const planDetailsWithProductsAvailableSchema = Type.Object({
   prices: Type.Array(pricesMonthSchema),
   products: Type.Array(productDetailPlanProductsHowToAccessSchema),
   product_groups: Type.Array(productsAvailableHowToAccessSchema),
-  created_at: Type.String({ format: "date-time" }),
-  updated_at: Type.String({ format: "date-time" }),
+  created_at: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
+  updated_at: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
 });

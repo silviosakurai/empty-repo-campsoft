@@ -9,11 +9,10 @@ export const viewClient = async (
   reply: FastifyReply
 ) => {
   const clientViewerUseCase = container.resolve(ClientViewerUseCase);
-  const { t, tokenKeyData, tokenJwtData } = request;
+  const { t, tokenJwtData } = request;
 
   try {
     const response = await clientViewerUseCase.execute({
-      tokenKeyData,
       userId: tokenJwtData.clientId,
     });
 

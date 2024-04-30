@@ -19,99 +19,217 @@ import {
   patchUserShippingAddressSchema,
   patchUserImageSchemaSchema,
   createUserNewsletterSchema,
+  createUserCreditCardSchema,
+  updateUserCreditCardDefaultSchema,
 } from '@core/validations/user';
+import {
+  userAddressBillingUpdatePermissions,
+  userAddressBillingViewPermissions,
+  userAddressShippingPatchPermissions,
+  userAddressShippingUpdatePermissions,
+  userAddressShippingViewPermissions,
+  userCreatePermissions,
+  userCreditCardCreatePermissions,
+  userDeletePermissions,
+  userImageUpdatePermissions,
+  userNewsletterSubscribePermissions,
+  userRecoveryPasswordPathPermissions,
+  userRecoveryPasswordPermissions,
+  userUpdatePasswordPermissions,
+  userUpdatePermissions,
+  userUpdatePhonePermissions,
+  userViewPermissions,
+  userVoucherPermissions,
+  userCreditCardDefaultUpdatePermissions,
+} from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
 
   server.get('/user', {
     schema: getUserSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.view,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userViewPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userViewPermissions),
+    ],
   });
 
   server.post('/user', {
     schema: userCreatorSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateTfa],
     handler: clientController.create,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userCreatePermissions),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.put('/user', {
     schema: userUpdaterSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.update,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userUpdatePermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePermissions),
+    ],
   });
 
   server.delete('/user', {
     schema: userDeleteSchema,
-    preHandler: [
-      server.authenticateKeyApi,
-      server.authenticateJwt,
-      server.authenticateTfa,
-    ],
     handler: clientController.delete,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userDeletePermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userDeletePermissions),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.patch('/user/phone', {
     schema: userPhoneUpdaterSchema,
-    preHandler: [
-      server.authenticateKeyApi,
-      server.authenticateJwt,
-      server.authenticateTfa,
-    ],
     handler: clientController.updatePhone,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userUpdatePhonePermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePhonePermissions),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.patch('/user/password', {
     schema: userPasswordUpdaterSchema,
-    preHandler: [
-      server.authenticateKeyApi,
-      server.authenticateJwt,
-      server.authenticateTfa,
-    ],
     handler: clientController.updatePassword,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userUpdatePasswordPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePasswordPermissions),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.get('/user/recovery-password/:login', {
     schema: userPasswordRecoveryMethodsSchema,
-    preHandler: [server.authenticateKeyApi],
     handler: clientController.passwordRecoveryMethods,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userRecoveryPasswordPermissions
+        ),
+    ],
   });
 
   server.patch('/user/recovery-password', {
     schema: userPasswordRecoveryUpdaterSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateTfa],
     handler: clientController.updatePasswordRecovery,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userRecoveryPasswordPathPermissions
+        ),
+      (request, reply) => server.authenticateTfa(request, reply),
+    ],
   });
 
   server.get('/user/vouchers/:voucherCode', {
     schema: getUserVoucherSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.viewVoucher,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userVoucherPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userVoucherPermissions),
+    ],
   });
 
   server.get('/user/billing-address', {
     schema: getUserBillingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.getBillingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressBillingViewPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressBillingViewPermissions
+        ),
+    ],
   });
 
   server.get('/user/shipping-address', {
     schema: getUserShippingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.getShippingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressShippingViewPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressShippingViewPermissions
+        ),
+    ],
   });
 
   server.put('/user/billing-address', {
     schema: putUserBillingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.putBillingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressBillingUpdatePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressBillingUpdatePermissions
+        ),
+    ],
   });
 
   server.put('/user/shipping-address', {
     schema: putUserShippingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.putShippingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressShippingUpdatePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressShippingUpdatePermissions
+        ),
+    ],
   });
 
   server.patch('/user/email-activation/:token', {
@@ -121,19 +239,84 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.patch('/user/shipping-address', {
     schema: patchUserShippingAddressSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.patchShippingAddress,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userAddressShippingPatchPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userAddressShippingPatchPermissions
+        ),
+    ],
   });
 
   server.patch('/user/image', {
     schema: patchUserImageSchemaSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: clientController.patchImage,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, userImageUpdatePermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userImageUpdatePermissions),
+    ],
   });
 
   server.post('/user/newsletter', {
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
-    handler: clientController.createClientNewsletter,
     schema: createUserNewsletterSchema,
+    handler: clientController.createClientNewsletter,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userNewsletterSubscribePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userNewsletterSubscribePermissions
+        ),
+    ],
+  });
+
+  server.post('/user/credit-card', {
+    schema: createUserCreditCardSchema,
+    handler: clientController.createCardClient,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardCreatePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userCreditCardCreatePermissions),
+    ],
+  });
+
+  server.patch('/user/credit-card/:id/default', {
+    schema: updateUserCreditCardDefaultSchema,
+    handler: clientController.updateUserCreditCardDefault,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardDefaultUpdatePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          userCreditCardDefaultUpdatePermissions
+        ),
+    ],
   });
 }

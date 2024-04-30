@@ -1,6 +1,6 @@
 import { and, eq, isNotNull } from "drizzle-orm";
 import * as schema from "@core/models";
-import { plan, planItem } from "@core/models";
+import { plan, planItem, planPartner } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
@@ -24,11 +24,12 @@ export class PlanListerOrderRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(planItem.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(plan.id_plano, payload.plan.plan_id),
           eq(plan.status, Status.ACTIVE),
-          eq(plan.id_empresa, tokenKeyData.company_id),
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
           isNotNull(planItem.id_produto)
         )
       )

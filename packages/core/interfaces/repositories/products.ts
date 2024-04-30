@@ -30,8 +30,8 @@ export interface ProductDto {
     face_value: number | null;
     price: number | null;
   };
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
   company_id: number;
   company_name: string | null;
 }

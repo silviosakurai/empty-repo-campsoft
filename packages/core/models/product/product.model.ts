@@ -37,9 +37,7 @@ export const product = mysqlTable("produto", {
   preco: double("preco"),
   preco_face: double("preco_face"),
   obs: varchar("obs", { length: 100 }),
-  created_at: timestamp("created_at", { mode: "string" })
-    .notNull()
-    .defaultNow(),
+  created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" })
     .notNull()
     .defaultNow(),

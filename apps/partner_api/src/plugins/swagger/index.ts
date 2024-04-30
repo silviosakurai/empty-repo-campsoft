@@ -31,26 +31,32 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           name: 'Authorization',
           description: 'Token JWT para autenticação',
         },
-        authenticateKeyApi: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'keyapi',
-          description: 'Chave API para autenticação',
-        },
       },
       produces: ['application/json'],
       tags: [
         {
-          name: TagSwagger.product,
-          description: 'End-points relacionados ao produto',
+          name: TagSwagger.authentication,
+          description: 'End-points relacionados a autenticação',
+        },
+        {
+          name: TagSwagger.order,
+          description: 'End-points relacionados a pedido',
         },
         {
           name: TagSwagger.plan,
           description: 'End-points relacionados ao plano',
         },
         {
-          name: TagSwagger.order,
-          description: 'End-points relacionados a pedido',
+          name: TagSwagger.product,
+          description: 'End-points relacionados ao produto',
+        },
+        {
+          name: TagSwagger.user,
+          description: 'End-points relacionados ao usuário',
+        },
+        {
+          name: TagSwagger.banner,
+          description: 'End-points relacionados a banner',
         },
       ],
     },

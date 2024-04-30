@@ -11,12 +11,12 @@ import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientR
 import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import {
+  ClientCardRepositoryInput,
   ClientEmailCreatorInput,
   FindClientByCpfEmailPhoneInput,
   FindClientByEmailPhoneInput,
 } from "@core/interfaces/repositories/client";
 import { ClientPasswordUpdaterRepository } from "@core/repositories/client/ClientPasswordUpdater.repository";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientByEmailPhone.repository";
 import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
@@ -35,12 +35,23 @@ import { ClientAddressCreatorRepository } from "@core/repositories/client/Client
 import { ClientAddressUpdaterRepository } from "@core/repositories/client/ClientAddressUpdater.repository";
 import { ClientEmailActivatorRepository } from "@core/repositories/client/ClientEmailActivator.repository";
 import { ClientImageUpdaterRepository } from "@core/repositories/client/ClientImageUpdater.repository";
+import { ClientPaymentCreatorRepository } from "@core/repositories/client/ClientPaymentCreator.repository";
+import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
+import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
+import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { ClientCardViewerRepository } from "@core/repositories/client/ClientCardViewer.repository";
+import { ClientCardCreatorRepository } from "@core/repositories/client/ClientCardCreator.repository";
+import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/ClientCardDefaultUpdater.repository";
+import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
+import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
+import { SQL } from "drizzle-orm";
 
 @injectable()
 export class ClientService {
   constructor(
     private readonly clientEraserRepository: ClientEraserRepository,
     private readonly clientViewerRepository: ClientViewerRepository,
+    private readonly clientListerRepository: ClientListerRepository,
     private readonly clientAddressViewerRepository: ClientAddressViewerRepository,
     private readonly clientCreatorRepository: ClientCreatorRepository,
     private readonly clientAccessCreatorRepository: ClientAccessCreatorRepository,
@@ -56,11 +67,17 @@ export class ClientService {
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
     private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
-    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository
+    private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
+    private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
+    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository,
+    private readonly clientCardViewerRepository: ClientCardViewerRepository,
+    private readonly clientCardCreatorRepository: ClientCardCreatorRepository,
+    private readonly cardDefaultUpdaterRepository: ClientCardDefaultUpdaterRepository,
+    private readonly cardListerByClientIdRepository: ClientCardListerByClientIdRepository
   ) {}
 
-  view = async (tokenKeyData: ITokenKeyData, userId: string) => {
-    return this.clientViewerRepository.view(tokenKeyData, userId);
+  view = async (userId: string) => {
+    return this.clientViewerRepository.view(userId);
   };
 
   viewBilling = async (userId: string) => {
@@ -71,8 +88,32 @@ export class ClientService {
     return this.clientAddressViewerRepository.viewShipping(userId);
   };
 
+  viewShippingExist = async (userId: string) => {
+    return this.clientAddressViewerRepository.viewShippingExist(userId);
+  };
+
   listClientByCpfEmailPhone = async (input: FindClientByCpfEmailPhoneInput) => {
     return this.clientByCpfEmailPhoneRepository.find(input);
+  };
+
+  listWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.listWithCompanies(
+      filterClientByPermission,
+      query
+    );
+  };
+
+  countTotalClientWithCompanies = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListClientRequest
+  ) => {
+    return this.clientListerRepository.countTotalClientWithCompanies(
+      filterClientByPermission,
+      query
+    );
   };
 
   viewClientByEmailPhone = async (input: FindClientByEmailPhoneInput) => {
@@ -101,6 +142,10 @@ export class ClientService {
 
   update = async (clientId: string, input: UpdateClientRequestDto) => {
     return this.clientUpdaterRepository.update(clientId, input);
+  };
+
+  updateById = async (clientId: string, input: UpdateClientByIdRequestDto) => {
+    return this.clientUpdaterRepository.updateById(clientId, input);
   };
 
   updatePhone = async (
@@ -138,12 +183,8 @@ export class ClientService {
     );
   };
 
-  passwordRecoveryMethods = async (
-    tokenKeyData: ITokenKeyData,
-    login: string
-  ) => {
+  passwordRecoveryMethods = async (login: string) => {
     return this.clientPasswordRecoveryMethodsRepository.passwordRecoveryMethods(
-      tokenKeyData,
       login
     );
   };
@@ -179,5 +220,39 @@ export class ClientService {
 
   updateImage = async (clientId: string, storageUrl: string) => {
     return this.clientImageUpdaterRepository.update(clientId, storageUrl);
+  };
+
+  createPaymentClient = async (clientId: string, clientExternalId: string) => {
+    return this.clientPaymentCreatorRepository.create(
+      clientId,
+      clientExternalId
+    );
+  };
+
+  viewPaymentClient = async (clientId: string) => {
+    return this.clientPaymentViewerRepository.view(clientId);
+  };
+
+  viewCreditCard = async (cardId: string) => {
+    return this.clientCardViewerRepository.view(cardId);
+  };
+
+  createCreditCard = async (
+    clientId: string,
+    input: ClientCardRepositoryInput
+  ) => {
+    return this.clientCardCreatorRepository.create(clientId, input);
+  };
+
+  updateDefaultCard = async (input: {
+    clientId: string;
+    cardId: string;
+    default: boolean;
+  }) => {
+    return this.cardDefaultUpdaterRepository.create(input);
+  };
+
+  listCreditCards = async (clientId: string) => {
+    return this.cardListerByClientIdRepository.list(clientId);
   };
 }

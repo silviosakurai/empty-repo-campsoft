@@ -1,7 +1,7 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { product, productCompany, productType } from "@core/models";
+import { product, productPartner, productType } from "@core/models";
 import { eq, and, asc, desc, SQLWrapper, inArray } from "drizzle-orm";
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
@@ -61,15 +61,15 @@ export class ProductListerRepository {
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
       .innerJoin(
         productType,
         eq(product.id_produto_tipo, productType.id_produto_tipo)
       )
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(eq(productCompany.id_empresa, companyId), ...filters));
+      .where(and(eq(productPartner.id_parceiro, companyId), ...filters));
 
     const totalResult = await allQuery.execute();
 
@@ -135,8 +135,8 @@ export class ProductListerRepository {
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
       .innerJoin(
         productType,
@@ -144,7 +144,7 @@ export class ProductListerRepository {
       )
       .where(
         and(
-          eq(productCompany.id_empresa, companyId),
+          eq(productPartner.id_parceiro, companyId),
           inArray(product.id_produto, productIds)
         )
       )

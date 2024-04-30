@@ -16,7 +16,7 @@ export const viewPlan = async (
 
   try {
     const response = await planViewerUseCase.execute(
-      tokenKeyData.company_id,
+      tokenKeyData.id_parceiro,
       request.params.planId
     );
 
