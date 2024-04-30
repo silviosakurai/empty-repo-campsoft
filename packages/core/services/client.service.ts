@@ -233,8 +233,8 @@ export class ClientService {
     return this.clientPaymentViewerRepository.view(clientId);
   };
 
-  viewCreditCard = async (cardId: string) => {
-    return this.clientCardViewerRepository.view(cardId);
+  viewCreditCard = async (cardId: string, clientId: string) => {
+    return this.clientCardViewerRepository.view(cardId, clientId);
   };
 
   createCreditCard = async (

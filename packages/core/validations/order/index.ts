@@ -6,3 +6,4 @@ export * from "./createOrderSchema.validation";
 export * from "./ordersFromManagersSchema.validation";
 export * from "./createOrderPaymentBoletoSchema.validation";
 export * from "./createOrderPaymentCardSchema.validation";
+export * from "./createOrderPaymentPixSchema.validation";

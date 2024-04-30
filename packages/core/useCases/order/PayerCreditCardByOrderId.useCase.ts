@@ -2,7 +2,6 @@ import { ClientService, OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { injectable } from "tsyringe";
 import { TFunction } from "i18next";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { PayByCreditCardRequest } from "./dtos/PayByCreditCardRequest.dto";
@@ -22,7 +21,6 @@ export class PayerCreditCardByOrderIdUseCase {
 
   async pay(
     t: TFunction<"translation", undefined>,
-    tokenKey: ITokenKeyData,
     orderId: string,
     input: PayByCreditCardRequest
   ) {
@@ -30,12 +28,11 @@ export class PayerCreditCardByOrderIdUseCase {
       externalId: externalCustomerId,
       order,
       sellerId,
-    } = await this.orderWithPaymentReaderUseCase.view(t, tokenKey, orderId);
+    } = await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
     const creditCard = await this.validateCreditCard(
       order.client_id,
       externalCustomerId,
-      tokenKey,
       t,
       input
     );
@@ -76,12 +73,11 @@ export class PayerCreditCardByOrderIdUseCase {
   private async validateCreditCard(
     clientId: string,
     externalCustomerId: string,
-    tokenKey: ITokenKeyData,
     t: TFunction<"translation", undefined>,
     input: PayByCreditCardRequest
   ) {
     if (input.credit_card_id) {
-      return this.confirmByCreditCardId(input.credit_card_id);
+      return this.confirmByCreditCardId(input.credit_card_id, clientId);
     }
 
     if (input.credit_card) {
@@ -109,13 +105,18 @@ export class PayerCreditCardByOrderIdUseCase {
 
       return creditCard;
     }
+
+    return false;
   }
 
-  private async confirmByCreditCardId(creditCardId: string) {
-    const result = await this.clientService.viewCreditCard(creditCardId);
+  private async confirmByCreditCardId(creditCardId: string, clientId: string) {
+    const result = await this.clientService.viewCreditCard(
+      creditCardId,
+      clientId
+    );
 
     if (!result) {
-      return;
+      return false;
     }
 
     if (!result.expiration_month || !result.expiration_year) {
@@ -127,7 +128,7 @@ export class PayerCreditCardByOrderIdUseCase {
       +result.expiration_year
     );
 
-    if (!cardIsValid) return;
+    if (!cardIsValid) return false;
 
     return result;
   }

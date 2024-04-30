@@ -2,7 +2,6 @@ import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ClientService, OrderService } from "@core/services";
 import { PaymentService } from "@core/services/payment.service";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 
 @injectable()
@@ -14,11 +13,7 @@ export class OrderWithPaymentReaderUseCase {
     private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
-  async view(
-    t: TFunction<"translation", undefined>,
-    tokenKey: ITokenKeyData,
-    orderId: string
-  ) {
+  async view(t: TFunction<"translation", undefined>, orderId: string) {
     const order = await this.orderService.listOrderById(orderId);
 
     if (!order) {
