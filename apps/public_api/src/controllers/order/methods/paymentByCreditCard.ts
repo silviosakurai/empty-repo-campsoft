@@ -13,11 +13,11 @@ export const paymentByCreditCard = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { t, tokenKeyData, params, body } = request;
+  const { t, params, body } = request;
   const service = container.resolve(PayerCreditCardByOrderIdUseCase);
 
   try {
-    const result = await service.pay(t, tokenKeyData, params.orderNumber, body);
+    const result = await service.pay(t, params.orderNumber, body);
 
     if (!result.status) {
       return sendResponse(reply, {
@@ -51,6 +51,13 @@ export const paymentByCreditCard = async (
       if (error.message === 'expired_card_error') {
         return sendResponse(reply, {
           message: t('expired_card_error'),
+          httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        });
+      }
+
+      if (error.message === t('something_went_wrong_to_generate_credit_card')) {
+        return sendResponse(reply, {
+          message: t('something_went_wrong_to_generate_credit_card'),
           httpStatusCode: HTTPStatusCode.BAD_REQUEST,
         });
       }

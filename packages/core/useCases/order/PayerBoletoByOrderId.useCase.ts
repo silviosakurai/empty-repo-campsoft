@@ -1,4 +1,3 @@
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
@@ -14,13 +13,9 @@ export class PayerByBoletoByOrderIdUseCase {
     private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
-  async pay(
-    t: TFunction<"translation", undefined>,
-    tokenKey: ITokenKeyData,
-    orderId: string
-  ) {
+  async pay(t: TFunction<"translation", undefined>, orderId: string) {
     const { order, externalId, sellerId } =
-      await this.orderWithPaymentReaderUseCase.view(t, tokenKey, orderId);
+      await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
     const result =
       await this.paymentGatewayService.createTransactionSimpleTicket({
