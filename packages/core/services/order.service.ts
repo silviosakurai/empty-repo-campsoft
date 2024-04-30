@@ -19,6 +19,7 @@ import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPay
 import { OrderStatusEnum } from "@core/common/enums/models/order";
 import { CouponService } from "./coupon.service";
 import { OrderPaymentUpdaterByOrderIdRepository } from "@core/repositories/order/OrderPaymentUpdaterByOrderId.repository";
+import { OrderStatusUpdaterRepository } from "@core/repositories/order/OrderStatusUpdater.repository";
 
 @injectable()
 export class OrderService {
@@ -27,6 +28,7 @@ export class OrderService {
     private readonly orderCreatorRepository: OrderCreatorRepository,
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
+    private readonly orderStatusUpdaterRepository: OrderStatusUpdaterRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
     private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
     private readonly paymentUpdaterByOrderIdRepository: OrderPaymentUpdaterByOrderIdRepository
@@ -120,5 +122,9 @@ export class OrderService {
     input: OrderPaymentUpdateInput
   ) => {
     return this.paymentUpdaterByOrderIdRepository.update(orderId, input);
+  };
+
+  updateStatusByOrderId = async (orderId: string, status: OrderStatusEnum) => {
+    return this.orderStatusUpdaterRepository.update(orderId, status);
   };
 }
