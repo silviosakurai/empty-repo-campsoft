@@ -1,24 +1,14 @@
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { Type } from "@sinclair/typebox";
+import { paymentCreditCardSchema } from "../payment/paymentCreditCardSchema";
 
 export const orderPaymentSchema = Type.Object({
   type: Type.String({
     description: "Forma de pagamento",
     enum: Object.values(OrderPaymentsMethodsEnum),
   }),
-  credit_card: Type.Union([
-    Type.Object({
-      name: Type.String(),
-      number: Type.String(),
-      expire_month: Type.Number(),
-      expire_year: Type.Number(),
-      cvv: Type.Number(),
-      installments: Type.Number(),
-    }),
-    Type.Null(),
-  ]),
-  credit_card_id: Type.Union([Type.String(), Type.Null()]),
-  voucher: Type.Union([Type.String(), Type.Null()]),
+  voucher: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  ...paymentCreditCardSchema.properties,
 });
 
 export const orderPlanSchema = Type.Object({
