@@ -1,4 +1,4 @@
-import { container, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import { VoucherService } from "./voucher.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { TFunction } from "i18next";
@@ -28,7 +28,8 @@ export class PaymentService {
     private readonly voucherService: VoucherService,
     private readonly signatureService: SignatureService,
     private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
-    private readonly sellerViewerByEmailRepository: PaymentSellerViewerByEmailRepository
+    private readonly sellerViewerByEmailRepository: PaymentSellerViewerByEmailRepository,
+    private readonly payerCreditCardByOrderIdUseCase: PayerCreditCardByOrderIdUseCase
   ) {}
 
   private voucherIsValid = async (
@@ -226,11 +227,11 @@ export class PaymentService {
       credit_card_id: payment?.credit_card_id,
     } as PayByCreditCardRequest;
 
-    const payerCreditCardByOrderIdUseCase = container.resolve(
-      PayerCreditCardByOrderIdUseCase
+    await this.payerCreditCardByOrderIdUseCase.pay(
+      t,
+      orderId,
+      creditCardPayment
     );
-
-    await payerCreditCardByOrderIdUseCase.pay(t, orderId, creditCardPayment);
 
     await this.signatureService.activePaidSignature(
       order.order_id,
