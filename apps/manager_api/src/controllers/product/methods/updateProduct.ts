@@ -14,10 +14,10 @@ export const updateProduct = async (
   reply: FastifyReply
 ) => {
   const service = container.resolve(ProductsUpdaterUseCase);
-  const { t, tokenKeyData } = request;
+  const { t, tokenJwtData } = request;
 
   try {
-    const response = await service.update(t, tokenKeyData.id_parceiro, {
+    const response = await service.update(t, tokenJwtData, {
       productId: request.params.sku,
       request: request.body,
     });
