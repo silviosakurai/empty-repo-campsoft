@@ -7,6 +7,8 @@ import {
 } from "@core/interfaces/services/payment/ITransactionCard";
 import { IZoopError } from "@core/interfaces/services/payment/IZoopError";
 import { paymentApiInstance } from "./paymentApiInstance";
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { ApiErrorCategoryZoop } from "@core/common/enums/ApiErrorCategoryZoop";
 
 export async function createTransactionCard(
   input: ITransactionCardRequest
@@ -46,6 +48,10 @@ export async function createTransactionCard(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    throw new Error(error.response.data.error.category);
+    if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
+      throw new Error(error.response.data.error.category);
+    }
+
+    throw new Error(ApiErrorCategoryZoop.PaymentCardRefused);
   }
 }

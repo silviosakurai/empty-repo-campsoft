@@ -112,5 +112,12 @@
   "endpoint_not_found": "Endpoint not found",
   "split_rule_precondition_creation_failure": "Split rule precondition creation failure",
   "duplicate_taxpayer_id": "Duplicate taxpayer id",
-  "server_api_error": "Server API error"
+  "server_api_error": "Server API error",
+  "payment_card_refused": "Payment card refused",
+  "create_credit_card_error": "Create credit card error",
+  "create_customer_error": "Create customer error",
+  "payment_card_id_refused": "Payment card id refused",
+  "create_transaction_full_ticket_error": "Create transaction full ticket error",
+  "create_transaction_pix_error": "Create transaction pix error",
+  "link_card_token_with_customer_error": "Link card token with customer error"
 }

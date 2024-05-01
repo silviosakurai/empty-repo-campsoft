@@ -1,5 +1,7 @@
+import { ApiErrorCategoryZoop } from "@core/common/enums/ApiErrorCategoryZoop";
 import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
 import { PaymentType } from "@core/common/enums/PaymentType";
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { generalEnvironment } from "@core/config/environments";
 import {
@@ -68,6 +70,10 @@ export async function createTransactionFullTicket(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    throw new Error(error.response.data.error.category);
+    if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
+      throw new Error(error.response.data.error.category);
+    }
+
+    throw new Error(ApiErrorCategoryZoop.CreateTransactionFullTicketError);
   }
 }

@@ -5,6 +5,8 @@ import {
 } from "@core/interfaces/services/payment/ICreateCustomer";
 import { paymentApiInstance } from "./paymentApiInstance";
 import { IZoopError } from "@core/interfaces/services/payment/IZoopError";
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { ApiErrorCategoryZoop } from "@core/common/enums/ApiErrorCategoryZoop";
 
 export async function createCustomer(input: ICreateCustomer) {
   try {
@@ -25,6 +27,10 @@ export async function createCustomer(input: ICreateCustomer) {
       message: response.data.error.message,
     };
   } catch (error: any) {
-    throw new Error(error.response.data.error.category);
+    if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
+      throw new Error(error.response.data.error.category);
+    }
+
+    throw new Error(ApiErrorCategoryZoop.CreateCustomerError);
   }
 }

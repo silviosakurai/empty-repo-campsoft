@@ -16,6 +16,7 @@ import {
 import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 import { ListOrderById } from "@core/interfaces/repositories/order";
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
@@ -124,15 +125,8 @@ export class PayerCreditCardByOrderIdUseCase {
         );
       }
 
-      console.log("error", error);
-
       if (error instanceof Error) {
-        if (
-          error.message === "invalid_card_number" ||
-          error.message === "expired_card_error" ||
-          error.message === "service_request_timeout" ||
-          error.message === "something_went_wrong_to_generate_credit_card"
-        ) {
+        if (existsInApiErrorCategoryZoop(error.message)) {
           throw new Error(t(error.message));
         }
       }

@@ -112,5 +112,12 @@
   "endpoint_not_found": "Endpoint não encontrado.",
   "split_rule_precondition_creation_failure": "Falha na criação da regra de divisão.",
   "duplicate_taxpayer_id": "ID do contribuinte duplicado.",
-  "server_api_error": "Erro de API do servidor."
+  "server_api_error": "Erro de API do servidor.",
+  "payment_card_refused": "Pagamento com cartão recusado.",
+  "create_credit_card_error": "Erro ao criar cartão de crédito.",
+  "create_customer_error": "Erro ao criar cliente.",
+  "payment_card_id_refused": "Pagamento com ID de cartão recusado.",
+  "create_transaction_full_ticket_error": "Erro ao criar transação com boleto.",
+  "create_transaction_pix_error": "Erro ao criar transação com PIX.",
+  "link_card_token_with_customer_error": "Erro ao vincular token de cartão com cliente."
 }

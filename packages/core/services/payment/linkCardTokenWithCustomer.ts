@@ -1,5 +1,7 @@
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 import { paymentApiInstance } from "./paymentApiInstance";
 import { ILinkCardTokenWithCustomerResponse } from "@core/interfaces/services/payment/ILinkCardTokenWithCustomer";
+import { ApiErrorCategoryZoop } from "@core/common/enums/ApiErrorCategoryZoop";
 
 export async function linkCardTokenWithCustomer(input: {
   token: string;
@@ -14,6 +16,10 @@ export async function linkCardTokenWithCustomer(input: {
 
     return result.data;
   } catch (error: any) {
-    throw new Error(error.response.data.error.category);
+    if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
+      throw new Error(error.response.data.error.category);
+    }
+
+    throw new Error(ApiErrorCategoryZoop.LinkCardTokenWithCustomerError);
   }
 }
