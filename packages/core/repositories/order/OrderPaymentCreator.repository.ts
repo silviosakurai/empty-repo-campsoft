@@ -52,7 +52,7 @@ export class OrderPaymentCreatorRepository {
 
     if (methodId === OrderPaymentsMethodsEnum.BOLETO) {
       valuesObject.pag_info_adicional = input.paymentLink;
-      valuesObject.due_date = input.dueDate;
+      valuesObject.data_vencimento = input.dueDate;
       valuesObject.codigo_barra = input.barcode;
     }
 
@@ -67,7 +67,7 @@ export class OrderPaymentCreatorRepository {
 
     if (methodId === OrderPaymentsMethodsEnum.PIX) {
       valuesObject.pag_info_adicional = input.paymentLink;
-      valuesObject.due_date = input.dueDate;
+      valuesObject.data_vencimento = input.dueDate;
     }
 
     const result = await this.db
