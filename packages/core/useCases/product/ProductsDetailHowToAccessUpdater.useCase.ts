@@ -51,35 +51,44 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
   ): UpdateParams | null {
     switch (request.type) {
       case ProductHowToAccessType.ANDROID:
-        return this.createUpdateParamsForAndroid();
+        return this.createUpdateParamsForAndroid(request);
       case ProductHowToAccessType.IOS:
-        return this.createUpdateParamsForIOS();
+        return this.createUpdateParamsForIOS(request);
       case ProductHowToAccessType.WEB:
       case ProductHowToAccessType.DESKTOP:
-        return this.createUpdateParamsForWebDesktop();
+        return this.createUpdateParamsForWebDesktop(request);
       default:
         return null;
     }
   }
 
-  private createUpdateParamsForAndroid(): UpdateParams {
+  private createUpdateParamsForAndroid(
+    request: UpdateProductDetailHowToAccessRequest
+  ): UpdateParams {
+    console.log(request);
     return {
-      como_acessar_mob: "",
-      como_acessar_url_and: "",
+      como_acessar_mob: request.content,
+      como_acessar_url_and: request.url,
     };
   }
 
-  private createUpdateParamsForIOS(): UpdateParams {
+  private createUpdateParamsForIOS(
+    request: UpdateProductDetailHowToAccessRequest
+  ): UpdateParams {
+    console.log(request);
     return {
-      como_acessar_mob: "",
-      como_acessar_url_ios: "",
+      como_acessar_mob: request.content,
+      como_acessar_url_ios: request.url,
     };
   }
 
-  private createUpdateParamsForWebDesktop(): UpdateParams {
+  private createUpdateParamsForWebDesktop(
+    request: UpdateProductDetailHowToAccessRequest
+  ): UpdateParams {
+    console.log(request);
     return {
-      como_acessar_url: "",
-      como_acessar_desk: "",
+      como_acessar_url: request.content,
+      como_acessar_desk: request.url,
     };
   }
 }
