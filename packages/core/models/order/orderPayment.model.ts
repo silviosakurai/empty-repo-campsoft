@@ -6,6 +6,7 @@ import {
   varbinary,
   double,
   timestamp,
+  text,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
@@ -34,8 +35,8 @@ export const orderPayment = mysqlTable("pedido_pagamento", {
   voucher: varchar("voucher", { length: 50 }),
   card_id: varbinary("card_id", { length: 16 }),
   pag_trans_id: varchar("pag_trans_id", { length: 25 }),
-  pag_info_adicional: varchar("pag_info_adicional", { length: 2000 }),
-  codigo_barra: varchar("codigo_barra", { length: 32 }),
+  pag_info_adicional: text("pag_info_adicional"),
+  codigo_pagamento: varchar("codigo_pagamento", { length: 500 }),
   taxa_meio_pagamento: double("taxa_meio_pagamento"),
   data_vencimento: timestamp("data_vencimento", { mode: "string" }),
   created_at: timestamp("created_at", { mode: "string" })

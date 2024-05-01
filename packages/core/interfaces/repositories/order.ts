@@ -109,6 +109,6 @@ export interface OrderPaymentUpdateInput {
   cardId?: string | null;
   paymentLink?: string | null;
   dueDate?: string | null;
-  barcode?: string | null;
+  codePayment?: string | null;
   voucher?: string | null;
 }

@@ -119,5 +119,6 @@
   "payment_card_id_refused": "Pagamento com ID de cartão recusado.",
   "create_transaction_full_ticket_error": "Erro ao criar transação com boleto.",
   "create_transaction_pix_error": "Erro ao criar transação com PIX.",
-  "link_card_token_with_customer_error": "Erro ao vincular token de cartão com cliente."
+  "link_card_token_with_customer_error": "Erro ao vincular token de cartão com cliente.",
+  "error_generating_qr_code_pix": "Erro ao gerar QR Code PIX."
 }

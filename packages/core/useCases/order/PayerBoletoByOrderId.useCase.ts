@@ -52,7 +52,7 @@ export class PayerByBoletoByOrderIdUseCase {
         paymentTransactionId: result.data.id,
         paymentLink: result.data.payment_method.url,
         dueDate: result.data.payment_method.expiration_date,
-        barcode: result.data.payment_method.barcode,
+        codePayment: result.data.payment_method.barcode,
       }
     );
 

@@ -9,6 +9,7 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
+import { generateQRCodeAsJPEGBase64 } from "@core/common/functions/generateQRCodeAsJPEGBase64";
 
 @injectable()
 export class PayerPixByOrderIdUseCase {
@@ -42,6 +43,14 @@ export class PayerPixByOrderIdUseCase {
       throw new Error(t("signature_not_found"));
     }
 
+    const pixCodeAsBase64 = await generateQRCodeAsJPEGBase64(
+      result.data.payment_method.qr_code.emv
+    );
+
+    if (!pixCodeAsBase64) {
+      throw new Error(t("error_generating_qr_code_pix"));
+    }
+
     await this.orderService.createOrderPayment(
       order,
       signature.signature_id,
@@ -49,14 +58,11 @@ export class PayerPixByOrderIdUseCase {
       OrderStatusEnum.PENDING,
       {
         paymentTransactionId: result.data.id,
-        paymentLink: result.data.payment_method.qr_code.emv,
+        paymentLink: pixCodeAsBase64,
         dueDate: result.data.payment_method.expiration_date,
+        codePayment: result.data.payment_method.qr_code.emv,
       }
     );
-
-    const pixCodeAsBase64 = Buffer.from(
-      result.data.payment_method.qr_code.emv
-    ).toString("base64");
 
     return {
       data: {

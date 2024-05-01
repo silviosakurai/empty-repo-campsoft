@@ -154,12 +154,12 @@ export class OrdersListerRepository {
         voucher: orderPayment.voucher,
         boleto: {
           url: orderPayment.pag_info_adicional,
-          code: orderPayment.codigo_barra,
+          code: orderPayment.codigo_pagamento,
           expire_at: orderPayment.data_vencimento,
         },
         pix: {
           url: orderPayment.pag_info_adicional,
-          code: orderPayment.pag_info_adicional,
+          code: orderPayment.codigo_pagamento,
           expire_at: orderPayment.data_vencimento,
         },
         cycle: clientSignature.ciclo,

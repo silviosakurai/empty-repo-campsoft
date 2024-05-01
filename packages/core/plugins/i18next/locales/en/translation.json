@@ -119,5 +119,6 @@
   "payment_card_id_refused": "Payment card id refused",
   "create_transaction_full_ticket_error": "Create transaction full ticket error",
   "create_transaction_pix_error": "Create transaction pix error",
-  "link_card_token_with_customer_error": "Link card token with customer error"
+  "link_card_token_with_customer_error": "Link card token with customer error",
+  "error_generating_qr_code_pix": "Error generating QR code PIX"
 }
