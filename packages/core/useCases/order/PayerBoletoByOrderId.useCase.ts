@@ -4,13 +4,19 @@ import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
   ) {}
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
@@ -30,12 +36,25 @@ export class PayerByBoletoByOrderIdUseCase {
       return result;
     }
 
-    await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-      paymentTransactionId: result.data.id,
-      paymentLink: result.data.payment_method.url,
-      dueDate: result.data.payment_method.expiration_date,
-      barcode: result.data.payment_method.barcode,
-    });
+    const signature =
+      await this.findSignatureByOrderNumber.findByOrder(orderId);
+
+    if (!signature) {
+      throw new Error(t("signature_not_found"));
+    }
+
+    await this.orderService.createOrderPayment(
+      order,
+      signature.signature_id,
+      OrderPaymentsMethodsEnum.BOLETO,
+      OrderStatusEnum.PENDING,
+      {
+        paymentTransactionId: result.data.id,
+        paymentLink: result.data.payment_method.url,
+        dueDate: result.data.payment_method.expiration_date,
+        barcode: result.data.payment_method.barcode,
+      }
+    );
 
     return {
       data: {

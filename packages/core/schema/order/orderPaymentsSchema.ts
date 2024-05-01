@@ -1,12 +1,12 @@
 import { Type } from "@sinclair/typebox";
 import { paymentBoletoSchema } from "../payment/paymentBoletoSchema";
 import { paymentPixSchema } from "../payment/paymentPixSchema";
-import { paymentCreditCardSchema } from "../payment/paymentCreditCardSchema";
+import { paymentCreditCardOrderSchema } from "../payment/paymentCreditCardOrderSchema";
 
 export const orderPaymentsSchema = Type.Object({
   type: Type.String(),
   status: Type.String(),
-  credit_card: paymentCreditCardSchema,
+  credit_card: paymentCreditCardOrderSchema,
   voucher: Type.String(),
   boleto: paymentBoletoSchema,
   pix: paymentPixSchema,

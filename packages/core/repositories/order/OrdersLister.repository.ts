@@ -16,6 +16,7 @@ import {
   planItem,
   productGroupProduct,
   clientSignature,
+  clientCards,
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -141,9 +142,13 @@ export class OrdersListerRepository {
         type: orderPaymentMethod.pedido_pag_metodo,
         status: orderPaymentStatus.pedido_pagamento_status,
         credit_card: {
-          brand: orderPayment.pag_cc_tipo,
-          number: orderPayment.pag_cc_numero_cartao,
-          credit_card_id: orderPayment.pag_cc_instantbuykey,
+          brand: clientCards.brand,
+          number:
+            sql<string>`CONCAT(COALESCE(${clientCards.first_digits}, ''), '********', COALESCE(${clientCards.last_digits}, ''))`.mapWith(
+              String
+            ),
+          credit_card_id:
+            sql<string>`BIN_TO_UUID(${clientCards.card_id})`.mapWith(String),
         },
         voucher: orderPayment.voucher,
         boleto: {
@@ -196,6 +201,7 @@ export class OrdersListerRepository {
           orderPayment.id_assinatura_cliente
         )
       )
+      .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
 

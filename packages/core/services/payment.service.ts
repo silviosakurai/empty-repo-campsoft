@@ -19,6 +19,8 @@ import {
 } from "@core/common/enums/models/order";
 import { PayerCreditCardByOrderIdUseCase } from "@core/useCases/order/PayerCreditCardByOrderId.useCase";
 import { PayByCreditCardRequest } from "@core/useCases/order/dtos/PayByCreditCardRequest.dto";
+import { PayerByBoletoByOrderIdUseCase } from "@core/useCases/order/PayerBoletoByOrderId.useCase";
+import { PayerPixByOrderIdUseCase } from "@core/useCases/order/PayerPixByOrderId.useCase";
 
 @injectable()
 export class PaymentService {
@@ -27,7 +29,9 @@ export class PaymentService {
     private readonly voucherService: VoucherService,
     private readonly signatureService: SignatureService,
     private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
-    private readonly payerCreditCardByOrderIdUseCase: PayerCreditCardByOrderIdUseCase
+    private readonly payerCreditCardByOrderIdUseCase: PayerCreditCardByOrderIdUseCase,
+    private readonly payerByBoletoByOrderIdUseCase: PayerByBoletoByOrderIdUseCase,
+    private readonly payerPixByOrderIdUseCase: PayerPixByOrderIdUseCase
   ) {}
 
   private voucherIsValid = async (
@@ -205,7 +209,9 @@ export class PaymentService {
       signature.signature_id,
       OrderPaymentsMethodsEnum.VOUCHER,
       statusPayment,
-      voucher
+      {
+        voucher,
+      }
     );
   };
 
@@ -230,11 +236,31 @@ export class PaymentService {
       orderId,
       creditCardPayment
     );
+  };
 
-    await this.signatureService.activePaidSignature(
-      order.order_id,
-      order.order_id_previous,
-      order.activation_immediate
-    );
+  payWithBoleto = async (
+    t: TFunction<"translation", undefined>,
+    orderId: string
+  ) => {
+    const order = await this.orderService.listOrderById(orderId);
+
+    if (!order) {
+      throw new Error(t("order_not_found"));
+    }
+
+    await this.payerByBoletoByOrderIdUseCase.pay(t, orderId);
+  };
+
+  payWithPix = async (
+    t: TFunction<"translation", undefined>,
+    orderId: string
+  ) => {
+    const order = await this.orderService.listOrderById(orderId);
+
+    if (!order) {
+      throw new Error(t("order_not_found"));
+    }
+
+    await this.payerPixByOrderIdUseCase.pay(t, orderId);
   };
 }

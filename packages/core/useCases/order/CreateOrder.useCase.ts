@@ -175,6 +175,14 @@ export class CreateOrderUseCase {
     if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
       return this.paymentService.payWithCard(t, orderId, payload.payment);
     }
+
+    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.BOLETO) {
+      return this.paymentService.payWithBoleto(t, orderId);
+    }
+
+    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.PIX) {
+      return this.paymentService.payWithPix(t, orderId);
+    }
   }
 
   private async validatePaymentMethod(
@@ -192,15 +200,19 @@ export class CreateOrderUseCase {
     this.validateVoucherUsage(t, payload);
     this.validateCouponAndVoucherIncompatibility(t, payload);
 
-    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
+    if (
+      payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD &&
+      !payload.payment.credit_card_id
+    ) {
       this.validateCVV(t, payload);
       this.validateExpireMonth(t, payload);
       this.validateExpireYear(t, payload);
       this.validateInstallments(t, payload);
       this.validateCreditCardNumber(t, payload);
       this.validateCreditCardName(t, payload);
-      this.validateCreditCardConsistency(t, payload);
     }
+
+    this.validateCreditCardConsistency(t, payload);
   }
 
   private validateCardPaymentMethod(

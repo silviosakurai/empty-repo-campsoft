@@ -9,7 +9,13 @@ import { ClientCardCreatorUseCase } from "../client/ClientCardCreator.useCase";
 import CreditCardExpirationDateIsInvalidError from "@core/common/exceptions/CreditCardExpirationDateIsInvalidError";
 import { checkIfDateIsAfterOfCurrent } from "@core/common/functions/checkIfDateIsAfterOfCurrent";
 import { SignatureService } from "@core/services/signature.service";
-import { OrderStatusEnum } from "@core/common/enums/models/order";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
+import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
+import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
+import { ListOrderById } from "@core/interfaces/repositories/order";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
@@ -19,7 +25,8 @@ export class PayerCreditCardByOrderIdUseCase {
     private readonly signatureService: SignatureService,
     private readonly cardCreatorUseCase: ClientCardCreatorUseCase,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
   ) {}
 
   async pay(
@@ -27,16 +34,27 @@ export class PayerCreditCardByOrderIdUseCase {
     orderId: string,
     input: PayByCreditCardRequest
   ) {
+    let order = null as ListOrderById | null;
+    let signature = null as ISignatureByOrder | null;
+    let cardId = null as string | null;
+
     try {
-      const {
-        externalId: externalCustomerId,
-        order,
-        sellerId,
-      } = await this.orderWithPaymentReaderUseCase.view(t, orderId);
+      signature = await this.findSignatureByOrderNumber.findByOrder(orderId);
+
+      if (!signature) {
+        throw new Error(t("signature_not_found"));
+      }
+
+      const orderData = await this.orderWithPaymentReaderUseCase.view(
+        t,
+        orderId
+      );
+
+      ({ order } = orderData);
 
       const creditCard = await this.validateCreditCard(
         order.client_id,
-        externalCustomerId,
+        orderData.externalId,
         t,
         input
       );
@@ -49,7 +67,7 @@ export class PayerCreditCardByOrderIdUseCase {
         amount: +order.total_price * 100,
         description: order.observation,
         reference_id: order.order_id,
-        sellerId,
+        sellerId: orderData.sellerId,
         cardId: creditCard.external_id,
         usage: "single_use",
       });
@@ -58,15 +76,24 @@ export class PayerCreditCardByOrderIdUseCase {
         return result;
       }
 
+      cardId = creditCard.card_id;
+
       await Promise.all([
         this.signatureService.activePaidSignature(
           order.order_id,
           order.order_id_previous,
           order.activation_immediate
         ),
-        this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-          paymentTransactionId: result.data.id,
-        }),
+        this.orderService.createOrderPayment(
+          order,
+          signature.signature_id,
+          OrderPaymentsMethodsEnum.CARD,
+          OrderStatusEnum.APPROVED,
+          {
+            paymentTransactionId: result.data.id,
+            cardId,
+          }
+        ),
       ]);
 
       const formatCreditCard = `${result.data.payment_method.first4_digits}xxxxxxxxxx${result.data.payment_method.last4_digits}`;
@@ -84,6 +111,18 @@ export class PayerCreditCardByOrderIdUseCase {
         orderId,
         OrderStatusEnum.FAILED
       );
+
+      if (signature && order) {
+        this.orderService.createOrderPayment(
+          order,
+          signature.signature_id,
+          OrderPaymentsMethodsEnum.CARD,
+          OrderStatusEnum.FAILED,
+          {
+            cardId,
+          }
+        );
+      }
 
       if (error instanceof Error) {
         if (
@@ -146,7 +185,7 @@ export class PayerCreditCardByOrderIdUseCase {
     );
 
     if (!result) {
-      return false;
+      throw new Error("invalid_card_number");
     }
 
     if (!result.expiration_month || !result.expiration_year) {
