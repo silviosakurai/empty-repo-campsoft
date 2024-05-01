@@ -9,6 +9,7 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
+import { amountToPay } from "@core/common/functions/amountToPay";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
@@ -23,9 +24,11 @@ export class PayerByBoletoByOrderIdUseCase {
     const { order, externalId, sellerId } =
       await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
+    const amountPay = amountToPay(order);
+
     const result =
       await this.paymentGatewayService.createTransactionSimpleTicket({
-        amount: +order.total_price * 100,
+        amount: amountPay,
         customerId: externalId,
         description: order.observation,
         reference_id: order.order_id,

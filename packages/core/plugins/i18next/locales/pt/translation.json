@@ -120,5 +120,6 @@
   "create_transaction_full_ticket_error": "Erro ao criar transação com boleto.",
   "create_transaction_pix_error": "Erro ao criar transação com PIX.",
   "link_card_token_with_customer_error": "Erro ao vincular token de cartão com cliente.",
-  "error_generating_qr_code_pix": "Erro ao gerar QR Code PIX."
+  "error_generating_qr_code_pix": "Erro ao gerar QR Code PIX.",
+  "amount_to_pay_invalid": "Valor a pagar inválido."
 }

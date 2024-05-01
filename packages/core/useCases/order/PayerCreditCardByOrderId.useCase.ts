@@ -17,6 +17,7 @@ import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSig
 import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 import { ListOrderById } from "@core/interfaces/repositories/order";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { amountToPay } from "@core/common/functions/amountToPay";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
@@ -66,8 +67,10 @@ export class PayerCreditCardByOrderIdUseCase {
 
       cardId = creditCard.card_id;
 
+      const amountPay = amountToPay(order);
+
       const result = await this.paymentGatewayService.createTransactionCardId({
-        amount: +order.total_price * 100,
+        amount: amountPay,
         description: order.observation,
         reference_id: order.order_id,
         sellerId: orderData.sellerId,

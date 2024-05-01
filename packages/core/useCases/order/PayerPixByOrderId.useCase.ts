@@ -10,6 +10,7 @@ import {
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
 import { generateQRCodeAsJPEGBase64 } from "@core/common/functions/generateQRCodeAsJPEGBase64";
+import { amountToPay } from "@core/common/functions/amountToPay";
 
 @injectable()
 export class PayerPixByOrderIdUseCase {
@@ -26,8 +27,10 @@ export class PayerPixByOrderIdUseCase {
       orderId
     );
 
+    const amountPay = amountToPay(order);
+
     const result = await this.paymentGatewayService.createTransactionPix({
-      amount: +order.total_price * 100,
+      amount: amountPay,
       description: order.observation,
       sellerId,
     });
@@ -66,8 +69,8 @@ export class PayerPixByOrderIdUseCase {
 
     return {
       data: {
-        url: result.data.payment_method.qr_code.emv,
-        code: pixCodeAsBase64,
+        url: pixCodeAsBase64,
+        code: result.data.payment_method.qr_code.emv,
         expire_at: result.data.payment_method.expiration_date,
       },
       status: true,
