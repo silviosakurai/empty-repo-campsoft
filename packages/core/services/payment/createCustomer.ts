@@ -24,11 +24,7 @@ export async function createCustomer(input: ICreateCustomer) {
       httpStatusCode: response.status,
       message: response.data.error.message,
     };
-  } catch (error) {
-    console.log("error", error);
-    return {
-      status: false,
-      httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
-    };
+  } catch (error: any) {
+    throw new Error(error.response.data.error.category);
   }
 }

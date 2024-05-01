@@ -5,7 +5,6 @@ import {
   varchar,
   varbinary,
   double,
-  json,
   timestamp,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";

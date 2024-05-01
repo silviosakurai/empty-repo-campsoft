@@ -36,10 +36,6 @@ export async function createTransactionPix(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    return {
-      status: false,
-      httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
-      data: error.response.data,
-    };
+    throw new Error(error.response.data.error.category);
   }
 }

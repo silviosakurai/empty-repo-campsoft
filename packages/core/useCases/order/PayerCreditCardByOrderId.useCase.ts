@@ -63,6 +63,8 @@ export class PayerCreditCardByOrderIdUseCase {
         throw new Error(t("something_went_wrong_to_generate_credit_card"));
       }
 
+      cardId = creditCard.card_id;
+
       const result = await this.paymentGatewayService.createTransactionCardId({
         amount: +order.total_price * 100,
         description: order.observation,
@@ -75,8 +77,6 @@ export class PayerCreditCardByOrderIdUseCase {
       if (!result.data) {
         return result;
       }
-
-      cardId = creditCard.card_id;
 
       await Promise.all([
         this.signatureService.activePaidSignature(
@@ -123,6 +123,8 @@ export class PayerCreditCardByOrderIdUseCase {
           }
         );
       }
+
+      console.log("error", error);
 
       if (error instanceof Error) {
         if (
