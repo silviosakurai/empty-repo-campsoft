@@ -12,6 +12,7 @@ import {
   userDeletePermissions,
   userListPermissions,
   userSendSsoPermissions,
+  userUpdatePermissions,
   userViewPermissions,
 } from '../permissions';
 
@@ -32,7 +33,7 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.update,
     preHandler: [
       (request, reply) =>
-        server.authenticateJwt(request, reply, userViewPermissions),
+        server.authenticateJwt(request, reply, userUpdatePermissions),
     ],
   });
 
