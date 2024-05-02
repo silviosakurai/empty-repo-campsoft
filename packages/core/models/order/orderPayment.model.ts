@@ -34,7 +34,7 @@ export const orderPayment = mysqlTable("pedido_pagamento", {
   data_pagamento: datetime("data_pagamento", { mode: "string" }),
   voucher: varchar("voucher", { length: 50 }),
   card_id: varbinary("card_id", { length: 16 }),
-  pag_trans_id: varchar("pag_trans_id", { length: 25 }),
+  pag_trans_id: varchar("pag_trans_id", { length: 50 }),
   pag_info_adicional: text("pag_info_adicional"),
   codigo_pagamento: varchar("codigo_pagamento", { length: 500 }),
   taxa_meio_pagamento: double("taxa_meio_pagamento"),
