@@ -3,6 +3,7 @@ import { ClientService, ZoopGatewayService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ClientPaymentExternalGeneratorUseCase } from "./ClientPaymentExternalGenerator.useCase";
 import { TFunction } from "i18next";
+import { getLastFourDigits } from "@core/common/functions/getLastFourDigits";
 
 @injectable()
 export class ClientCardCreatorUseCase {
@@ -19,6 +20,7 @@ export class ClientCardCreatorUseCase {
     clientExternalId?: string
   ) {
     const creditCard = await this.gatewayService.createCreditCardToken(input);
+    const last4Digits = getLastFourDigits(input.card_number);
 
     const result = await this.clientService.createCreditCard(clientId, {
       default: input.default ?? false,
@@ -28,6 +30,7 @@ export class ClientCardCreatorUseCase {
       first4Digits: creditCard.card.first4_digits.toLocaleString("en-us", {
         minimumIntegerDigits: 4,
       }),
+      last4Digits,
       brand: creditCard.card.card_brand,
       tokenId: creditCard.id,
     });

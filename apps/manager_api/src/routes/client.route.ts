@@ -63,4 +63,5 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
     handler: clientController.delete,
   });
+
 }
