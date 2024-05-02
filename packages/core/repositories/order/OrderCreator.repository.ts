@@ -51,7 +51,7 @@ export class OrderCreatorRepository {
       ),
       pedido_parcelas_valor: totalPricesInstallments.value,
       pedido_parcelas_vezes: totalPricesInstallments.installments,
-      ativacao_imediata: payload.activate_now,
+      ativacao_imediata: payload?.activate_now ? payload.activate_now : true,
       cliente_email: user.email,
       cliente_primeiro_nome: user.first_name,
       cliente_ultimo_nome: user.last_name,

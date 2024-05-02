@@ -55,7 +55,7 @@ export class PriceService {
       await this.productService.findPlanPriceProductCrossSell(
         tokenKeyData,
         payload.plan.plan_id,
-        payload.months,
+        payload.months ?? 0,
         selectedProducts
       );
 
@@ -99,7 +99,7 @@ export class PriceService {
 
     const planPrice = await this.planService.findPriceByPlanIdAndMonth(
       payload.plan.plan_id,
-      payload.months
+      payload.months ?? 0
     );
 
     if (!planPrice || (!planPrice.price_with_discount && !planPrice.price)) {
@@ -119,7 +119,7 @@ export class PriceService {
   applyDiscountPreviousOrderByActivateNow = async (
     payload: CreateOrderRequestDto
   ): Promise<number> => {
-    if (payload.activate_now && payload.previous_order_id) {
+    if (payload?.activate_now && payload?.previous_order_id) {
       const orderPrevious = await this.orderService.listOrderById(
         payload.previous_order_id
       );
@@ -198,7 +198,7 @@ export class PriceService {
     }
 
     let finalPriceDiscountOrderPrevious = 0;
-    if (payload.activate_now && payload.previous_order_id) {
+    if (payload?.activate_now && payload.previous_order_id) {
       const priceDiscountOrderPrevious =
         await this.applyDiscountPreviousOrderByActivateNow(payload);
 

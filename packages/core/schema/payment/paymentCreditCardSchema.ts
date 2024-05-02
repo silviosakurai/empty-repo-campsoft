@@ -17,5 +17,5 @@ export const paymentCreditCardSchema = Type.Object({
       Type.Null(),
     ])
   ),
-  credit_card_id: Type.Optional(Type.String()),
+  credit_card_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 });

@@ -4,6 +4,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { CreateOrderUseCase } from '@core/useCases/order/CreateOrder.useCase';
 import { CreateOrderRequestDto } from '@core/useCases/order/dtos/CreateOrderRequest.dto';
 import { container } from 'tsyringe';
+import CreditCardExpirationDateIsInvalidError from '@core/common/exceptions/CreditCardExpirationDateIsInvalidError';
 
 export const createOrder = async (
   request: FastifyRequest<{
@@ -28,6 +29,13 @@ export const createOrder = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
+
+    if (error instanceof CreditCardExpirationDateIsInvalidError) {
+      return sendResponse(reply, {
+        message: t('expired_card_error'),
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     if (error instanceof Error) {
       return sendResponse(reply, {
