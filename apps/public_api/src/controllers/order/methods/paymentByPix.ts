@@ -12,10 +12,10 @@ export const paymentByPix = async (
 ) => {
   const service = container.resolve(PayerPixByOrderIdUseCase);
 
-  const { t, params, tokenKeyData } = request;
+  const { t, params } = request;
 
   try {
-    const result = await service.pay(t, tokenKeyData, params.orderNumber);
+    const result = await service.pay(t, params.orderNumber);
 
     if (!result.status) {
       return sendResponse(reply, {
@@ -30,7 +30,7 @@ export const paymentByPix = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
-    console.log(error);
+
     return sendResponse(reply, {
       message: t('internal_server_error'),
       httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,

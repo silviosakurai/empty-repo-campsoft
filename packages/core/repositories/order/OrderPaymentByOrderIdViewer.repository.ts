@@ -6,10 +6,11 @@ import {
   orderPaymentMethod,
   orderPaymentStatus,
   clientSignature,
+  clientCards,
 } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
-import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { OrderPayments } from "@core/interfaces/repositories/order";
+import { enrichPaymentOrder } from "@core/common/functions/enrichPaymentOrder";
 
 @injectable()
 export class OrderPaymentByOrderIdViewerRepository {
@@ -20,37 +21,28 @@ export class OrderPaymentByOrderIdViewerRepository {
   async find(orderId: string): Promise<OrderPayments[]> {
     const result = await this.db
       .select({
+        type_id: orderPayment.id_pedido_pag_metodo,
         type: orderPaymentMethod.pedido_pag_metodo,
         status: orderPaymentStatus.pedido_pagamento_status,
         credit_card: {
-          brand: orderPayment.pag_cc_tipo,
-          number: orderPayment.pag_cc_numero_cartao,
-          credit_card_id: orderPayment.pag_cc_instantbuykey,
+          brand: clientCards.brand,
+          number:
+            sql<string>`CONCAT(COALESCE(${clientCards.first_digits}, ''), '********', COALESCE(${clientCards.last_digits}, ''))`.mapWith(
+              String
+            ),
+          credit_card_id:
+            sql<string>`BIN_TO_UUID(${clientCards.card_id})`.mapWith(String),
         },
         voucher: orderPayment.voucher,
         boleto: {
-          url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.url'), NULL)
-            ELSE NULL
-          END`,
-          code: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.line'), NULL)
-            ELSE NULL
-          END`,
+          url: orderPayment.pag_info_adicional,
+          code: orderPayment.codigo_pagamento,
+          expire_at: orderPayment.data_vencimento,
         },
         pix: {
-          url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.PIX} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.qr_code_url'), NULL)
-            ELSE NULL
-          END`,
-          code: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.PIX} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.qr_code'), NULL)
-            ELSE NULL
-          END`,
-          expire_at: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.PIX} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.expires_at'), NULL)
-            ELSE NULL
-          END`,
+          url: orderPayment.pag_info_adicional,
+          code: orderPayment.codigo_pagamento,
+          expire_at: orderPayment.data_vencimento,
         },
         cycle: clientSignature.ciclo,
         created_at: orderPayment.created_at,
@@ -79,6 +71,7 @@ export class OrderPaymentByOrderIdViewerRepository {
           orderPayment.id_assinatura_cliente
         )
       )
+      .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
 
@@ -86,6 +79,6 @@ export class OrderPaymentByOrderIdViewerRepository {
       return [];
     }
 
-    return result as OrderPayments[];
+    return enrichPaymentOrder(result);
   }
 }
