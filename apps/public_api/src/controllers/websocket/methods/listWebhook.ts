@@ -8,7 +8,7 @@ export const listWebhook = async (
   console.log('Client connected');
 
   socket.on('message', (message) => {
-    socket.send('hi from server ' + message);
+    socket.send('hi from server ' + message.toString());
   });
 
   socket.on('close', () => {
