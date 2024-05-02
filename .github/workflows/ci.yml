@@ -298,7 +298,7 @@ jobs:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN_TOOLS }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
         with:
-          projectBaseDir: apps/tools_api/
+          projectBaseDir: apps/tools/
           args: >
             -D"sonar.projectKey=${{ env.SONAR_TOOLS_PROJECT_KEY }}"
             -D"sonar.sources=src"
