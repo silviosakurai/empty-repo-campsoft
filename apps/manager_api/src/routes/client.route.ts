@@ -12,6 +12,7 @@ import {
   userDeletePermissions,
   userListPermissions,
   userSendSsoPermissions,
+  userUpdatePermissions,
   userViewPermissions,
 } from '../permissions';
 
