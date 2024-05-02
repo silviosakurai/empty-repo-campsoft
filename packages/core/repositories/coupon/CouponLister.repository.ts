@@ -26,7 +26,7 @@ export class CouponListerRepository {
     tokenKeyData: ITokenKeyData,
     couponCode: string,
     planId: number,
-    selectedProducts: string[] | null
+    selectedProducts: string[] | null | undefined
   ): Promise<ICouponVerifyEligibilityUser[]> {
     const validUntil = currentTime();
 

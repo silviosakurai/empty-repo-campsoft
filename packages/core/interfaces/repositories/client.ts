@@ -80,7 +80,7 @@ export interface ClientCardRepositoryInput {
   brand?: string;
   default: boolean;
   first4Digits: string;
-  last4Digits?: string;
+  last4Digits?: string | null;
 }
 
 export interface ListClientByGroupAndPartner {
