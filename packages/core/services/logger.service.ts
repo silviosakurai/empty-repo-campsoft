@@ -24,15 +24,21 @@ export class LoggerService implements ILoggerService {
   }
 
   private pathsToRedact(): string[] {
-    return ["password", "token"];
+    return [
+      "password",
+      "token",
+      "number",
+      "expire_month",
+      "expire_year",
+      "cvv",
+    ];
   }
 
   private sanitizeLog(message: any): any {
     let sanitizedMessage = this.getObjectMessage(message);
 
     this.pathsToRedact().forEach((word) => {
-      const regex = new RegExp(`("${word}":".*?")`, "g");
-
+      const regex = new RegExp(`("${word}":)(?:"([^"]*)"|([^",}]*))`, "g");
       sanitizedMessage = sanitizedMessage.replace(regex, `"${word}":"******"`);
     });
 
