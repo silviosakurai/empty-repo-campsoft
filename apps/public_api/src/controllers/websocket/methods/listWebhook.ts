@@ -1,5 +1,5 @@
 import { FastifyRequest } from 'fastify';
-import { WebSocket } from 'ws';
+import { WebSocket } from '@fastify/websocket';
 
 export const listWebhook = async (
   socket: WebSocket,
