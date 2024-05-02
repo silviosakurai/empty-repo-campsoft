@@ -306,10 +306,10 @@ jobs:
             -D"sonar.coverage.exclusions=**"
             -D"sonar.cpd.exclusions=**"
 
-            - name: Wait for ${{ env.TIME_AWAIT }}
-            uses: jakejarvis/wait-action@master
-            with:
-              time: "${{ env.TIME_AWAIT }}"
+      - name: Wait for ${{ env.TIME_AWAIT }}
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "${{ env.TIME_AWAIT }}"
 
       - name: Check Quality Gate (Tools)
         run: |
