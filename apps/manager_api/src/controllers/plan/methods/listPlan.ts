@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { PlansListerByCompanyUseCase } from '@core/useCases/plan/PlansListerByCompany.useCase';
+import { PlansListerWithProductsUseCase } from '@core/useCases/plan/PlanListerWithProducts.useCase';
 import { container } from 'tsyringe';
 import { ListPlanRequest } from '@core/useCases/plan/dtos/ListPlanRequest.dto';
 
@@ -11,11 +11,17 @@ export const listPlan = async (
   }>,
   reply: FastifyReply
 ) => {
-  const planListerUseCase = container.resolve(PlansListerByCompanyUseCase);
-  const { t } = request;
+  const planListerUseCase = container.resolve(PlansListerWithProductsUseCase);
+  const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
 
   try {
-    const response = await planListerUseCase.execute(request.query);
+    const response = await planListerUseCase.execute(
+      tokenJwtData,
+      permissionsRoute,
+      request.query,
+      redis
+    );
 
     if (!response) {
       request.server.logger.info(response, request.id);
