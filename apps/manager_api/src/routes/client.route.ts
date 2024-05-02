@@ -3,10 +3,15 @@ import { container } from 'tsyringe';
 import {
   getUserByIdSchema,
   listUserWithCompaniesSchema,
+  userDeleteByIdSchema,
   userUpdateByIdSchema,
 } from '@core/validations/user';
 import ClientController from '@/controllers/client';
-import { userListPermissions, userViewPermissions } from '@/permissions';
+import {
+  userDeletePermissions,
+  userListPermissions,
+  userViewPermissions,
+} from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
@@ -37,4 +42,14 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
     handler: clientController.view,
   });
+
+  server.delete('/users/:userId', {
+    schema: userDeleteByIdSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userDeletePermissions),
+    ],
+    handler: clientController.delete,
+  });
+
 }

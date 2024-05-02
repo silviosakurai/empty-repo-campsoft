@@ -45,6 +45,7 @@ import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/Cl
 import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 import { SQL } from "drizzle-orm";
+import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 
 @injectable()
 export class ClientService {
@@ -204,6 +205,10 @@ export class ClientService {
     userFounded: ViewClientResponse
   ) => {
     return this.clientEraserRepository.delete(tokenJwtData, userFounded);
+  };
+
+  deleteById = async (userId: string, userFounded: ViewClientByIdResponse) => {
+    return this.clientEraserRepository.deleteById(userId, userFounded);
   };
 
   createEmailNewsletter = async (
