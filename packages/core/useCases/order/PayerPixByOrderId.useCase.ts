@@ -1,32 +1,36 @@
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
+import { generateQRCodeAsJPEGBase64 } from "@core/common/functions/generateQRCodeAsJPEGBase64";
+import { amountToPay } from "@core/common/functions/amountToPay";
 
 @injectable()
 export class PayerPixByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
   ) {}
 
-  async pay(
-    t: TFunction<"translation", undefined>,
-    tokenKey: ITokenKeyData,
-    orderId: string
-  ) {
+  async pay(t: TFunction<"translation", undefined>, orderId: string) {
     const { order, sellerId } = await this.orderWithPaymentReaderUseCase.view(
       t,
-      tokenKey,
       orderId
     );
 
+    const amountPay = amountToPay(order);
+
     const result = await this.paymentGatewayService.createTransactionPix({
-      amount: +order.total_price * 100,
+      amount: amountPay,
       description: order.observation,
       sellerId,
     });
@@ -35,20 +39,38 @@ export class PayerPixByOrderIdUseCase {
       return result;
     }
 
-    await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-      paymentTransactionId: result.data.id,
-      paymentLink: result.data.payment_method.qr_code.emv,
-      dueDate: result.data.payment_method.expiration_date,
-    });
+    const signature =
+      await this.findSignatureByOrderNumber.findByOrder(orderId);
 
-    const pixCodeAsBase64 = Buffer.from(
+    if (!signature) {
+      throw new Error(t("signature_not_found"));
+    }
+
+    const pixCodeAsBase64 = await generateQRCodeAsJPEGBase64(
       result.data.payment_method.qr_code.emv
-    ).toString("base64");
+    );
+
+    if (!pixCodeAsBase64) {
+      throw new Error(t("error_generating_qr_code_pix"));
+    }
+
+    await this.orderService.createOrderPayment(
+      order,
+      signature.signature_id,
+      OrderPaymentsMethodsEnum.PIX,
+      OrderStatusEnum.PENDING,
+      {
+        paymentTransactionId: result.data.id,
+        paymentLink: pixCodeAsBase64,
+        dueDate: result.data.payment_method.expiration_date,
+        codePayment: result.data.payment_method.qr_code.emv,
+      }
+    );
 
     return {
       data: {
-        url: result.data.payment_method.qr_code.emv,
-        code: pixCodeAsBase64,
+        url: pixCodeAsBase64,
+        code: result.data.payment_method.qr_code.emv,
         expire_at: result.data.payment_method.expiration_date,
       },
       status: true,

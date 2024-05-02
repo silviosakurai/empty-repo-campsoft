@@ -1,7 +1,10 @@
 import { Type } from "@sinclair/typebox";
 
-export const paymentPixSchema = Type.Object({
-  url: Type.String(),
-  code: Type.String(),
-  expire_at: Type.String(),
-});
+export const paymentPixSchema = Type.Union([
+  Type.Object({
+    url: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+    code: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+    expire_at: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  }),
+  Type.Null(),
+]);

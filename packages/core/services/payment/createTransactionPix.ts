@@ -7,6 +7,8 @@ import {
 } from "@core/interfaces/services/payment/ITransactionPix";
 import { IZoopError } from "@core/interfaces/services/payment/IZoopError";
 import { paymentApiInstance } from "./paymentApiInstance";
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { ApiErrorCategoryZoop } from "@core/common/enums/ApiErrorCategoryZoop";
 
 export async function createTransactionPix(
   input: ITransactionPixRequest
@@ -36,10 +38,10 @@ export async function createTransactionPix(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    return {
-      status: false,
-      httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
-      data: error.response.data,
-    };
+    if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
+      throw new Error(error.response.data.error.category);
+    }
+
+    throw new Error(ApiErrorCategoryZoop.CreateTransactionPixError);
   }
 }

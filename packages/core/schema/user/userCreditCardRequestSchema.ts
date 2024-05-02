@@ -7,7 +7,7 @@ export const userCreditCardRequestSchema = Type.Object({
     minimum: new Date().getFullYear() % 100,
     maximum: 9999,
   }),
-  card_number: Type.Number({ maxLength: 16 }),
+  card_number: Type.String({ maxLength: 16 }),
   security_code: Type.String({ maxLength: 4 }),
   default: Type.Optional(Type.Boolean()),
 });
