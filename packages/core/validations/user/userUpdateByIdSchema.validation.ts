@@ -3,7 +3,7 @@ import { Language } from "@core/common/enums/Language";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
-export const userUpdaterByIdSchema = {
+export const userUpdateByIdSchema = {
   description: "Atualiza os dados do usuário",
   tags: [TagSwagger.user],
   produces: ["application/json"],

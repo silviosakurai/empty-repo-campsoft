@@ -80,6 +80,16 @@ export class ClientService {
     return this.clientViewerRepository.view(userId);
   };
 
+  viewById = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    userId: string
+  ) => {
+    return this.clientViewerRepository.viewById(
+      filterClientByPermission,
+      userId
+    );
+  };
+
   viewBilling = async (userId: string) => {
     return this.clientAddressViewerRepository.viewBilling(userId);
   };

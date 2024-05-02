@@ -212,28 +212,6 @@ export class ClientListerRepository {
       isFilterApplied = true;
     }
 
-    if (query.position_id) {
-      filters = isFilterApplied
-        ? and(filters, eq(permission.id_cargo, query.position_id))
-        : and(
-            filterClientByPermission,
-            eq(permission.id_cargo, query.position_id)
-          );
-
-      isFilterApplied = true;
-    }
-
-    if (query.company_id) {
-      filters = isFilterApplied
-        ? and(filters, eq(permission.id_parceiro, query.company_id))
-        : and(
-            filterClientByPermission,
-            eq(permission.id_parceiro, query.company_id)
-          );
-
-      isFilterApplied = true;
-    }
-
     if (query.status) {
       filters = isFilterApplied
         ? and(filters, eq(client.status, query.status))

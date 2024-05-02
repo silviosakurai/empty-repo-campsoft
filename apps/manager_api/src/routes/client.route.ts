@@ -1,8 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
+  getUserByIdSchema,
   listUserWithCompaniesSchema,
-  userUpdaterByIdSchema,
+  userUpdateByIdSchema,
 } from '@core/validations/user';
 import ClientController from '@/controllers/client';
 import { userListPermissions, userViewPermissions } from '@/permissions';
@@ -20,11 +21,20 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.put('/users/:userId', {
-    schema: userUpdaterByIdSchema,
+    schema: userUpdateByIdSchema,
     handler: clientController.update,
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(request, reply, userViewPermissions),
     ],
+  });
+
+  server.get('/users/:userId', {
+    schema: getUserByIdSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userViewPermissions),
+    ],
+    handler: clientController.view,
   });
 }
