@@ -9,8 +9,7 @@ import cartRoutes from './cart.route';
 import orderRoutes from '@/routes/order.route';
 import vouchersRoutes from '@/routes/voucher.route';
 import healthRoutes from '@/routes/health.route';
-import reviewRoutes from './review.route';
-import webhooksRoutes from './webhook.route';
+import reviewRoutes from '@/routes/review.route';
 
 export default async function (server: FastifyInstance) {
   await server.register(authRoutes);
@@ -24,5 +23,4 @@ export default async function (server: FastifyInstance) {
   await server.register(vouchersRoutes);
   await server.register(healthRoutes);
   await server.register(reviewRoutes);
-  await server.register(webhooksRoutes);
 }
