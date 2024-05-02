@@ -65,7 +65,6 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
   private createUpdateParamsForAndroid(
     request: UpdateProductDetailHowToAccessRequest
   ): UpdateParams {
-    console.log(request);
     return {
       como_acessar_mob: request.content,
       como_acessar_url_and: request.url,
@@ -75,7 +74,6 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
   private createUpdateParamsForIOS(
     request: UpdateProductDetailHowToAccessRequest
   ): UpdateParams {
-    console.log(request);
     return {
       como_acessar_mob: request.content,
       como_acessar_url_ios: request.url,
@@ -85,7 +83,6 @@ export class ProductsDetailHowToAccessUpdaterUseCase {
   private createUpdateParamsForWebDesktop(
     request: UpdateProductDetailHowToAccessRequest
   ): UpdateParams {
-    console.log(request);
     return {
       como_acessar_url: request.content,
       como_acessar_desk: request.url,
