@@ -45,6 +45,7 @@ import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/Cl
 import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 import { SQL } from "drizzle-orm";
+import { ClientCardEraserRepository } from "@core/repositories/client/ClientCardEraser.repository";
 
 @injectable()
 export class ClientService {
@@ -71,6 +72,7 @@ export class ClientService {
     private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
     private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository,
     private readonly clientCardViewerRepository: ClientCardViewerRepository,
+    private readonly clientCardEraserRepository: ClientCardEraserRepository,
     private readonly clientCardCreatorRepository: ClientCardCreatorRepository,
     private readonly cardDefaultUpdaterRepository: ClientCardDefaultUpdaterRepository,
     private readonly cardListerByClientIdRepository: ClientCardListerByClientIdRepository
@@ -254,5 +256,9 @@ export class ClientService {
 
   listCreditCards = async (clientId: string) => {
     return this.cardListerByClientIdRepository.list(clientId);
+  };
+
+  eraseCreditCard = async (cardId: string) => {
+    return this.clientCardEraserRepository.erase(cardId);
   };
 }

@@ -35,4 +35,5 @@ export enum ApiErrorCategoryZoop {
   CreateTransactionPixError = "create_transaction_pix_error",
   LinkCardTokenWithCustomerError = "link_card_token_with_customer_error",
   AmountToPayInvalid = "amount_to_pay_invalid",
+  RemoveCardById = "remove_card_by_id",
 }
