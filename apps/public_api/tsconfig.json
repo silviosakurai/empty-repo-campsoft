@@ -18,13 +18,6 @@
       "@core/*": ["../../packages/core/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "../../packages/core/common/types/**/*.d.ts",
-    "../tools/src/routes/webhook.route.ts",
-    "../tools/src/routes/websocket.route.ts",
-    "../tools/src/controllers/websocket",
-    "../tools/src/controllers/webhook"
-  ],
+  "include": ["src/**/*", "../../packages/core/common/types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }
