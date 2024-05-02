@@ -3,12 +3,13 @@ import { Language } from "@core/common/enums/Language";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
-export const userUpdaterByIdSchema = {
+export const userUpdateSchema = {
   description: "Atualiza os dados do usuário",
   tags: [TagSwagger.user],
   produces: ["application/json"],
   security: [
     {
+      authenticateKeyApi: [],
       authenticateJwt: [],
     },
   ],
@@ -22,13 +23,10 @@ export const userUpdaterByIdSchema = {
     ),
   }),
   body: Type.Object({
-    leader_id: Type.Optional(Type.String()),
     status: Type.String({ enum: Object.values(ClientStatus) }),
     first_name: Type.String(),
     last_name: Type.String(),
     birthday: Type.String({ format: "date" }),
-    email: Type.String(),
-    phone: Type.String(),
     gender: Type.String({ enum: Object.values(ClientGender) }),
     obs: Type.Optional(Type.String()),
   }),

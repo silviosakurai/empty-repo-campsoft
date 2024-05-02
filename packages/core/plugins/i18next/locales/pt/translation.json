@@ -121,5 +121,7 @@
   "create_transaction_pix_error": "Erro ao criar transação com PIX.",
   "link_card_token_with_customer_error": "Erro ao vincular token de cartão com cliente.",
   "error_generating_qr_code_pix": "Erro ao gerar QR Code PIX.",
-  "amount_to_pay_invalid": "Valor a pagar inválido."
+  "amount_to_pay_invalid": "Valor a pagar inválido.",
+  "resource_not_found": "Desculpe, o vendedor que você está tentando usar não existe ou foi excluído",
+  "forbidden": "Seu usuário não está autorizado a acessar este recurso."
 }

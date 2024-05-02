@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import {
   getUserSchema,
   userCreatorSchema,
-  userUpdaterSchema,
+  userUpdateSchema,
   userDeleteSchema,
   userPhoneUpdaterSchema,
   userPasswordUpdaterSchema,
@@ -69,7 +69,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.put('/user', {
-    schema: userUpdaterSchema,
+    schema: userUpdateSchema,
     handler: clientController.update,
     preHandler: [
       (request, reply) =>

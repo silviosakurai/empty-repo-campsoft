@@ -90,10 +90,6 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           name: TagSwagger.voucher,
           description: 'End-points relacionados ao voucher',
         },
-        {
-          name: TagSwagger.webhook,
-          description: 'End-points relacionados a webhooks',
-        },
       ],
     },
   });

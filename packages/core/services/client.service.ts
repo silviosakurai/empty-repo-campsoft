@@ -46,6 +46,7 @@ import { ClientCardListerByClientIdRepository } from "@core/repositories/client/
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 import { SQL } from "drizzle-orm";
 import { ClientCardEraserRepository } from "@core/repositories/client/ClientCardEraser.repository";
+import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 
 @injectable()
 export class ClientService {
@@ -80,6 +81,16 @@ export class ClientService {
 
   view = async (userId: string) => {
     return this.clientViewerRepository.view(userId);
+  };
+
+  viewById = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    userId: string
+  ) => {
+    return this.clientViewerRepository.viewById(
+      filterClientByPermission,
+      userId
+    );
   };
 
   viewBilling = async (userId: string) => {
@@ -196,6 +207,10 @@ export class ClientService {
     userFounded: ViewClientResponse
   ) => {
     return this.clientEraserRepository.delete(tokenJwtData, userFounded);
+  };
+
+  deleteById = async (userId: string, userFounded: ViewClientByIdResponse) => {
+    return this.clientEraserRepository.deleteById(userId, userFounded);
   };
 
   createEmailNewsletter = async (
