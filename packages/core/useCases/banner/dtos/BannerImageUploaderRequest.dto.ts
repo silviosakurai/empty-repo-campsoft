@@ -6,10 +6,6 @@ export interface BannerImageRequestParamsDto {
   type: BannerImageType;
 }
 
-export interface BannerImageRequestQueryDto {
-  company_id: number[];
-}
-
 export interface BannerImageRequestBodyDto {
   image: string;
 }

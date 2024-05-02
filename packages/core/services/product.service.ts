@@ -91,8 +91,8 @@ export class ProductService {
     return this.productViewerRepository.get(companyId, sku);
   };
 
-  viewByCompanyIds = async (sku: string) => {
-    return this.productViewerGroupedByCompanyRepository.view(sku);
+  viewByCompanyIds = async (partnerIds: number[], sku: string) => {
+    return this.productViewerGroupedByCompanyRepository.view(partnerIds, sku);
   };
 
   findProductsByIds = async (companyId: number, productIds: string[]) => {

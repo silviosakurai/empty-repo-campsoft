@@ -6,18 +6,16 @@ import { BannerImageUploaderUseCase } from '@core/useCases/banner/BannerImageUpl
 import {
   BannerImageRequestParamsDto,
   BannerImageRequestBodyDto,
-  BannerImageRequestQueryDto,
 } from '@core/useCases/banner/dtos/BannerImageUploaderRequest.dto';
 
 export const uploadBannerImage = async (
   request: FastifyRequest<{
     Params: BannerImageRequestParamsDto;
     Body: BannerImageRequestBodyDto;
-    Querystring: BannerImageRequestQueryDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const bannerImageUploaderUseCase = container.resolve(
     BannerImageUploaderUseCase
   );
@@ -25,7 +23,7 @@ export const uploadBannerImage = async (
   try {
     const response = await bannerImageUploaderUseCase.upload(
       t,
-      request.query.company_id,
+      tokenJwtData,
       parseInt(request.params.bannerId),
       parseInt(request.params.bannerItemId),
       request.params.type,

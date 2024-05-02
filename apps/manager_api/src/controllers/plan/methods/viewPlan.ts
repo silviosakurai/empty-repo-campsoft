@@ -12,10 +12,13 @@ export const viewPlan = async (
   reply: FastifyReply
 ) => {
   const planViewerUseCase = container.resolve(PlanViewerByCompanyUseCase);
-  const { t } = request;
+  const { t, tokenJwtData } = request;
 
   try {
-    const response = await planViewerUseCase.execute(request.params.planId);
+    const response = await planViewerUseCase.execute(
+      tokenJwtData,
+      request.params.planId,
+    );
 
     if (!response) {
       request.server.logger.info(response, request.id);

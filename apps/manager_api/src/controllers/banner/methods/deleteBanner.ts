@@ -5,23 +5,21 @@ import { container } from 'tsyringe';
 import { BannerDeleterUseCase } from '@core/useCases/banner/BannerDeleter.usecase';
 import {
   BannerDeleterRequestParamsDto,
-  BannerDeleterRequestQueryDto,
 } from '@core/useCases/banner/dtos/BannerDeleterRequest.dto';
 
 export const deleteBanner = async (
   request: FastifyRequest<{
     Params: BannerDeleterRequestParamsDto;
-    Querystring: BannerDeleterRequestQueryDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const bannerDeleterUseCase = container.resolve(BannerDeleterUseCase);
 
   try {
     const response = await bannerDeleterUseCase.delete(
       t,
-      request.query.company_id,
+      tokenJwtData,
       parseInt(request.params.bannerId)
     );
 
