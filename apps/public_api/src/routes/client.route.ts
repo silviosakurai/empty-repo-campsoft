@@ -22,6 +22,7 @@ import {
   createUserCreditCardSchema,
   updateUserCreditCardDefaultSchema,
   listUserCreditCardSchema,
+  userCreditCardDeleteSchema,
 } from '@core/validations/user';
 import {
   userAddressBillingUpdatePermissions,
@@ -325,6 +326,7 @@ export default async function clientRoutes(server: FastifyInstance) {
 
   server.delete('/user/credit-card/:id', {
     handler: clientController.eraseCardClient,
+    schema: userCreditCardDeleteSchema,
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(
