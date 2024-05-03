@@ -21,3 +21,4 @@ export * from "./patchUserImageSchema.validation";
 export * from "./listUserWithCompaniesSchema.validation";
 export * from "./createUserCreditCardSchema.validation";
 export * from "./updateUserCreditCardDefaultSchema.validation";
+export * from "./listUserCreditCardSchema.validation";
