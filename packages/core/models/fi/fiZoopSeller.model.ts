@@ -5,11 +5,7 @@ export const fiZoopSeller = mysqlTable("fi_zoop_vendedor", {
   id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 })
     .notNull()
     .primaryKey(),
-  id_api_acesso: varchar("id_api_acesso", { length: 32 }).notNull(),
   nome: varchar("nome", { length: 50 }),
-  first_name: varchar("#first_name", { length: 50 }),
-  last_name: varchar("#last_name", { length: 50 }),
-  email: varchar("#email", { length: 150 }),
   business_name: varchar("business_name", { length: 50 }),
   business_phone: varchar("business_phone", { length: 50 }),
   business_email: varchar("business_email", { length: 50 }),

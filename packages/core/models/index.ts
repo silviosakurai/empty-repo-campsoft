@@ -7,7 +7,6 @@ export * from "./coupon";
 export * from "./email";
 export * from "./fi";
 export * from "./order";
-export * from "./partner";
 export * from "./pdv";
 export * from "./permission";
 export * from "./plan";

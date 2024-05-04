@@ -12,9 +12,7 @@ export const viewClient = async (
   const { t, tokenJwtData } = request;
 
   try {
-    const response = await clientViewerUseCase.execute({
-      userId: tokenJwtData.clientId,
-    });
+    const response = await clientViewerUseCase.execute(tokenJwtData.clientId);
 
     if (!response) {
       request.server.logger.warn(response, request.id);

@@ -8,10 +8,12 @@ env:
   SHARED_USER_TOKEN: squ_23a970a10d0dddff6d8e7ceb28788f780149a2be
   SONAR_HOST_URL: http://data.tocalivros.com:9000/
   SONAR_TOKEN_PUBLIC: sqp_95245917aa19a69fc343dc5f854d846e9c13a4db
-  SONAR_TOKEN_PARTNER: sqp_3444075491e5fb1d429c67e368f4a85298c8268a
+  SONAR_TOKEN_MANAGER: sqp_efe77b2f8cfb1d1302988b28bbd1a57c271f1204
+  SONAR_TOKEN_TOOLS: sqp_b9fb4697162315bb013b728236e05bf377605f38
   SONAR_TOKEN_CORE: sqp_c9ab534fde48953a50fd239678a4840bcdf5dc09
   SONAR_PUBLIC_PROJECT_KEY: mania-public
-  SONAR_PARTNER_PROJECT_KEY: mania-partner
+  SONAR_MANAGER_PROJECT_KEY: mania-manager
+  SONAR_TOOLS_PROJECT_KEY: mania-tools
   SONAR_CORE_PROJECT_KEY: mania-core
   TIME_AWAIT: 30s
   VERSION_NODE: 20.11.1
@@ -79,7 +81,7 @@ jobs:
         with:
           time: "${{ env.TIME_AWAIT }}"
 
-      - name: Check Quality Gate (Partner)
+      - name: Check Quality Gate (Manager)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PUBLIC_PROJECT_KEY }}" | jq -r '.projectStatus.status')
@@ -133,7 +135,7 @@ jobs:
             echo "All security hotspots have been reviewed. Proceeding with the build."
           fi
 
-  build_partner:
+  build_manager:
     runs-on: ubuntu-latest
     permissions: read-all
 
@@ -170,20 +172,20 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Run Lint (Partner)
-        run: pnpm run lint:partner
+      - name: Run Lint (Manager)
+        run: pnpm run lint:manager
 
-      - name: Run Build (Partner)
-        run: pnpm run build:partner
+      - name: Run Build (Manager)
+        run: pnpm run build:manager
 
       - uses: SonarSource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: ${{ env.SONAR_TOKEN_PARTNER }}
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN_MANAGER }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
         with:
-          projectBaseDir: apps/partner_api/
+          projectBaseDir: apps/manager_api/
           args: >
-            -D"sonar.projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}"
+            -D"sonar.projectKey=${{ env.SONAR_MANAGER_PROJECT_KEY }}"
             -D"sonar.sources=src"
             -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
             -D"sonar.coverage.exclusions=**"
@@ -194,33 +196,33 @@ jobs:
         with:
           time: "${{ env.TIME_AWAIT }}"
 
-      - name: Check Quality Gate (Partner)
+      - name: Check Quality Gate (Manager)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
-          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq -r '.projectStatus.status')
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_MANAGER_PROJECT_KEY }}" | jq -r '.projectStatus.status')
           echo "Quality Gate Status: $status"
           if [[ "$status" == "OK" ]]; then
             echo "Quality Gate is OK. Proceeding with the build."
           else
             echo "Quality Gate Status is not OK. Fetching details on failed conditions..."
             # Fetch details on failed Quality Gate conditions
-            conditions_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq '.projectStatus.conditions[] | select(.status != "OK") | {metricKey, comparator, errorThreshold, actualValue}')
+            conditions_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_MANAGER_PROJECT_KEY }}" | jq '.projectStatus.conditions[] | select(.status != "OK") | {metricKey, comparator, errorThreshold, actualValue}')
             echo "Failed Quality Gate Conditions Details:"
             echo "$conditions_response"
             exit 1
           fi
 
-      - name: Check Maintainability (Partner)
+      - name: Check Maintainability (Manager)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PARTNER_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_MANAGER_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
           echo "Technical Debt: $response minutes"
           if [[ "$response" == "\"not_available\"" ]]; then
             echo "Technical debt data not available. Continuing with the build."
           elif [[ "$response" != "\"0\"" ]]; then
             echo "Technical debt is not zero, it's $response minutes. Failing the build."
 
-            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_PARTNER_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_MANAGER_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
             echo "Issues details:"
             echo "$issues_response"
 
@@ -229,17 +231,132 @@ jobs:
             echo "Technical debt is zero. Proceeding with the build."
           fi
 
-      - name: Check Security Hotspots (Partner)
+      - name: Check Security Hotspots (Manager)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
-          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_PARTNER_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_MANAGER_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
           echo "Security Hotspots Reviewed: $response"
           if [[ "$response" == "\"not_available\"" ]]; then
             echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
           elif [[ "$response" != "\"100\"" ]]; then
             echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
 
-            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_PARTNER_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_MANAGER_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
+            echo "Unresolved Security Hotspots Details:"
+            echo "$hotspots_response"
+
+            exit 1
+          else
+            echo "All security hotspots have been reviewed. Proceeding with the build."
+          fi
+
+  build_tools:
+    runs-on: ubuntu-latest
+    permissions: read-all
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.VERSION_NODE }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.VERSION_JAVA }}
+          distribution: "temurin"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            **/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install JQ
+        run: sudo apt-get install jq
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Run Lint (Tools)
+        run: pnpm run lint:tools
+
+      - name: Run Build (Tools)
+        run: pnpm run build:tools
+
+      - uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN_TOOLS }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: apps/tools/
+          args: >
+            -D"sonar.projectKey=${{ env.SONAR_TOOLS_PROJECT_KEY }}"
+            -D"sonar.sources=src"
+            -D"sonar.exclusions=**/node_modules/**,**/*.spec.ts"
+            -D"sonar.coverage.exclusions=**"
+            -D"sonar.cpd.exclusions=**"
+
+      - name: Wait for ${{ env.TIME_AWAIT }}
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "${{ env.TIME_AWAIT }}"
+
+      - name: Check Quality Gate (Tools)
+        run: |
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_TOOLS_PROJECT_KEY }}" | jq -r '.projectStatus.status')
+          echo "Quality Gate Status: $status"
+          if [[ "$status" == "OK" ]]; then
+            echo "Quality Gate is OK. Proceeding with the build."
+          else
+            echo "Quality Gate Status is not OK. Fetching details on failed conditions..."
+            # Fetch details on failed Quality Gate conditions
+            conditions_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_TOOLS_PROJECT_KEY }}" | jq '.projectStatus.conditions[] | select(.status != "OK") | {metricKey, comparator, errorThreshold, actualValue}')
+            echo "Failed Quality Gate Conditions Details:"
+            echo "$conditions_response"
+            exit 1
+          fi
+
+      - name: Check Maintainability (Tools)
+        run: |
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_TOOLS_PROJECT_KEY }}&metricKeys=sqale_index" | jq '.component.measures[0].value // "not_available"')
+          echo "Technical Debt: $response minutes"
+          if [[ "$response" == "\"not_available\"" ]]; then
+            echo "Technical debt data not available. Continuing with the build."
+          elif [[ "$response" != "\"0\"" ]]; then
+            echo "Technical debt is not zero, it's $response minutes. Failing the build."
+
+            issues_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/issues/search?componentKeys=${{ env.SONAR_TOOLS_PROJECT_KEY }}" | jq '.issues[] | {key, message, severity, type, component, line}' )
+            echo "Issues details:"
+            echo "$issues_response"
+
+            exit 1
+          else
+            echo "Technical debt is zero. Proceeding with the build."
+          fi
+
+      - name: Check Security Hotspots (Tools)
+        run: |
+          ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
+          response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/measures/component?component=${{ env.SONAR_TOOLS_PROJECT_KEY }}&metricKeys=security_hotspots_reviewed" | jq '.component.measures[0].value // "not_available"')
+          echo "Security Hotspots Reviewed: $response"
+          if [[ "$response" == "\"not_available\"" ]]; then
+            echo "Security hotspots data not available or no security hotspots to review. Continuing with the build."
+          elif [[ "$response" != "\"100\"" ]]; then
+            echo "Not all security hotspots have been reviewed. Reviewed: $response%. Failing the build."
+
+            hotspots_response=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/hotspots/search?projectKey=${{ env.SONAR_TOOLS_PROJECT_KEY }}&statuses=TO_REVIEW" | jq '.hotspots[] | {key, message, component, line, status}')
             echo "Unresolved Security Hotspots Details:"
             echo "$hotspots_response"
 
@@ -284,7 +401,7 @@ jobs:
         with:
           time: "${{ env.TIME_AWAIT }}"
 
-      - name: Check Quality Gate (Partner)
+      - name: Check Quality Gate (Core)
         run: |
           ENCODED_TOKEN=$(echo -n '${{ env.SHARED_USER_TOKEN }}:' | base64)
           status=$(wget --header="Authorization: Basic $ENCODED_TOKEN" -q -O - "${{ env.SONAR_HOST_URL }}api/qualitygates/project_status?projectKey=${{ env.SONAR_CORE_PROJECT_KEY }}" | jq -r '.projectStatus.status')

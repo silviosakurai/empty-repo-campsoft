@@ -9,6 +9,10 @@ import { client, clientGroupsTree, order } from "@core/models";
 import { RoleContext } from "@core/common/enums/models/role";
 import { ClientListerGroupTreeRepository } from "@core/repositories/client/ClientListerGroupTree.repository";
 import { ListClientByGroupAndPartner } from "@core/interfaces/repositories/client";
+import { FastifyRedis } from "@fastify/redis";
+import { createCacheKey } from "@core/common/functions/createCacheKey";
+import { createSha256Hash } from "@core/common/functions/createSha256Hash";
+import { convertSqlToString } from "@core/common/functions/convertSqlToString";
 
 @injectable()
 export class ControlAccessService {
@@ -30,7 +34,8 @@ export class ControlAccessService {
 
   filterClientByPermission = async (
     tokenJwtData: ITokenJwtData,
-    permissionsRoute: string[]
+    permissionsRoute: string[],
+    redis: FastifyRedis
   ): Promise<SQL<unknown> | undefined> => {
     const accessByPermissions = this.selectAccessByPermissions(
       tokenJwtData,
@@ -55,10 +60,11 @@ export class ControlAccessService {
       const whereConditionGroupContext =
         this.generateWhereConditionByViewGroupsTree(uniqueAccessItems);
 
-      const clientsGroups =
-        await this.clientListerGroupTreeRepository.listClientByGroupAndPartner(
-          whereConditionGroupContext
-        );
+      const clientsGroups = await this.listClientGroup(
+        whereConditionGroupContext,
+        tokenJwtData.clientId,
+        redis
+      );
 
       whereCondition = this.generateWhereCondition(
         tokenJwtData,
@@ -68,6 +74,32 @@ export class ControlAccessService {
     }
 
     return whereCondition;
+  };
+
+  private listClientGroup = async (
+    whereConditionGroupContext: SQL<unknown> | undefined,
+    clientId: string,
+    redis: FastifyRedis
+  ): Promise<ListClientByGroupAndPartner[]> => {
+    const sqlString = convertSqlToString(whereConditionGroupContext);
+    const hashOfCondition = createSha256Hash(sqlString);
+    const cacheGroup = createCacheKey("clientGroup", clientId, hashOfCondition);
+
+    const cacheClientsGroups = await redis.get(cacheGroup);
+    if (cacheClientsGroups) {
+      return JSON.parse(cacheClientsGroups);
+    }
+
+    const clientsGroups =
+      await this.clientListerGroupTreeRepository.listClientByGroupAndPartner(
+        whereConditionGroupContext
+      );
+
+    if (clientsGroups) {
+      await redis.set(cacheGroup, JSON.stringify(clientsGroups), "EX", 1800);
+    }
+
+    return clientsGroups;
   };
 
   private generateWhereCondition = (

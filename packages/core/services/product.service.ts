@@ -10,12 +10,23 @@ import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductR
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
 import { ProductCompanyCreatorRepository } from "@core/repositories/product/ProductCompanyCreator.repository";
+import { ProductDetailHowToAccessUpdaterRepository } from "@core/repositories/product/ProductDetailHowToAccessUpdater.repository";
+import { UpdateParams } from "@core/useCases/product/dtos/ProductDetaiHowToAccess.dto";
 import { ProductViewerGroupedByCompanyRepository } from "@core/repositories/product/ProductViewerGroupedByCompany.repository";
 import { ProductUpdaterRepository } from "@core/repositories/product/ProductUpdater.repository";
 import { UpdateProductRequest } from "@core/useCases/product/dtos/UpdateProductRequest.dto";
 import { ProductCompanyViewerRepository } from "@core/repositories/product/ProductCompanyViewer.repository";
 import { ProductImagesUrlUpdaterRepository } from "@core/repositories/product/ProductImagesUrlUpdater.repository";
 import { ProductImageRepositoryCreateInput } from "@core/interfaces/repositories/products";
+import { ProductGroupViewerRepository } from "@core/repositories/product/ProductGroupViewer.repository";
+import { ProductGroupProductCreatorRepository } from "@core/repositories/product/ProductGroupProductCreator.repository";
+import { ProductGroupProductDeleterRepository } from "@core/repositories/product/ProductGroupProductDeleter.repository";
+import { ProductGroupProductViewerRepository } from "@core/repositories/product/ProductGroupProductViewer.repository";
+import { ProductGroupImagesUrlUpdaterRepository } from "@core/repositories/product/ProductGroupImagesUrlUpdater.repository";
+import { ProductGroupProductListerRepository } from "@core/repositories/product/ProductGroupProductLister.repository";
+import { ProductGroupUpdaterRepository } from "@core/repositories/product/ProductGroupUpdater.repository";
+import { UpdateProductGroupBodyRequest } from "@core/useCases/product/dtos/UpdateProductGroupRequest.dto";
+import { ListProductByCompanyRequest } from "@core/useCases/product/dtos/ListProductByCompanyRequest.dto";
 
 @injectable()
 export class ProductService {
@@ -29,7 +40,15 @@ export class ProductService {
     private readonly productCompanyCreatorRepository: ProductCompanyCreatorRepository,
     private readonly productListerRepository: ProductListerRepository,
     private readonly productListerGroupedByCompanyRepository: ProductListerGroupedByCompanyRepository,
-    private readonly crossSellProductListerRepository: CrossSellProductListerRepository
+    private readonly productDetailHowToAccessUpdaterRepository: ProductDetailHowToAccessUpdaterRepository,
+    private readonly crossSellProductListerRepository: CrossSellProductListerRepository,
+    private readonly productGroupViewerRepository: ProductGroupViewerRepository,
+    private readonly productGroupUpdaterRepository: ProductGroupUpdaterRepository,
+    private readonly productGroupProductViewerRepository: ProductGroupProductViewerRepository,
+    private readonly productGroupProductListerRepository: ProductGroupProductListerRepository,
+    private readonly productGroupProductCreatorRepository: ProductGroupProductCreatorRepository,
+    private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
+    private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -45,10 +64,20 @@ export class ProductService {
   };
 
   listByCompanyIds = async (
-    query: ListProductRequest,
+    query: ListProductByCompanyRequest,
     listPartnersIds: number[]
   ) => {
     return this.productListerGroupedByCompanyRepository.list(
+      query,
+      listPartnersIds
+    );
+  };
+
+  countTotalCompanies = async (
+    query: ListProductByCompanyRequest,
+    listPartnersIds: number[]
+  ) => {
+    return this.productListerGroupedByCompanyRepository.countTotalCompanies(
       query,
       listPartnersIds
     );
@@ -115,7 +144,7 @@ export class ProductService {
     const planProductCrossSell = await this.findPlanProductCrossSell(
       tokenKeyData,
       payload.plan.plan_id,
-      payload.months,
+      payload.months ?? 0,
       selectedProducts
     );
 
@@ -134,15 +163,66 @@ export class ProductService {
     return allProductsSelected;
   };
 
+  updateDetailHowToAccess = async (
+    productId: string,
+    updateParams: UpdateParams
+  ) => {
+    return this.productDetailHowToAccessUpdaterRepository.updateDetailHowToAccess(
+      productId,
+      updateParams
+    );
+  };
+
+  deleteDetailHowToAccess = async (
+    productId: string,
+    updateParams: UpdateParams
+  ) => {
+    return this.productDetailHowToAccessUpdaterRepository.updateDetailHowToAccess(
+      productId,
+      updateParams
+    );
+  };
+
   update = async (productId: string, input: UpdateProductRequest) => {
     return this.productUpdaterRepository.update(productId, input);
   };
 
-  productCompanyViewer(productId: string, companyId: number) {
-    return this.productCompanyViewerRepository.view(productId, companyId);
+  productCompanyViewer(productId: string, listPartnersIds: number[]) {
+    return this.productCompanyViewerRepository.view(productId, listPartnersIds);
   }
 
   updateImagesUrl(productId: string, input: ProductImageRepositoryCreateInput) {
     return this.imagesUrlUpdaterRepository.update(productId, input);
+  }
+
+  findGroup(groupId: number) {
+    return this.productGroupViewerRepository.get(groupId);
+  }
+
+  updateGroup = async (
+    groupId: number,
+    input: UpdateProductGroupBodyRequest
+  ) => {
+    return this.productGroupUpdaterRepository.update(groupId, input);
+  };
+
+  findProductGroupProduct(groupId: number, productId: string) {
+    return this.productGroupProductViewerRepository.view(groupId, productId);
+  }
+
+  listProductGroupProduct(groupId: number) {
+    return this.productGroupProductListerRepository.list(groupId);
+  }
+
+  addProductToGroup(groupId: number, productId: string) {
+    return this.productGroupProductCreatorRepository.create(groupId, productId);
+  }
+
+  deleteProductFromGroup(groupId: number, productId: string) {
+    return this.productDeleterFromGroupRepository.delete(groupId, productId);
+  }
+
+  updateGroupsImagesUrl(groupId: number, url: string) {
+    return this.productGroupImagesUrlUpdaterRepository.update(groupId, url);
   }
 }

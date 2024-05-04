@@ -8,6 +8,8 @@ import {
   ordersByNumberParamSchema,
   createOrderSchema,
   postOrderPaymentBoletoSchema,
+  postOrderPaymentCardSchema,
+  postOrderPaymentPixSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -15,6 +17,8 @@ import {
   orderNumberPaymentViewPermissions,
   orderViewPermissions,
   orderPaymentBoletoPermissions,
+  orderPaymentCreditCardPermissions,
+  orderPaymentPixPermissions,
   orderListPermissions,
 } from '@/permissions';
 
@@ -97,5 +101,35 @@ export default async function orderRoutes(server: FastifyInstance) {
       (request, reply) =>
         server.authenticateJwt(request, reply, orderPaymentBoletoPermissions),
     ],
+  });
+
+  server.post('/orders/:orderNumber/payments/credit-card', {
+    handler: orderController.paymentByCreditCard,
+    schema: postOrderPaymentCardSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          orderPaymentCreditCardPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(
+          request,
+          reply,
+          orderPaymentCreditCardPermissions
+        ),
+    ],
+  });
+
+  server.post('/orders/:orderNumber/payments/pix', {
+    handler: orderController.paymentByPix,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderPaymentPixPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderPaymentPixPermissions),
+    ],
+    schema: postOrderPaymentPixSchema,
   });
 }

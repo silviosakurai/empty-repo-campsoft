@@ -61,7 +61,7 @@ export class ClientListerRepository {
       return null;
     }
 
-    return await this.enrichCompanyClient(totalPaginated);
+    return this.enrichCompanyClient(totalPaginated);
   }
 
   async countTotalClientWithCompanies(
@@ -80,6 +80,10 @@ export class ClientListerRepository {
       .where(filters)
       .execute();
 
+    if (!countResult?.length) {
+      return 0;
+    }
+
     return countResult[0].count;
   }
 
@@ -92,9 +96,7 @@ export class ClientListerRepository {
       })
     );
 
-    const enrichCompanyAll = await Promise.all(enrichCompanyPromises);
-
-    return enrichCompanyAll;
+    return Promise.all(enrichCompanyPromises);
   }
 
   private async fetchSellersClient(clientId: string) {
@@ -135,40 +137,50 @@ export class ClientListerRepository {
         query.sort_order === SortOrder.ASC
           ? asc(permission.id_parceiro)
           : desc(permission.id_parceiro),
+
       [ClientFields.cpf]: () =>
         query.sort_order === SortOrder.ASC ? asc(client.cpf) : desc(client.cpf),
+
       [ClientFields.email]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.email)
           : desc(client.email),
+
       [ClientFields.gender]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.sexo)
           : desc(client.sexo),
+
       [ClientFields.name]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.nome)
           : desc(client.nome),
+
       [ClientFields.phone]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.telefone)
           : desc(client.telefone),
+
       [ClientFields.position_id]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(permission.id_cargo)
           : desc(permission.id_cargo),
+
       [ClientFields.status]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.status)
           : desc(client.status),
+
       [ClientFields.user_id]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.id_cliente)
           : desc(client.id_cliente),
+
       [ClientFields.created_at]: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.created_at)
           : desc(client.created_at),
+
       default: () =>
         query.sort_order === SortOrder.ASC
           ? asc(client.created_at)
@@ -197,28 +209,6 @@ export class ClientListerRepository {
 
     if (query.name) {
       filters = and(filters, eq(client.nome, query.name));
-      isFilterApplied = true;
-    }
-
-    if (query.position_id) {
-      filters = isFilterApplied
-        ? and(filters, eq(permission.id_cargo, query.position_id))
-        : and(
-            filterClientByPermission,
-            eq(permission.id_cargo, query.position_id)
-          );
-
-      isFilterApplied = true;
-    }
-
-    if (query.company_id) {
-      filters = isFilterApplied
-        ? and(filters, eq(permission.id_parceiro, query.company_id))
-        : and(
-            filterClientByPermission,
-            eq(permission.id_parceiro, query.company_id)
-          );
-
       isFilterApplied = true;
     }
 

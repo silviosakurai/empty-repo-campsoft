@@ -5,14 +5,16 @@ import { createTransactionFullTicket } from "./payment/createTransactionFullTick
 import { createTransactionSimpleTicket } from "./payment/createTransactionSimpleTicket";
 import { createTransactionCard } from "./payment/createTransactionCard";
 import { createTransactionCardId } from "./payment/createTransactionCardId";
-import { saveCardToken } from "./payment/saveCardToken";
+import { createCreditCardToken } from "./payment/createCreditCardToken";
+import { linkCardTokenWithCustomer } from "./payment/linkCardTokenWithCustomer";
 
 @injectable()
 export class ZoopGatewayService implements IZoopGatewayService {
-  saveCardToken = saveCardToken;
   createTransactionPix = createTransactionPix;
   createTransactionFullTicket = createTransactionFullTicket;
   createTransactionSimpleTicket = createTransactionSimpleTicket;
   createTransactionCard = createTransactionCard;
   createTransactionCardId = createTransactionCardId;
+  createCreditCardToken = createCreditCardToken;
+  linkCardTokenWithCustomer = linkCardTokenWithCustomer;
 }

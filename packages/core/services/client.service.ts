@@ -11,6 +11,7 @@ import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientR
 import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePhoneClientRequest.dto";
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import {
+  ClientCardRepositoryInput,
   ClientEmailCreatorInput,
   FindClientByCpfEmailPhoneInput,
   FindClientByEmailPhoneInput,
@@ -38,9 +39,14 @@ import { ClientPaymentCreatorRepository } from "@core/repositories/client/Client
 import { ClientPaymentViewerRepository } from "@core/repositories/client/ClientPaymentViewer.repository";
 import { ClientListerRepository } from "@core/repositories/client/ClientLister.repository";
 import { ListClientRequest } from "@core/useCases/client/dtos/ListClientRequest.dto";
+import { ClientCardViewerRepository } from "@core/repositories/client/ClientCardViewer.repository";
+import { ClientCardCreatorRepository } from "@core/repositories/client/ClientCardCreator.repository";
+import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/ClientCardDefaultUpdater.repository";
+import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 import { CreateClientRequestPartnerDto } from "@core/useCases/client/dtos/CreateClientRequestPartner.dto";
 import { SQL } from "drizzle-orm";
+import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 
 @injectable()
 export class ClientService {
@@ -65,11 +71,25 @@ export class ClientService {
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
     private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
-    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository
+    private readonly clientPaymentCreatorRepository: ClientPaymentCreatorRepository,
+    private readonly clientCardViewerRepository: ClientCardViewerRepository,
+    private readonly clientCardCreatorRepository: ClientCardCreatorRepository,
+    private readonly cardDefaultUpdaterRepository: ClientCardDefaultUpdaterRepository,
+    private readonly cardListerByClientIdRepository: ClientCardListerByClientIdRepository
   ) {}
 
   view = async (userId: string) => {
     return this.clientViewerRepository.view(userId);
+  };
+
+  viewById = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    userId: string
+  ) => {
+    return this.clientViewerRepository.viewById(
+      filterClientByPermission,
+      userId
+    );
   };
 
   viewBilling = async (userId: string) => {
@@ -196,6 +216,10 @@ export class ClientService {
     return this.clientEraserRepository.delete(tokenJwtData, userFounded);
   };
 
+  deleteById = async (userId: string, userFounded: ViewClientByIdResponse) => {
+    return this.clientEraserRepository.deleteById(userId, userFounded);
+  };
+
   createEmailNewsletter = async (
     clientId: string,
     clientEmailTypeId: number
@@ -231,5 +255,28 @@ export class ClientService {
 
   viewPaymentClient = async (clientId: string) => {
     return this.clientPaymentViewerRepository.view(clientId);
+  };
+
+  viewCreditCard = async (cardId: string, clientId: string) => {
+    return this.clientCardViewerRepository.view(cardId, clientId);
+  };
+
+  createCreditCard = async (
+    clientId: string,
+    input: ClientCardRepositoryInput
+  ) => {
+    return this.clientCardCreatorRepository.create(clientId, input);
+  };
+
+  updateDefaultCard = async (input: {
+    clientId: string;
+    cardId: string;
+    default: boolean;
+  }) => {
+    return this.cardDefaultUpdaterRepository.create(input);
+  };
+
+  listCreditCards = async (clientId: string) => {
+    return this.cardListerByClientIdRepository.list(clientId);
   };
 }

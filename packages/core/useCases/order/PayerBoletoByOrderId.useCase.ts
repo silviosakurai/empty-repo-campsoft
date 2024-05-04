@@ -1,80 +1,81 @@
-import { ClientService, OrderService } from "@core/services";
-import { PaymentService } from "@core/services/payment.service";
+import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
-import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
+import { amountToPay } from "@core/common/functions/amountToPay";
+import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
-    private readonly clientService: ClientService,
-    private readonly paymentService: PaymentService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
   ) {}
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
-    const order = await this.orderService.listOrderById(orderId);
+    try {
+      const { order, externalId, sellerId } =
+        await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
-    if (!order) {
-      throw new Error(t("order_not_found"));
+      const amountPay = amountToPay(order);
+
+      const result =
+        await this.paymentGatewayService.createTransactionSimpleTicket({
+          amount: amountPay,
+          customerId: externalId,
+          description: order.observation,
+          reference_id: order.order_id,
+          sellerId,
+        });
+
+      if (!result.data) {
+        return result;
+      }
+
+      const signature =
+        await this.findSignatureByOrderNumber.findByOrder(orderId);
+
+      if (!signature) {
+        throw new Error(t("signature_not_found"));
+      }
+
+      await this.orderService.createOrderPayment(
+        order,
+        signature.signature_id,
+        OrderPaymentsMethodsEnum.BOLETO,
+        OrderStatusEnum.PENDING,
+        {
+          paymentTransactionId: result.data.id,
+          paymentLink: result.data.payment_method.url,
+          dueDate: result.data.payment_method.expiration_date,
+          codePayment: result.data.payment_method.barcode,
+        }
+      );
+
+      return {
+        data: {
+          url: result.data.payment_method.url,
+          code: result.data.payment_method.barcode,
+        },
+        status: true,
+      } as ResponseService;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (existsInApiErrorCategoryZoop(error.message)) {
+          throw new Error(t(error.message));
+        }
+      }
+
+      throw error;
     }
-
-    const sellerId = order.seller_id
-      ? order.seller_id
-      : (
-          await this.paymentService.sellerViewByEmail(
-            "ricardo@maniadeapp.com.br"
-          )
-        )?.sellerId;
-
-    if (!sellerId) {
-      throw new Error(t("seller_not_found"));
-    }
-
-    const client = await this.clientService.view(order.client_id);
-
-    if (!client) {
-      throw new Error(t("client_not_found"));
-    }
-
-    const clientPayment = await this.clientService.viewPaymentClient(
-      client.client_id
-    );
-
-    const externalId = clientPayment
-      ? clientPayment.external_id
-      : await this.paymentExternalGeneratorUseCase.generate(t, client);
-
-    const result =
-      await this.paymentGatewayService.createTransactionSimpleTicket({
-        amount: +order.total_price * 100,
-        customerId: externalId,
-        description: order.observation,
-        reference_id: order.order_id,
-        sellerId,
-      });
-
-    if (!result.data) {
-      return result;
-    }
-
-    await this.orderService.paymentOrderUpdateByOrderId(order.order_id, {
-      paymentTransactionId: result.data.id,
-      paymentLink: result.data.payment_method.url,
-      dueDate: result.data.payment_method.expiration_date,
-      barcode: result.data.payment_method.barcode,
-    });
-
-    return {
-      data: {
-        url: result.data.payment_method.url,
-        code: result.data.payment_method.barcode,
-      },
-      status: true,
-    } as ResponseService;
   }
 }
