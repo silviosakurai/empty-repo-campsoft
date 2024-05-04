@@ -1,4 +1,4 @@
-import { IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
+import { IClientConnectClient, IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
 import { ClientCreatorRepository } from "@core/repositories/client/ClientCreator.repository";
 import { ClientAccessCreatorRepository } from "@core/repositories/client/ClientAccessCreator.repository";
 import { ClientByCpfEmailPhoneReaderRepository } from "@core/repositories/client/ClientByCPFEmailPhoneReader.repository";
@@ -44,6 +44,7 @@ import { ClientCardCreatorRepository } from "@core/repositories/client/ClientCar
 import { ClientCardDefaultUpdaterRepository } from "@core/repositories/client/ClientCardDefaultUpdater.repository";
 import { ClientCardListerByClientIdRepository } from "@core/repositories/client/ClientCardListerByClientId.repository";
 import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
+import { CreateClientRequestPartnerDto } from "@core/useCases/client/dtos/CreateClientRequestPartner.dto";
 import { SQL } from "drizzle-orm";
 import { ViewClientByIdResponse } from "@core/useCases/client/dtos/ViewClientByIdResponse.dto";
 
@@ -135,6 +136,10 @@ export class ClientService {
     return this.clientCreatorRepository.create(input);
   };
 
+  createPartner = async (input: CreateClientRequestPartnerDto) => {
+    return this.clientCreatorRepository.createToPartner(input);
+  };
+
   createAddress = async (
     userId: string,
     data: UpdateClientAddressRequest,
@@ -147,6 +152,10 @@ export class ClientService {
     );
   };
 
+  connectClient = async (input: IClientConnectClient) => {
+    return this.clientAccessCreatorRepository.createToPartner(input);
+  };
+  
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
     return this.clientAccessCreatorRepository.create(input);
   };
