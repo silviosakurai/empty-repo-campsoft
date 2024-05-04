@@ -1,6 +1,6 @@
 import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
-import { AddProductToPartnerBodyRequest } from "./dtos/AddProductToPartnerRequest.dto";
+import { AddProductToGroupBodyRequest } from "./dtos/AddProductToGroupRequest.dto";
 
 @injectable()
 export class ProductsToGroupAdderUseCase {
@@ -9,14 +9,20 @@ export class ProductsToGroupAdderUseCase {
   ) {}
 
   async execute(
-    partnerId: number,
-    body: AddProductToPartnerBodyRequest,
+    groupId: number,
+    body: AddProductToGroupBodyRequest,
   ): Promise<boolean | null> {
-    const productPartnerPromises = 
-      body.products.map(productId => this.productService.createProductPartner(productId, partnerId));
+    const group = await this.productService.findGroup(groupId);
+
+    if (!group) {
+      return null;
+    }
+
+    const productGroupsPromises = 
+      body.product_id.map(productId => this.productService.addProductToGroup(groupId, productId));
 
     try {
-      await Promise.all(productPartnerPromises);
+      await Promise.all(productGroupsPromises);
       return true;
     } catch (error) {
       return false;

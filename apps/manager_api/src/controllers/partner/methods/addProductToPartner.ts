@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ProductsToGroupAdderUseCase } from '@core/useCases/product/ProductsToGroupAdder.useCase';
+import { ProductsToPartnerAdderUseCase } from '@core/useCases/product/ProductsToPartnerAdder.useCase';
 import { container } from 'tsyringe';
 import {
   AddProductToPartnerParamsRequest,
@@ -15,13 +15,13 @@ export const addProductToPartner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const productsToGroupAdderUseCase = container.resolve(
-    ProductsToGroupAdderUseCase
+  const productsToPartnerAdderUseCase = container.resolve(
+    ProductsToPartnerAdderUseCase
   );
   const { t } = request;
 
   try {
-    const response = await productsToGroupAdderUseCase.execute(
+    const response = await productsToPartnerAdderUseCase.execute(
       request.params.partnerId,
       request.body
     );
