@@ -19,6 +19,7 @@ export class ClientCardViewerRepository {
         first_digits: clientCards.first_digits,
         expiration_month: sql`${clientCards.expiration_month}`.mapWith(Number),
         expiration_year: sql`${clientCards.expiration_year}`.mapWith(Number),
+        default: clientCards.default,
       })
       .from(clientCards)
       .where(

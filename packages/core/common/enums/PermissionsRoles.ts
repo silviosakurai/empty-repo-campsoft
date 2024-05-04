@@ -24,6 +24,7 @@ export enum PermissionsRoles {
   USER_NEWSLETTER_SUBSCRIBE = "user_newsletter_subscribe",
   USER_CREDIT_CARD_CREATE = "user_credit_card_create",
   USER_CREDIT_CARD_DEFAULT_UPDATE = "user_credit_card_default_update",
+  USER_CREDIT_CARD_DELETE = "user_credit_card_delete",
   ORDER_LIST = "order_list",
   ORDER_VIEW = "order_view",
   ORDER_CREATE = "order_create",

@@ -21,6 +21,7 @@ import {
   createUserNewsletterSchema,
   createUserCreditCardSchema,
   updateUserCreditCardDefaultSchema,
+  userCreditCardDeleteSchema,
 } from '@core/validations/user';
 import {
   userAddressBillingUpdatePermissions,
@@ -41,6 +42,7 @@ import {
   userViewPermissions,
   userVoucherPermissions,
   userCreditCardDefaultUpdatePermissions,
+  userCreditCardDeletePermissions,
 } from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -317,6 +319,21 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userCreditCardDefaultUpdatePermissions
         ),
+    ],
+  });
+
+  server.delete('/user/credit-card/:id', {
+    handler: clientController.eraseCardClient,
+    schema: userCreditCardDeleteSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardDeletePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userCreditCardDeletePermissions),
     ],
   });
 }
