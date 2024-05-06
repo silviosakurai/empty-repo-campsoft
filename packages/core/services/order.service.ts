@@ -16,9 +16,12 @@ import {
   OrderPaymentUpdateInput,
 } from "@core/interfaces/repositories/order";
 import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPaymentCreator.repository";
-import { OrderStatusEnum } from "@core/common/enums/models/order";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
 import { CouponService } from "./coupon.service";
-import { OrderPaymentUpdaterByOrderIdRepository } from "@core/repositories/order/OrderPaymentUpdaterByOrderId.repository";
+import { OrderStatusUpdaterRepository } from "@core/repositories/order/OrderStatusUpdater.repository";
 
 @injectable()
 export class OrderService {
@@ -27,9 +30,9 @@ export class OrderService {
     private readonly orderCreatorRepository: OrderCreatorRepository,
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
+    private readonly orderStatusUpdaterRepository: OrderStatusUpdaterRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
-    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
-    private readonly paymentUpdaterByOrderIdRepository: OrderPaymentUpdaterByOrderIdRepository
+    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository
   ) {}
 
   list = async (
@@ -102,23 +105,20 @@ export class OrderService {
   createOrderPayment = async (
     order: ListOrderById,
     signatureId: string,
-    methodId: string,
+    methodId: OrderPaymentsMethodsEnum,
     statusPayment: OrderStatusEnum,
-    voucher: string | null
+    input: OrderPaymentUpdateInput
   ) => {
     return this.orderPaymentCreatorRepository.create(
       order,
       signatureId,
       methodId,
       statusPayment,
-      voucher
+      input
     );
   };
 
-  paymentOrderUpdateByOrderId = async (
-    orderId: string,
-    input: OrderPaymentUpdateInput
-  ) => {
-    return this.paymentUpdaterByOrderIdRepository.update(orderId, input);
+  updateStatusByOrderId = async (orderId: string, status: OrderStatusEnum) => {
+    return this.orderStatusUpdaterRepository.update(orderId, status);
   };
 }

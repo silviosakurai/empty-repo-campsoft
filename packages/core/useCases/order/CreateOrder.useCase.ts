@@ -5,7 +5,11 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
-import { ClientService, ProductService } from "@core/services";
+import {
+  ClientService,
+  OrderValidationService,
+  ProductService,
+} from "@core/services";
 import {
   CreateOrder,
   OrderByNumberResponse,
@@ -28,7 +32,8 @@ export class CreateOrderUseCase {
     private readonly signatureService: SignatureService,
     private readonly priceService: PriceService,
     private readonly paymentService: PaymentService,
-    private readonly voucherService: VoucherService
+    private readonly voucherService: VoucherService,
+    private readonly orderValidationService: OrderValidationService
   ) {}
 
   async execute(
@@ -37,7 +42,11 @@ export class CreateOrderUseCase {
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto
   ) {
-    await this.validatePaymentMethod(t, tokenJwtData, payload);
+    await this.orderValidationService.validatePaymentMethod(
+      t,
+      tokenJwtData,
+      payload
+    );
 
     const userFounded = await this.clientService.view(tokenJwtData.clientId);
 
@@ -55,7 +64,7 @@ export class CreateOrderUseCase {
       this.voucherService.isProductsVoucherEligible(
         tokenKeyData,
         payload.payment?.voucher,
-        payload.products
+        payload?.products
       ),
     ]);
 
@@ -175,60 +184,13 @@ export class CreateOrderUseCase {
     if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
       return this.paymentService.payWithCard(t, orderId, payload.payment);
     }
-  }
 
-  private async validatePaymentMethod(
-    t: TFunction<"translation", undefined>,
-    tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
-  ) {
-    if (
-      payload.subscribe &&
-      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.CARD
-    ) {
-      throw new Error(t("payment_method_not_card"));
+    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.BOLETO) {
+      return this.paymentService.payWithBoleto(t, orderId);
     }
 
-    if (
-      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.BOLETO &&
-      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.PIX &&
-      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.CARD &&
-      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.VOUCHER
-    ) {
-      throw new Error(t("payment_method_invalid"));
-    }
-
-    if (payload.previous_order_id) {
-      const orderIsExists = await this.orderService.orderIsExists(
-        payload.previous_order_id
-      );
-
-      if (!orderIsExists) {
-        throw new Error(t("previous_order_not_found"));
-      }
-    }
-
-    if (payload.subscribe) {
-      const isSignaturePlanActiveByClientId =
-        await this.signatureService.isSignaturePlanActiveByClientId(
-          tokenJwtData.clientId,
-          payload.plan.plan_id
-        );
-
-      if (isSignaturePlanActiveByClientId) {
-        throw new Error(t("plan_already_active"));
-      }
-    }
-
-    if (
-      payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.VOUCHER &&
-      payload.activate_now === false
-    ) {
-      throw new Error(t("voucher_activate_now_false"));
-    }
-
-    if (payload.coupon_code && payload.payment.voucher) {
-      throw new Error(t("coupon_code_with_voucher_not_allowed"));
+    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.PIX) {
+      return this.paymentService.payWithPix(t, orderId);
     }
   }
 

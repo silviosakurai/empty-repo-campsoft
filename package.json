@@ -9,20 +9,25 @@
   "scripts": {
     "dev": "turbo run dev",
     "dev:manager": "turbo run dev --filter=manager",
+    "dev:tools": "turbo run dev --filter=tools",
     "dev:public": "turbo run dev --filter=public",
     "build": "turbo run build",
     "build:manager": "turbo run build --filter=manager",
     "build:public": "turbo run build --filter=public",
+    "build:tools": "turbo run build --filter=tools",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "lint:manager": "turbo run lint --filter=manager",
     "lint:public": "turbo run lint --filter=public",
+    "lint:tools": "turbo run lint --filter=tools",
     "sonar": "turbo run sonar",
     "sonar:manager": "turbo run sonar --filter=manager",
     "sonar:public": "turbo run sonar --filter=public",
+    "sonar:tools": "turbo run sonar --filter=tools",
     "prepare": "[ \"$NODE_ENV\" != 'production' ] && husky install || echo 'In production'",
     "docker:public": "docker build -f apps/public_api/Dockerfile -t mania-public .",
-    "docker:manager": "docker build -f apps/manager_api/Dockerfile -t mania-manager ."
+    "docker:manager": "docker build -f apps/manager_api/Dockerfile -t mania-manager .",
+    "docker:tools": "docker build -f apps/tools/Dockerfile -t mania-tools ."
   },
   "keywords": [],
   "author": "",
@@ -30,6 +35,7 @@
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
     "@types/node": "^20.12.5",
+    "@types/qrcode": "^1.5.5",
     "@types/randomstring": "^1.3.0",
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
@@ -76,11 +82,14 @@
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
     "mysql2": "^3.9.3",
+    "qrcode": "^1.5.3",
     "randomstring": "^1.3.0",
     "reflect-metadata": "^0.2.2",
+    "sharp": "^0.33.3",
     "tsyringe": "^4.8.0",
     "twilio": "^5.0.3",
     "typescript-eslint": "^7.5.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "ws": "^8.17.0"
   }
 }

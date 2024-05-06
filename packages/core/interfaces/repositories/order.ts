@@ -105,8 +105,10 @@ export interface ListOrderById {
 export type OrderPayments = Static<typeof orderPaymentsSchema>;
 
 export interface OrderPaymentUpdateInput {
-  paymentTransactionId: string;
-  paymentLink?: string;
-  dueDate?: string;
-  barcode?: string;
+  paymentTransactionId?: string | null;
+  cardId?: string | null;
+  paymentLink?: string | null;
+  dueDate?: string | null;
+  codePayment?: string | null;
+  voucher?: string | null;
 }

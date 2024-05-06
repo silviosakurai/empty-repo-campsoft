@@ -7,10 +7,7 @@ import {
   varbinary,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import {
-  CouponRescueCodeDeleted,
-  CouponRescueCodeStatus,
-} from "@core/common/enums/models/voucher";
+import { CouponRescueCodeStatus } from "@core/common/enums/models/voucher";
 
 export const couponRescueCode = mysqlTable("cupom_resgatar_codigo", {
   id_cupom_resgatar_codigo: varbinary("id_cupom_resgatar_codigo", {
@@ -29,7 +26,6 @@ export const couponRescueCode = mysqlTable("cupom_resgatar_codigo", {
   cupom_resgatar_codigo: varchar("cupom_resgatar_codigo", {
     length: 12,
   }).notNull(),
-  numero_produtos: int("numero_produtos").notNull().default(1),
   qnt_uso_max: int("qnt_uso_max", { unsigned: true }).default(1),
   qnt_uso_faltante: int("qnt_uso_faltante", { unsigned: true }).default(1),
   qnt_uso_por_cli: int("qnt_uso_por_cli", { unsigned: true }).default(1),
@@ -37,10 +33,4 @@ export const couponRescueCode = mysqlTable("cupom_resgatar_codigo", {
   enviado_para: varchar("enviado_para", { length: 50 }),
   created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
-  deleted: mysqlEnum("deleted", [
-    CouponRescueCodeDeleted.YES,
-    CouponRescueCodeDeleted.NO,
-  ])
-    .notNull()
-    .default(CouponRescueCodeDeleted.NO),
 });

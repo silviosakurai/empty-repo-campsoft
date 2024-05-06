@@ -13,3 +13,8 @@ export * from "./notification.service";
 export * from "./order.service";
 export * from "./campsoftGatewayCustomer.service";
 export * from "./zoopGateway.service";
+export * from "./seller.service";
+export * from "./signature.service";
+export * from "./payment.service";
+export * from "./orderValidation.service";
+export * from "./voucher.service";
