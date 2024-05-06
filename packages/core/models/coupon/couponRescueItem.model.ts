@@ -1,5 +1,4 @@
 import {
-  CouponRescueItemDeleted,
   CouponRescueItemRedeem,
   CouponRescueItemTypeTime,
 } from "@core/common/enums/models/coupon";
@@ -31,10 +30,4 @@ export const couponRescueItem = mysqlTable("cupom_resgatar_item", {
     .default(CouponRescueItemRedeem.NO),
   created_at: timestamp("created_at", { mode: "string" }).defaultNow(),
   updated_at: timestamp("updated_at", { mode: "string" }).defaultNow(),
-  deleted: mysqlEnum("deleted", [
-    CouponRescueItemDeleted.YES,
-    CouponRescueItemDeleted.NO,
-  ])
-    .notNull()
-    .default(CouponRescueItemDeleted.NO),
 });
