@@ -36,6 +36,10 @@ export class ClientCardCreatorUseCase {
       tokenId: creditCard.id,
     });
 
+    if (!result) {
+      return result;
+    }
+
     const cards = await this.clientService.listCreditCards(clientId);
 
     if (input.default || cards.length === 1) {
@@ -54,7 +58,7 @@ export class ClientCardCreatorUseCase {
       customer: externalId,
     });
 
-    return result;
+    return { id: creditCard.id };
   }
 
   private async generateExternalId(
