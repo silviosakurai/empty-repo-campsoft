@@ -76,6 +76,12 @@ services:
     networks:
       - sonarnet
 
+  websocket:
+    image: ./websocket
+    container_name: websocket
+    ports:
+      - 3003:3003
+
 networks:
   sonarnet:
 
