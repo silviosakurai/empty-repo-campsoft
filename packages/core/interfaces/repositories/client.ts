@@ -79,6 +79,7 @@ export interface ClientCardRepositoryInput {
   tokenId: string;
   brand?: string;
   default: boolean;
+  holder_name: string;
   first4Digits: string;
   last4Digits?: string | null;
 }
