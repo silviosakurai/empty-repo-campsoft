@@ -16,18 +16,6 @@ RUN pnpm install
 
 RUN turbo run build --filter=websocket
 
-FROM node:20.11.1
+EXPOSE 3003
 
-WORKDIR /app
-
-COPY --from=builder /app/apps/websocket/dist /app
-COPY --from=builder /app/node_modules /app/node_modules
-
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/apps/websocket/package*.json ./apps/websocket
-
-EXPOSE 3000
-
-WORKDIR /app/apps/websocket/src
-
-CMD ["node", "index.js"]
+CMD node dist/index.js

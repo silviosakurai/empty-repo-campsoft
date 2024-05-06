@@ -10,11 +10,5 @@
     "build": "tsc && tsc-alias -p tsconfig.json",
     "lint": "pnpx eslint . --fix",
     "sonar": "sonar-scanner -X"
-  },
-  "devDependencies": {
-    "typescript": "^5.4.4"
-  },
-  "dependencies": {
-    "socket.io": "^4.7.5"
   }
 }
