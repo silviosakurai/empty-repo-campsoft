@@ -12,10 +12,10 @@ export const paymentByBoleto = async (
 ) => {
   const service = container.resolve(PayerByBoletoByOrderIdUseCase);
 
-  const { t, params, tokenKeyData } = request;
+  const { t, params } = request;
 
   try {
-    const result = await service.pay(t, tokenKeyData, params.orderNumber);
+    const result = await service.pay(t, params.orderNumber);
 
     if (!result.status) {
       return sendResponse(reply, {

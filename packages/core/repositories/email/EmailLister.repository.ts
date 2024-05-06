@@ -7,7 +7,7 @@ import {
   templateModule,
   emailHistory,
 } from "@core/models";
-import { and, count, eq, like, sql, or, desc } from "drizzle-orm";
+import { and, count, eq, like, sql, or, desc, inArray } from "drizzle-orm";
 import { EmailBlock, EmailType } from "@core/common/enums/models/email";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITemplateEmail } from "@core/interfaces/repositories/tfa";
@@ -63,6 +63,50 @@ export class EmailListerRepository {
         or(
           and(
             eq(templateEmail.id_parceiro, tokenKeyData.id_parceiro),
+            eq(templateModule.modulo, templateModulo)
+          ),
+          and(
+            eq(
+              templateEmail.id_parceiro,
+              sql`${templateEmail.id_parceiro} IS NULL`
+            ),
+            eq(templateModule.modulo, templateModulo)
+          )
+        )
+      )
+      .orderBy(desc(templateEmail.id_parceiro))
+      .limit(1)
+      .execute();
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as ITemplateEmail;
+  }
+
+  async getTemplateEmailToPartner(
+    partnerIds: number[],
+    templateModulo: TemplateModulo
+  ): Promise<ITemplateEmail | null> {
+    const result = await this.db
+      .select({
+        templateId: templateEmail.id_template_email,
+        sender: templateEmail.de_email,
+        replyTo: templateEmail.responder_para,
+        subject: templateEmail.assunto,
+        template: templateEmail.email_html,
+        templateTxt: templateEmail.email_txt,
+      })
+      .from(templateEmail)
+      .innerJoin(
+        templateModule,
+        eq(templateModule.id_template_modulo, templateEmail.id_template_modulo)
+      )
+      .where(
+        or(
+          and(
+            inArray(templateEmail.id_parceiro, partnerIds),
             eq(templateModule.modulo, templateModulo)
           ),
           and(

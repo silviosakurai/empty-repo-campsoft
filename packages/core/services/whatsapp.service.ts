@@ -76,6 +76,16 @@ export class WhatsappService implements IWhatsappService {
     );
   }
 
+  public async getTemplateWhatsappModuleToPartner(
+    partnerIds: number[],
+    templateModulo: TemplateModulo
+  ): Promise<ITemplateWhatsapp | null> {
+    return this.whatsAppListerRepository.getTemplateWhatsappToPartner(
+      partnerIds,
+      templateModulo
+    );
+  }
+
   public async getTemplateWhatsapp(
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo,
@@ -83,6 +93,25 @@ export class WhatsappService implements IWhatsappService {
   ): Promise<ITemplateWhatsapp | null> {
     const template = await this.getTemplateWhatsappModule(
       tokenKeyData,
+      templateModulo
+    );
+
+    if (!template) {
+      return null;
+    }
+
+    template.template = replaceTemplate(template.template, rTemplate);
+
+    return template;
+  }
+
+  public async getTemplateWhatsappToPartner(
+    partnerIds: number[],
+    templateModulo: TemplateModulo,
+    rTemplate: IReplaceTemplate
+  ): Promise<ITemplateWhatsapp | null> {
+    const template = await this.getTemplateWhatsappModuleToPartner(
+      partnerIds,
       templateModulo
     );
 
@@ -103,6 +132,48 @@ export class WhatsappService implements IWhatsappService {
   ): Promise<boolean> {
     const template = await this.getTemplateWhatsapp(
       tokenKeyData,
+      templateModulo,
+      rTemplate
+    );
+
+    if (!template) {
+      return false;
+    }
+
+    const payload = {
+      target_phone: notificationTemplate.phoneNumber,
+      message: template.template,
+    } as IWhatsappServiceInput;
+
+    const sendWA = await this.send(payload);
+
+    if (sendWA) {
+      const sender = extractPhoneNumber(sendWA.from);
+      const whatsappToken = sendWA.sid;
+      const sendDate = formatDateToString(sendWA.dateCreated);
+
+      await this.whatsAppListerRepository.insertWhatsAppHistory(
+        template.templateId,
+        notificationTemplate,
+        sender,
+        whatsappToken,
+        sendDate
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+
+  public async sendWhatsappToPartner(
+    partnerIds: number[],
+    notificationTemplate: NotificationTemplate,
+    templateModulo: TemplateModulo,
+    rTemplate: IReplaceTemplate
+  ): Promise<boolean> {
+    const template = await this.getTemplateWhatsappToPartner(
+      partnerIds,
       templateModulo,
       rTemplate
     );
