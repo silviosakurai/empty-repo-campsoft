@@ -2,34 +2,38 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
-import WebSocket from 'ws';
 import { PaymentWebhookHandlerUseCase } from '@core/useCases/webhook/PaymentWebhookHandler.useCase';
+import { PaymentWebhookHandlerRequest } from '@core/useCases/webhook/dtos/WebhookRequest.dto';
 
 export const paymentWebhook = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
-  socket: WebSocket.Server
+  request: FastifyRequest<{
+    Body: PaymentWebhookHandlerRequest;
+  }>,
+  reply: FastifyReply
 ) => {
   const service = container.resolve(PaymentWebhookHandlerUseCase);
 
-  request.server.logger.trace(JSON.stringify(request.body), 'payment-webhook');
-  request.server.logger.trace(
-    JSON.stringify(request.params),
-    'payment-webhook'
-  );
-  request.server.logger.trace(JSON.stringify(request.query), 'payment-webhook');
+  request.server.logger.trace(JSON.stringify(request.body), request.id);
 
-  socket.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(`event.event - ${request.body}`);
+  try {
+    const result = await service.handle(request.body);
+
+    if (!result) {
+      return sendResponse(reply, {
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+        message: request.t('order_not_found'),
+      });
     }
-  });
 
-  console.log(request.body);
-  console.log(request.params);
-  console.log(request.query);
+    return sendResponse(reply, {
+      httpStatusCode: HTTPStatusCode.OK,
+    });
+  } catch (error) {
+    request.server.logger.error(error, request.id);
 
-  return sendResponse(reply, {
-    httpStatusCode: HTTPStatusCode.OK,
-  });
+    return sendResponse(reply, {
+      message: request.t('internal_server_error'),
+      httpStatusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
 };

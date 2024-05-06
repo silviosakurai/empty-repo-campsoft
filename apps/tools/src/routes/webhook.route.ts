@@ -7,10 +7,7 @@ export default async function webhooksRoutes(app: FastifyInstance) {
   const controller = container.resolve(WebhookController);
 
   app.post('/webhook/payments', {
-    handler: (request, reply) => {
-      const ws = app.websocketServer;
-      return controller.paymentWebhook(request, reply, ws);
-    },
+    handler: controller.paymentWebhook,
     schema: webhookPaymentSchema,
   });
 }
