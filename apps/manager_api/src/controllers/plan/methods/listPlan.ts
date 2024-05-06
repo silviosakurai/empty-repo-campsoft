@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { PlansListerWithProductsUseCase } from '@core/useCases/plan/PlanListerWithProducts.useCase';
+import { PlansListerWithProductsUseCase } from '@core/useCases/plan/PlansListerWithProducts.useCase';
 import { container } from 'tsyringe';
 import { ListPlanRequest } from '@core/useCases/plan/dtos/ListPlanRequest.dto';
 
