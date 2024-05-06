@@ -36,14 +36,8 @@ export class PlanService {
     return this.planListerByCompanyRepository.list(query);
   };
 
-  listWithProducts = async (
-    filterClientByPermission: SQL<unknown> | undefined,
-    query: ListPlanRequest
-  ) => {
-    return this.planListerWithProductsRepository.list(
-      filterClientByPermission,
-      query
-    );
+  listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
+    return this.planListerWithProductsRepository.list(partnersId, query);
   };
 
   view = async (companyId: number, planId: number) => {
