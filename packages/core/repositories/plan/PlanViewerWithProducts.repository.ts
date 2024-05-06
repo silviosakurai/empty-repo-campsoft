@@ -2,14 +2,13 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, sql, SQL } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
 import { ProductListerRepository } from "../product/ProductLister.repository";
 import { ProductGroupProductListerRepository } from "../product/ProductGroupProductLister.repository";
 import { ViewPlanRepositoryDTO } from "@core/interfaces/repositories/plan";
-import { inArray } from "drizzle-orm";
 
 @injectable()
 export class PlanViewerWithProductsRepository {
