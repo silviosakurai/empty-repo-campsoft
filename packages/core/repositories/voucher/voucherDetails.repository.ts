@@ -2,12 +2,11 @@ import { injectable, inject } from "tsyringe";
 import * as schema from "@core/models";
 import { couponRescueCode, couponRescue, couponRescueItem } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 import { CouponRescueCodeStatus } from "@core/common/enums/models/voucher";
 import { IGetVoucherInfo } from "@core/interfaces/repositories/voucher";
 import { CouponRescueItemTypeTime } from "@core/common/enums/models/coupon";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { isNotNull } from "drizzle-orm";
 
 @injectable()
 export class VoucherDetailsRepository {
