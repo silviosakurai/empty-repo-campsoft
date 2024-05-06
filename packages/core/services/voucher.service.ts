@@ -8,6 +8,7 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { IVerifyEligibilityUser } from "@core/interfaces/repositories/voucher";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { VoucherUpdaterRepository } from "@core/repositories/voucher/VoucherUpdater.repository";
+import { VoucherDetailsRepository } from "@core/repositories/voucher/voucherDetails.repository";
 
 @injectable()
 export class VoucherService {
@@ -17,7 +18,8 @@ export class VoucherService {
     private readonly availableVoucherProductsRepository: AvailableVoucherProductsRepository,
     private readonly clientSignatureRepository: ClientSignatureRepository,
     private readonly availableVoucherPlansRepository: AvailableVoucherPlansRepository,
-    private readonly voucherUpdaterRepository: VoucherUpdaterRepository
+    private readonly voucherUpdaterRepository: VoucherUpdaterRepository,
+    private readonly voucherDetailsRepository: VoucherDetailsRepository
   ) {}
 
   verifyEligibilityUser = async (
@@ -119,5 +121,12 @@ export class VoucherService {
 
   updateVoucher = async (voucher: string) => {
     return this.voucherUpdaterRepository.updateVoucher(voucher);
+  };
+
+  getVoucherDetails = async (tokenKeyData: ITokenKeyData, voucher: string) => {
+    return this.voucherDetailsRepository.getVoucherDetails(
+      tokenKeyData,
+      voucher
+    );
   };
 }

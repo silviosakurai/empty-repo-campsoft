@@ -14,8 +14,6 @@ import { v4 } from 'uuid';
 import loggerServicePlugin from '@core/plugins/logger';
 import swaggerPlugin from '@/plugins/swagger';
 import corsPlugin from '@core/plugins/cors';
-import websocketPlugin from '@core/plugins/websocket';
-import websocketRoute from './routes/websocket.route';
 
 const server = fastify({
   genReqId: () => v4(),
@@ -39,9 +37,6 @@ server.register(i18nextPlugin);
 server.register(jwtPlugin);
 server.register(swaggerPlugin);
 server.register(corsPlugin);
-server.register(websocketPlugin);
-
-websocketRoute(server);
 
 const start = async () => {
   try {

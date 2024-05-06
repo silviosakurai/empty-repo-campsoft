@@ -18,6 +18,8 @@ import { patchImage } from './methods/patchImage';
 import { createClientNewsletter } from './methods/createClientNewsletter';
 import { createCardClient } from './methods/createCardClient';
 import { updateUserCreditCardDefault } from './methods/updateUserCreditCardDefault';
+import { eraseCardClient } from './methods/eraseCardClient';
+import { readCardsClient } from './methods/readCardsClient';
 
 @injectable()
 class ClientController {
@@ -40,6 +42,8 @@ class ClientController {
   public createClientNewsletter = createClientNewsletter;
   public createCardClient = createCardClient;
   public updateUserCreditCardDefault = updateUserCreditCardDefault;
+  public eraseCardClient = eraseCardClient;
+  public readCardsClient = readCardsClient;
 }
 
 export default ClientController;

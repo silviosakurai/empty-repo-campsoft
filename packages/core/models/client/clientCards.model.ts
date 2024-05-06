@@ -19,6 +19,7 @@ export const clientCards = mysqlTable("cliente_cartoes", {
   fingerprint: char("fingerprint", { length: 30 }),
   valid: tinyint("valid"),
   brand: char("brand", { length: 20 }),
+  holder_name: varchar("holder_name", { length: 100 }).notNull(),
   first_digits: char("first_digits", { length: 10 }),
   last_digits: char("last_digits", { length: 8 }),
   expiration_month: char("expiration_month", { length: 2 }),

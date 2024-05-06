@@ -1,4 +1,4 @@
-import WebhookController from '@/controllers/webhook';
+import WebhookController from '../controllers/webhook';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import { webhookPaymentSchema } from '@core/validations/webhook';

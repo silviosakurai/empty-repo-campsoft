@@ -1,2 +1,3 @@
 turbo run lint --filter=manager
 turbo run lint --filter=public
+turbo run lint --filter=tools

@@ -1,5 +1,13 @@
 import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 
+export interface IClientConnectClient {
+  clientId: string;
+  cpf?: string;
+  phoneNumber?: string;
+  email?: string;
+  status?: ClientCompanyStatus;
+}
+
 export interface IClientConnectClientAndCompany {
   clientId: string;
   companyId: number;

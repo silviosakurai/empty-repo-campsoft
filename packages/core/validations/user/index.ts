@@ -20,5 +20,8 @@ export * from "./userActivatePasswordSchema.validation";
 export * from "./patchUserShippingAddressSchema.validation";
 export * from "./patchUserImageSchema.validation";
 export * from "./listUserWithCompaniesSchema.validation";
+export * from "./userCreatorPartnerSchema.validation";
 export * from "./createUserCreditCardSchema.validation";
 export * from "./updateUserCreditCardDefaultSchema.validation";
+export * from "./listUserCreditCardSchema.validation";
+export * from "./userCreditCardDeleteSchema.validation";

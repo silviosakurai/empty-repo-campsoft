@@ -13,10 +13,20 @@ export const createCardClient = async (
   const { t, tokenJwtData, body } = request;
 
   try {
-    await service.create(tokenJwtData.clientId, t, body);
+    const result = await service.create(tokenJwtData.clientId, t, body);
+
+    if (!result) {
+      return sendResponse(reply, {
+        message: t('something_went_wrong_to_generate_credit_card'),
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     return sendResponse(reply, {
       httpStatusCode: HTTPStatusCode.CREATED,
+      data: {
+        card_id: result.id,
+      },
     });
   } catch (error) {
     request.server.logger.error(error, request.id);

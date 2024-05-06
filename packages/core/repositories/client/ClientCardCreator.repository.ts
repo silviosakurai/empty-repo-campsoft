@@ -22,6 +22,7 @@ export class ClientCardCreatorRepository {
         useGrouping: false,
       }),
       expiration_year: input.expiration_year.toString(),
+      holder_name: input.holder_name,
       first_digits: input.first4Digits,
       last_digits: input.last4Digits,
       id_cliente: sql`UUID_TO_BIN(${clientId})`,
