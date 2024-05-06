@@ -1,18 +1,13 @@
 import "reflect-metadata";
 import fastify from "fastify";
-import { paidSuccess } from "./events/paidSuccess.event";
 import websocketPlugin from "@core/plugins/websocket";
+import routes from "./routes";
 
 const server = fastify({
   logger: true,
 });
 server.register(websocketPlugin);
-
-server.register(async function (server) {
-  server.get("/", { websocket: true }, (socket, req) => {
-    paidSuccess(socket);
-  });
-});
+server.register(routes);
 
 server.listen({ port: 3003, host: "0.0.0.0" }, (err, address) => {
   if (err) {
