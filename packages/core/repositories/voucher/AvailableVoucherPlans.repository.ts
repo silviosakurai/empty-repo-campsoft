@@ -20,10 +20,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { currentTime } from "@core/common/functions/currentTime";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
-import {
-  CouponRescueItemDeleted,
-  CouponRescueItemTypeTime,
-} from "@core/common/enums/models/coupon";
+import { CouponRescueItemTypeTime } from "@core/common/enums/models/coupon";
 import { Status } from "@core/common/enums/Status";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import {
@@ -121,7 +118,6 @@ export class AvailableVoucherPlansRepository {
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_resgatar_codigo, voucher),
           eq(clientSignature.id_parceiro, tokenKeyData.id_parceiro),
-          eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(plan.status, Status.ACTIVE)
         )
       )
@@ -191,7 +187,6 @@ export class AvailableVoucherPlansRepository {
       .where(
         and(
           eq(couponRescueCode.cupom_resgatar_codigo, voucher),
-          eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(plan.status, Status.ACTIVE),
           eq(couponRescue.id_parceiro, tokenKeyData.id_parceiro)
         )
