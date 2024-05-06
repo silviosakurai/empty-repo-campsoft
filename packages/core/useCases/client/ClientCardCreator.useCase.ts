@@ -27,6 +27,7 @@ export class ClientCardCreatorUseCase {
       expiration_month: +input.expiration_month,
       expiration_year: +input.expiration_year,
       externalId: creditCard.card.id,
+      holder_name: input.holder_name,
       first4Digits: creditCard.card.first4_digits.toLocaleString("en-us", {
         minimumIntegerDigits: 4,
       }),

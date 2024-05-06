@@ -16,6 +16,7 @@ export class ClientCardViewerRepository {
         card_id: sql<string>`BIN_TO_UUID(${clientCards.card_id})`,
         external_id: clientCards.id_externo,
         brand: clientCards.brand,
+        holder_name: clientCards.holder_name,
         first_digits: clientCards.first_digits,
         expiration_month: sql`${clientCards.expiration_month}`.mapWith(Number),
         expiration_year: sql`${clientCards.expiration_year}`.mapWith(Number),

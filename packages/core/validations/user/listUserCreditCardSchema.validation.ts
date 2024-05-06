@@ -30,6 +30,7 @@ export const listUserCreditCardSchema = {
           Type.Object({
             card_id: Type.String(),
             brand: Type.String(),
+            holder_name: Type.String(),
             first_digits: Type.String({ maxLength: 4 }),
             last_digits: Type.String({ maxLength: 4 }),
             expiration_month: Type.String({ maxLength: 2 }),
