@@ -17,6 +17,7 @@ export class ClientCardListerByClientIdRepository {
         external_id: clientCards.id_externo,
         brand: clientCards.brand,
         first_digits: clientCards.first_digits,
+        last_digits: clientCards.last_digits,
         expiration_month: sql`${clientCards.expiration_month}`.mapWith(Number),
         expiration_year: sql`${clientCards.expiration_year}`.mapWith(Number),
         default: clientCards.default,

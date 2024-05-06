@@ -21,6 +21,7 @@ import {
   createUserNewsletterSchema,
   createUserCreditCardSchema,
   updateUserCreditCardDefaultSchema,
+  listUserCreditCardSchema,
   userCreditCardDeleteSchema,
 } from '@core/validations/user';
 import {
@@ -43,6 +44,7 @@ import {
   userVoucherPermissions,
   userCreditCardDefaultUpdatePermissions,
   userCreditCardDeletePermissions,
+  userCreditCardListPermissions,
 } from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -334,6 +336,21 @@ export default async function clientRoutes(server: FastifyInstance) {
         ),
       (request, reply) =>
         server.authenticateJwt(request, reply, userCreditCardDeletePermissions),
+    ],
+  });
+
+  server.get('/user/credit-card', {
+    handler: clientController.readCardsClient,
+    schema: listUserCreditCardSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardListPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userCreditCardListPermissions),
     ],
   });
 }

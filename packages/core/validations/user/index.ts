@@ -22,4 +22,5 @@ export * from "./listUserWithCompaniesSchema.validation";
 export * from "./userCreatorPartnerSchema.validation";
 export * from "./createUserCreditCardSchema.validation";
 export * from "./updateUserCreditCardDefaultSchema.validation";
+export * from "./listUserCreditCardSchema.validation";
 export * from "./userCreditCardDeleteSchema.validation";

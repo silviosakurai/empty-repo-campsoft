@@ -61,3 +61,7 @@ export const userCreditCardDefaultUpdatePermissions = [
 export const userCreditCardDeletePermissions = [
   PermissionsRoles.USER_CREDIT_CARD_DELETE,
 ];
+
+export const userCreditCardListPermissions = [
+  PermissionsRoles.USER_CREDIT_CARD_LIST,
+];
