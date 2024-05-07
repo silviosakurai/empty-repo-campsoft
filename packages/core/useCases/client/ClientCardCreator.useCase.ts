@@ -27,6 +27,7 @@ export class ClientCardCreatorUseCase {
       expiration_month: +input.expiration_month,
       expiration_year: +input.expiration_year,
       externalId: creditCard.card.id,
+      holder_name: input.holder_name,
       first4Digits: creditCard.card.first4_digits.toLocaleString("en-us", {
         minimumIntegerDigits: 4,
       }),
@@ -34,6 +35,10 @@ export class ClientCardCreatorUseCase {
       brand: creditCard.card.card_brand,
       tokenId: creditCard.id,
     });
+
+    if (!result) {
+      return result;
+    }
 
     const cards = await this.clientService.listCreditCards(clientId);
 
@@ -53,7 +58,7 @@ export class ClientCardCreatorUseCase {
       customer: externalId,
     });
 
-    return result;
+    return { id: creditCard.id };
   }
 
   private async generateExternalId(

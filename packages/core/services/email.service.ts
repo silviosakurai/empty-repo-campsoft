@@ -73,6 +73,16 @@ export class EmailService implements IEmailService {
     );
   }
 
+  public async getTemplateEmailModuleToPartner(
+    partnerIds: number[],
+    templateModulo: TemplateModulo
+  ): Promise<ITemplateEmail | null> {
+    return this.emailListerRepository.getTemplateEmailToPartner(
+      partnerIds,
+      templateModulo
+    );
+  }
+
   public async getTemplateEmail(
     tokenKeyData: ITokenKeyData,
     templateModulo: TemplateModulo,
@@ -80,6 +90,25 @@ export class EmailService implements IEmailService {
   ): Promise<ITemplateEmail | null> {
     const template = await this.getTemplateEmailModule(
       tokenKeyData,
+      templateModulo
+    );
+
+    if (!template) {
+      return null;
+    }
+
+    template.template = replaceTemplate(template.template, rTemplate);
+
+    return template;
+  }
+
+  public async getTemplateEmailToPartner(
+    partnerIds: number[],
+    templateModulo: TemplateModulo,
+    rTemplate: IReplaceTemplate
+  ): Promise<ITemplateEmail | null> {
+    const template = await this.getTemplateEmailModuleToPartner(
+      partnerIds,
       templateModulo
     );
 
@@ -100,6 +129,49 @@ export class EmailService implements IEmailService {
   ): Promise<boolean> {
     const template = await this.getTemplateEmail(
       tokenKeyData,
+      templateModulo,
+      rTemplate
+    );
+
+    if (!template) {
+      return false;
+    }
+
+    const payload = {
+      html: template.template,
+      subject: template.subject,
+      to: notificationTemplate.email,
+      from: template.sender,
+    } as IEmailSendService;
+
+    const sendEmail = await this.send(payload);
+
+    const emailToken = sendEmail.MessageId ?? "";
+    const sendDate = currentTime();
+
+    if (sendEmail) {
+      await this.emailListerRepository.insertEmailHistory(
+        template.templateId,
+        notificationTemplate,
+        template.sender,
+        emailToken,
+        sendDate
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+
+  public async sendEmailToPartner(
+    partnerIds: number[],
+    notificationTemplate: NotificationTemplate,
+    templateModulo: TemplateModulo,
+    rTemplate: IReplaceTemplate
+  ): Promise<boolean> {
+    const template = await this.getTemplateEmailToPartner(
+      partnerIds,
       templateModulo,
       rTemplate
     );

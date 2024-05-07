@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import {
   getUserByIdSchema,
   listUserWithCompaniesSchema,
+  userCreatorPartnerSchema,
   userDeleteByIdSchema,
   userSendSsoSchema,
   userUpdateByIdSchema,
@@ -28,6 +29,15 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
   });
 
+  server.post('/users', {
+    schema: userCreatorPartnerSchema,
+    handler: clientController.create,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userListPermissions),
+    ],
+  });
+
   server.put('/users/:userId', {
     schema: userUpdateByIdSchema,
     handler: clientController.update,
@@ -35,6 +45,15 @@ export default async function clientRoutes(server: FastifyInstance) {
       (request, reply) =>
         server.authenticateJwt(request, reply, userUpdatePermissions),
     ],
+  });
+
+  server.patch('/users/:userId/send-sso', {
+    schema: userSendSsoSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userSendSsoPermissions),
+    ],
+    handler: clientController.sendSso,
   });
 
   server.patch('/users/:userId/send-sso', {
@@ -63,5 +82,4 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
     handler: clientController.delete,
   });
-
 }
