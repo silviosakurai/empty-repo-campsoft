@@ -38,6 +38,7 @@ export enum PermissionsRoles {
   PLAN_LIST = "plan_list",
   PLAN_VIEW = "plan_view",
   PLAN_UPGRADES = "plan_upgrades",
+  PLAN_CREATE = "plan_create",
   PRODUCT_LIST = "product_list",
   PRODUCT_VIEW = "product_view",
   PRODUCT_CROSS_SELL = "product_cross_sell",

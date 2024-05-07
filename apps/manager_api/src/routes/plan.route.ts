@@ -4,8 +4,13 @@ import { container } from 'tsyringe';
 import {
   getPlanByCompanySchema,
   listPlanByCompanySchema,
+  postPlanSchema,
 } from '@core/validations/plan';
-import { planListPermissions, planViewPermissions } from '@/permissions';
+import {
+  planCreatePermissions,
+  planListPermissions,
+  planViewPermissions,
+} from '@/permissions';
 
 export default async function planRoutes(server: FastifyInstance) {
   const planController = container.resolve(PlanController);
@@ -25,6 +30,15 @@ export default async function planRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(request, reply, planViewPermissions),
+    ],
+  });
+
+  server.post('/plans', {
+    schema: postPlanSchema,
+    handler: planController.create,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, planCreatePermissions),
     ],
   });
 }
