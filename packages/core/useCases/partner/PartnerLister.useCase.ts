@@ -1,4 +1,4 @@
-import { PartnerService, ProductService } from "@core/services";
+import { PartnerService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ListPartnerResponse } from "@core/useCases/partner/dtos/ListPartnerResponse.dto";
 import { ListPartnerRequest } from "./dtos/ListPartnerRequest.dto";
