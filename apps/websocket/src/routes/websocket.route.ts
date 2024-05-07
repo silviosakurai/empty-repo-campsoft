@@ -1,8 +1,15 @@
 import { FastifyInstance } from "fastify";
-import { paidSuccess } from "../events/paidSuccess.event";
+import {
+  addClientAsListener,
+  removeClientAsListener,
+} from "@/functions/websocket";
 
 export default async function websocketRoute(server: FastifyInstance) {
   server.get("/", { websocket: true }, (socket, req) => {
-    paidSuccess(socket);
+    addClientAsListener(socket);
+
+    socket.on("close", () => {
+      removeClientAsListener(socket);
+    });
   });
 }
