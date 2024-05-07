@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, asc, desc, SQLWrapper, sql, SQL } from "drizzle-orm";
+import { eq, and, asc, desc, SQLWrapper, sql, inArray } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import {
@@ -20,7 +20,6 @@ import { ProductListerRepository } from "../product/ProductLister.repository";
 import { ProductGroupProductListerRepository } from "../product/ProductGroupProductLister.repository";
 import { ListPlanResponse } from "@core/useCases/plan/dtos/ListPlanResponse.dto";
 import { ViewPlanRepositoryResponse } from "@core/interfaces/repositories/plan";
-import { inArray } from "drizzle-orm";
 
 @injectable()
 export class PlanListerWithProductsRepository {
