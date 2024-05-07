@@ -21,7 +21,7 @@ export class CouponService {
     tokenKeyData: ITokenKeyData,
     couponCode: string,
     planId: number,
-    selectedProducts: string[] | null
+    selectedProducts: string[] | null | undefined
   ): Promise<ICouponVerifyEligibilityUser[] | null> => {
     return this.couponListerRepository.verifyEligibilityCoupon(
       tokenKeyData,
@@ -91,7 +91,7 @@ export class CouponService {
       tokenKeyData,
       payload.coupon_code,
       payload.plan.plan_id,
-      payload.products
+      payload?.products
     );
 
     if (!isEligibility || isEligibility.length === 0) {

@@ -7,7 +7,7 @@ import { planDetailsWithProductsSelectedSchema } from "../plan/planDetailsWithPr
 export const orderListSchema = Type.Object({
   order_id: Type.String(),
   client_id: Type.String(),
-  seller_id: Type.String(),
+  seller_id: Type.String({ nullable: true }),
   status: Type.String(),
   totals: orderTotalsSchema,
   installments: paymentInstallmentsSchema,

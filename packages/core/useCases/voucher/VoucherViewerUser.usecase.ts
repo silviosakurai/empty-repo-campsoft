@@ -39,22 +39,25 @@ export class VoucherViewerUserUseCase {
     const isClientSignatureActive =
       await this.voucherService.isClientSignatureActive(tokenJwtData);
 
-    const [listProductsUserResult, listPlansUserResult] = await Promise.all([
-      this.voucherService.listVoucherEligibleProductsUser(
-        tokenKeyData,
-        tokenJwtData,
-        voucher,
-        isClientSignatureActive
-      ),
-      this.voucherService.listVoucherEligiblePlansUser(
-        tokenKeyData,
-        tokenJwtData,
-        voucher,
-        isClientSignatureActive
-      ),
-    ]);
+    const [getVoucherDetails, listProductsUserResult, listPlansUserResult] =
+      await Promise.all([
+        this.voucherService.getVoucherDetails(tokenKeyData, voucher),
+        this.voucherService.listVoucherEligibleProductsUser(
+          tokenKeyData,
+          tokenJwtData,
+          voucher,
+          isClientSignatureActive
+        ),
+        this.voucherService.listVoucherEligiblePlansUser(
+          tokenKeyData,
+          tokenJwtData,
+          voucher,
+          isClientSignatureActive
+        ),
+      ]);
 
     return {
+      voucher: getVoucherDetails,
       products: listProductsUserResult,
       plan:
         listPlansUserResult && listPlansUserResult?.length > 0

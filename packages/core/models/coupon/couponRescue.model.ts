@@ -6,10 +6,7 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import {
-  CouponRescueDeleted,
-  CouponRescueStatus,
-} from "@core/common/enums/models/coupon";
+import { CouponRescueStatus } from "@core/common/enums/models/coupon";
 
 export const couponRescue = mysqlTable("cupom_resgatar", {
   id_cupom_resgatar: int("id_cupom_resgatar").notNull().primaryKey(),
@@ -29,10 +26,4 @@ export const couponRescue = mysqlTable("cupom_resgatar", {
   updated_at: datetime("updated_at", { mode: "string" }).default(
     sql`CURRENT_TIMESTAMP`
   ),
-  deleted: mysqlEnum("deleted", [
-    CouponRescueDeleted.YES,
-    CouponRescueDeleted.NO,
-  ])
-    .notNull()
-    .default(CouponRescueDeleted.NO),
 });

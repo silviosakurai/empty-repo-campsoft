@@ -1,3 +1,4 @@
+import { CouponRescueStatus } from "@core/common/enums/models/coupon";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
 
 export interface IVerifyEligibilityUser {
@@ -69,4 +70,12 @@ export interface AvailableProducts {
 export interface IVoucherProductsAndPlans {
   products: ProductDetail[] | null;
   plan: PlanDetails | null;
+}
+
+export interface IGetVoucherInfo {
+  status: CouponRescueStatus;
+  name: string;
+  expires_at: string;
+  code: string;
+  months: number;
 }
