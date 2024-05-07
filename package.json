@@ -32,7 +32,9 @@
     "docker:public": "docker build -f apps/public_api/Dockerfile -t mania-public .",
     "docker:manager": "docker build -f apps/manager_api/Dockerfile -t mania-manager .",
     "docker:tools": "docker build -f apps/tools/Dockerfile -t mania-tools .",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
