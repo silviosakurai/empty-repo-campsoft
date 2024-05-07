@@ -1,8 +1,8 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { HTTPStatusCode } from "@core/common/enums/HTTPStatusCode";
-import { sendResponse } from "@core/common/functions/sendResponse";
-import { EventEnum } from "@/types/EventEnum";
-import { sendMessageToClients } from "@/functions/websocket";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
+import { sendResponse } from '@core/common/functions/sendResponse';
+import { EventEnum } from '@/types/EventEnum';
+import { sendMessageToClients } from '@/functions/websocket';
 
 export const payment = async (
   request: FastifyRequest<{ Params: { id: string } }>,

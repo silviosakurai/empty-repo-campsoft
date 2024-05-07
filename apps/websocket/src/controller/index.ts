@@ -1,5 +1,5 @@
-import { injectable } from "tsyringe";
-import { payment } from "./methods/payment";
+import { injectable } from 'tsyringe';
+import { payment } from './methods/payment';
 
 @injectable()
 export class WebsocketController {

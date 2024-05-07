@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import fastify from "fastify";
-import websocketPlugin from "@core/plugins/websocket";
-import routes from "./routes";
+import 'reflect-metadata';
+import fastify from 'fastify';
+import websocketPlugin from '@core/plugins/websocket';
+import routes from './routes';
 
 const server = fastify({
   logger: true,
@@ -9,7 +9,7 @@ const server = fastify({
 server.register(websocketPlugin);
 server.register(routes);
 
-server.listen({ port: 3003, host: "0.0.0.0" }, (err, address) => {
+server.listen({ port: 3003, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.log(err);
     server.log.error(err);

@@ -1,3 +1,3 @@
 export enum EventEnum {
-  paidSuccess = "paid_success",
+  paidSuccess = 'paid_success',
 }

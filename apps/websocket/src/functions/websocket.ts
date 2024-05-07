@@ -1,4 +1,4 @@
-import { WebSocket } from "@fastify/websocket";
+import { WebSocket } from '@fastify/websocket';
 
 const clients: WebSocket[] = [];
 
