@@ -1,14 +1,14 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance } from 'fastify';
 import {
   addClientAsListener,
   removeClientAsListener,
-} from "@/functions/websocket";
+} from '@/functions/websocket';
 
 export default async function websocketRoute(server: FastifyInstance) {
-  server.get("/", { websocket: true }, (socket, req) => {
+  server.get('/', { websocket: true }, (socket) => {
     addClientAsListener(socket);
 
-    socket.on("close", () => {
+    socket.on('close', () => {
       removeClientAsListener(socket);
     });
   });
