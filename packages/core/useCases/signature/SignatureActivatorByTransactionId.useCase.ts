@@ -22,6 +22,6 @@ export class SignatureActivatorByTransactionIdUseCase {
       true
     );
 
-    return true;
+    return order;
   }
 }
