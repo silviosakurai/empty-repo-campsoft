@@ -21,7 +21,7 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           'Seja bem-vindo ao Mania de App! Nesta documentação, apresentaremos uma visão detalhada da API. Através deste guia, você obterá uma compreensão abrangente do desenvolvimento, implementação e manutenção deste projeto.',
         version: '1.0.0',
       },
-      host: generalEnvironment.appUrlTools,
+      host: generalEnvironment.appUrlWebhooks,
       schemes: [generalEnvironment.protocol],
       consumes: ['application/json'],
       produces: ['application/json'],
