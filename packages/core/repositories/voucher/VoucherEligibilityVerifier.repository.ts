@@ -53,7 +53,7 @@ export class VoucherEligibilityVerifierRepository {
   isProductsVoucherEligible = async (
     tokenKeyData: ITokenKeyData,
     voucher: string | null | undefined,
-    selectedProducts: string[] | null
+    selectedProducts: string[] | null | undefined
   ) => {
     if (!voucher) {
       return false;

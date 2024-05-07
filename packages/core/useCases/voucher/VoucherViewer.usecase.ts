@@ -23,18 +23,21 @@ export class VoucherViewerUseCase {
       throw new VoucherError(t("voucher_not_eligible"));
     }
 
-    const [listProductsUserResult, listPlansUserResult] = await Promise.all([
-      this.voucherService.listVoucherEligibleProductsNotSignatureUser(
-        tokenKeyData,
-        voucher
-      ),
-      this.voucherService.listVoucherEligiblePlansNotSignatureUser(
-        tokenKeyData,
-        voucher
-      ),
-    ]);
+    const [getVoucherDetails, listProductsUserResult, listPlansUserResult] =
+      await Promise.all([
+        this.voucherService.getVoucherDetails(tokenKeyData, voucher),
+        this.voucherService.listVoucherEligibleProductsNotSignatureUser(
+          tokenKeyData,
+          voucher
+        ),
+        this.voucherService.listVoucherEligiblePlansNotSignatureUser(
+          tokenKeyData,
+          voucher
+        ),
+      ]);
 
     return {
+      voucher: getVoucherDetails,
       products: listProductsUserResult,
       plan:
         listPlansUserResult && listPlansUserResult?.length > 0

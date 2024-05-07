@@ -8,17 +8,7 @@ export enum CouponRescueItemRedeem {
   NO = "N",
 }
 
-export enum CouponRescueItemDeleted {
-  YES = "Y",
-  NO = "N",
-}
-
 export enum CouponRescueStatus {
   ACTIVE = "ativo",
   INACTIVE = "inativo",
-}
-
-export enum CouponRescueDeleted {
-  YES = "Y",
-  NO = "N",
 }

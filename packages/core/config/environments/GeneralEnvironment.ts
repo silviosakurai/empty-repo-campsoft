@@ -10,6 +10,7 @@ export class GeneralEnvironment {
   private readonly APP_ENVIRONMENT: AppEnvironment | undefined;
   private readonly APP_URL_PUBLIC: string | undefined;
   private readonly APP_URL_MANAGER: string | undefined;
+  private readonly APP_URL_TOOLS: string | undefined;
   private readonly JWT_SECRET: string | undefined;
   private readonly JWT_SECRET_EXPIRES_IN: string | undefined;
   private readonly BASE_URL_CAMPSOFT_API: string | undefined;
@@ -23,6 +24,7 @@ export class GeneralEnvironment {
       .APP_ENVIRONMENT as unknown as AppEnvironment;
     this.APP_URL_PUBLIC = process.env.APP_URL_PUBLIC;
     this.APP_URL_MANAGER = process.env.APP_URL_MANAGER;
+    this.APP_URL_TOOLS = process.env.APP_URL_TOOLS;
     this.JWT_SECRET = process.env.JWT_SECRET;
     this.JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
     this.API_KEY_CAMPSOFT = process.env.API_KEY_CAMPSOFT;
@@ -63,6 +65,14 @@ export class GeneralEnvironment {
     }
 
     return this.APP_URL_MANAGER;
+  }
+
+  public get appUrlTools(): string {
+    if (!this.APP_URL_TOOLS) {
+      throw new InvalidConfigurationError("APP_URL_TOOLS is not defined.");
+    }
+
+    return this.APP_URL_TOOLS;
   }
 
   public get jwtSecret(): string {

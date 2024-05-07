@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import {
   getUserByIdSchema,
   listUserWithCompaniesSchema,
+  userCreatorPartnerSchema,
   userDeleteByIdSchema,
   userSendSsoSchema,
   userUpdateByIdSchema,
@@ -22,6 +23,15 @@ export default async function clientRoutes(server: FastifyInstance) {
   server.get('/users', {
     schema: listUserWithCompaniesSchema,
     handler: clientController.list,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userListPermissions),
+    ],
+  });
+
+  server.post('/users', {
+    schema: userCreatorPartnerSchema,
+    handler: clientController.create,
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(request, reply, userListPermissions),

@@ -1,13 +1,11 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
-import { UpdateProductDetailHowToAccessRequest } from '@core/useCases/product/dtos/UpdateProductDetaiHowToAccessRequest.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { ProductsDetailHowToAccessDeleterUseCase } from '@core/useCases/product/ProductsDetailHowToAccessDeleter.useCase';
 
 export const deleteProductDetailHowToAccess = async (
   request: FastifyRequest<{
-    Body: UpdateProductDetailHowToAccessRequest;
     Params: { sku: string };
   }>,
   reply: FastifyReply
@@ -24,7 +22,6 @@ export const deleteProductDetailHowToAccess = async (
         tokenJwtData,
         {
           productId: request.params.sku,
-          request: request.body,
         }
       );
 

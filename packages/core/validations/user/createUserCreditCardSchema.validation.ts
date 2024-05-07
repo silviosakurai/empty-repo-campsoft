@@ -28,7 +28,9 @@ export const createUserCreditCardSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Object({}),
+        data: Type.Object({
+          card_id: Type.String(),
+        }),
       },
       { description: "Successful" }
     ),
