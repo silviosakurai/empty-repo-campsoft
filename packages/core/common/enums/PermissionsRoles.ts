@@ -34,6 +34,7 @@ export enum PermissionsRoles {
   ORDER_PAYMENT_PIX = "order_payment_pix",
   PARTNER_LIST = "partner_list",
   PARTNER_CREATE = "partner_create",
+  PARTNER_UPDATE = "partner_update",
   PARTNER_DELETE = "partner_delete",
   PLAN_LIST = "plan_list",
   PLAN_VIEW = "plan_view",

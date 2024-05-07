@@ -4,6 +4,7 @@ export * from "./cache.service";
 export * from "./client.service";
 export * from "./email.service";
 export * from "./logger.service";
+export * from "./partner.service";
 export * from "./plan.service";
 export * from "./product.service";
 export * from "./sms.service";

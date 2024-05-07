@@ -5,6 +5,7 @@
   "login_success": "Login com sucesso",
   "internal_server_error": "Erro interno do servidor",
   "client_not_found": "Cliente não encontrado",
+  "partner_not_found": "Parceiro não encontrado!",
   "product_not_found": "Produto não encontrado",
   "product_group_not_found": "Grupo de Produto não encontrado",
   "product_group_relation_not_found": "Relação de Produto com Grupo não encontrada",
