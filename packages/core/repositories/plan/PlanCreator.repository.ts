@@ -2,12 +2,11 @@ import * as schema from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { CreatePlanRequest } from "@core/useCases/plan/dtos/CreatePlanRequest.dto";
-import { inArray, sql } from "drizzle-orm";
+import { inArray, sql, eq } from "drizzle-orm";
 import {
   PlanPriceCreate,
   PlanVisivelSite,
 } from "@core/common/enums/models/plan";
-import { eq } from "drizzle-orm";
 import { Status } from "@core/common/enums/Status";
 
 @injectable()
