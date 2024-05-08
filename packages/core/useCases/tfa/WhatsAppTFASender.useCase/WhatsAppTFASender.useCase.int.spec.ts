@@ -1,8 +1,11 @@
+import "reflect-metadata";
 import { container } from "tsyringe";
 jest.mock("./");
 import { WhatsAppTFASenderUserCase } from "./";
 import { LoggerService } from "@core/services";
 import { WhatsAppListerRepository } from "@core/repositories/whatsapp/WhatsAppLister.repository";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
+import { TFAType } from "@core/common/enums/models/tfa";
 
 describe("Int::WhatsAppTFASenderUseCase", () => {
   let service: WhatsAppTFASenderUserCase;
@@ -34,5 +37,16 @@ describe("Int::WhatsAppTFASenderUseCase", () => {
     container.clearInstances();
   });
 
-  test("must generate a tfa token", async () => {});
+  test("must generate a tfa token", async () => {
+    const result = await service.execute({
+      loginUserTFA: { clientId: "123", login: "18999999999" },
+      tokenKeyData: {
+        acoes: [PermissionsRoles.TFA_SEND_CODE],
+        id_api_key: 1,
+        id_cargo: 1,
+        id_parceiro: 1,
+      },
+      type: TFAType.WHATSAPP,
+    });
+  });
 });
