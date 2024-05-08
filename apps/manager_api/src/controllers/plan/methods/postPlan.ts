@@ -16,7 +16,7 @@ export const postPlan = async (
 
   try {
     const response = await planCreatorUseCase.execute(request.body);
-
+    console.log(response);
     if (!response) {
       request.server.logger.warn(response, request.id);
 

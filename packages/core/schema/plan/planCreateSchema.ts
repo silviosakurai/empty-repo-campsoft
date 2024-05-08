@@ -2,6 +2,7 @@ import { Type } from "@sinclair/typebox";
 import { pricesMonthSchema } from "../price/pricesMonthSchema";
 
 export const planCreateSchema = Type.Object({
+  plan_id: Type.Optional(Type.Number()),
   visible_site: Type.Boolean(),
   business_id: Type.Number(),
   plan: Type.String(),
