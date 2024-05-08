@@ -20,7 +20,7 @@ server.addHook('preValidation', requestHook);
 server.addHook('onSend', responseHook);
 server.addHook('onError', errorHook);
 
-server.decorateRequest('module', RouteModule.TOOLS);
+server.decorateRequest('module', RouteModule.WEBHOOKS);
 
 server.register(dbConnector);
 server.register(loggerServicePlugin);
