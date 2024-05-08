@@ -7,6 +7,8 @@ import {
   PlanPriceCreate,
   PlanVisivelSite,
 } from "@core/common/enums/models/plan";
+import { eq } from "drizzle-orm";
+import { Status } from "@core/common/enums/Status";
 
 @injectable()
 export class PlanCreatorRepository {
@@ -20,12 +22,14 @@ export class PlanCreatorRepository {
       this.removeDuplicatesValuesFromArray(input.product_groups),
     ];
 
-    const [checkProductsIds, checkProductGroupsIds] = await Promise.all([
-      this.checkIfProductsExists(productsIds),
-      this.checkIfProductGroupsExists(productGroupsIds),
-    ]);
+    const [checkProductsIds, checkProductGroupsIds, checkPartner] =
+      await Promise.all([
+        this.checkIfProductsExists(productsIds),
+        this.checkIfProductGroupsExists(productGroupsIds),
+        this.checkIfPartnerExists(input.business_id),
+      ]);
 
-    if (!checkProductsIds || !checkProductGroupsIds) {
+    if (!checkProductsIds || !checkProductGroupsIds || !checkPartner) {
       return false;
     }
 
@@ -37,6 +41,7 @@ export class PlanCreatorRepository {
           : PlanVisivelSite.NO,
         descricao: input.description,
         descricao_curta: input.short_description,
+        status: Status.ACTIVE,
       })
       .execute();
 
@@ -44,17 +49,27 @@ export class PlanCreatorRepository {
       return false;
     }
 
-    this.createPlanPrices(
-      result[0].insertId,
-      input.prices as PlanPriceCreate[]
-    );
-    this.createPlanItens(result[0].insertId, productsIds);
+    const [isPlanPriceCreated, isPlanItemCreated, isPlanPartnerCreated] =
+      await Promise.all([
+        this.createPlanPrices(
+          result[0].insertId,
+          input.prices as PlanPriceCreate[]
+        ),
+        this.createPlanItens(result[0].insertId, productsIds),
+        this.createPlanPartner(result[0].insertId, input.business_id),
+      ]);
+
+    if (!isPlanPriceCreated || !isPlanItemCreated || !isPlanPartnerCreated) {
+      return false;
+    }
     return true;
   }
 
   private createPlanPrices(planId: number, prices: PlanPriceCreate[]) {
+    let isPlanPriceSaved = true;
+
     prices.map(async (price) => {
-      await this.db
+      const result = await this.db
         .insert(schema.planPrice)
         .values({
           id_plano: planId,
@@ -64,19 +79,93 @@ export class PlanCreatorRepository {
           meses: price.months,
         })
         .execute();
+
+      if (!result.length) {
+        isPlanPriceSaved = false;
+      }
     });
+
+    if (!isPlanPriceSaved) {
+      this.deletePlan(planId);
+      return false;
+    }
+
+    return true;
   }
 
   private createPlanItens(planId: number, itens: string[]) {
+    let isPlanItemSaved = true;
+
     itens.map(async (item) => {
-      await this.db
+      const result = await this.db
         .insert(schema.planItem)
         .values({
           id_plano: planId,
           id_produto: item,
         })
         .execute();
+
+      if (!result.length) {
+        isPlanItemSaved = false;
+      }
     });
+
+    if (!isPlanItemSaved) {
+      this.deletePlan(planId);
+      return false;
+    }
+
+    return true;
+  }
+
+  private async createPlanPartner(
+    planId: number,
+    partnerId: number
+  ): Promise<boolean> {
+    const result = await this.db
+      .insert(schema.planPartner)
+      .values({
+        id_plano: planId,
+        id_parceiro: partnerId,
+      })
+      .execute();
+
+    if (!result.length) {
+      this.deletePlan(planId);
+      return false;
+    }
+    return true;
+  }
+
+  private async deletePlan(planId: number) {
+    await Promise.all([
+      this.db
+        .delete(schema.planPartner)
+        .where(eq(schema.planPartner.id_plano, planId)),
+      this.db
+        .delete(schema.planItem)
+        .where(eq(schema.planPartner.id_plano, planId)),
+      this.db
+        .delete(schema.planPrice)
+        .where(eq(schema.planPartner.id_plano, planId)),
+      this.db
+        .delete(schema.plan)
+        .where(eq(schema.planPartner.id_plano, planId)),
+    ]);
+  }
+
+  async checkIfPartnerExists(partnerId: number) {
+    const result = await this.db
+      .select({ partner_id: schema.partner.id_parceiro })
+      .from(schema.partner)
+      .where(eq(schema.partner.id_parceiro, partnerId))
+      .execute();
+
+    if (!result.length) {
+      return false;
+    }
+
+    return true;
   }
 
   async checkIfProductsExists(productIds: string[]) {
