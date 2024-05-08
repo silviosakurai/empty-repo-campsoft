@@ -53,7 +53,7 @@ describe("Unit::WhatsAppTFASenderUserCase", () => {
     };
     const mockReplaceTemplate = { code: mockGeneratedCode };
 
-    await whatsappTFASender.execute(mockRequest);
+    const result = await whatsappTFASender.execute(mockRequest);
 
     expect(mockTfaService.generateAndVerifyToken).toHaveBeenCalled();
     expect(mockWhatsappService.sendWhatsapp).toHaveBeenCalledWith(
@@ -67,6 +67,7 @@ describe("Unit::WhatsAppTFASenderUserCase", () => {
       mockRequest.loginUserTFA,
       mockGeneratedCode
     );
+    expect(result).toBeTruthy();
   });
 
   test("Executes WhatsApp message sending and returns an error if token generation fails", async () => {
