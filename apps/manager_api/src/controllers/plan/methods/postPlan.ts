@@ -16,19 +16,19 @@ export const postPlan = async (
 
   try {
     const response = await planCreatorUseCase.execute(request.body);
-    console.log(response);
+
     if (!response) {
       request.server.logger.warn(response, request.id);
 
       return sendResponse(reply, {
-        message: t('error_create_product'),
-        httpStatusCode: HTTPStatusCode.NOT_FOUND,
+        message: t('error_create_plan'),
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
       });
     }
 
     return sendResponse(reply, {
       data: request.body,
-      httpStatusCode: HTTPStatusCode.OK,
+      httpStatusCode: HTTPStatusCode.CREATED,
     });
   } catch (error) {
     request.server.logger.error(error, request.id);

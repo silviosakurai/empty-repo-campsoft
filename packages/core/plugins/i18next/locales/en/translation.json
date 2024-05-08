@@ -37,6 +37,7 @@
   "error_list_products_order": "Error list products order!",
   "error_create_signature_products": "Error create signature products!",
   "error_create_product": "Error create products!",
+  "error_create_plan": "Error create plans!",
   "payment_method_not_card": "For recurring subscription, the payment method must be a card",
   "payment_method_invalid": "Payment method invalid!",
   "previous_order_not_found": "Previous order not found!",

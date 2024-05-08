@@ -19,7 +19,7 @@ export class PlanCreatorRepository {
   async create(input: CreatePlanRequest): Promise<boolean> {
     const [productsIds, productGroupsIds] = [
       this.removeDuplicatesValuesFromArray(input.products),
-      this.removeDuplicatesValuesFromArray(input.product_groups),
+      input.product_groups,
     ];
 
     const [checkProductsIds, checkProductGroupsIds, checkPartner] =
@@ -29,7 +29,12 @@ export class PlanCreatorRepository {
         this.checkIfPartnerExists(input.business_id),
       ]);
 
-    if (!checkProductsIds || !checkProductGroupsIds || !checkPartner) {
+    if (
+      !checkProductsIds ||
+      !checkProductGroupsIds ||
+      !checkPartner ||
+      productsIds.length !== productGroupsIds.length
+    ) {
       return false;
     }
 
@@ -55,7 +60,7 @@ export class PlanCreatorRepository {
           result[0].insertId,
           input.prices as PlanPriceCreate[]
         ),
-        this.createPlanItens(result[0].insertId, productsIds),
+        this.createPlanItens(result[0].insertId, productsIds, productGroupsIds),
         this.createPlanPartner(result[0].insertId, input.business_id),
       ]);
 
@@ -93,22 +98,27 @@ export class PlanCreatorRepository {
     return true;
   }
 
-  private createPlanItens(planId: number, itens: string[]) {
+  private async createPlanItens(
+    planId: number,
+    productIds: string[],
+    productGroupIds: string[]
+  ) {
     let isPlanItemSaved = true;
 
-    itens.map(async (item) => {
+    for (var i = 0; i < productIds.length; i++) {
       const result = await this.db
         .insert(schema.planItem)
         .values({
           id_plano: planId,
-          id_produto: item,
+          id_produto: productIds[i],
+          id_produto_grupo: parseInt(productGroupIds[i]),
         })
         .execute();
 
       if (!result.length) {
         isPlanItemSaved = false;
       }
-    });
+    }
 
     if (!isPlanItemSaved) {
       this.deletePlan(planId);
