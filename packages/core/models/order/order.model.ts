@@ -23,6 +23,7 @@ export const order = mysqlTable("pedido", {
   id_parceiro: int("id_parceiro").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
   id_plano: int("id_plano"),
+  id_fi_contas_split_regra: int("id_fi_contas_split_regra").notNull(),
   recorrencia: mysqlEnum("recorrencia", [
     OrderRecorrencia.NO,
     OrderRecorrencia.YES,
