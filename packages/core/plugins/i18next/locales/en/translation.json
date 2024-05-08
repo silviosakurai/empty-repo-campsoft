@@ -66,6 +66,7 @@
   "product_update_not_allowed": "Product update not allowed!",
   "product_group_update_not_allowed": "Product Group update not allowed!",
   "banner_update_not_allowed": "Banner update not allowed!",
+  "product_group_products_list_not_allowed": "Product group product listing not allowed!",
   "error_update_product": "Error update products!",
   "token_not_found": "Token not found.",
   "token_generated_successfuly": "Token generated successfully!",
