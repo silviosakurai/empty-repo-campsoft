@@ -109,7 +109,7 @@ export class PlanCreatorRepository {
   ) {
     let isPlanItemSaved = true;
 
-    for (var i = 0; i < productIds.length; i++) {
+    for (let i = 0; i < productIds.length; i++) {
       const result = await this.db
         .insert(schema.planItem)
         .values({
