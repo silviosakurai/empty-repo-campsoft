@@ -16,57 +16,62 @@ export class PlanCreatorRepository {
   ) {}
 
   async create(input: CreatePlanRequest): Promise<boolean> {
-    const [productsIds, productGroupsIds] = [
-      this.removeDuplicatesValuesFromArray(input.products),
-      input.product_groups,
-    ];
+    const productIds = this.removeDuplicates(input.products);
+    const productGroupIds = input.product_groups;
 
-    const [checkProductsIds, checkProductGroupsIds, checkPartner] =
+    const [productsExist, productGroupsExist, partnerExists] =
       await Promise.all([
-        this.checkIfProductsExists(productsIds),
-        this.checkIfProductGroupsExists(productGroupsIds),
-        this.checkIfPartnerExists(input.business_id),
+        this.verifyProductsExistence(productIds),
+        this.verifyProductGroupsExistence(productGroupIds),
+        this.verifyPartnerExistence(input.business_id),
       ]);
 
     if (
-      !checkProductsIds ||
-      !checkProductGroupsIds ||
-      !checkPartner ||
-      productsIds.length !== productGroupsIds.length
+      !productsExist ||
+      !productGroupsExist ||
+      !partnerExists ||
+      productIds.length !== productGroupIds.length
     ) {
       return false;
     }
 
-    const result = await this.db
-      .insert(schema.plan)
-      .values({
-        visivel_site: input.visible_site
-          ? PlanVisivelSite.YES
-          : PlanVisivelSite.NO,
-        descricao: input.description,
-        descricao_curta: input.short_description,
-        status: Status.ACTIVE,
-      })
-      .execute();
-
-    if (!result.length) {
+    const planId = await this.createPlan(input);
+    if (planId === null) {
       return false;
     }
 
-    const [isPlanPriceCreated, isPlanItemCreated, isPlanPartnerCreated] =
-      await Promise.all([
-        this.createPlanPrices(
-          result[0].insertId,
-          input.prices as PlanPriceCreate[]
-        ),
-        this.createPlanItens(result[0].insertId, productsIds, productGroupsIds),
-        this.createPlanPartner(result[0].insertId, input.business_id),
-      ]);
+    const [pricesCreated, itemsCreated, partnerLinked] = await Promise.all([
+      this.createPlanPrices(planId, input.prices as PlanPriceCreate[]),
+      this.createPlanItems(planId, productIds, productGroupIds),
+      this.createPlanPartner(planId, input.business_id),
+    ]);
 
-    if (!isPlanPriceCreated || !isPlanItemCreated || !isPlanPartnerCreated) {
+    if (!pricesCreated || !itemsCreated || !partnerLinked) {
+      await this.deletePlan(planId);
       return false;
     }
+
     return true;
+  }
+
+  private async createPlan(input: CreatePlanRequest): Promise<number | null> {
+    try {
+      const result = await this.db
+        .insert(schema.plan)
+        .values({
+          visivel_site: input.visible_site
+            ? PlanVisivelSite.YES
+            : PlanVisivelSite.NO,
+          descricao: input.description,
+          descricao_curta: input.short_description,
+          status: Status.ACTIVE,
+        })
+        .execute();
+
+      return result[0]?.insertId ?? null;
+    } catch (error) {
+      return null;
+    }
   }
 
   private createPlanPrices(planId: number, prices: PlanPriceCreate[]) {
@@ -97,7 +102,7 @@ export class PlanCreatorRepository {
     return true;
   }
 
-  private async createPlanItens(
+  private async createPlanItems(
     planId: number,
     productIds: string[],
     productGroupIds: string[]
@@ -163,50 +168,37 @@ export class PlanCreatorRepository {
     ]);
   }
 
-  async checkIfPartnerExists(partnerId: number) {
+  async verifyPartnerExistence(partnerId: number) {
     const result = await this.db
       .select({ partner_id: schema.partner.id_parceiro })
       .from(schema.partner)
       .where(eq(schema.partner.id_parceiro, partnerId))
       .execute();
 
-    if (!result.length) {
-      return false;
-    }
-
-    return true;
+    return result.length > 0;
   }
 
-  async checkIfProductsExists(productIds: string[]) {
+  async verifyProductsExistence(productIds: string[]) {
     const result = await this.db
       .select({ product_id: schema.product.id_produto })
       .from(schema.product)
       .where(inArray(schema.product.id_produto, productIds))
       .execute();
 
-    if (result.length < productIds.length) {
-      return false;
-    }
-
-    return true;
+    return result.length === productIds.length;
   }
 
-  async checkIfProductGroupsExists(productGroupsIds: string[]) {
+  async verifyProductGroupsExistence(productGroupsIds: string[]) {
     const result = await this.db
       .select({ product_group_id: schema.productGroup.id_produto_grupo })
       .from(schema.productGroup)
       .where(inArray(sql`id_produto_grupo`.mapWith(String), productGroupsIds))
       .execute();
 
-    if (result.length < productGroupsIds.length) {
-      return false;
-    }
-
-    return true;
+    return result.length === productGroupsIds.length;
   }
 
-  private removeDuplicatesValuesFromArray(ids: string[]) {
-    const uniqueSet = new Set(ids);
-    return Array.from(uniqueSet);
+  private removeDuplicates(items: string[]): string[] {
+    return [...new Set(items)];
   }
 }
