@@ -126,5 +126,6 @@
   "error_generating_qr_code_pix": "Erro ao gerar QR Code PIX.",
   "amount_to_pay_invalid": "Valor a pagar inválido.",
   "resource_not_found": "Desculpe, o vendedor que você está tentando usar não existe ou foi excluído",
+  "forbidden": "Seu usuário não está autorizado a acessar este recurso.",
   "forbidden": "Seu usuário não está autorizado a acessar este recurso."
 }
