@@ -40,7 +40,8 @@ export class CreateOrderUseCase {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    splitRuleId: number
   ) {
     await this.orderValidationService.validatePaymentMethod(
       t,
@@ -129,7 +130,8 @@ export class CreateOrderUseCase {
       payload,
       totalPrices,
       userFounded,
-      totalPricesInstallments
+      totalPricesInstallments,
+      splitRuleId
     );
 
     if (!createOrder) {

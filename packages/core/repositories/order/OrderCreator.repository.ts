@@ -29,7 +29,8 @@ export class OrderCreatorRepository {
     payload: CreateOrderRequestDto,
     planPrice: PlanPrice,
     user: ViewClientResponse,
-    totalPricesInstallments: OrderCreatePaymentsCard
+    totalPricesInstallments: OrderCreatePaymentsCard,
+    splitRuleId: number
   ): Promise<CreateOrder | null> {
     const valuesObject: typeof schema.order.$inferInsert = {
       id_cliente:
@@ -37,6 +38,7 @@ export class OrderCreatorRepository {
       id_parceiro: tokenKeyData.id_parceiro,
       id_pedido_status: OrderStatusEnum.PENDING,
       id_plano: payload.plan.plan_id ?? null,
+      id_financeiro_split_regra: splitRuleId,
       recorrencia: payload.subscribe
         ? OrderRecorrencia.YES
         : OrderRecorrencia.NO,

@@ -5,6 +5,7 @@ import { CreateOrderUseCase } from '@core/useCases/order/CreateOrder.useCase';
 import { CreateOrderRequestDto } from '@core/useCases/order/dtos/CreateOrderRequest.dto';
 import { container } from 'tsyringe';
 import CreditCardExpirationDateIsInvalidError from '@core/common/exceptions/CreditCardExpirationDateIsInvalidError';
+import { generalEnvironment } from '@core/config/environments';
 
 export const createOrder = async (
   request: FastifyRequest<{
@@ -16,11 +17,14 @@ export const createOrder = async (
   const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
+    const splitRuleId = generalEnvironment;
+
     const response = await createOrderUseCase.execute(
       t,
       tokenKeyData,
       tokenJwtData,
-      request.body
+      request.body,
+      splitRuleId.publicSplitRuleId
     );
 
     return sendResponse(reply, {
