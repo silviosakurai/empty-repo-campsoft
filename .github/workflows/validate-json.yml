@@ -22,7 +22,11 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
           cache: "npm"
 
-      - name: Install dependencies in .github/scripts
+      - name: Install dependencies
+        run: npm install
+        working-directory: .github/scripts
+
+      - name: Install JSONLint and JSON Dup Key Validator
         run: |
           npm install jsonlint json-dup-key-validator
         working-directory: .github/scripts
