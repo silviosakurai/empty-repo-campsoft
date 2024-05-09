@@ -10,14 +10,12 @@ export const deletePartner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const partnerDeleterUseCase = container.resolve(
-    PartnerDeleterUseCase
-  );
+  const partnerDeleterUseCase = container.resolve(PartnerDeleterUseCase);
   const { t } = request;
 
   try {
     const response = await partnerDeleterUseCase.execute(
-      request.params.partnerId,
+      request.params.partnerId
     );
 
     if (!response) {
