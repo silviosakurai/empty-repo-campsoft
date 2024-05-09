@@ -8,11 +8,13 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const fiZoopSplitList = mysqlTable("fi_zoop_split_lista", {
-  id_fi_zoop_split_lista: varchar("id_fi_zoop_split_lista", { length: 36 })
+export const fiZoopSplitList = mysqlTable("financeiro_split_lista", {
+  id_financeiro_split_lista: varchar("id_financeiro_split_lista", {
+    length: 36,
+  })
     .notNull()
     .primaryKey(),
-  id_fi_zoop_split_regra: int("id_fi_zoop_split_regra").notNull(),
+  id_financeiro_split_regras: int("id_financeiro_split_regras").notNull(),
   sandbox: int("sandbox").default(1),
   id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 }),
   id_fi_contas: int("id_fi_contas"),

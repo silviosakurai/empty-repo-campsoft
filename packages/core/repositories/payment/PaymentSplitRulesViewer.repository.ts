@@ -3,6 +3,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { fiAccountsSplitRules, fiZoopSplitList } from "@core/models";
 import { eq, and } from "drizzle-orm";
+import { FinanceAccountsSplitRulesStatus } from "@core/common/enums/models/financeAccountsSplitRules";
 
 @injectable()
 export class PaymentSplitRulesViewerRepository {
@@ -19,14 +20,17 @@ export class PaymentSplitRulesViewerRepository {
       .innerJoin(
         fiZoopSplitList,
         eq(
-          fiAccountsSplitRules.id_fi_contas_split_regra,
-          fiZoopSplitList.id_fi_zoop_split_regra
+          fiAccountsSplitRules.id_financeiro_split_regras,
+          fiZoopSplitList.id_financeiro_split_regras
         )
       )
       .where(
         and(
-          eq(fiAccountsSplitRules.id_fi_contas_split_regra, ruleId),
-          eq(fiAccountsSplitRules.status, "ativo")
+          eq(fiAccountsSplitRules.id_financeiro_split_regras, ruleId),
+          eq(
+            fiAccountsSplitRules.status,
+            FinanceAccountsSplitRulesStatus.active
+          )
         )
       );
 
