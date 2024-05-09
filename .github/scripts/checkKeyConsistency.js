@@ -1,6 +1,12 @@
 const fs = require("fs");
 
 function checkKeyConsistency(baseFilePath, comparisonFilePath) {
+  const baseFilePathIdentity = baseFilePath.split("/").slice(-2).join("/");
+  const comparisonFilePathIdentity = comparisonFilePath
+    .split("/")
+    .slice(-2)
+    .join("/");
+
   const baseFileContent = JSON.parse(fs.readFileSync(baseFilePath, "utf8"));
   const comparisonFileContent = JSON.parse(
     fs.readFileSync(comparisonFilePath, "utf8")
@@ -18,12 +24,12 @@ function checkKeyConsistency(baseFilePath, comparisonFilePath) {
 
   if (missingKeys.length > 0) {
     console.error(
-      `Missing keys in ${comparisonFilePath.split("/").pop()}: ${missingKeys.join(", ")}`
+      `Missing keys in ${comparisonFilePathIdentity}: ${missingKeys.join(", ")}`
     );
     process.exit(1);
   } else {
     console.log(
-      `All keys in ${baseFilePath.split("/").pop()} are present in ${comparisonFilePath.split("/").pop()}.`
+      `All keys in ${baseFilePathIdentity} are present in ${comparisonFilePathIdentity}.`
     );
   }
 }
