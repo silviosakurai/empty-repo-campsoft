@@ -1,30 +1,35 @@
 const fs = require("fs");
 
-const jsonData = JSON.parse(
-  fs.readFileSync(
-    "packages/core/plugins/i18next/locales/en/translation.json",
-    "utf8"
-  )
-);
-const keysSeen = new Set();
+function checkDuplicatesInFile(filePath) {
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const lines = fileContent.split(/\r?\n/);
+  const keysSeen = new Map();
 
-let hasDuplicates = false;
+  let duplicatesFound = false;
 
-function checkKeys(object) {
-  for (const key of Object.keys(object)) {
-    if (keysSeen.has(key)) {
-      console.error(`Duplicate key found: ${key}`);
-      hasDuplicates = true;
+  lines.forEach((line) => {
+    const match = line.match(/"([^"]+)":/);
+
+    if (match) {
+      const key = match[1];
+
+      if (keysSeen.has(key)) {
+        console.error(`Duplicate key found: ${key}`);
+        duplicatesFound = true;
+      }
+
+      keysSeen.set(key, (keysSeen.get(key) || 0) + 1);
     }
-    keysSeen.add(key);
-    if (typeof object[key] === "object" && object[key] !== null) {
-      checkKeys(object[key]);
-    }
+  });
+
+  if (!duplicatesFound) {
+    console.log("No duplicate keys found.");
   }
 }
 
-checkKeys(jsonData);
+const paths = [
+  "packages/core/plugins/i18next/locales/en/translation.json",
+  "packages/core/plugins/i18next/locales/pt/translation.json",
+];
 
-if (!hasDuplicates) {
-  console.log("No duplicate keys found.");
-}
+paths.forEach((path) => checkDuplicatesInFile(path));
