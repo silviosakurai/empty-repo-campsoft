@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
 
       - name: Install JSONLint
-        run: npm install jsonlint
+        run: npm install -g jsonlint
 
       - name: Install JSON Dup Key Validator
         run: npm install json-dup-key-validator
