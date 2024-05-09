@@ -13,7 +13,7 @@ export const banner = mysqlTable("banner", {
   status: mysqlEnum("status", [BannerStatus.ACTIVE, BannerStatus.INACTIVE])
     .notNull()
     .default(BannerStatus.ACTIVE),
-  local: varchar("local", { length: 20 }),
+  local: varchar("local", { length: 50 }),
   id_parceiro: int("id_parceiro"),
   id_banner_tipo: int("id_banner_tipo"),
   banner: varchar("banner", { length: 50 }),

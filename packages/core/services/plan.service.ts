@@ -12,6 +12,8 @@ import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequ
 import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
+import { SQL } from "drizzle-orm";
+import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 
 @injectable()
 export class PlanService {
@@ -21,6 +23,7 @@ export class PlanService {
     private readonly planListerWithProductsRepository: PlanListerWithProductsRepository,
     private readonly planViewerRepository: PlanViewerRepository,
     private readonly planViewerByCompanyRepository: PlanViewerByCompanyRepository,
+    private readonly planViewerWithProductsRepository: PlanViewerWithProductsRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
@@ -37,6 +40,15 @@ export class PlanService {
 
   listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
     return this.planListerWithProductsRepository.list(partnersId, query);
+
+  listWithProducts = async (
+    filterClientByPermission: SQL<unknown> | undefined,
+    query: ListPlanRequest
+  ) => {
+    return this.planListerWithProductsRepository.list(
+      filterClientByPermission,
+      query
+    );
   };
 
   view = async (companyId: number, planId: number) => {
@@ -45,6 +57,10 @@ export class PlanService {
 
   viewByCompany = async (planId: number) => {
     return this.planViewerByCompanyRepository.get(planId);
+  };
+
+  viewWithProducts = async (partnersId: number[], planId: number) => {
+    return this.planViewerWithProductsRepository.view(partnersId, planId);
   };
 
   upgrade = async (

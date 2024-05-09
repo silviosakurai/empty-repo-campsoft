@@ -1,4 +1,6 @@
 import { IPaginationQueryString } from "@core/common/interfaces/IPaginationQueryString";
+import { bannerItemsSchema } from "@core/schema/banner/bannerItemsSchema";
+import { Static } from "@sinclair/typebox";
 
 export interface IBannerReaderInput extends IPaginationQueryString {
   location: string;
@@ -12,19 +14,4 @@ export interface IBanner {
   banner_name: string | null;
 }
 
-export interface IBannerItem {
-  banner_id: number;
-  item_id: number;
-  item_name: string;
-  description: string;
-  sort: number;
-  format: string;
-  images: {
-    desktop: string;
-    mobile: string;
-  };
-  html: string;
-  link: string;
-  start_date: string;
-  end_date: string;
-}
+export type IBannerItem = Static<typeof bannerItemsSchema>;
