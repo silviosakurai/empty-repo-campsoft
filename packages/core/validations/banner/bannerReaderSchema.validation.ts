@@ -1,7 +1,6 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { bannerReaderResponseSchema } from "@core/schema/banner/bannerReaderResponseSchema";
-import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
+import { bannerItemSchema } from "@core/schema/banner/bannerItemSchema";
 import { Type } from "@fastify/type-provider-typebox";
 
 export const bannerReaderSchema = {
@@ -23,7 +22,6 @@ export const bannerReaderSchema = {
     ),
   }),
   querystring: Type.Object({
-    ...pagingRequestSchema.properties,
     location: Type.Optional(Type.String()),
     type: Type.Optional(Type.Integer({ minimum: 0 })),
   }),
@@ -32,7 +30,7 @@ export const bannerReaderSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: bannerReaderResponseSchema,
+        data: Type.Array(bannerItemSchema),
       },
       { description: "Successful" }
     ),
