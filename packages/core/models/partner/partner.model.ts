@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const partner = mysqlTable("parceiro", {
-  id_parceiro: int("id_parceiro").notNull().primaryKey(),
+  id_parceiro: int("id_parceiro"),
   id_parceiro_tipo: int("id_parceiro_tipo"),
   status: mysqlEnum("status", [PartnerStatus.ACTIVE, PartnerStatus.INACTIVE])
     .notNull()

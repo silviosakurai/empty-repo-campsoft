@@ -1,4 +1,5 @@
 import { productListGroupedByCompanyResponseSchema } from "@core/schema/product/productListGroupedByCompanyResponseSchema";
+import { productListGroupedByPartnerResponseSchema } from "@core/schema/product/productListGroupedByPartnerResponseSchema";
 import { ProductResponse } from "./ProductResponse.dto";
 import { productListResponseSchema } from "@core/schema/product/productListResponseSchema";
 import { productListWithPricesResponseSchema } from "@core/schema/product/productListWithPricesResponseSchema";
@@ -20,6 +21,9 @@ export type ListProductGroupedByCompany = Static<
 >;
 export type ListProductGroupedByCompanyResponse = Static<
   typeof productListGroupedByCompanyResponseSchema
+>;
+export type ListProductGroupedByPartnerResponse = Static<
+  typeof productListGroupedByPartnerResponseSchema
 >;
 export type ListProductResponseCrossSell = Static<
   typeof productListWithPricesResponseSchema
