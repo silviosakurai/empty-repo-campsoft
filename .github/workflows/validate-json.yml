@@ -21,17 +21,13 @@ jobs:
         with:
           node-version: ${{ env.VERSION_NODE }}
 
-      - name: Install JSONLint and JSON Dup Key Validator
-        run: |
-          npm install --legacy-peer-deps jsonlint json-dup-key-validator
-        working-directory: .github/scripts
+      - name: Install JSONLint
+        run: npm install -g jsonlint
 
       - name: Validate JSON structure
         run: |
-          npx jsonlint ../../packages/core/plugins/i18next/locales/en/translation.json -q
-          npx jsonlint ../../packages/core/plugins/i18next/locales/pt/translation.json -q
-        working-directory: .github/scripts
+          jsonlint packages/core/plugins/i18next/locales/en/translation.json -q
+          jsonlint packages/core/plugins/i18next/locales/pt/translation.json -q
 
       - name: Check for duplicate keys
-        run: node check-duplicates.js
-        working-directory: .github/scripts
+        run: node .github/scripts/check-duplicates.js
