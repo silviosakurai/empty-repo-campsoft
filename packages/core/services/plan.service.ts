@@ -11,14 +11,18 @@ import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrd
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
+import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
+import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 
 @injectable()
 export class PlanService {
   constructor(
     private readonly planListerRepository: PlanListerRepository,
     private readonly planListerByCompanyRepository: PlanListerByCompanyRepository,
+    private readonly planListerWithProductsRepository: PlanListerWithProductsRepository,
     private readonly planViewerRepository: PlanViewerRepository,
     private readonly planViewerByCompanyRepository: PlanViewerByCompanyRepository,
+    private readonly planViewerWithProductsRepository: PlanViewerWithProductsRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
@@ -29,16 +33,24 @@ export class PlanService {
     return this.planListerRepository.list(companyId, query);
   };
 
-  listByCompany = async (query: ListPlanRequest) => {
-    return this.planListerByCompanyRepository.list(query);
+  listByCompany = async (partnerIds: number[], query: ListPlanRequest) => {
+    return this.planListerByCompanyRepository.list(partnerIds, query);
+  };
+
+   listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
+    return this.planListerWithProductsRepository.list(partnersId, query);
   };
 
   view = async (companyId: number, planId: number) => {
     return this.planViewerRepository.get(companyId, planId);
   };
 
-  viewByCompany = async (planId: number) => {
-    return this.planViewerByCompanyRepository.get(planId);
+  viewByCompany = async (partnerIds: number[], planId: number) => {
+    return this.planViewerByCompanyRepository.get(partnerIds, planId);
+  };
+
+  viewWithProducts = async (partnersId: number[], planId: number) => {
+    return this.planViewerWithProductsRepository.view(partnersId, planId);
   };
 
   upgrade = async (

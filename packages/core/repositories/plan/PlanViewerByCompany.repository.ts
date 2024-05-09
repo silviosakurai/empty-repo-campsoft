@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { Plan, PlanVisivelSite } from "@core/common/enums/models/plan";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
@@ -20,7 +20,10 @@ export class PlanViewerByCompanyRepository {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
-  async get(planId: number): Promise<Plan | null> {
+  async get(
+    partnerIds: number[],
+    planId: number,
+  ): Promise<Plan | null> {
     const result: ViewPlanRepositoryDTO[] = await this.db
       .select({
         plan_id: plan.id_plano,
@@ -39,7 +42,12 @@ export class PlanViewerByCompanyRepository {
       })
       .from(plan)
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
-      .where(and(eq(plan.id_plano, planId)))
+      .where(
+        and(
+          inArray(planPartner.id_parceiro, partnerIds),
+          eq(plan.id_plano, planId)
+        )
+      )
       .execute();
 
     if (!result.length) {

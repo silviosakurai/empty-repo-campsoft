@@ -21,7 +21,7 @@ export class BannerViewerRepository {
   ) {}
 
   async view(
-    companyIds: number[],
+    partnerIds: number[],
     bannerId: number,
   ): Promise<BannerReaderResponseItem | null> {
     const result = await this.db
@@ -34,7 +34,7 @@ export class BannerViewerRepository {
       .from(banner)
       .where(and(
         eq(banner.status, BannerStatus.ACTIVE),
-        inArray(banner.id_parceiro, companyIds),
+        inArray(banner.id_parceiro, partnerIds),
         eq(banner.id_banner, bannerId),
       ))
       .execute();

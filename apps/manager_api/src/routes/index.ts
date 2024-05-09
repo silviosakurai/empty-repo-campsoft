@@ -5,6 +5,7 @@ import clientRoutes from '@/routes/client.route';
 import planRoutes from '@/routes/plan.route';
 import orderRoutes from '@/routes/order.route';
 import bannerRoutes from '@/routes/banner.route';
+import partnerRoutes from '@/routes/partner.route';
 
 export default async function (server: FastifyInstance) {
   await server.register(authRoutes);
@@ -13,4 +14,5 @@ export default async function (server: FastifyInstance) {
   await server.register(planRoutes);
   await server.register(orderRoutes);
   await server.register(bannerRoutes);
+  await server.register(partnerRoutes);
 }
