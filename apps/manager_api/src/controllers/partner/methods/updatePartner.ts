@@ -12,15 +12,13 @@ export const updatePartner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const partnerUpdaterUseCase = container.resolve(
-    PartnerUpdaterUseCase
-  );
+  const partnerUpdaterUseCase = container.resolve(PartnerUpdaterUseCase);
   const { t } = request;
 
   try {
     const response = await partnerUpdaterUseCase.execute(
       request.params.partnerId,
-      request.body,
+      request.body
     );
 
     if (!response) {

@@ -3,9 +3,7 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { BannerDeleterUseCase } from '@core/useCases/banner/BannerDeleter.usecase';
-import {
-  BannerDeleterRequestParamsDto,
-} from '@core/useCases/banner/dtos/BannerDeleterRequest.dto';
+import { BannerDeleterRequestParamsDto } from '@core/useCases/banner/dtos/BannerDeleterRequest.dto';
 
 export const deleteBanner = async (
   request: FastifyRequest<{

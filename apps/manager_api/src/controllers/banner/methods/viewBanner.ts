@@ -3,9 +3,7 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { container } from 'tsyringe';
 import { BannerViewerUseCase } from '@core/useCases/banner/BannerViewer.usecase';
-import {
-  BannerViewerRequestDto,
-} from '@core/useCases/banner/dtos/BannerViewerRequest.dto';
+import { BannerViewerRequestDto } from '@core/useCases/banner/dtos/BannerViewerRequest.dto';
 
 export const viewBanner = async (
   request: FastifyRequest<{

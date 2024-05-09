@@ -11,15 +11,11 @@ export const createPartner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const partnerCreatorUseCase = container.resolve(
-    PartnerCreatorUseCase
-  );
+  const partnerCreatorUseCase = container.resolve(PartnerCreatorUseCase);
   const { t } = request;
 
   try {
-    const response = await partnerCreatorUseCase.execute(
-      request.body,
-    );
+    const response = await partnerCreatorUseCase.execute(request.body);
 
     if (!response) {
       request.server.logger.warn(response, request.id);

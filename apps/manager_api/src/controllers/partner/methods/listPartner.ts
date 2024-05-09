@@ -11,15 +11,11 @@ export const listPartner = async (
   }>,
   reply: FastifyReply
 ) => {
-  const partnerListerUseCase = container.resolve(
-    PartnerListerUseCase
-  );
+  const partnerListerUseCase = container.resolve(PartnerListerUseCase);
   const { t } = request;
 
   try {
-    const response = await partnerListerUseCase.execute(
-      request.query
-    );
+    const response = await partnerListerUseCase.execute(request.query);
 
     if (!response) {
       request.server.logger.warn(response, request.id);
