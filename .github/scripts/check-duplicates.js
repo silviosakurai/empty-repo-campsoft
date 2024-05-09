@@ -23,7 +23,9 @@ function checkDuplicatesInFile(filePath) {
     }
   });
 
-  if (!duplicatesFound) {
+  if (duplicatesFound) {
+    process.exit(1);
+  } else {
     console.log(`No duplicate keys found in ${fileName}.`);
   }
 }
