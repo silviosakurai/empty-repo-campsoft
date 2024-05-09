@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { SmsTFAUserSenderCase } from ".";
+import { SmsTFAUserSenderCase } from "../../../useCases/tfa/SmsTFASender.useCase";
 import { TfaService } from "@core/services/tfa.service";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
 import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
