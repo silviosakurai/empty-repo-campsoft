@@ -13,6 +13,7 @@ import {
   userDeletePermissions,
   userListPermissions,
   userSendSsoPermissions,
+  userUpdatePermissions,
   userViewPermissions,
 } from '../permissions';
 
@@ -42,8 +43,17 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.update,
     preHandler: [
       (request, reply) =>
-        server.authenticateJwt(request, reply, userViewPermissions),
+        server.authenticateJwt(request, reply, userUpdatePermissions),
     ],
+  });
+
+  server.patch('/users/:userId/send-sso', {
+    schema: userSendSsoSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userSendSsoPermissions),
+    ],
+    handler: clientController.sendSso,
   });
 
   server.patch('/users/:userId/send-sso', {
