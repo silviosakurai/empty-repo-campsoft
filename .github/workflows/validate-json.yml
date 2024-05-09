@@ -23,7 +23,7 @@ jobs:
 
       - name: Install JSONLint and JSON Dup Key Validator
         run: |
-          npm install jsonlint json-dup-key-validator
+          npm install --legacy-peer-deps jsonlint json-dup-key-validator
         working-directory: .github/scripts
 
       - name: Validate JSON structure
