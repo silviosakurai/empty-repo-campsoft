@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { CreatePlanRequest } from "./dtos/CreatePlanRequest.dto";
-import { PlanService } from "@core/services";
+import { PlanService } from "@core/services/plan.service";
 
 @injectable()
 export class PlanCreatorUseCase {
