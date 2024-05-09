@@ -42,7 +42,7 @@ export class PlanCreatorRepository {
 
     const [pricesCreated, itemsCreated, partnerLinked] = await Promise.all([
       this.createPlanPrices(planId, input.prices as PlanPriceCreate[]),
-      this.createPlanItems(planId, productIds, productGroupIds),
+      this.createPlanItems(planId, productIds),
       this.createPlanPartner(planId, input.business_id),
     ]);
 
@@ -102,27 +102,50 @@ export class PlanCreatorRepository {
     return true;
   }
 
-  private async createPlanItems(
-    planId: number,
-    productIds: string[],
-    productGroupIds: string[]
-  ) {
+  private async createPlanItems(planId: number, productIds: string[]) {
     let isPlanItemSaved = true;
 
-    for (let i = 0; i < productIds.length; i++) {
+    productIds.map(async (product) => {
       const result = await this.db
         .insert(schema.planItem)
         .values({
           id_plano: planId,
-          id_produto: productIds[i],
-          id_produto_grupo: parseInt(productGroupIds[i]),
+          id_produto: product,
         })
         .execute();
 
       if (!result.length) {
         isPlanItemSaved = false;
       }
+    });
+
+    if (!isPlanItemSaved) {
+      this.deletePlan(planId);
+      return false;
     }
+
+    return true;
+  }
+
+  private async createPlanGroupItems(
+    planId: number,
+    productGroupIds: string[]
+  ) {
+    let isPlanItemSaved = true;
+
+    productGroupIds.map(async (productGroup) => {
+      const result = await this.db
+        .insert(schema.planItem)
+        .values({
+          id_plano: planId,
+          id_produto_grupo: parseInt(productGroup),
+        })
+        .execute();
+
+      if (!result.length) {
+        isPlanItemSaved = false;
+      }
+    });
 
     if (!isPlanItemSaved) {
       this.deletePlan(planId);
