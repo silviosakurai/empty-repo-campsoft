@@ -14,6 +14,7 @@ import {
   getProductGroupSchema,
   putProductGroupSchema,
   deleteProductDetailHowToAccessSchema,
+  createProductGroupSchema,
 } from '@core/validations/product';
 import {
   productCreatePermissions,
@@ -23,6 +24,7 @@ import {
   productListPermissions,
   productUpdatePermissions,
   productViewPermissions,
+  productCreateGroupPermissions,
 } from '@/permissions';
 
 export default async function productRoutes(server: FastifyInstance) {
@@ -145,6 +147,15 @@ export default async function productRoutes(server: FastifyInstance) {
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(request, reply, productUpdatePermissions),
+    ],
+  });
+
+  server.post('/product_groups', {
+    schema: createProductGroupSchema,
+    handler: productController.createProductGroup,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productCreateGroupPermissions),
     ],
   });
 }

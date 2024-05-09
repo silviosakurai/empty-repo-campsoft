@@ -19,3 +19,7 @@ export const productEditHowToAccessPermissions = [
 export const productDeleteHowToAccessPermissions = [
   PermissionsRoles.PRODUCT_DELETE_HOW_TO_ACCESS,
 ];
+
+export const productCreateGroupPermissions = [
+  PermissionsRoles.PRODUCT_CREATE_GROUP,
+];
