@@ -19,13 +19,7 @@ export class PlansListerWithProductsUseCase {
     query: ListPlanRequest,
     redis: FastifyRedis
   ): Promise<object | null> {
-    const filterClientByPermission =
-      await this.controlAccessService.filterClientByPermission(
-        tokenJwtData,
-        permissionsRoute,
-        redis
-      );
-
-    return this.planService.listWithProducts(filterClientByPermission, query);
+    const partnersId = this.controlAccessService.listPartnersIds(tokenJwtData);
+    return this.planService.listWithProducts(partnersId, query);
   }
 }

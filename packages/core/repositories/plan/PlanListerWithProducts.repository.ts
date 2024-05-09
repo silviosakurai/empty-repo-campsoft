@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, asc, desc, sql, SQL } from "drizzle-orm";
+import { eq, and, asc, desc, SQLWrapper, sql, inArray } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import {
@@ -32,10 +32,10 @@ export class PlanListerWithProductsRepository {
   ) {}
 
   async list(
-    filterClientByPermission: SQL<unknown> | undefined,
+    partnersId: number[],
     query: ListPlanRequest
   ): Promise<ListPlanResponse | null> {
-    const filters = this.setFilters(query, filterClientByPermission);
+    const filters = this.setFilters(query);
 
     const allQuery = this.db
       .select({
@@ -56,7 +56,7 @@ export class PlanListerWithProductsRepository {
       .from(plan)
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(filters);
+      .where(and(...filters, inArray(planPartner.id_parceiro, partnersId)));
 
     const totalResult: ViewPlanRepositoryResponse[] = await allQuery.execute();
 
@@ -84,34 +84,26 @@ export class PlanListerWithProductsRepository {
     };
   }
 
-  private setFilters(
-    query: ListPlanRequest,
-    filterClientByPermission: SQL<unknown> | undefined
-  ): SQL<unknown> | undefined {
-    let filters = and();
-    let isFilterApplied = false;
+  private setFilters(query: ListPlanRequest): SQLWrapper[] {
+    const filters: SQLWrapper[] = [];
 
     if (query.id) {
-      filters = and(filters, eq(plan.id_plano, query.id));
-      isFilterApplied = true;
+      filters.push(eq(plan.id_plano, query.id));
     }
 
     if (query.status) {
-      filters = and(filters, eq(plan.status, query.status));
-      isFilterApplied = true;
+      filters.push(eq(plan.status, query.status));
     }
 
     if (query.plan) {
-      filters = and(filters, eq(plan.plano, query.plan));
-      isFilterApplied = true;
+      filters.push(eq(plan.plano, query.plan));
     }
 
     if (query.description) {
-      filters = and(filters, eq(plan.descricao, query.description));
-      isFilterApplied = true;
+      filters.push(eq(plan.descricao, query.description));
     }
 
-    return isFilterApplied ? filters : filterClientByPermission;
+    return filters;
   }
 
   private setOrderBy(sortBy?: PlanFields, sortOrder?: SortOrder) {

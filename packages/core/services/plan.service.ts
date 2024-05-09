@@ -12,7 +12,6 @@ import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequ
 import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
-import { SQL } from "drizzle-orm";
 import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 
 @injectable()
@@ -38,14 +37,8 @@ export class PlanService {
     return this.planListerByCompanyRepository.list(query);
   };
 
-  listWithProducts = async (
-    filterClientByPermission: SQL<unknown> | undefined,
-    query: ListPlanRequest
-  ) => {
-    return this.planListerWithProductsRepository.list(
-      filterClientByPermission,
-      query
-    );
+   listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
+    return this.planListerWithProductsRepository.list(partnersId, query);
   };
 
   view = async (companyId: number, planId: number) => {
