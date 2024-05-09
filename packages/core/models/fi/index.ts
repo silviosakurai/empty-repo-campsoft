@@ -1,5 +1,4 @@
 export * from "./fiAccounts.model";
-export * from "./fiAccountsSplitRulesList.model";
 export * from "./fiZoopPlan.model";
 export * from "./fiZoopSeller.model";
 export * from "./fiZoopSellerAccount.model";

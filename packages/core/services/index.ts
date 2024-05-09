@@ -19,3 +19,4 @@ export * from "./signature.service";
 export * from "./payment.service";
 export * from "./orderValidation.service";
 export * from "./voucher.service";
+export * from "./finance.service";

@@ -90,6 +90,7 @@ export interface ListOrderById {
   seller_id?: string;
   company_id: number;
   status_id: number;
+  split_rule_id: number;
   recurrence: number;
   recurrence_period: number;
   total_price: number;

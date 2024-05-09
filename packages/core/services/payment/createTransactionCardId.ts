@@ -29,6 +29,7 @@ export async function createTransactionCardId(
           id: input.cardId,
         },
       },
+      split_rules: input.split_rules,
     });
 
     if (response.status === HTTPStatusCode.CREATED) {
