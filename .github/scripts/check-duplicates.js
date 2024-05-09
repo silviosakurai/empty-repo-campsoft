@@ -1,37 +1,20 @@
 const fs = require("fs");
+const dupKeyValidator = require("json-dup-key-validator");
 
-function checkForDuplicateKeys(jsonObject, filePath) {
-  function checkDuplicates(obj, path = []) {
-    const keys = new Set();
+const jsonContentPt = fs.readFileSync(
+  "packages/core/plugins/i18next/locales/pt/translation.json",
+  "utf8"
+);
+const jsonContentEn = fs.readFileSync(
+  "packages/core/plugins/i18next/locales/en/translation.json",
+  "utf8"
+);
 
-    if (obj && typeof obj === "object" && !Array.isArray(obj)) {
-      Object.keys(obj).forEach((key) => {
-        if (keys.has(key)) {
-          throw new Error(
-            `Duplicate key "${key}" found at path "${path.join(".")}" in file ${filePath}`
-          );
-        }
+try {
+  dupKeyValidator.parse(jsonContentPt, true);
+  dupKeyValidator.parse(jsonContentEn, true);
 
-        keys.add(key);
-
-        checkDuplicates(obj[key], path.concat(key));
-      });
-    }
-  }
-  checkDuplicates(jsonObject);
+  console.log("No duplicate keys found.");
+} catch (e) {
+  console.error("Duplicate keys detected:", e.message);
 }
-
-process.argv.slice(2).forEach((filePath) => {
-  const content = fs.readFileSync(filePath, "utf8");
-  try {
-    const json = JSON.parse(content);
-
-    checkForDuplicateKeys(json, filePath);
-
-    console.log(`No duplicate keys found in ${filePath}`);
-  } catch (e) {
-    console.error(`Error in ${filePath}: ${e.message}`);
-
-    process.exit(1);
-  }
-});

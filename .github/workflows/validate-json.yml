@@ -24,10 +24,13 @@ jobs:
       - name: Install JSONLint
         run: npm install -g jsonlint
 
+      - name: Install JSON Dup Key Validator
+        run: npm install -g json-dup-key-validator
+
       - name: Validate JSON structure
         run: |
           jsonlint packages/core/plugins/i18next/locales/en/translation.json -q
           jsonlint packages/core/plugins/i18next/locales/pt/translation.json -q
 
       - name: Check for duplicate keys
-        run: node .github/scripts/check-duplicates.js packages/core/plugins/i18next/locales/en/translation.json packages/core/plugins/i18next/locales/pt/translation.json
+        run: node .github/scripts/check-duplicates.js
