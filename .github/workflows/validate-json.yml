@@ -30,4 +30,7 @@ jobs:
           jsonlint packages/core/plugins/i18next/locales/pt/translation.json -q
 
       - name: Check for duplicate keys
-        run: node .github/scripts/check-duplicates.js
+        run: node .github/scripts/checkDuplicates.js
+
+      - name: Check translation key consistency
+        run: node .github/scripts/checkKeyConsistency.js
