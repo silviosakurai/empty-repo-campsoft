@@ -9,20 +9,29 @@
   "scripts": {
     "dev": "turbo run dev",
     "dev:manager": "turbo run dev --filter=manager",
+    "dev:webhooks": "turbo run dev --filter=webhooks",
     "dev:public": "turbo run dev --filter=public",
+    "dev:websocket": "turbo run dev --filter=websocket",
     "build": "turbo run build",
     "build:manager": "turbo run build --filter=manager",
     "build:public": "turbo run build --filter=public",
+    "build:webhooks": "turbo run build --filter=webhooks",
+    "build:websocket": "turbo run build --filter=websocket",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "lint:manager": "turbo run lint --filter=manager",
     "lint:public": "turbo run lint --filter=public",
+    "lint:webhooks": "turbo run lint --filter=webhooks",
+    "lint:websocket": "turbo run lint --filter=websocket",
     "sonar": "turbo run sonar",
     "sonar:manager": "turbo run sonar --filter=manager",
     "sonar:public": "turbo run sonar --filter=public",
+    "sonar:webhooks": "turbo run sonar --filter=webhooks",
+    "sonar:websocket": "turbo run sonar --filter=websocket",
     "prepare": "[ \"$NODE_ENV\" != 'production' ] && husky install || echo 'In production'",
     "docker:public": "docker build -f apps/public_api/Dockerfile -t mania-public .",
-    "docker:manager": "docker build -f apps/manager_api/Dockerfile -t mania-manager ."
+    "docker:manager": "docker build -f apps/manager_api/Dockerfile -t mania-manager .",
+    "docker:webhooks": "docker build -f apps/webhooks/Dockerfile -t mania-webhook ."
   },
   "keywords": [],
   "author": "",
@@ -84,6 +93,7 @@
     "tsyringe": "^4.8.0",
     "twilio": "^5.0.3",
     "typescript-eslint": "^7.5.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "ws": "^8.17.0"
   }
 }

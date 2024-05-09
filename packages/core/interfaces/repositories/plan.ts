@@ -46,3 +46,16 @@ export interface PlanPriceCrossSellOrder {
 export interface PlanListerOrderResponse {
   product_id: string;
 }
+
+export interface ViewPlanRepositoryResponse {
+  plan_id: number;
+  status: Status | null;
+  visible_site: boolean;
+  business_id: number;
+  plan: string | null;
+  image: string | null;
+  description: string | null;
+  short_description: string | null;
+  created_at: string;
+  updated_at: string;
+}

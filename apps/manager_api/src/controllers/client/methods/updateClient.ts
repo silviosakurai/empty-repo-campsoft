@@ -13,10 +13,14 @@ export const updateClient = async (
   reply: FastifyReply
 ) => {
   const clientUseCase = container.resolve(ClientByIdUpdaterUseCase);
-  const { t } = request;
+  const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
   try {
     const response = await clientUseCase.update(
+      tokenJwtData,
+      permissionsRoute,
       request.params.userId,
+      redis,
       request.body
     );
 

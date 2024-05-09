@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import {
   getUserSchema,
   userCreatorSchema,
-  userUpdaterSchema,
+  userUpdateSchema,
   userDeleteSchema,
   userPhoneUpdaterSchema,
   userPasswordUpdaterSchema,
@@ -21,6 +21,8 @@ import {
   createUserNewsletterSchema,
   createUserCreditCardSchema,
   updateUserCreditCardDefaultSchema,
+  listUserCreditCardSchema,
+  userCreditCardDeleteSchema,
 } from '@core/validations/user';
 import {
   userAddressBillingUpdatePermissions,
@@ -41,6 +43,8 @@ import {
   userViewPermissions,
   userVoucherPermissions,
   userCreditCardDefaultUpdatePermissions,
+  userCreditCardDeletePermissions,
+  userCreditCardListPermissions,
 } from '@/permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
@@ -68,7 +72,7 @@ export default async function clientRoutes(server: FastifyInstance) {
   });
 
   server.put('/user', {
-    schema: userUpdaterSchema,
+    schema: userUpdateSchema,
     handler: clientController.update,
     preHandler: [
       (request, reply) =>
@@ -317,6 +321,36 @@ export default async function clientRoutes(server: FastifyInstance) {
           reply,
           userCreditCardDefaultUpdatePermissions
         ),
+    ],
+  });
+
+  server.delete('/user/credit-card/:id', {
+    handler: clientController.eraseCardClient,
+    schema: userCreditCardDeleteSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardDeletePermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userCreditCardDeletePermissions),
+    ],
+  });
+
+  server.get('/user/credit-card', {
+    handler: clientController.readCardsClient,
+    schema: listUserCreditCardSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(
+          request,
+          reply,
+          userCreditCardListPermissions
+        ),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userCreditCardListPermissions),
     ],
   });
 }

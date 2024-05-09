@@ -6,7 +6,7 @@ import {
   templateWhatsApp,
   whatsAppHistory,
 } from "@core/models";
-import { and, eq, sql, or, desc } from "drizzle-orm";
+import { and, eq, sql, or, desc, inArray } from "drizzle-orm";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { ITemplateWhatsapp } from "@core/interfaces/repositories/tfa";
@@ -39,6 +39,49 @@ export class WhatsAppListerRepository {
         or(
           and(
             eq(templateWhatsApp.id_parceiro, tokenKeyData.id_parceiro),
+            eq(templateModule.modulo, templateModulo)
+          ),
+          and(
+            eq(
+              templateWhatsApp.id_parceiro,
+              sql`${templateWhatsApp.id_parceiro} IS NULL`
+            ),
+            eq(templateModule.modulo, templateModulo)
+          )
+        )
+      )
+      .orderBy(desc(templateWhatsApp.id_parceiro))
+      .limit(1)
+      .execute();
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0] as ITemplateWhatsapp;
+  }
+
+  async getTemplateWhatsappToPartner(
+    partnerIds: number[],
+    templateModulo: TemplateModulo
+  ): Promise<ITemplateWhatsapp | null> {
+    const result = await this.db
+      .select({
+        template: templateWhatsApp.template,
+        templateId: templateWhatsApp.id_template_whatsapp,
+      })
+      .from(templateWhatsApp)
+      .innerJoin(
+        templateModule,
+        eq(
+          templateModule.id_template_modulo,
+          templateWhatsApp.id_template_modulo
+        )
+      )
+      .where(
+        or(
+          and(
+            inArray(templateWhatsApp.id_parceiro, partnerIds),
             eq(templateModule.modulo, templateModulo)
           ),
           and(

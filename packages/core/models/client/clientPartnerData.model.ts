@@ -11,7 +11,7 @@ import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 
 export const clientPartnerData = mysqlTable("cliente_parceiro_dados", {
   id_cliente: binary("id_cliente", { length: 16 }).notNull().primaryKey(),
-  id_parceiro: int("id_parceiro").notNull(),
+  id_parceiro: int("id_parceiro"),
   status: mysqlEnum("status", [
     ClientCompanyStatus.ACTIVE,
     ClientCompanyStatus.INACTIVE,

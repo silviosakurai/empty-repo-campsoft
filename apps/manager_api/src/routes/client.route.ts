@@ -1,11 +1,21 @@
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
+  getUserByIdSchema,
   listUserWithCompaniesSchema,
-  userUpdaterByIdSchema,
+  userCreatorPartnerSchema,
+  userDeleteByIdSchema,
+  userSendSsoSchema,
+  userUpdateByIdSchema,
 } from '@core/validations/user';
-import ClientController from '@/controllers/client';
-import { userListPermissions, userViewPermissions } from '@/permissions';
+import ClientController from '../controllers/client';
+import {
+  userDeletePermissions,
+  userListPermissions,
+  userSendSsoPermissions,
+  userUpdatePermissions,
+  userViewPermissions,
+} from '../permissions';
 
 export default async function clientRoutes(server: FastifyInstance) {
   const clientController = container.resolve(ClientController);
@@ -19,12 +29,57 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
   });
 
+  server.post('/users', {
+    schema: userCreatorPartnerSchema,
+    handler: clientController.create,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userListPermissions),
+    ],
+  });
+
   server.put('/users/:userId', {
-    schema: userUpdaterByIdSchema,
+    schema: userUpdateByIdSchema,
     handler: clientController.update,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userUpdatePermissions),
+    ],
+  });
+
+  server.patch('/users/:userId/send-sso', {
+    schema: userSendSsoSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userSendSsoPermissions),
+    ],
+    handler: clientController.sendSso,
+  });
+
+  server.patch('/users/:userId/send-sso', {
+    schema: userSendSsoSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userSendSsoPermissions),
+    ],
+    handler: clientController.sendSso,
+  });
+
+  server.get('/users/:userId', {
+    schema: getUserByIdSchema,
     preHandler: [
       (request, reply) =>
         server.authenticateJwt(request, reply, userViewPermissions),
     ],
+    handler: clientController.view,
+  });
+
+  server.delete('/users/:userId', {
+    schema: userDeleteByIdSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userDeletePermissions),
+    ],
+    handler: clientController.delete,
   });
 }

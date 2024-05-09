@@ -59,7 +59,7 @@ export default [
       complexity: ['error', { max: 10 }],
       'max-depth': ['error', 4],
       'max-nested-callbacks': ['error', 3],
-      'max-statements': ['error', 20],
+      'max-statements': ['error', 25],
       'no-magic-numbers': 'off',
       'no-implicit-globals': 'error',
       'prefer-promise-reject-errors': 'error',

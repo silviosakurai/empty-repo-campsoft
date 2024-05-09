@@ -5,9 +5,11 @@
   "login_success": "Login com sucesso",
   "internal_server_error": "Erro interno do servidor",
   "client_not_found": "Cliente não encontrado",
+  "partner_not_found": "Parceiro não encontrado!",
   "product_not_found": "Produto não encontrado",
   "product_group_not_found": "Grupo de Produto não encontrado",
   "product_group_relation_not_found": "Relação de Produto com Grupo não encontrada",
+  "product_partner_relation_not_found": "Relação de Produto com Parceiro não encontrada",
   "banner_not_found": "Banner não encontrado",
   "banner_item_not_found": "Banner item não encontrado",
   "error_send_code_verification": "Erro ao enviar o código de verificação",
@@ -65,6 +67,8 @@
   "product_group_update_not_allowed": "Atualização de grupo de produto não permitida.",
   "banner_update_not_allowed": "Atualização de Banner não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
+  "token_not_found": "Token não encontrado.",
+  "token_generated_successfuly": "Token gerado com sucesso."
   "error_update_product_group": "Erro ao atualizar o grupo de produto.",
   "error_update_product_group_products": "Error ao adicionar um produto ao grupo",
   "token_not_found": "Token não encontrado.",
@@ -76,6 +80,7 @@
   "card_not_found": "Cartão não encontrado",
   "how_to_access_product_delete_not_allowed": "Exclusão de como acessar produto não permitida",
   "how_to_access_product_update_not_allowed": "Atualização de como acessar produto não permitida",
+  "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida"
   "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida",
   "cvv_invalid": "CVV inválido",
   "expire_month_invalid": "Mês de expiração inválido",
@@ -121,5 +126,7 @@
   "create_transaction_pix_error": "Erro ao criar transação com PIX.",
   "link_card_token_with_customer_error": "Erro ao vincular token de cartão com cliente.",
   "error_generating_qr_code_pix": "Erro ao gerar QR Code PIX.",
-  "amount_to_pay_invalid": "Valor a pagar inválido."
+  "amount_to_pay_invalid": "Valor a pagar inválido.",
+  "resource_not_found": "Desculpe, o vendedor que você está tentando usar não existe ou foi excluído",
+  "forbidden": "Seu usuário não está autorizado a acessar este recurso."
 }

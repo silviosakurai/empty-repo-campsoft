@@ -1,7 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { PlanViewerByCompanyUseCase } from '@core/useCases/plan/PlanViewerByCompany.useCase';
+import { PlanViewerWithProductsUseCase } from '@core/useCases/plan/PlanViewerWithProducts.useCase';
 import { container } from 'tsyringe';
 import { ViewPlanRequest } from '@core/useCases/plan/dtos/ViewPlanRequest.dto';
 
@@ -11,13 +11,16 @@ export const viewPlan = async (
   }>,
   reply: FastifyReply
 ) => {
-  const planViewerUseCase = container.resolve(PlanViewerByCompanyUseCase);
-  const { t, tokenJwtData } = request;
+  const planViewerUseCase = container.resolve(PlanViewerWithProductsUseCase);
+  const { t, tokenJwtData, permissionsRoute } = request;
+  const { redis } = request.server;
 
   try {
     const response = await planViewerUseCase.execute(
       tokenJwtData,
+      permissionsRoute,
       request.params.planId,
+      redis
     );
 
     if (!response) {
