@@ -26,6 +26,7 @@ function checkKeyConsistency(baseFilePath, comparisonFilePath) {
     console.error(
       `Missing keys in ${comparisonFilePathIdentity}: ${missingKeys.join(", ")}`
     );
+
     process.exit(1);
   } else {
     console.log(
