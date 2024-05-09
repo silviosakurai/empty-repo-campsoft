@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 function checkDuplicatesInFile(filePath) {
+  const fileName = filePath.split("/").pop();
   const fileContent = fs.readFileSync(filePath, "utf8");
   const lines = fileContent.split(/\r?\n/);
   const keysSeen = new Map();
@@ -14,7 +15,7 @@ function checkDuplicatesInFile(filePath) {
       const key = match[1];
 
       if (keysSeen.has(key)) {
-        console.error(`Duplicate key found: ${key}`);
+        console.error(`Duplicate key "${key}" found in ${fileName}`);
         duplicatesFound = true;
       }
 
@@ -23,7 +24,7 @@ function checkDuplicatesInFile(filePath) {
   });
 
   if (!duplicatesFound) {
-    console.log("No duplicate keys found.");
+    console.log(`No duplicate keys found in ${fileName}.`);
   }
 }
 
