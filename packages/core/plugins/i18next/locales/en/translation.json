@@ -65,6 +65,8 @@
   "product_group_update_not_allowed": "Product Group update not allowed!",
   "banner_update_not_allowed": "Banner update not allowed!",
   "error_update_product": "Error update products!",
+  "token_not_found": "Token not found.",
+  "token_generated_successfuly": "Token generated successfully!"
   "error_update_product_group": "Error update products groups!",
   "error_update_product_group_products": "Error adding product to a group!",
   "token_not_found": "Token not found.",
@@ -76,6 +78,7 @@
   "card_not_found": "Card not found",
   "how_to_access_product_delete_not_allowed": "How to access product delete not allowed",
   "how_to_access_product_update_not_allowed": "How to access product update not allowed",
+  "how_to_access_product_update_or_delete_not_allowed": "How to access product update or delete not allowed"
   "how_to_access_product_update_or_delete_not_allowed": "How to access product update or delete not allowed",
   "cvv_invalid": "CVV invalid",
   "expire_month_invalid": "Expire month invalid",

@@ -65,6 +65,8 @@
   "product_group_update_not_allowed": "Atualização de grupo de produto não permitida.",
   "banner_update_not_allowed": "Atualização de Banner não permitida.",
   "error_update_product": "Erro ao atualizar o produto.",
+  "token_not_found": "Token não encontrado.",
+  "token_generated_successfuly": "Token gerado com sucesso."
   "error_update_product_group": "Erro ao atualizar o grupo de produto.",
   "error_update_product_group_products": "Error ao adicionar um produto ao grupo",
   "token_not_found": "Token não encontrado.",
@@ -76,6 +78,7 @@
   "card_not_found": "Cartão não encontrado",
   "how_to_access_product_delete_not_allowed": "Exclusão de como acessar produto não permitida",
   "how_to_access_product_update_not_allowed": "Atualização de como acessar produto não permitida",
+  "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida"
   "how_to_access_product_update_or_delete_not_allowed": "Atualização ou exclusão de como acessar produto não permitida",
   "cvv_invalid": "CVV inválido",
   "expire_month_invalid": "Mês de expiração inválido",
