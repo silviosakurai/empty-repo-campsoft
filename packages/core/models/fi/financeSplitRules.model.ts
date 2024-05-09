@@ -8,7 +8,7 @@ import {
 import { sql } from "drizzle-orm";
 import { FinanceAccountsSplitRulesStatus } from "@core/common/enums/models/financeAccountsSplitRules";
 
-export const fiAccountsSplitRules = mysqlTable("financeiro_split_regras", {
+export const financeSplitRules = mysqlTable("financeiro_split_regras", {
   id_financeiro_split_regras: int("id_financeiro_split_regras")
     .notNull()
     .primaryKey(),

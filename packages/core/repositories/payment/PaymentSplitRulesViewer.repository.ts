@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { fiAccountsSplitRules, fiZoopSplitList } from "@core/models";
+import { financeSplitRules, financeSplitList } from "@core/models";
 import { eq, and } from "drizzle-orm";
 import { FinanceAccountsSplitRulesStatus } from "@core/common/enums/models/financeAccountsSplitRules";
 
@@ -14,23 +14,20 @@ export class PaymentSplitRulesViewerRepository {
   async view(ruleId: number) {
     const results = await this.db
       .select({
-        name: fiAccountsSplitRules.regra_nome,
+        name: financeSplitRules.regra_nome,
       })
-      .from(fiAccountsSplitRules)
+      .from(financeSplitRules)
       .innerJoin(
-        fiZoopSplitList,
+        financeSplitList,
         eq(
-          fiAccountsSplitRules.id_financeiro_split_regras,
-          fiZoopSplitList.id_financeiro_split_regras
+          financeSplitRules.id_financeiro_split_regras,
+          financeSplitList.id_financeiro_split_regras
         )
       )
       .where(
         and(
-          eq(fiAccountsSplitRules.id_financeiro_split_regras, ruleId),
-          eq(
-            fiAccountsSplitRules.status,
-            FinanceAccountsSplitRulesStatus.active
-          )
+          eq(financeSplitRules.id_financeiro_split_regras, ruleId),
+          eq(financeSplitRules.status, FinanceAccountsSplitRulesStatus.active)
         )
       );
 

@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const fiZoopSplitList = mysqlTable("financeiro_split_lista", {
+export const financeSplitList = mysqlTable("financeiro_split_lista", {
   id_financeiro_split_lista: varchar("id_financeiro_split_lista", {
     length: 36,
   })
