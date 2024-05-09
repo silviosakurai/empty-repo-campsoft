@@ -2,11 +2,11 @@ const fs = require("fs");
 const dupKeyValidator = require("json-dup-key-validator");
 
 const jsonContentPt = fs.readFileSync(
-  "packages/core/plugins/i18next/locales/pt/translation.json",
+  "../../packages/core/plugins/i18next/locales/pt/translation.json",
   "utf8"
 );
 const jsonContentEn = fs.readFileSync(
-  "packages/core/plugins/i18next/locales/en/translation.json",
+  "../../packages/core/plugins/i18next/locales/en/translation.json",
   "utf8"
 );
 
