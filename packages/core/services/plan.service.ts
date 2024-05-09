@@ -33,8 +33,8 @@ export class PlanService {
     return this.planListerRepository.list(companyId, query);
   };
 
-  listByCompany = async (query: ListPlanRequest) => {
-    return this.planListerByCompanyRepository.list(query);
+  listByCompany = async (partnerIds: number[], query: ListPlanRequest) => {
+    return this.planListerByCompanyRepository.list(partnerIds, query);
   };
 
    listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
@@ -45,8 +45,8 @@ export class PlanService {
     return this.planViewerRepository.get(companyId, planId);
   };
 
-  viewByCompany = async (planId: number) => {
-    return this.planViewerByCompanyRepository.get(planId);
+  viewByCompany = async (partnerIds: number[], planId: number) => {
+    return this.planViewerByCompanyRepository.get(partnerIds, planId);
   };
 
   viewWithProducts = async (partnersId: number[], planId: number) => {

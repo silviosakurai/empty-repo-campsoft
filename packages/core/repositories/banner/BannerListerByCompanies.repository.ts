@@ -21,12 +21,12 @@ export class BannerListerByCompaniesRepository {
   ) {}
 
   private buildWhereCondition(
-    companyIds: number[],
+    partnerIds: number[],
     input: IBannerReaderInput
   ) {
     let whereCondition = and(
       eq(banner.status, BannerStatus.ACTIVE),
-      inArray(banner.id_parceiro, companyIds)
+      inArray(banner.id_parceiro, partnerIds)
     );
 
     if (input.location) {
@@ -44,14 +44,14 @@ export class BannerListerByCompaniesRepository {
   }
 
   async banners(
-    companyIds: number[],
+    partnerIds: number[],
     input: IBannerReaderInput
   ): Promise<IBanner[]> {
     const offset = input.current_page
       ? (input.current_page - 1) * input.per_page
       : 0;
 
-    const whereCondition = this.buildWhereCondition(companyIds, input);
+    const whereCondition = this.buildWhereCondition(partnerIds, input);
 
     const result = await this.db
       .select({
@@ -114,10 +114,10 @@ export class BannerListerByCompaniesRepository {
   }
 
   async countTotal(
-    companyIds: number[],
+    partnerIds: number[],
     input: IBannerReaderInput
   ): Promise<number> {
-    const whereCondition = this.buildWhereCondition(companyIds, input);
+    const whereCondition = this.buildWhereCondition(partnerIds, input);
 
     const countResult = await this.db
       .select({
