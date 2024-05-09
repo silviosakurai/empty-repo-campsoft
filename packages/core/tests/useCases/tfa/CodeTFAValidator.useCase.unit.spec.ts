@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { CodeTFAValidatorUserCase } from "./";
+import { CodeTFAValidatorUserCase } from "../../../useCases/tfa/CodeTFAValidator.useCase";
 import { TfaService } from "@core/services/tfa.service";
 import { ValidateCodeTFARequest } from "@core/useCases/tfa/dtos/ValidateCodeTFARequest.dto";
 import { IValidateCodeTFA } from "@core/interfaces/repositories/tfa";

@@ -1,4 +1,4 @@
-import { phoneNumberIncludesCountryCode } from "./";
+import { phoneNumberIncludesCountryCode } from "@core/common/functions/phoneNumberIncludesCountryCode";
 
 describe("Unit::phoneNumberIncludesCountryCode", () => {
   test("must return an exact phone number", () => {

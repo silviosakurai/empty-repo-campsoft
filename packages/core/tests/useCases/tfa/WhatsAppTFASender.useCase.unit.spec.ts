@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { WhatsAppTFASenderUserCase } from ".";
+import { WhatsAppTFASenderUserCase } from "../../../useCases/tfa/WhatsAppTFASender.useCase";
 import { TfaService } from "@core/services/tfa.service";
 import { WhatsappService } from "@core/services/whatsapp.service";
 import { SendCodeLoginTFARequest } from "@core/useCases/tfa/dtos/SendCodeTFARequest.dto";
