@@ -33,3 +33,4 @@ const portugueseJson =
   "packages/core/plugins/i18next/locales/pt/translation.json";
 
 checkKeyConsistency(englishJson, portugueseJson);
+checkKeyConsistency(portugueseJson, englishJson);
