@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { CreatePlanRequest } from "@core/useCases/plan/dtos/CreatePlanRequest.dto";
-import { inArray, sql, eq } from "drizzle-orm";
+import { inArray, eq } from "drizzle-orm";
 import {
   PlanPriceCreate,
   PlanVisivelSite,
@@ -26,12 +26,7 @@ export class PlanCreatorRepository {
         this.verifyPartnerExistence(input.business_id),
       ]);
 
-    if (
-      !productsExist ||
-      !productGroupsExist ||
-      !partnerExists ||
-      productIds.length !== productGroupIds.length
-    ) {
+    if (!productsExist || !productGroupsExist || !partnerExists) {
       return false;
     }
 
@@ -40,13 +35,20 @@ export class PlanCreatorRepository {
       return false;
     }
 
-    const [pricesCreated, itemsCreated, partnerLinked] = await Promise.all([
-      this.createPlanPrices(planId, input.prices as PlanPriceCreate[]),
-      this.createPlanItems(planId, productIds),
-      this.createPlanPartner(planId, input.business_id),
-    ]);
+    const [pricesCreated, itemsCreated, productGroupsCreated, partnerLinked] =
+      await Promise.all([
+        this.createPlanPrices(planId, input.prices as PlanPriceCreate[]),
+        this.createPlanItems(planId, productIds),
+        this.createPlanGroupItems(planId, productGroupIds),
+        this.createPlanPartner(planId, input.business_id),
+      ]);
 
-    if (!pricesCreated || !itemsCreated || !partnerLinked) {
+    if (
+      !pricesCreated ||
+      !itemsCreated ||
+      !productGroupsCreated ||
+      !partnerLinked
+    ) {
       await this.deletePlan(planId);
       return false;
     }
@@ -129,7 +131,7 @@ export class PlanCreatorRepository {
 
   private async createPlanGroupItems(
     planId: number,
-    productGroupIds: string[]
+    productGroupIds: number[]
   ) {
     let isPlanItemSaved = true;
 
@@ -138,7 +140,7 @@ export class PlanCreatorRepository {
         .insert(schema.planItem)
         .values({
           id_plano: planId,
-          id_produto_grupo: parseInt(productGroup),
+          id_produto_grupo: productGroup,
         })
         .execute();
 
@@ -211,11 +213,11 @@ export class PlanCreatorRepository {
     return result.length === productIds.length;
   }
 
-  async verifyProductGroupsExistence(productGroupsIds: string[]) {
+  async verifyProductGroupsExistence(productGroupsIds: number[]) {
     const result = await this.db
       .select({ product_group_id: schema.productGroup.id_produto_grupo })
       .from(schema.productGroup)
-      .where(inArray(sql`id_produto_grupo`.mapWith(String), productGroupsIds))
+      .where(inArray(schema.productGroup.id_produto_grupo, productGroupsIds))
       .execute();
 
     return result.length === productGroupsIds.length;

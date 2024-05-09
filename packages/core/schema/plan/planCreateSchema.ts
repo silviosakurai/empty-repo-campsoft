@@ -10,5 +10,5 @@ export const planCreateSchema = Type.Object({
   short_description: Type.String(),
   prices: Type.Array(pricesMonthCreatorSchema),
   products: Type.Array(Type.String()),
-  product_groups: Type.Array(Type.String()),
+  product_groups: Type.Array(Type.Number()),
 });
