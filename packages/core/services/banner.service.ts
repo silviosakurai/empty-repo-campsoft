@@ -36,12 +36,12 @@ export class BannerService {
     return this.bannerReaderRepository.banners(tokenKeyData, input);
   };
 
-  listByPartner = async (companyIds: number[], input: IBannerReaderInput) => {
-    return this.bannerListerRepository.banners(companyIds, input);
+  listByPartner = async (partnerIds: number[], input: IBannerReaderInput) => {
+    return this.bannerListerRepository.banners(partnerIds, input);
   };
 
-  viewByPartner = async (companyIds: number[], bannerId: number) => {
-    return this.bannerViewerRepository.view(companyIds, bannerId);
+  viewByPartner = async (partnerIds: number[], bannerId: number) => {
+    return this.bannerViewerRepository.view(partnerIds, bannerId);
   };
 
   countTotal = async (
@@ -52,10 +52,10 @@ export class BannerService {
   };
 
   countTotalByPartner = async (
-    companyIds: number[],
+    partnerIds: number[],
     input: IBannerReaderInput
   ) => {
-    return this.bannerListerRepository.countTotal(companyIds, input);
+    return this.bannerListerRepository.countTotal(partnerIds, input);
   };
 
   create = async (input: BannerCreatorRequestDto) => {

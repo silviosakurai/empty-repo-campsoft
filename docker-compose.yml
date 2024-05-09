@@ -76,6 +76,17 @@ services:
     networks:
       - sonarnet
 
+  websocket:
+    command: sh -c 'pnpm install && pnpm run dev:websocket'
+    build:
+      context: ./apps/websocket
+      target: builder
+    volumes:
+      - ./:/app
+    container_name: websocket
+    ports:
+      - 3003:3003
+
 networks:
   sonarnet:
 

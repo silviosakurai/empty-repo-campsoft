@@ -16,6 +16,6 @@ export class ProductsCreatorUseCase {
 
     await this.productService.create(body);
 
-    return this.productService.createProductCompany(productId, companyId);
+    return this.productService.createProductPartner(productId, companyId);
   }
 }

@@ -9,5 +9,5 @@ export enum RouteMethod {
 export enum RouteModule {
   MANAGER = "manager",
   PUBLIC = "public",
-  TOOLS = "tools",
+  WEBHOOKS = "webhooks",
 }

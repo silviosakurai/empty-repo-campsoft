@@ -6,24 +6,22 @@ import { BannerUpdaterUseCase } from '@core/useCases/banner/BannerUpdater.usecas
 import {
   BannerUpdaterRequestDto,
   BannerUpdaterRequestParamsDto,
-  BannerUpdaterRequestQueryDto,
 } from '@core/useCases/banner/dtos/BannerUpdaterRequest.dto';
 
 export const updateBanner = async (
   request: FastifyRequest<{
     Body: BannerUpdaterRequestDto;
     Params: BannerUpdaterRequestParamsDto;
-    Querystring: BannerUpdaterRequestQueryDto;
   }>,
   reply: FastifyReply
 ) => {
-  const { t } = request;
+  const { t, tokenJwtData } = request;
   const bannerUpdaterUseCase = container.resolve(BannerUpdaterUseCase);
 
   try {
     const response = await bannerUpdaterUseCase.update(
       t,
-      request.query.company_id,
+      tokenJwtData,
       parseInt(request.params.bannerId),
       request.body
     );
