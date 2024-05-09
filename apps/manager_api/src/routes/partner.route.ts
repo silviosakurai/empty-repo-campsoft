@@ -55,7 +55,7 @@ export default async function partnerRoutes(server: FastifyInstance) {
         server.authenticateJwt(request, reply, partnerDeletePermissions),
     ],
   });
-  
+
   server.get('/partner/:partnerId/products', {
     schema: listProductByPartnerSchema,
     handler: partnerController.listProduct,

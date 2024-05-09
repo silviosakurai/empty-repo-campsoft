@@ -9,4 +9,3 @@ export const userUpdatePermissions = [PermissionsRoles.USER_UPDATE];
 export const userDeletePermissions = [PermissionsRoles.USER_DELETE];
 
 export const userSendSsoPermissions = [PermissionsRoles.USER_SEND_SSO];
-

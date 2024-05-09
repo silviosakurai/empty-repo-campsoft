@@ -1,20 +1,22 @@
 const fs = require("fs");
 
 function checkForDuplicateKeys(jsonObject, filePath) {
-  const keys = new Set();
   function checkDuplicates(obj, path = []) {
-    Object.keys(obj).forEach((key) => {
-      if (typeof obj[key] === "object" && obj[key] !== null) {
-        return checkDuplicates(obj[key], path.concat(key));
-      }
-      const fullPath = path.concat(key).join(".");
-      if (keys.has(fullPath)) {
-        throw new Error(
-          `Duplicate key "${fullPath}" found in file ${filePath}`
-        );
-      }
-      keys.add(fullPath);
-    });
+    const keys = new Set();
+
+    if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+      Object.keys(obj).forEach((key) => {
+        if (keys.has(key)) {
+          throw new Error(
+            `Duplicate key "${key}" found at path "${path.join(".")}" in file ${filePath}`
+          );
+        }
+
+        keys.add(key);
+
+        checkDuplicates(obj[key], path.concat(key));
+      });
+    }
   }
   checkDuplicates(jsonObject);
 }
@@ -23,10 +25,13 @@ process.argv.slice(2).forEach((filePath) => {
   const content = fs.readFileSync(filePath, "utf8");
   try {
     const json = JSON.parse(content);
+
     checkForDuplicateKeys(json, filePath);
+
     console.log(`No duplicate keys found in ${filePath}`);
   } catch (e) {
-    console.error(`JSON parsing error in ${filePath}: ${e.message}`);
+    console.error(`Error in ${filePath}: ${e.message}`);
+
     process.exit(1);
   }
 });
