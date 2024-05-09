@@ -126,5 +126,6 @@
   "error_generating_qr_code_pix": "Error generating QR code PIX",
   "amount_to_pay_invalid": "Amount to pay invalid",
   "resource_not_found": "Sorry, the seller you are trying to use does not exist or has been deleted",
+  "forbidden": "Your user is not authorized to access this resource.",
   "forbidden": "Your user is not authorized to access this resource."
 }
