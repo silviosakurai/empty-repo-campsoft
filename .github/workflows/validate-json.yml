@@ -34,4 +34,3 @@ jobs:
 
       - name: Check for duplicate keys
         run: node .github/scripts/check-duplicates.js
-        working-directory: packages/core/plugins/i18next/locales
