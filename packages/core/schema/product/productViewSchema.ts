@@ -9,6 +9,13 @@ export const planProductSchema = Type.Object({
   low_price: Type.Union([Type.Number(), Type.Null()]),
 });
 
+export const marketingProductHighlightsListSchema = Type.Object({
+  title: Type.Union([Type.String(), Type.Null()]),
+  subtitle: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+  image_background: Type.Union([Type.String(), Type.Null()]),
+});
+
 export const marketingProductInstitucionalListSchema = Type.Object({
   title: Type.Union([Type.String(), Type.Null()]),
   description: Type.Union([Type.String(), Type.Null()]),
@@ -38,6 +45,9 @@ export const productViewSchemaResponse = Type.Object({
   ...productViewSchema.properties,
   plans: planProductSchema,
   institutional: Type.Array(marketingProductInstitucionalListSchema, {
+    nullable: true,
+  }),
+  highlights: Type.Array(marketingProductHighlightsListSchema, {
     nullable: true,
   }),
 });
