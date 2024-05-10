@@ -1,10 +1,12 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import * as schema from "@core/models";
 import { productGroupProduct, productGroup } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { ListProductGroupResponse } from "@core/useCases/product/dtos/ListProductGroupResponse.dto";
-import { ListProductGroupPreviewResponse } from "@core/useCases/product/dtos/ListProductGroupResponse.dto";
+import {
+  ListProductGroupResponse,
+  ListProductGroupPreviewResponse,
+} from "@core/useCases/product/dtos/ListProductGroupResponse.dto";
 
 @injectable()
 export class ProductGroupListerRepository {
