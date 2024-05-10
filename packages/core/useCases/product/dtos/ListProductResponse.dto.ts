@@ -16,15 +16,19 @@ export interface ListProductResult {
 }
 
 export type ListProductResponse = Static<typeof productListResponseSchema>;
+
 export type ListProductGroupedByCompany = Static<
   typeof productDetailsWithPricesAndDatesGroupedByCompanySchema
 >;
+
 export type ListProductGroupedByCompanyResponse = Static<
   typeof productListGroupedByCompanyResponseSchema
 >;
+
 export type ListProductGroupedByPartnerResponse = Static<
   typeof productListGroupedByPartnerResponseSchema
 >;
+
 export type ListProductResponseCrossSell = Static<
   typeof productListWithPricesResponseSchema
 >;

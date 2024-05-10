@@ -11,7 +11,6 @@ export const productDetailHowToAccessWithDatesSchema = Type.Object({
     Type.Null(),
   ]),
   name: Type.Union([Type.String(), Type.Null()]),
-  long_description: Type.Union([Type.String(), Type.Null()]),
   short_description: Type.Union([Type.String(), Type.Null()]),
   marketing_phrases: Type.Union([Type.String(), Type.Null()]),
   content_provider_name: Type.Union([Type.String(), Type.Null()]),
