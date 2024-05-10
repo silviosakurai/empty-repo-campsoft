@@ -7,17 +7,20 @@ import { validateImage } from "@core/common/functions/validateImage";
 import { BannerNotFoundError } from "@core/common/exceptions/BannerNotFoundError";
 import { StorageService } from "@core/services/storage.service";
 import { BannerItemNotFoundError } from "@core/common/exceptions/BannerItemNotFoundError";
+import { ControlAccessService } from "@core/services/controlAccess.service";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 
 @injectable()
 export class BannerImageUploaderUseCase {
   constructor(
     private readonly bannerService: BannerService,
     private readonly storageService: StorageService,
+    private readonly controlAccessService: ControlAccessService,
   ) {}
 
   async upload(
     t: TFunction<"translation", undefined>,
-    companyIds: number[],
+    tokenJwtData: ITokenJwtData,
     bannerId: number,
     bannerItemId: number,
     type: BannerImageType,
@@ -25,7 +28,10 @@ export class BannerImageUploaderUseCase {
   ): Promise<boolean> {
     validateImage(t, input.image);
 
-    const banner = await this.bannerService.viewByPartner(companyIds, bannerId);
+    const listPartnersIds =
+      this.controlAccessService.listPartnersIds(tokenJwtData);
+
+    const banner = await this.bannerService.viewByPartner(listPartnersIds, bannerId);
 
     if (!banner) {
       throw new BannerNotFoundError(t("banner_not_found"));

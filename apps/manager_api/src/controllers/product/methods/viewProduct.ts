@@ -14,10 +14,11 @@ export const viewProduct = async (
   const productViewerByCompanyUseCase = container.resolve(
     ProductViewerByCompanyUseCase
   );
-  const { t } = request;
+  const { t, tokenJwtData } = request;
 
   try {
     const response = await productViewerByCompanyUseCase.execute(
+      tokenJwtData,
       request.params.sku
     );
 

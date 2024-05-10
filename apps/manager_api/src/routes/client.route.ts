@@ -56,6 +56,15 @@ export default async function clientRoutes(server: FastifyInstance) {
     handler: clientController.sendSso,
   });
 
+  server.patch('/users/:userId/send-sso', {
+    schema: userSendSsoSchema,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateJwt(request, reply, userSendSsoPermissions),
+    ],
+    handler: clientController.sendSso,
+  });
+
   server.get('/users/:userId', {
     schema: getUserByIdSchema,
     preHandler: [

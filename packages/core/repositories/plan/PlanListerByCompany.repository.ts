@@ -2,7 +2,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import { plan, planPartner } from "@core/models";
-import { eq, and, asc, desc, SQLWrapper, sql } from "drizzle-orm";
+import { eq, and, asc, desc, SQLWrapper, sql, inArray } from "drizzle-orm";
 import { ListPlanRequest } from "@core/useCases/plan/dtos/ListPlanRequest.dto";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import {
@@ -31,7 +31,10 @@ export class PlanListerByCompanyRepository {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository
   ) {}
 
-  async list(query: ListPlanRequest): Promise<ListPlanResponse | null> {
+  async list(
+    partnerIds: number[],
+    query: ListPlanRequest
+  ): Promise<ListPlanResponse | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -53,7 +56,7 @@ export class PlanListerByCompanyRepository {
       .from(plan)
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
-      .where(and(...filters));
+      .where(and(inArray(planPartner.id_parceiro, partnerIds), ...filters));
 
     const totalResult: ViewPlanRepositoryDTO[] = await allQuery.execute();
 
