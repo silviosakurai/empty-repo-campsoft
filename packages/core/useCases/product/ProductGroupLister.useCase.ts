@@ -1,6 +1,5 @@
 import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
-import { ListProductGroupResponse } from "./dtos/ListProductGroupResponse.dto";
 import { TFunction } from "i18next";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ControlAccessService } from "@core/services/controlAccess.service";
