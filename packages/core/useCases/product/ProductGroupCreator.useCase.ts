@@ -2,7 +2,6 @@ import { injectable } from "tsyringe";
 import { ProductService } from "@core/services";
 import { TFunction } from "i18next";
 import { ProductGroupNotFoundError } from "@core/common/exceptions/ProductGroupNotFoundError";
-import { ProductGroupImageType } from "@core/common/enums/models/product";
 
 @injectable()
 export class ProductGroupCreatorUseCase {
