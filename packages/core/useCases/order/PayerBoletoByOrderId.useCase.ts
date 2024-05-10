@@ -17,13 +17,13 @@ export class PayerByBoletoByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
+    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
     try {
-      const { order, externalId, sellerId } =
+      const { order, externalId, sellerId, splitList } =
         await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
       const amountPay = amountToPay(order);
@@ -35,6 +35,7 @@ export class PayerByBoletoByOrderIdUseCase {
           description: order.observation,
           reference_id: order.order_id,
           sellerId,
+          // split_rules: splitList,
         });
 
       if (!result.data) {

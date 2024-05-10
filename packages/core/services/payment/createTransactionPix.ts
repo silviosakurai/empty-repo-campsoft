@@ -23,6 +23,7 @@ export async function createTransactionPix(
       amount: input.amount,
       payment_type: PaymentType.pix,
       pix_expiration_date_time: input.expiration,
+      split_rules: input.split_rules,
     });
 
     if (response.status === HTTPStatusCode.CREATED) {

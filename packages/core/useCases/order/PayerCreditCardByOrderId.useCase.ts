@@ -76,7 +76,7 @@ export class PayerCreditCardByOrderIdUseCase {
         sellerId: orderData.sellerId,
         cardId: creditCard.external_id,
         usage: "single_use",
-        split_rules: orderData.splitList as any,
+        split_rules: orderData.splitList,
       });
 
       if (!result.data) {

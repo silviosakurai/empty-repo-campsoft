@@ -6,13 +6,13 @@ import { FinanceSplitListIsMain } from "@core/common/enums/models/financeSplitLi
 import { PaymentSplitRulesListerResponse } from "@core/interfaces/repositories/payment";
 import { ISplitRuleRequest } from "@core/interfaces/services/payment/ISplitRule";
 import { PaymentSplitRulesListerRepository } from "@core/repositories/payment/PaymentSplitRulesLister.repository";
-
+// todo: debugar finance serve
 @injectable()
 export class OrderWithPaymentReaderUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly clientService: ClientService,
-    private readonly financeService: FinanceService,
+    private readonly financeService: PaymentSplitRulesListerRepository,
     private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
@@ -53,7 +53,7 @@ export class OrderWithPaymentReaderUseCase {
     ruleId: number,
     t: TFunction<"translation", undefined>
   ) {
-    const sellers = await this.financeService.listSplitRules(ruleId);
+    const sellers = await this.financeService.list(ruleId);
 
     if (!sellers) {
       throw new Error(t("seller_not_found"));
@@ -129,4 +129,3 @@ export class OrderWithPaymentReaderUseCase {
     return result;
   }
 }
-// TODO: inserir mensagem nos erros && alterar injeção do repository para o service

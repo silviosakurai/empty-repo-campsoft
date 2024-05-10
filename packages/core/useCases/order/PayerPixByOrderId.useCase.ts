@@ -24,10 +24,8 @@ export class PayerPixByOrderIdUseCase {
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
     try {
-      const { order, sellerId } = await this.orderWithPaymentReaderUseCase.view(
-        t,
-        orderId
-      );
+      const { order, sellerId, splitList } =
+        await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
       const amountPay = amountToPay(order);
 
@@ -35,6 +33,7 @@ export class PayerPixByOrderIdUseCase {
         amount: amountPay,
         description: order.observation,
         sellerId,
+        split_rules: splitList,
       });
 
       if (!result.data) {

@@ -24,6 +24,7 @@ export async function createTransactionSimpleTicket(
       description: input.description ?? "",
       payment_type: PaymentType.boleto,
       reference_id: input.reference_id,
+      split_rules: input.split_rules,
     });
 
     if (response.status === HTTPStatusCode.CREATED) {
