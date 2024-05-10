@@ -9,6 +9,11 @@ export const planProductSchema = Type.Object({
   low_price: Type.Union([Type.Number(), Type.Null()]),
 });
 
+export const marketingProductMagazinesListSchema = Type.Object({
+  title: Type.Union([Type.String(), Type.Null()]),
+  image_background: Type.Union([Type.String(), Type.Null()]),
+});
+
 export const marketingProductHighlightsListSchema = Type.Object({
   title: Type.Union([Type.String(), Type.Null()]),
   subtitle: Type.Union([Type.String(), Type.Null()]),
@@ -48,6 +53,9 @@ export const productViewSchemaResponse = Type.Object({
     nullable: true,
   }),
   highlights: Type.Array(marketingProductHighlightsListSchema, {
+    nullable: true,
+  }),
+  magazines: Type.Array(marketingProductMagazinesListSchema, {
     nullable: true,
   }),
 });

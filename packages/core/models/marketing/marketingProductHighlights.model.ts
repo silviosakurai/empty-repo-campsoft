@@ -8,8 +8,8 @@ export const marketingProductHighlights = mysqlTable(
       .primaryKey()
       .autoincrement(),
     id_produto: varchar("id_produto", { length: 10 }),
-    titulo: varchar("titulo", { length: 1000 }),
-    sub_titulo: varchar("sub_titulo", { length: 1000 }),
+    titulo: varchar("titulo", { length: 200 }),
+    sub_titulo: varchar("sub_titulo", { length: 200 }),
     descricao: varchar("descricao", { length: 1000 }),
     url_imagem: varchar("url_imagem", { length: 1000 }),
     url_video: varchar("url_video", { length: 1000 }),

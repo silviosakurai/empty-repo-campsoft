@@ -1,6 +1,7 @@
 import {
   marketingProductHighlightsListSchema,
   marketingProductInstitucionalListSchema,
+  marketingProductMagazinesListSchema,
 } from "@core/schema/product/productViewSchema";
 import { Static } from "@sinclair/typebox";
 
@@ -10,4 +11,8 @@ export type MarketingProductInstitucionalList = Static<
 
 export type MarketingProductHighlightsList = Static<
   typeof marketingProductHighlightsListSchema
+>;
+
+export type MarketingProductMagazinesList = Static<
+  typeof marketingProductMagazinesListSchema
 >;
