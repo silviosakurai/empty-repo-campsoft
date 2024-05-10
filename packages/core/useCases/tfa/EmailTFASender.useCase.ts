@@ -29,15 +29,17 @@ export class EmailTFASenderUserCase {
       code,
     } as IReplaceTemplate;
 
-    await this.emailService.sendEmail(
+    const isEmailSent = await this.emailService.sendEmail(
       tokenKeyData,
       notificationTemplate,
       TemplateModulo.CODIGO_TFA,
       replaceTemplate
     );
 
-    await this.tfaService.insertCodeUser(type, loginUserTFA, code);
+    if (isEmailSent) {
+      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
+    }
 
-    return true;
+    return isEmailSent;
   }
 }
