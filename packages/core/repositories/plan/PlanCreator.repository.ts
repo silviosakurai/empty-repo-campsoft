@@ -180,16 +180,20 @@ export class PlanCreatorRepository {
     await Promise.all([
       this.db
         .delete(schema.planPartner)
-        .where(eq(schema.planPartner.id_plano, planId)),
+        .where(eq(schema.planPartner.id_plano, planId))
+        .execute(),
       this.db
         .delete(schema.planItem)
-        .where(eq(schema.planPartner.id_plano, planId)),
+        .where(eq(schema.planPartner.id_plano, planId))
+        .execute(),
       this.db
         .delete(schema.planPrice)
-        .where(eq(schema.planPartner.id_plano, planId)),
+        .where(eq(schema.planPartner.id_plano, planId))
+        .execute(),
       this.db
         .delete(schema.plan)
-        .where(eq(schema.planPartner.id_plano, planId)),
+        .where(eq(schema.planPartner.id_plano, planId))
+        .execute(),
     ]);
   }
 
