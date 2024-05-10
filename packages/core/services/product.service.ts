@@ -62,7 +62,7 @@ export class ProductService {
   viewProductPartner = async (productId: string, partnerId: number) => {
     return this.productPartnerViewerRepository.view(productId, partnerId);
   };
-  
+
   createProductPartner = async (productId: string, partnerId: number) => {
     return this.productPartnerCreatorRepository.create(productId, partnerId);
   };
@@ -99,8 +99,8 @@ export class ProductService {
     return this.productListerRepository.listByIds(companyId, productIds);
   };
 
-  view = async (companyId: number, sku: string) => {
-    return this.productViewerRepository.get(companyId, sku);
+  view = async (companyId: number, slug: string) => {
+    return this.productViewerRepository.get(companyId, slug);
   };
 
   viewByCompanyIds = async (partnerIds: number[], sku: string) => {

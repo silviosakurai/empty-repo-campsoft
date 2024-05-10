@@ -1,6 +1,7 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { productDetailHowToAccessWithDatesSchema } from "@core/schema/product/productDetailHowToAccessWithDatesSchema";
+import { productViewSchema } from "@core/schema/product/productViewSchema";
 import { Type } from "@sinclair/typebox";
 
 export const getProductSchema = {
@@ -22,14 +23,14 @@ export const getProductSchema = {
     ),
   }),
   params: Type.Object({
-    sku: Type.String(),
+    slug: Type.String(),
   }),
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: productDetailHowToAccessWithDatesSchema,
+        data: productViewSchema,
       },
       { description: "Successful" }
     ),
