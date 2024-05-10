@@ -22,12 +22,13 @@ export class ProductViewerUseCase {
       return null;
     }
 
-    const [plansProduct, institutional, highlights, magazines] =
+    const [plansProduct, institutional, highlights, magazines, sections] =
       await Promise.all([
         this.listPlansByProduct(companyId, product.product_id),
         this.marketingService.list(product.product_id),
         this.marketingService.listHighlights(product.product_id),
         this.marketingService.listMagazines(product.product_id),
+        this.marketingService.listSection(product.product_id),
       ]);
 
     return {
@@ -36,6 +37,7 @@ export class ProductViewerUseCase {
       institutional,
       highlights,
       magazines,
+      sections,
     };
   }
 
