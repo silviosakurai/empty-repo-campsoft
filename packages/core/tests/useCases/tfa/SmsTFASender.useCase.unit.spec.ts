@@ -15,7 +15,7 @@ const mockGeneratedCode = "123456";
 const mockLoginUser = "18999999999";
 const mockTemplate = { templateId: '1', template: "template" }
 
-describe("Unit::SmsTFAUserSenderCase", () => {
+describe("Unit::SmsTFASenderCase", () => {
   let smsTFAUserSender: SmsTFAUserSenderCase;
   let mockTfaService: jest.Mocked<TfaService>;
   let mockSmsService: jest.Mocked<SmsService>;
@@ -87,12 +87,8 @@ describe("Unit::SmsTFAUserSenderCase", () => {
       phone: mockLoginUser,
       message: expect.any(String),
     });
-    expect(mockTfaService.insertCodeUser).toHaveBeenCalledWith(
-      TFAType.SMS,
-      expect.any(Object),
-      mockGeneratedCode
-    );
+    expect(mockTfaService.insertCodeUser).not.toHaveBeenCalled();
     expect(mockTfaService.insertSmsHistory).not.toHaveBeenCalled();
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 });
