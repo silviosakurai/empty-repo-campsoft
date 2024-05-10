@@ -3,7 +3,7 @@ import { eq, and } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { product, productPartner, productType } from "@core/models";
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { ProductView } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
 export class ProductViewerRepository {
@@ -11,7 +11,7 @@ export class ProductViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async get(companyId: number, slug: string): Promise<ProductResponse | null> {
+  async get(companyId: number, slug: string): Promise<ProductView | null> {
     const result = await this.db
       .select({
         product_id: product.id_produto,
@@ -62,6 +62,6 @@ export class ProductViewerRepository {
       return null;
     }
 
-    return result[0] as unknown as ProductResponse;
+    return result[0] as ProductView;
   }
 }

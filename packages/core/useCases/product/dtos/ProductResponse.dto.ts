@@ -1,6 +1,9 @@
 import { productDetailsWithPricesAndDatesAndHowToSchema } from "@core/schema/product/productDetailsWithPricesAndDatesAndHowToSchema";
 import { productDetailsWithPricesAndDatesSchema } from "@core/schema/product/productDetailsWithPricesAndDatesSchema";
-import { productViewSchema } from "@core/schema/product/productViewSchema";
+import {
+  productViewSchema,
+  productViewSchemaResponse,
+} from "@core/schema/product/productViewSchema";
 import { Static } from "@sinclair/typebox";
 
 export type ProductResponse = Static<
@@ -11,4 +14,6 @@ export type ProductResponseCrossSell = Static<
   typeof productDetailsWithPricesAndDatesSchema
 >;
 
-export type ProductViewResponse = Static<typeof productViewSchema>;
+export type ProductViewResponse = Static<typeof productViewSchemaResponse>;
+
+export type ProductView = Static<typeof productViewSchema>;

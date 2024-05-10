@@ -1,7 +1,6 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { productDetailHowToAccessWithDatesSchema } from "@core/schema/product/productDetailHowToAccessWithDatesSchema";
-import { productViewSchema } from "@core/schema/product/productViewSchema";
+import { productViewSchemaResponse } from "@core/schema/product/productViewSchema";
 import { Type } from "@sinclair/typebox";
 
 export const getProductSchema = {
@@ -30,7 +29,7 @@ export const getProductSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: productViewSchema,
+        data: productViewSchemaResponse,
       },
       { description: "Successful" }
     ),

@@ -2,12 +2,14 @@ import { PlanService, ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ProductViewResponse } from "./dtos/ProductResponse.dto";
 import { ListPlanProductResponse } from "../plan/dtos/ListPlanResponse.dto";
+import { MarketingService } from "@core/services/marketing.service";
 
 @injectable()
 export class ProductViewerUseCase {
   constructor(
     private readonly productService: ProductService,
-    private readonly planService: PlanService
+    private readonly planService: PlanService,
+    private readonly marketingService: MarketingService
   ) {}
 
   async execute(
@@ -20,14 +22,15 @@ export class ProductViewerUseCase {
       return null;
     }
 
-    const plansProduct = await this.listPlansByProduct(
-      companyId,
-      product?.product_id
-    );
+    const [plansProduct, institutional] = await Promise.all([
+      this.listPlansByProduct(companyId, product.product_id),
+      this.marketingService.list(product.product_id),
+    ]);
 
     return {
       ...product,
       plans: plansProduct,
+      institutional,
     };
   }
 
