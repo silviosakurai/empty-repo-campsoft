@@ -19,17 +19,17 @@ export const paymentByCreditCard = async (
   try {
     const result = await service.pay(t, params.orderNumber, body);
 
-    // if (!result.status) {
-    //   return sendResponse(reply, {
-    //     data: result.data,
-    //     httpStatusCode: result.httpStatusCode,
-    //   });
-    // }
+    if (!result.status) {
+      return sendResponse(reply, {
+        data: result.data,
+        httpStatusCode: result.httpStatusCode,
+      });
+    }
 
-    // return sendResponse(reply, {
-    //   data: result.data,
-    //   httpStatusCode: HTTPStatusCode.CREATED,
-    // });
+    return sendResponse(reply, {
+      data: result.data,
+      httpStatusCode: HTTPStatusCode.CREATED,
+    });
   } catch (error) {
     request.server.logger.error(error, request.id);
 

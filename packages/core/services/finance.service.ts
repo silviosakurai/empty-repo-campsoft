@@ -1,13 +1,13 @@
-import { PaymentSplitRulesViewerRepository } from "@core/repositories/payment/PaymentSplitRulesViewer.repository";
+import { PaymentSplitRulesListerRepository } from "@core/repositories/payment/PaymentSplitRulesLister.repository";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class FinanceService {
   constructor(
-    private readonly splitRulesViewerRepository: PaymentSplitRulesViewerRepository
+    private readonly splitRulesListerRepository: PaymentSplitRulesListerRepository
   ) {}
 
-  readSplitRules = async (ruleId: number) => {
-    return this.splitRulesViewerRepository.view(ruleId);
-  };
+  async listSplitRules(ruleId: number) {
+    return this.splitRulesListerRepository.list(ruleId);
+  }
 }

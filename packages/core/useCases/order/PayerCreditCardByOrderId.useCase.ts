@@ -69,49 +69,48 @@ export class PayerCreditCardByOrderIdUseCase {
 
       const amountPay = amountToPay(order);
 
-      return false;
+      const result = await this.paymentGatewayService.createTransactionCardId({
+        amount: amountPay,
+        description: order.observation,
+        reference_id: order.order_id,
+        sellerId: orderData.sellerId,
+        cardId: creditCard.external_id,
+        usage: "single_use",
+        split_rules: orderData.splitList as any,
+      });
 
-      // const result = await this.paymentGatewayService.createTransactionCardId({
-      //   amount: amountPay,
-      //   description: order.observation,
-      //   reference_id: order.order_id,
-      //   sellerId: orderData.sellerId,
-      //   cardId: creditCard.external_id,
-      //   usage: "single_use",
-      // });
+      if (!result.data) {
+        return result;
+      }
 
-      // if (!result.data) {
-      //   return result;
-      // }
+      await Promise.all([
+        this.signatureService.activePaidSignature(
+          order.order_id,
+          order.order_id_previous,
+          order.activation_immediate
+        ),
+        this.orderService.createOrderPayment(
+          order,
+          signature.signature_id,
+          OrderPaymentsMethodsEnum.CARD,
+          OrderStatusEnum.APPROVED,
+          {
+            paymentTransactionId: result.data.id,
+            cardId,
+          }
+        ),
+      ]);
 
-      // await Promise.all([
-      //   this.signatureService.activePaidSignature(
-      //     order.order_id,
-      //     order.order_id_previous,
-      //     order.activation_immediate
-      //   ),
-      //   this.orderService.createOrderPayment(
-      //     order,
-      //     signature.signature_id,
-      //     OrderPaymentsMethodsEnum.CARD,
-      //     OrderStatusEnum.APPROVED,
-      //     {
-      //       paymentTransactionId: result.data.id,
-      //       cardId,
-      //     }
-      //   ),
-      // ]);
+      const formatCreditCard = `${result.data.payment_method.first4_digits}xxxxxxxxxx${result.data.payment_method.last4_digits}`;
 
-      // const formatCreditCard = `${result.data.payment_method.first4_digits}xxxxxxxxxx${result.data.payment_method.last4_digits}`;
-
-      // return {
-      //   data: {
-      //     brand: result.data.payment_method.card_brand,
-      //     number: formatCreditCard,
-      //     credit_card_id: creditCard.card_id,
-      //   },
-      //   status: true,
-      // } as ResponseService;
+      return {
+        data: {
+          brand: result.data.payment_method.card_brand,
+          number: formatCreditCard,
+          credit_card_id: creditCard.card_id,
+        },
+        status: true,
+      } as ResponseService;
     } catch (error) {
       await this.orderService.updateStatusByOrderId(
         orderId,

@@ -8,14 +8,17 @@ import {
   FinanceSplitListIsLiable,
   FinanceSplitListStatus,
 } from "@core/common/enums/models/financeSplitList";
+import { PaymentSplitRulesListerResponse } from "@core/interfaces/repositories/payment";
 
 @injectable()
-export class PaymentSplitRulesViewerRepository {
+export class PaymentSplitRulesListerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async view(ruleId: number) {
+  async list(
+    ruleId: number
+  ): Promise<PaymentSplitRulesListerResponse[] | null> {
     const results = await this.db
       .select({
         name: financeSplitRules.regra_nome,
@@ -29,7 +32,6 @@ export class PaymentSplitRulesViewerRepository {
           ELSE false
         END`.mapWith(Boolean),
         amount: financeSplitList.valor,
-        percentage: financeSplitList.percentage_amount,
         charge_recipient_processing_fee: sql`CASE
           WHEN ${financeSplitList.charge_recipient_processing_fee} = ${FinanceSplitListIsLiable.YES} THEN true
           ELSE false
@@ -39,6 +41,7 @@ export class PaymentSplitRulesViewerRepository {
           ELSE false
         END`.mapWith(Boolean),
         isMain: financeSplitList.principal,
+        percentage_or_amount: financeSplitList.percentage_or_amount,
       })
       .from(financeSplitRules)
       .innerJoin(

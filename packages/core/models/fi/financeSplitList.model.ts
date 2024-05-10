@@ -25,8 +25,7 @@ export const financeSplitList = mysqlTable("financeiro_split_lista", {
     .notNull()
     .primaryKey(),
   id_financeiro_split_regras: int("id_financeiro_split_regras").notNull(),
-  sandbox: int("sandbox").default(1),
-  id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 }),
+  id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 }).notNull(),
   id_fi_contas: int("id_fi_contas"),
   id_fi_zoop_vendedor_conta: varchar("id_fi_zoop_vendedor_conta", {
     length: 32,
@@ -46,7 +45,7 @@ export const financeSplitList = mysqlTable("financeiro_split_lista", {
   charge_processing_fee: mysqlEnum("charge_processing_fee", [
     FinanceSplitListChargeProcessingFee.YES,
     FinanceSplitListChargeProcessingFee.NO,
-  ]),
+  ]).notNull(),
   charge_recipient_processing_fee: mysqlEnum(
     "charge_recipient_processing_fee",
     [
@@ -58,11 +57,11 @@ export const financeSplitList = mysqlTable("financeiro_split_lista", {
     FinanceSplitListIsGrossAmount.YES,
     FinanceSplitListIsGrossAmount.NO,
   ]),
-  percentage_amount: mysqlEnum("percentage_amount", [
+  percentage_or_amount: mysqlEnum("percentage_or_amount", [
     FinanceSplitListPercentageAmount.PERCENTAGE,
     FinanceSplitListPercentageAmount.AMOUNT,
-  ]),
-  valor: float("valor"),
+  ]).notNull(),
+  valor: float("valor").notNull(),
   antecipacao: mysqlEnum("antecipacao", [
     FinanceSplitListAnticipation.YES,
     FinanceSplitListAnticipation.NO,
