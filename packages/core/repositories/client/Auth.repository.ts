@@ -1,5 +1,5 @@
 import * as schema from "@core/models";
-import { access, client, clientMagicToken } from "@core/models";
+import { client, clientMagicToken } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq, or, and, sql } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
@@ -8,7 +8,6 @@ import {
   ClientStatus,
 } from "@core/common/enums/models/client";
 import { LoginResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
 @injectable()
 export class AuthRepository {
@@ -17,7 +16,6 @@ export class AuthRepository {
   ) {}
 
   authenticate = async (
-    tokenKeyData: ITokenKeyData,
     login: string,
     password: string
   ): Promise<LoginResponse | null> => {
@@ -25,7 +23,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
         birth_date: client.data_nascimento,
@@ -33,13 +30,12 @@ export class AuthRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
+        photo: client.foto,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, tokenKeyData.company_id),
           or(
             eq(client.email, login),
             eq(client.cpf, login),
@@ -54,11 +50,10 @@ export class AuthRepository {
       return null;
     }
 
-    return result[0] as unknown as LoginResponse;
+    return result[0] as LoginResponse;
   };
 
   authenticateByClientId = async (
-    tokenKeyData: ITokenKeyData,
     clientId: string,
     password: string
   ): Promise<LoginResponse | null> => {
@@ -66,7 +61,6 @@ export class AuthRepository {
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
         birth_date: client.data_nascimento,
@@ -74,13 +68,12 @@ export class AuthRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
+        photo: client.foto,
       })
       .from(client)
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, tokenKeyData.company_id),
           eq(client.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           sql`SUBSTRING_INDEX(${client.senha}, ':', 1) = MD5(CONCAT(SUBSTRING_INDEX(${client.senha}, ':', -1), ${password}))`
         )
@@ -91,18 +84,16 @@ export class AuthRepository {
       return null;
     }
 
-    return result[0] as unknown as LoginResponse;
+    return result[0] as LoginResponse;
   };
 
   authenticateByMagicToken = async (
-    tokenKeyData: ITokenKeyData,
     token: string
   ): Promise<LoginResponse | null> => {
     const result = await this.db
       .select({
         client_id: sql`BIN_TO_UUID(${client.id_cliente})`,
         status: client.status,
-        facebook_id: client.id_facebook,
         name: client.nome,
         surname: client.sobrenome,
         birth_date: client.data_nascimento,
@@ -110,14 +101,13 @@ export class AuthRepository {
         phone: client.telefone,
         cpf: client.cpf,
         gender: client.sexo,
+        photo: client.foto,
       })
       .from(clientMagicToken)
       .innerJoin(client, eq(client.id_cliente, clientMagicToken.id_cliente))
-      .innerJoin(access, eq(access.id_cliente, client.id_cliente))
       .where(
         and(
           eq(client.status, ClientStatus.ACTIVE),
-          eq(access.id_empresa, tokenKeyData.company_id),
           eq(clientMagicToken.token, token),
           eq(clientMagicToken.status, ClientMagicTokenStatus.YES)
         )
@@ -128,6 +118,6 @@ export class AuthRepository {
       return null;
     }
 
-    return result[0] as unknown as LoginResponse;
+    return result[0] as LoginResponse;
   };
 }

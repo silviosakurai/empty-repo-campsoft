@@ -3,6 +3,7 @@ import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { eq, sql } from "drizzle-orm";
 import { UpdateClientRequestDto } from "@core/useCases/client/dtos/UpdateClientRequest.dto";
+import { UpdateClientByIdRequestDto } from "@core/useCases/client/dtos/updateClientByIdRequest.dto";
 
 @injectable()
 export class ClientUpdaterRepository {
@@ -25,6 +26,31 @@ export class ClientUpdaterRepository {
       .execute();
 
     if (!result[0].affectedRows) {
+      return null;
+    }
+
+    return true;
+  }
+
+  async updateById(clientId: string, input: UpdateClientByIdRequestDto) {
+    const [resultClient] = await Promise.all([
+      this.db
+        .update(schema.client)
+        .set({
+          data_nascimento: input.birthday,
+          nome: input.first_name,
+          sobrenome: input.last_name,
+          email: input.email,
+          telefone: input.phone,
+          sexo: input.gender,
+          obs: input.obs,
+          status: input.status,
+        })
+        .where(eq(schema.client.id_cliente, sql`UUID_TO_BIN(${clientId})`))
+        .execute(),
+    ]);
+
+    if (!resultClient[0].affectedRows) {
       return null;
     }
 

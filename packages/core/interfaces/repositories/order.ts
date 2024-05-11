@@ -87,6 +87,7 @@ export interface ListOrderById {
   order_id: string;
   order_id_previous: string;
   client_id: string;
+  seller_id?: string;
   company_id: number;
   status_id: number;
   recurrence: number;
@@ -98,6 +99,16 @@ export interface ListOrderById {
   total_installments: number;
   total_installments_value: number;
   activation_immediate: boolean;
+  observation?: string;
 }
 
 export type OrderPayments = Static<typeof orderPaymentsSchema>;
+
+export interface OrderPaymentUpdateInput {
+  paymentTransactionId?: string | null;
+  cardId?: string | null;
+  paymentLink?: string | null;
+  dueDate?: string | null;
+  codePayment?: string | null;
+  voucher?: string | null;
+}

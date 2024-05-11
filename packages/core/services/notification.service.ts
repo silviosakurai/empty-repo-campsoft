@@ -9,13 +9,15 @@ import { TFAVerificationError } from "@core/common/exceptions/TFAVerificationErr
 import { phoneNumberValidateNational } from "@core/common/functions/phoneNumberValidateNational";
 import { validateEmail } from "@core/common/functions/emailValidate";
 import { TFunction } from "i18next";
+import { EmailDomainService } from "./emailDomain.service";
 
 @injectable()
 class NotificationService {
   constructor(
     private readonly whatsAppTFASenderUseCase: WhatsAppTFASenderUserCase,
     private readonly smsTFASenderUseCase: SmsTFAUserSenderCase,
-    private readonly emailTFASenderUseCase: EmailTFASenderUserCase
+    private readonly emailTFASenderUseCase: EmailTFASenderUserCase,
+    private readonly emailDomainService: EmailDomainService
   ) {}
 
   public async executeTfa(
@@ -41,6 +43,14 @@ class NotificationService {
     if (options.type === TFAType.EMAIL) {
       if (!validateEmail(options.loginUserTFA.login)) {
         throw new TFAVerificationError(t("email_is_not_valid"));
+      }
+
+      const isEmailDisposable = await this.emailDomainService.isEmailDisposable(
+        options.loginUserTFA.login
+      );
+
+      if (isEmailDisposable) {
+        throw new TFAVerificationError(t("email_disposable_not_allowed"));
       }
 
       return this.emailTFASenderUseCase.execute(options);

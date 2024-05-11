@@ -1,6 +1,6 @@
 # Mania de APP
 
-Bem-vindo ao repositório do projeto Mania de APP, um monorepo gerenciado pelo TurboRepo que hospeda as APIs `public` e `partner`. Este projeto foi configurado para facilitar o desenvolvimento, build e colaboração em múltiplas APIs sob uma única base de código.
+Bem-vindo ao repositório do projeto Mania de APP, um monorepo gerenciado pelo TurboRepo que hospeda as APIs `public` e `manager`. Este projeto foi configurado para facilitar o desenvolvimento, build e colaboração em múltiplas APIs sob uma única base de código.
 
 ## Pré-requisitos
 
@@ -62,18 +62,18 @@ pnpm run build
 
 3. **Desenvolvimento e Build Específicos**
 
-Para desenvolvimento e build de projetos específicos (`partner` ou `public`):
+Para desenvolvimento e build de projetos específicos (`manager` ou `public`):
 
-3.1. **Iniciar o projeto partner em modo de desenvolvimento:**
+3.1. **Iniciar o projeto manager em modo de desenvolvimento:**
 
 ```sh
-pnpm run dev:partner
+pnpm run dev:manager
 ```
 
-3.2. **Construir o projeto partner:**
+3.2. **Construir o projeto manager:**
 
 ```sh
-pnpm run build:partner
+pnpm run build:manager
 ```
 
 3.3. **Iniciar o projeto public em modo de desenvolvimento:**

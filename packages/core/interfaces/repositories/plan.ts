@@ -39,8 +39,23 @@ export interface PlanPriceOrder {
 export interface PlanPriceCrossSellOrder {
   product_id: string | null;
   price_discount: number;
+  discount_coupon?: number | null;
+  discount_product?: number | null;
 }
 
 export interface PlanListerOrderResponse {
   product_id: string;
+}
+
+export interface ViewPlanRepositoryResponse {
+  plan_id: number;
+  status: Status | null;
+  visible_site: boolean;
+  business_id: number;
+  plan: string | null;
+  image: string | null;
+  description: string | null;
+  short_description: string | null;
+  created_at: string;
+  updated_at: string;
 }

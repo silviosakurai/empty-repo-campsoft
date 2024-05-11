@@ -6,25 +6,41 @@ import {
   getProductSchema,
   listProductSchema,
 } from '@core/validations/product';
+import {
+  productCrossSellPermissions,
+  productViewPermissions,
+  productListPermissions,
+} from '@/permissions';
 
 export default async function productRoutes(server: FastifyInstance) {
   const productController = container.resolve(ProductController);
 
   server.get('/products', {
     schema: listProductSchema,
-    preHandler: [server.authenticateKeyApi],
     handler: productController.list,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, productListPermissions),
+    ],
   });
 
-  server.get('/products/:sku', {
+  server.get('/products/:slug', {
     schema: getProductSchema,
-    preHandler: [server.authenticateKeyApi],
     handler: productController.view,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, productViewPermissions),
+    ],
   });
 
   server.get('/products/cross-sell', {
     schema: getProductCrossSellSchema,
-    preHandler: [server.authenticateKeyApi, server.authenticateJwt],
     handler: productController.listCrossSell,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, productCrossSellPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, productCrossSellPermissions),
+    ],
   });
 }

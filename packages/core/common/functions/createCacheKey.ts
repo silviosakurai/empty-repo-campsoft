@@ -1,19 +1,19 @@
 export function createCacheKey(
   nameCache: string,
-  id: string | string[] | undefined,
-  routePath: string | undefined,
-  routeMethod: string,
-  routeModule: string
+  idCache: string | string[] | undefined,
+  paramsCache?: string
 ): string {
-  if (!id) {
+  if (!idCache) {
     throw new Error("id is required");
   }
 
-  const idKey = Array.isArray(id) ? id[0] : id;
+  const idCacheKey = Array.isArray(idCache) ? idCache[0] : idCache;
 
-  const encodedRoutePath = encodeURIComponent(routePath || "");
-  const encodedRouteMethod = encodeURIComponent(routeMethod);
-  const encodedRouteModule = encodeURIComponent(routeModule);
+  let cacheKey = `${nameCache}:${idCacheKey}`;
+  if (paramsCache) {
+    const encodedparamsCache = encodeURIComponent(paramsCache);
+    cacheKey += `:${encodedparamsCache}`;
+  }
 
-  return `${nameCache}:${idKey}:${encodedRoutePath}:${encodedRouteMethod}:${encodedRouteModule}`;
+  return cacheKey;
 }

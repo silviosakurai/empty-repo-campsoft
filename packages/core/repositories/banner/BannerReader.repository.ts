@@ -14,6 +14,7 @@ import {
 } from "@core/common/enums/models/banner";
 import { currentTime } from "@core/common/functions/currentTime";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { BannerResponseDto } from "@core/useCases/banner/dtos/BannerReaderResponse.dto";
 
 @injectable()
 export class BannerReaderRepository {
@@ -27,7 +28,7 @@ export class BannerReaderRepository {
   ) {
     let whereCondition = and(
       eq(banner.status, BannerStatus.ACTIVE),
-      eq(banner.id_empresa, tokenKeyData.company_id)
+      eq(banner.id_parceiro, tokenKeyData.id_parceiro)
     );
 
     if (input.location) {
@@ -47,7 +48,7 @@ export class BannerReaderRepository {
   async banners(
     tokenKeyData: ITokenKeyData,
     input: IBannerReaderInput
-  ): Promise<IBanner[]> {
+  ): Promise<BannerResponseDto[]> {
     const offset = input.current_page
       ? (input.current_page - 1) * input.per_page
       : 0;
@@ -127,6 +128,10 @@ export class BannerReaderRepository {
       .from(banner)
       .where(whereCondition)
       .execute();
+
+    if (!countResult?.length) {
+      return 0;
+    }
 
     return countResult[0].count;
   }

@@ -3,11 +3,11 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ProductViewerUseCase } from '@core/useCases/product/ProductViewer.useCase';
 import { container } from 'tsyringe';
-import { ViewProductRequest } from '@core/useCases/product/dtos/ViewProductRequest.dto';
+import { ViewProductPublicRequest } from '@core/useCases/product/dtos/ViewProductRequest.dto';
 
 export const viewProduct = async (
   request: FastifyRequest<{
-    Params: ViewProductRequest;
+    Params: ViewProductPublicRequest;
   }>,
   reply: FastifyReply
 ) => {
@@ -16,8 +16,8 @@ export const viewProduct = async (
 
   try {
     const response = await productViewerUseCase.execute(
-      tokenKeyData.company_id,
-      request.params.sku
+      tokenKeyData.id_parceiro,
+      request.params.slug
     );
 
     if (!response) {

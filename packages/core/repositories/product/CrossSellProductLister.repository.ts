@@ -2,7 +2,13 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
-import { plan, product, productType, productCrossSell } from "@core/models";
+import {
+  plan,
+  planPartner,
+  product,
+  productType,
+  productCrossSell,
+} from "@core/models";
 import {
   SQLWrapper,
   and,
@@ -61,8 +67,14 @@ export class CrossSellProductListerRepository {
         },
         prices: {
           months: productCrossSell.meses,
-          price: sql<number>`CAST(${product.preco_face} AS DECIMAL(10,2))`,
-          price_with_discount: sql<number>`CAST(${productCrossSell.preco_desconto} AS DECIMAL(10,2))`,
+          price:
+            sql<number>`CAST(${product.preco_face} AS DECIMAL(10,2))`.mapWith(
+              Number
+            ),
+          price_with_discount:
+            sql<number>`CAST(${productCrossSell.preco_desconto} AS DECIMAL(10,2))`.mapWith(
+              Number
+            ),
         },
         created_at: product.created_at,
         updated_at: product.updated_at,
@@ -162,12 +174,13 @@ export class CrossSellProductListerRepository {
       })
       .from(productCrossSell)
       .innerJoin(plan, eq(productCrossSell.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(productCrossSell.id_plano, planId),
           eq(productCrossSell.meses, months),
           inArray(productCrossSell.id_produto, selectedProducts),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productCrossSell.id_produto)
@@ -193,13 +206,14 @@ export class CrossSellProductListerRepository {
       })
       .from(productCrossSell)
       .innerJoin(plan, eq(productCrossSell.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(product, eq(productCrossSell.id_produto, product.id_produto))
       .where(
         and(
           eq(productCrossSell.id_plano, planId),
           eq(productCrossSell.meses, months),
           inArray(productCrossSell.id_produto, selectedProducts),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productCrossSell.id_produto)

@@ -1,7 +1,6 @@
 import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { userCreatorResponseSchema } from "@core/schema/user/userCreatorResponseSchema";
 
 export const createUserNewsletterSchema = {
   description: "Registra o e-mail do cliente na newsletter",
@@ -10,6 +9,7 @@ export const createUserNewsletterSchema = {
   security: [
     {
       authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({
@@ -29,7 +29,7 @@ export const createUserNewsletterSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: userCreatorResponseSchema,
+        data: Type.Object({}),
       },
       { description: "Successful" }
     ),

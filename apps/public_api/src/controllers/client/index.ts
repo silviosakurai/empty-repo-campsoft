@@ -8,11 +8,18 @@ import { passwordRecoveryMethodsClient } from './methods/passwordRecoveryMethods
 import { updatePasswordRecoveryClient } from './methods/updatePasswordRecoveryClient';
 import { deleteClient } from './methods/deleteClient';
 import { viewVoucher } from './methods/viewVoucher';
-import { createClientNewsletter } from './methods/createClientNewsletter';
 import { getBillingAddress } from './methods/getBillingAddress';
 import { getShippingAddress } from './methods/getShippingAddress';
 import { putBillingAddress } from './methods/putBillingAddress';
 import { putShippingAddress } from './methods/putShippingAddress';
+import { activateClientEmail } from './methods/activateClientEmail';
+import { patchShippingAddress } from './methods/patchShippingAddress';
+import { patchImage } from './methods/patchImage';
+import { createClientNewsletter } from './methods/createClientNewsletter';
+import { createCardClient } from './methods/createCardClient';
+import { updateUserCreditCardDefault } from './methods/updateUserCreditCardDefault';
+import { eraseCardClient } from './methods/eraseCardClient';
+import { readCardsClient } from './methods/readCardsClient';
 
 @injectable()
 class ClientController {
@@ -25,11 +32,18 @@ class ClientController {
   public passwordRecoveryMethods = passwordRecoveryMethodsClient;
   public updatePasswordRecovery = updatePasswordRecoveryClient;
   public viewVoucher = viewVoucher;
-  public createClientNewsletter = createClientNewsletter;
   public getBillingAddress = getBillingAddress;
   public getShippingAddress = getShippingAddress;
   public putBillingAddress = putBillingAddress;
   public putShippingAddress = putShippingAddress;
+  public activateClientEmail = activateClientEmail;
+  public patchShippingAddress = patchShippingAddress;
+  public patchImage = patchImage;
+  public createClientNewsletter = createClientNewsletter;
+  public createCardClient = createCardClient;
+  public updateUserCreditCardDefault = updateUserCreditCardDefault;
+  public eraseCardClient = eraseCardClient;
+  public readCardsClient = readCardsClient;
 }
 
 export default ClientController;

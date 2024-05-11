@@ -34,7 +34,7 @@ export class OrderCreatorRepository {
     const valuesObject: typeof schema.order.$inferInsert = {
       id_cliente:
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
-      id_empresa: tokenKeyData.company_id,
+      id_parceiro: tokenKeyData.id_parceiro,
       id_pedido_status: OrderStatusEnum.PENDING,
       id_plano: payload.plan.plan_id ?? null,
       recorrencia: payload.subscribe
@@ -44,12 +44,14 @@ export class OrderCreatorRepository {
       valor_preco: Number(planPrice.price ?? 0),
       valor_desconto: Number(planPrice.discount_value ?? 0),
       valor_total: Number(planPrice.price_with_discount ?? 0),
+      valor_cupom: Number(planPrice.discount_coupon ?? 0),
+      desconto_produto: Number(planPrice.discount_product ?? 0),
       valor_desconto_ordem_anterior: Number(
         planPrice.price_with_discount_order_previous ?? 0
       ),
       pedido_parcelas_valor: totalPricesInstallments.value,
       pedido_parcelas_vezes: totalPricesInstallments.installments,
-      ativacao_imediata: payload.activate_now,
+      ativacao_imediata: payload?.activate_now ? payload.activate_now : true,
       cliente_email: user.email,
       cliente_primeiro_nome: user.first_name,
       cliente_ultimo_nome: user.last_name,
@@ -78,7 +80,7 @@ export class OrderCreatorRepository {
 
     const orderFounded = await this.findLastOrderByIdClient(
       tokenJwtData.clientId,
-      tokenKeyData.company_id
+      tokenKeyData.id_parceiro
     );
 
     if (!orderFounded) {
@@ -102,7 +104,7 @@ export class OrderCreatorRepository {
       .where(
         and(
           eq(order.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(order.id_empresa, companyId)
+          eq(order.id_parceiro, companyId)
         )
       )
       .orderBy(desc(order.created_at))

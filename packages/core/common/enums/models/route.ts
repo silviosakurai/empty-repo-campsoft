@@ -7,6 +7,7 @@ export enum RouteMethod {
 }
 
 export enum RouteModule {
-  PARTNER = "partner",
+  MANAGER = "manager",
   PUBLIC = "public",
+  WEBHOOKS = "webhooks",
 }

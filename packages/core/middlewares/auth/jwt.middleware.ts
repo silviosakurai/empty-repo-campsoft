@@ -6,54 +6,80 @@ import { ApiJwtViewerUseCase } from "@core/useCases/api/ApiJwtViewer.useCase";
 import { container } from "tsyringe";
 import { ViewApiJwtRequest } from "@core/useCases/api/dtos/ViewApiJwtRequest.dto";
 import { createCacheKey } from "@core/common/functions/createCacheKey";
+import { getRootPath } from "@core/common/functions/getRootPath";
+import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
+import { hasRequiredPermission } from "@core/common/functions/hasRequiredPermission";
+import { FastifyRedis } from "@fastify/redis";
+import { ITokenJwtAccess } from "@core/common/interfaces/ITokenJwtData";
+
+async function handleApiKeyCache(
+  redis: FastifyRedis,
+  cacheKey: string,
+  decoded: { clientId: string },
+  routeModule: string
+) {
+  const cacheAuth = await redis.get(cacheKey);
+  if (cacheAuth) {
+    return JSON.parse(cacheAuth);
+  }
+
+  const apiJwtViewerUseCase = container.resolve(ApiJwtViewerUseCase);
+  const responseAuth = await apiJwtViewerUseCase.execute({
+    clientId: decoded.clientId,
+    routeModule,
+  } as ViewApiJwtRequest);
+
+  if (responseAuth) {
+    await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
+  }
+
+  return responseAuth;
+}
 
 async function authenticateJwt(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
+  permissions: PermissionsRoles[] | null
 ): Promise<void> {
-  const { t, tokenKeyData } = request;
+  const { t } = request;
   const { redis } = request.server;
 
-  const routePath = request.routeOptions.url || request.raw.url;
-  const routeMethod = request.routeOptions.method;
-  const routeModule = request.module;
+  const routePath = request.routeOptions.url ?? request.raw.url;
 
   try {
-    const apiJwtViewerUseCase = container.resolve(ApiJwtViewerUseCase);
     const decoded: { clientId: string } = await request.jwtVerify();
 
-    if (!decoded) {
+    if (!decoded || !routePath || !permissions) {
       return sendResponse(reply, {
         message: t("not_authorized"),
         httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
       });
     }
 
-    const cacheKey = createCacheKey(
-      "jwtCache",
-      decoded.clientId,
-      routePath,
-      routeMethod,
+    const routeModule = getRootPath(routePath, request.module);
+    const cacheKey = createCacheKey("jwtCache", decoded.clientId, routeModule);
+
+    const responseAuth = await handleApiKeyCache(
+      redis,
+      cacheKey,
+      decoded,
       routeModule
     );
 
-    const cacheAuth = await redis.get(cacheKey);
-
-    if (cacheAuth) {
-      request.tokenJwtData = JSON.parse(cacheAuth);
-
-      return;
+    if (!responseAuth) {
+      return sendResponse(reply, {
+        message: t("not_authorized"),
+        httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
+      });
     }
 
-    const responseAuth = await apiJwtViewerUseCase.execute({
-      clientId: decoded.clientId,
-      tokenKeyData,
-      routePath,
-      routeMethod,
-      routeModule,
-    } as ViewApiJwtRequest);
+    const selectPermissios = responseAuth.access.map(
+      (access: ITokenJwtAccess) => access.acao
+    );
 
-    if (!responseAuth) {
+    const hasPermission = hasRequiredPermission(selectPermissios, permissions);
+
+    if (!hasPermission) {
       return sendResponse(reply, {
         message: t("not_authorized"),
         httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
@@ -63,6 +89,7 @@ async function authenticateJwt(
     await redis.set(cacheKey, JSON.stringify(responseAuth), "EX", 1800);
 
     request.tokenJwtData = responseAuth;
+    request.permissionsRoute = permissions;
 
     return;
   } catch (error) {
@@ -76,7 +103,10 @@ async function authenticateJwt(
 export default fp(async (fastify) => {
   fastify.decorate(
     "authenticateJwt",
-    async (request: FastifyRequest, reply: FastifyReply) =>
-      authenticateJwt(request, reply)
+    async (
+      request: FastifyRequest,
+      reply: FastifyReply,
+      permissions: PermissionsRoles[] | null = null
+    ) => authenticateJwt(request, reply, permissions)
   );
 });

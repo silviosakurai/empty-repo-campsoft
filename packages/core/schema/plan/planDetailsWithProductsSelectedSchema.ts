@@ -1,6 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import { pricesSchema } from "../price/pricesSchema";
-import { productsSelectedSchema } from "../product/productsSelectedSchema copy";
+import { productsSelectedSchema } from "../product/productsSelectedSchema";
 import { productDetailPlanProductsSchema } from "../product/productDetailPlanProductsSchema";
 
 export const planDetailsWithProductsSelectedSchema = Type.Object({

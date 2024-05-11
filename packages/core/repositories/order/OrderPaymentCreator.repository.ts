@@ -3,9 +3,15 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { orderPayment } from "@core/models";
 import { sql } from "drizzle-orm";
-import { ListOrderById } from "@core/interfaces/repositories/order";
+import {
+  ListOrderById,
+  OrderPaymentUpdateInput,
+} from "@core/interfaces/repositories/order";
 import { currentTime } from "@core/common/functions/currentTime";
-import { OrderStatusEnum } from "@core/common/enums/models/order";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
 
 @injectable()
 export class OrderPaymentCreatorRepository {
@@ -16,9 +22,9 @@ export class OrderPaymentCreatorRepository {
   async create(
     order: ListOrderById,
     signatureId: string,
-    methodId: string,
+    methodId: OrderPaymentsMethodsEnum,
     statusPayment: OrderStatusEnum,
-    voucher: string | null
+    input: OrderPaymentUpdateInput
   ): Promise<boolean> {
     const validUntil = currentTime();
 
@@ -38,11 +44,31 @@ export class OrderPaymentCreatorRepository {
       pedido_parcelas_vezes: order.total_installments,
       id_pedido_pag_metodo: Number(methodId),
       data_pagamento: validUntil,
-      voucher: voucher,
     };
 
-    if (voucher) {
-      valuesObject.voucher = voucher;
+    if (input.paymentTransactionId) {
+      valuesObject.pag_trans_id = input.paymentTransactionId;
+    }
+
+    if (methodId === OrderPaymentsMethodsEnum.BOLETO) {
+      valuesObject.pag_info_adicional = input.paymentLink;
+      valuesObject.data_vencimento = input.dueDate;
+      valuesObject.codigo_pagamento = input.codePayment;
+    }
+
+    if (methodId === OrderPaymentsMethodsEnum.VOUCHER) {
+      valuesObject.voucher = input.voucher;
+    }
+
+    if (methodId === OrderPaymentsMethodsEnum.CARD) {
+      valuesObject.card_id =
+        sql`UUID_TO_BIN(${input.cardId})` as unknown as string;
+    }
+
+    if (methodId === OrderPaymentsMethodsEnum.PIX) {
+      valuesObject.pag_info_adicional = input.paymentLink;
+      valuesObject.data_vencimento = input.dueDate;
+      valuesObject.codigo_pagamento = input.codePayment;
     }
 
     const result = await this.db

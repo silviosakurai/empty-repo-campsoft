@@ -35,11 +35,12 @@ export class SmsTFAUserSenderCase {
 
     if (sendSms) {
       await this.tfaService.insertSmsHistory(templateId, loginUserTFA, sendSms);
+      await this.tfaService.insertCodeUser(type, loginUserTFA, code);
+      return true;
     }
 
-    await this.tfaService.insertCodeUser(type, loginUserTFA, code);
 
-    return true;
+    return false;
   }
 
   async getTemplateSMS(

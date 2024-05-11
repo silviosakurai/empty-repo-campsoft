@@ -1,8 +1,10 @@
 import { IBannerItem } from "@core/interfaces/repositories/banner";
+import { bannerItemSchema } from "@core/schema/banner/bannerItemSchema";
 import { bannerReaderResponseSchema } from "@core/schema/banner/bannerReaderResponseSchema";
 import { Static } from "@fastify/type-provider-typebox";
 
 export type BannerReaderResponseDto = Static<typeof bannerReaderResponseSchema>;
+export type BannerResponseDto = Static<typeof bannerItemSchema>;
 
 export type BannerReaderResponseItem = {
   banner_id: number;

@@ -13,18 +13,28 @@ import {
   CreateOrder,
   ListOrderById,
   OrderCreatePaymentsCard,
+  OrderPaymentUpdateInput,
 } from "@core/interfaces/repositories/order";
 import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPaymentCreator.repository";
-import { OrderStatusEnum } from "@core/common/enums/models/order";
+import {
+  OrderPaymentsMethodsEnum,
+  OrderStatusEnum,
+} from "@core/common/enums/models/order";
+import { CouponService } from "./coupon.service";
+import { OrderStatusUpdaterRepository } from "@core/repositories/order/OrderStatusUpdater.repository";
+import { OrderViewerByTransactionIdRepository } from "@core/repositories/order/OrderViewerByTransactionId.repository";
 
 @injectable()
 export class OrderService {
   constructor(
+    private readonly couponService: CouponService,
+    private readonly orderCreatorRepository: OrderCreatorRepository,
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
+    private readonly orderStatusUpdaterRepository: OrderStatusUpdaterRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
-    private readonly orderCreatorRepository: OrderCreatorRepository,
-    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository
+    private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
+    private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository
   ) {}
 
   list = async (
@@ -74,7 +84,7 @@ export class OrderService {
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard
   ): Promise<CreateOrder | null> => {
-    return this.orderCreatorRepository.create(
+    const create = await this.orderCreatorRepository.create(
       tokenKeyData,
       tokenJwtData,
       payload,
@@ -82,21 +92,39 @@ export class OrderService {
       user,
       totalPricesInstallments
     );
+
+    if (!create) {
+      return null;
+    }
+
+    if (payload.coupon_code) {
+      await this.couponService.updateCoupon(payload.coupon_code);
+    }
+
+    return create;
   };
 
   createOrderPayment = async (
     order: ListOrderById,
     signatureId: string,
-    methodId: string,
+    methodId: OrderPaymentsMethodsEnum,
     statusPayment: OrderStatusEnum,
-    voucher: string | null
+    input: OrderPaymentUpdateInput
   ) => {
     return this.orderPaymentCreatorRepository.create(
       order,
       signatureId,
       methodId,
       statusPayment,
-      voucher
+      input
     );
+  };
+
+  updateStatusByOrderId = async (orderId: string, status: OrderStatusEnum) => {
+    return this.orderStatusUpdaterRepository.update(orderId, status);
+  };
+
+  viewByTransactionId = async (transactionId: string) => {
+    return this.viewerByTransactionIdRepository.find(transactionId);
   };
 }

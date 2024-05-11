@@ -24,27 +24,53 @@ export class LoggerService implements ILoggerService {
   }
 
   private pathsToRedact(): string[] {
-    return ["password", "token"];
+    return [
+      "password",
+      "token",
+      "number",
+      "expire_month",
+      "expire_year",
+      "cvv",
+    ];
   }
 
   private sanitizeLog(message: any): any {
     let sanitizedMessage = this.getObjectMessage(message);
 
     this.pathsToRedact().forEach((word) => {
-      const regex = new RegExp(`("${word}":".*?")`, "g");
-
+      const regex = new RegExp(`("${word}":)(?:"([^"]*)"|([^",}]*))`, "g");
       sanitizedMessage = sanitizedMessage.replace(regex, `"${word}":"******"`);
     });
 
     return sanitizedMessage;
   }
 
-  private getObjectMessage(message: any) {
-    if (typeof message === "object") {
-      return JSON.stringify(message);
+  private getObjectMessage(message: any): string {
+    if (message === null) {
+      return "null";
     }
 
-    return message;
+    if (typeof message === "string") {
+      return message.toString();
+    }
+
+    if (typeof message === "number") {
+      return message.toString();
+    }
+
+    if (typeof message === "boolean") {
+      return message.toString();
+    }
+
+    if (typeof message === "object") {
+      try {
+        return JSON.stringify(message);
+      } catch (error) {
+        return "Log message serialization failed";
+      }
+    }
+
+    return String(message);
   }
 
   private parseMessage(message: any, requestId?: string) {

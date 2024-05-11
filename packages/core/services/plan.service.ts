@@ -9,24 +9,50 @@ import { PlanProductGroupDetailsListerRepository } from "@core/repositories/plan
 import { PlanProduct } from "@core/interfaces/repositories/plan";
 import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrder.repository";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
+import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
+import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
+import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
+import { PlanListerByProductRepository } from "@core/repositories/plan/PlanListerByProduct.repository";
 
 @injectable()
 export class PlanService {
   constructor(
     private readonly planListerRepository: PlanListerRepository,
+    private readonly planListerByCompanyRepository: PlanListerByCompanyRepository,
+    private readonly planListerWithProductsRepository: PlanListerWithProductsRepository,
     private readonly planViewerRepository: PlanViewerRepository,
+    private readonly planViewerByCompanyRepository: PlanViewerByCompanyRepository,
+    private readonly planViewerWithProductsRepository: PlanViewerWithProductsRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
-    private readonly planListerOrderRepository: PlanListerOrderRepository
+    private readonly planListerOrderRepository: PlanListerOrderRepository,
+    private readonly planListerByProductRepository: PlanListerByProductRepository
   ) {}
 
   list = async (companyId: number, query: ListPlanRequest) => {
     return this.planListerRepository.list(companyId, query);
   };
 
+  listByCompany = async (partnerIds: number[], query: ListPlanRequest) => {
+    return this.planListerByCompanyRepository.list(partnerIds, query);
+  };
+
+  listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
+    return this.planListerWithProductsRepository.list(partnersId, query);
+  };
+
   view = async (companyId: number, planId: number) => {
     return this.planViewerRepository.get(companyId, planId);
+  };
+
+  viewByCompany = async (partnerIds: number[], planId: number) => {
+    return this.planViewerByCompanyRepository.get(partnerIds, planId);
+  };
+
+  viewWithProducts = async (partnersId: number[], planId: number) => {
+    return this.planViewerWithProductsRepository.view(partnersId, planId);
   };
 
   upgrade = async (
@@ -124,5 +150,9 @@ export class PlanService {
     payload.products?.forEach((product) => productsOrderSet.add(product));
 
     return Array.from(productsOrderSet);
+  };
+
+  listPlansByProduct = async (partnerId: number, productId: string) => {
+    return this.planListerByProductRepository.list(partnerId, productId);
   };
 }

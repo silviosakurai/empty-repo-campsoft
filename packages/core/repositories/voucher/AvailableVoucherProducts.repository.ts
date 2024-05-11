@@ -19,10 +19,7 @@ import {
   ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
-import {
-  CouponRescueItemDeleted,
-  CouponRescueItemTypeTime,
-} from "@core/common/enums/models/coupon";
+import { CouponRescueItemTypeTime } from "@core/common/enums/models/coupon";
 import { Status } from "@core/common/enums/Status";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { currentTime } from "@core/common/functions/currentTime";
@@ -132,8 +129,7 @@ export class AvailableVoucherProductsRepository {
           ),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(order.cupom_resgatar_codigo, voucher),
-          eq(clientSignature.id_empresa, tokenKeyData.company_id),
-          eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
+          eq(clientSignature.id_parceiro, tokenKeyData.id_parceiro),
           eq(product.status, Status.ACTIVE)
         )
       )
@@ -211,9 +207,8 @@ export class AvailableVoucherProductsRepository {
       .where(
         and(
           eq(couponRescueCode.cupom_resgatar_codigo, voucher),
-          eq(couponRescueItem.deleted, CouponRescueItemDeleted.NO),
           eq(product.status, Status.ACTIVE),
-          eq(couponRescue.id_empresa, tokenKeyData.company_id)
+          eq(couponRescue.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(product.id_produto)

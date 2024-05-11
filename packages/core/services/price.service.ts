@@ -55,7 +55,7 @@ export class PriceService {
       await this.productService.findPlanPriceProductCrossSell(
         tokenKeyData,
         payload.plan.plan_id,
-        payload.months,
+        payload.months ?? 0,
         selectedProducts
       );
 
@@ -64,6 +64,7 @@ export class PriceService {
     }
 
     let finalPrice = 0;
+    let discountCoupon = 0;
 
     planPriceCrossSell.forEach((item) => {
       let discountPercentage = item.price_discount;
@@ -73,8 +74,11 @@ export class PriceService {
       );
 
       if (findProduct) {
-        discountPercentage =
+        const discountValue =
           discountPercentage * findProduct.desconto_percentual;
+
+        discountPercentage -= discountValue;
+        discountCoupon += discountValue;
       }
 
       finalPrice = finalPrice + discountPercentage;
@@ -83,6 +87,7 @@ export class PriceService {
     return {
       product_id: null,
       price_discount: Number(finalPrice.toFixed(2)),
+      discount_coupon: Number(discountCoupon.toFixed(2)),
     };
   };
 
@@ -94,7 +99,7 @@ export class PriceService {
 
     const planPrice = await this.planService.findPriceByPlanIdAndMonth(
       payload.plan.plan_id,
-      payload.months
+      payload.months ?? 0
     );
 
     if (!planPrice || (!planPrice.price_with_discount && !planPrice.price)) {
@@ -114,7 +119,7 @@ export class PriceService {
   applyDiscountPreviousOrderByActivateNow = async (
     payload: CreateOrderRequestDto
   ): Promise<number> => {
-    if (payload.activate_now && payload.previous_order_id) {
+    if (payload?.activate_now && payload?.previous_order_id) {
       const orderPrevious = await this.orderService.listOrderById(
         payload.previous_order_id
       );
@@ -169,6 +174,11 @@ export class PriceService {
     findSignatureActiveByClientId: ISignatureActiveByClient[]
   ) => {
     const finalPrice = Number(planPrice.price);
+    const discountCoupon =
+      Number(planPrice?.discount_coupon ?? 0) +
+      Number(planPriceCrossSell?.discount_coupon ?? 0);
+
+    let discountProduct = 0;
 
     let finalPriceDiscount = Number(planPrice.price_with_discount);
     if (planPriceCrossSell) {
@@ -179,13 +189,16 @@ export class PriceService {
     if (findSignatureActiveByClientId.length) {
       findSignatureActiveByClientId.forEach((item) => {
         if (item.recurrence === ClientSignatureRecorrencia.YES) {
-          finalPriceDiscount -= finalPriceDiscount * item.discount_percentage;
+          const discountValue = finalPriceDiscount * item.discount_percentage;
+
+          finalPriceDiscount -= discountValue;
+          discountProduct += discountValue;
         }
       });
     }
 
     let finalPriceDiscountOrderPrevious = 0;
-    if (payload.activate_now && payload.previous_order_id) {
+    if (payload?.activate_now && payload.previous_order_id) {
       const priceDiscountOrderPrevious =
         await this.applyDiscountPreviousOrderByActivateNow(payload);
 
@@ -206,6 +219,8 @@ export class PriceService {
         0,
         Number(finalPriceDiscountOrderPrevious.toFixed(2))
       ),
+      discount_coupon: Math.max(0, Number(discountCoupon.toFixed(2))),
+      discount_product: Math.max(0, Number(discountProduct.toFixed(2))),
     };
   };
 }

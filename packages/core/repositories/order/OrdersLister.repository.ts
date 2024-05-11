@@ -9,12 +9,14 @@ import {
   orderPaymentStatus,
   plan,
   planPrice,
+  planPartner,
   product,
   productType,
   productGroup,
   planItem,
   productGroupProduct,
   clientSignature,
+  clientCards,
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -25,7 +27,6 @@ import {
   OrderPayments,
   PlanDetails,
 } from "@core/interfaces/repositories/order";
-import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
 import {
   AvailableProducts,
@@ -33,6 +34,7 @@ import {
 } from "@core/interfaces/repositories/voucher";
 import { ListOrderResponse } from "@core/useCases/order/dtos/ListOrderResponse.dto";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
+import { enrichPaymentOrder } from "@core/common/functions/enrichPaymentOrder";
 
 @injectable()
 export class OrdersListerRepository {
@@ -89,7 +91,7 @@ export class OrdersListerRepository {
       )
       .where(
         and(
-          eq(order.id_empresa, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       )
@@ -121,11 +123,15 @@ export class OrdersListerRepository {
       .from(order)
       .where(
         and(
-          eq(order.id_empresa, tokenKeyData.company_id),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       )
       .execute();
+
+    if (!countResult?.length) {
+      return 0;
+    }
 
     return countResult[0].count;
   }
@@ -133,37 +139,28 @@ export class OrdersListerRepository {
   private async fetchOrderPayments(orderId: string): Promise<OrderPayments[]> {
     const result = await this.db
       .select({
+        type_id: orderPayment.id_pedido_pag_metodo,
         type: orderPaymentMethod.pedido_pag_metodo,
         status: orderPaymentStatus.pedido_pagamento_status,
         credit_card: {
-          brand: orderPayment.pag_cc_tipo,
-          number: orderPayment.pag_cc_numero_cartao,
-          credit_card_id: orderPayment.pag_cc_instantbuykey,
+          brand: clientCards.brand,
+          number:
+            sql<string>`CONCAT(COALESCE(${clientCards.first_digits}, ''), '********', COALESCE(${clientCards.last_digits}, ''))`.mapWith(
+              String
+            ),
+          credit_card_id:
+            sql<string>`BIN_TO_UUID(${clientCards.card_id})`.mapWith(String),
         },
         voucher: orderPayment.voucher,
         boleto: {
-          url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.url'), NULL)
-            ELSE NULL
-          END`,
-          code: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.BOLETO} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.line'), NULL)
-            ELSE NULL
-          END`,
+          url: orderPayment.pag_info_adicional,
+          code: orderPayment.codigo_pagamento,
+          expire_at: orderPayment.data_vencimento,
         },
         pix: {
-          url: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.PIX} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.qr_code_url'), NULL)
-            ELSE NULL
-          END`,
-          code: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.PIX} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.qr_code'), NULL)
-            ELSE NULL
-          END`,
-          expire_at: sql<string>`CASE WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.PIX} 
-            THEN COALESCE(JSON_EXTRACT(${orderPayment.pag_info_adicional},'$.expires_at'), NULL)
-            ELSE NULL
-          END`,
+          url: orderPayment.pag_info_adicional,
+          code: orderPayment.codigo_pagamento,
+          expire_at: orderPayment.data_vencimento,
         },
         cycle: clientSignature.ciclo,
         created_at: orderPayment.created_at,
@@ -191,14 +188,15 @@ export class OrdersListerRepository {
           orderPayment.id_assinatura_cliente
         )
       )
+      .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
 
     if (result.length === 0) {
-      return [];
+      return [] as OrderPayments[];
     }
 
-    return result as OrderPayments[];
+    return enrichPaymentOrder(result);
   }
 
   private async fetchOrderPlan(tokenKeyData: ITokenKeyData, orderId: string) {
@@ -210,7 +208,7 @@ export class OrdersListerRepository {
           WHEN ${plan.visivel_site} = ${PlanVisivelSite.YES} THEN true
           ELSE false
         END`.mapWith(Boolean),
-        business_id: plan.id_empresa,
+        business_id: planPartner.id_parceiro,
         plan: plan.plano,
         image: plan.imagem,
         description: plan.descricao,
@@ -219,10 +217,11 @@ export class OrdersListerRepository {
       .from(plan)
       .innerJoin(order, eq(order.id_plano, plan.id_plano))
       .innerJoin(planPrice, eq(planPrice.id_plano, plan.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(plan.id_plano)
@@ -267,6 +266,7 @@ export class OrdersListerRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(product, eq(planItem.id_produto, product.id_produto))
       .innerJoin(
         productType,
@@ -275,13 +275,13 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .execute();
 
     if (result.length === 0) {
-      return [];
+      return [] as PlanProducts[];
     }
 
     return result as PlanProducts[];
@@ -299,6 +299,7 @@ export class OrdersListerRepository {
       })
       .from(plan)
       .innerJoin(planItem, eq(plan.id_plano, planItem.id_plano))
+      .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .innerJoin(
         productGroup,
         eq(productGroup.id_produto_grupo, planItem.id_produto_grupo)
@@ -310,7 +311,7 @@ export class OrdersListerRepository {
       .where(
         and(
           eq(plan.id_plano, planId),
-          eq(plan.id_empresa, tokenKeyData.company_id)
+          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
         )
       )
       .groupBy(productGroupProduct.id_produto_grupo)
@@ -451,7 +452,8 @@ export class OrdersListerRepository {
         order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
-        company_id: order.id_empresa,
+        company_id: order.id_parceiro,
+        seller_id: order.id_vendedor,
         status_id: order.id_pedido_status,
         recurrence: order.recorrencia,
         recurrence_period: order.recorrencia_periodo,
@@ -463,6 +465,7 @@ export class OrdersListerRepository {
         total_installments: order.pedido_parcelas_vezes,
         total_installments_value: order.pedido_parcelas_valor,
         activation_immediate: order.ativacao_imediata,
+        observation: order.obs,
       })
       .from(order)
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
@@ -483,6 +486,10 @@ export class OrdersListerRepository {
       .from(order)
       .where(and(eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
+
+    if (!result?.length) {
+      return false;
+    }
 
     return result[0].count > 0;
   }

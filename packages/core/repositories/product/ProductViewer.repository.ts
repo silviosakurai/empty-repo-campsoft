@@ -2,8 +2,8 @@ import * as schema from "@core/models";
 import { eq, and } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { product, productCompany, productType } from "@core/models";
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { product, productPartner, productType } from "@core/models";
+import { ProductView } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
 export class ProductViewerRepository {
@@ -11,13 +11,12 @@ export class ProductViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async get(companyId: number, sku: string): Promise<ProductResponse | null> {
+  async get(companyId: number, slug: string): Promise<ProductView | null> {
     const result = await this.db
       .select({
         product_id: product.id_produto,
         status: product.status,
         name: product.produto,
-        long_description: product.descricao,
         short_description: product.descricao_curta,
         marketing_phrases: product.frases_marketing,
         content_provider_name: product.conteudista_nome,
@@ -44,8 +43,8 @@ export class ProductViewerRepository {
       })
       .from(product)
       .innerJoin(
-        productCompany,
-        eq(product.id_produto, productCompany.id_produto)
+        productPartner,
+        eq(product.id_produto, productPartner.id_produto)
       )
       .innerJoin(
         productType,
@@ -53,8 +52,8 @@ export class ProductViewerRepository {
       )
       .where(
         and(
-          eq(productCompany.id_empresa, companyId),
-          eq(product.id_produto, sku)
+          eq(productPartner.id_parceiro, companyId),
+          eq(product.url_caminho, slug)
         )
       )
       .execute();
@@ -63,6 +62,6 @@ export class ProductViewerRepository {
       return null;
     }
 
-    return result[0] as unknown as ProductResponse;
+    return result[0] as ProductView;
   }
 }

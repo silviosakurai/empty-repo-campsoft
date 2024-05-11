@@ -4,7 +4,7 @@ export interface UpdateClientRequestDto {
   status: ClientStatus;
   first_name: string;
   last_name: string;
-  birthday: Date;
+  birthday: string;
   gender: ClientGender;
   obs: string;
 }

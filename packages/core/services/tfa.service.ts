@@ -1,22 +1,15 @@
 import { TfaCodesWhatsAppRepository } from "@core/repositories/tfa/TfaCodesWhatsApp.repository";
 import { TfaCodesSms } from "@core/repositories/tfa/TfaCodesSms.repository";
-import { TfaCodesEmail } from "@core/repositories/tfa/TfaCodesEmail.repository";
 import { TfaCodesRepository } from "@core/repositories/tfa/TfaCodes.repository";
 import { injectable } from "tsyringe";
 import { generateTokenTfa } from "@core/common/functions/generateTokenTfa";
 import { TFAType } from "@core/common/enums/models/tfa";
 import {
-  ITemplateEmail,
   ITemplateSMS,
-  ITemplateWhatsapp,
   IValidateCodeTFA,
 } from "@core/interfaces/repositories/tfa";
-import { extractPhoneNumber } from "@core/common/functions/extractPhoneNumber";
-import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
-import { formatDateToString } from "@core/common/functions/formatDateToString";
 import { ISmsSentMessageResponse } from "@core/interfaces/services/ISms.service";
 import { currentTime } from "@core/common/functions/currentTime";
-import { SendEmailCommandOutput } from "@aws-sdk/client-ses";
 import { LoginUserTFA } from "@core/interfaces/services/IClient.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 
@@ -25,8 +18,7 @@ export class TfaService {
   constructor(
     private readonly tfaCodesRepository: TfaCodesRepository,
     private readonly tfaCodesWhatsAppRepository: TfaCodesWhatsAppRepository,
-    private readonly tfaCodesSms: TfaCodesSms,
-    private readonly tfaCodesEmail: TfaCodesEmail
+    private readonly tfaCodesSms: TfaCodesSms
   ) {}
 
   async generateAndVerifyToken(): Promise<string> {
@@ -43,24 +35,10 @@ export class TfaService {
     return token;
   }
 
-  public async getTemplateWhatsapp(
-    tokenKeyData: ITokenKeyData
-  ): Promise<ITemplateWhatsapp> {
-    return this.tfaCodesWhatsAppRepository.getTemplateWhatsapp(
-      tokenKeyData
-    );
-  }
-
   public async getTemplateSms(
     tokenKeyData: ITokenKeyData
   ): Promise<ITemplateSMS> {
     return this.tfaCodesSms.getTemplateSms(tokenKeyData);
-  }
-
-  public async getTemplateEmail(
-    tokenKeyData: ITokenKeyData
-  ): Promise<ITemplateEmail> {
-    return this.tfaCodesEmail.getTemplateEmail(tokenKeyData);
   }
 
   public async insertCodeUser(
@@ -68,29 +46,7 @@ export class TfaService {
     loginUserTFA: LoginUserTFA,
     code: string
   ): Promise<boolean> {
-    return this.tfaCodesRepository.insertCodeUser(
-      type,
-      loginUserTFA,
-      code
-    );
-  }
-
-  async insertWhatsAppHistory(
-    templateId: number,
-    loginUserTFA: LoginUserTFA,
-    sendWA: MessageInstance
-  ): Promise<boolean> {
-    const sender = extractPhoneNumber(sendWA.from);
-    const whatsappToken = sendWA.sid;
-    const sendDate = formatDateToString(sendWA.dateCreated);
-
-    return this.tfaCodesWhatsAppRepository.insertWhatsAppHistory(
-      templateId,
-      loginUserTFA,
-      sender,
-      whatsappToken,
-      sendDate
-    );
+    return this.tfaCodesRepository.insertCodeUser(type, loginUserTFA, code);
   }
 
   async insertSmsHistory(
@@ -105,24 +61,6 @@ export class TfaService {
       templateId,
       loginUserTFA,
       smsToken,
-      sendDate
-    );
-  }
-
-  async insertEmailHistory(
-    templateId: number,
-    loginUserTFA: LoginUserTFA,
-    sender: string | null,
-    sendEmail: SendEmailCommandOutput
-  ): Promise<boolean> {
-    const emailToken = sendEmail.MessageId ?? "";
-    const sendDate = currentTime();
-
-    return this.tfaCodesEmail.insertEmailHistory(
-      templateId,
-      loginUserTFA,
-      sender,
-      emailToken,
       sendDate
     );
   }

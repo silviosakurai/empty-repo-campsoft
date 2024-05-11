@@ -12,7 +12,7 @@ export const templateSms = mysqlTable("template_sms", {
     .notNull()
     .primaryKey()
     .autoincrement(),
-  id_empresa: int("id_empresa"),
+  id_parceiro: int("id_parceiro"),
   id_template_tipo: int("id_template_tipo").notNull(),
   id_template_modulo: int("id_template_modulo").notNull(),
   nome: char("nome", { length: 50 }),
