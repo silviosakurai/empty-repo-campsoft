@@ -30,7 +30,6 @@ export class ProductListerRepository {
         product_id: product.id_produto,
         status: product.status,
         name: product.produto,
-        long_description: product.descricao,
         short_description: product.descricao_curta,
         marketing_phrases: product.frases_marketing,
         content_provider_name: product.conteudista_nome,

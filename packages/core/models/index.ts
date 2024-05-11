@@ -19,3 +19,4 @@ export * from "./template";
 export * from "./tfa";
 export * from "./url";
 export * from "./whatsapp";
+export * from "./marketing";
