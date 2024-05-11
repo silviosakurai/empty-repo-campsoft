@@ -5,6 +5,7 @@ import {
   marketingProductInstitutionalMiddleListSchema,
   marketingProductMagazinesListSchema,
   marketingProductNumbersListSchema,
+  marketingProductPartnerEditorsListSchema,
   marketingProductSectionsListSchema,
   reviewListResponseSchema,
 } from "@core/schema/product/productViewSchema";
@@ -39,6 +40,10 @@ export type MarketingProductNumbersList = Static<
 >;
 
 export type ReviewListResponse = Static<typeof reviewListResponseSchema>;
+
+export type MarketingProductPartnerEditorsList = Static<
+  typeof marketingProductPartnerEditorsListSchema
+>;
 
 export interface MarketingProductList {
   marketing_produto_id: number;

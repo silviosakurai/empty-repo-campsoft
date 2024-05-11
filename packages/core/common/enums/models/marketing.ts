@@ -6,4 +6,5 @@ export enum MarketingType {
   EBOOK_AUDIOBOOK = 5,
   INSTITUTIONAL_MIDDLE = 6,
   NUMBER = 7,
+  PARTNER_EDITORS = 8,
 }

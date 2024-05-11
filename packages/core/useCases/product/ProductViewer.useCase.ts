@@ -11,6 +11,7 @@ import {
   MarketingProductList,
   MarketingProductMagazinesList,
   MarketingProductNumbersList,
+  MarketingProductPartnerEditorsList,
   MarketingProductSectionsList,
 } from "@core/interfaces/repositories/marketing";
 import { MarketingType } from "@core/common/enums/models/marketing";
@@ -72,6 +73,10 @@ export class ProductViewerUseCase {
         marketing,
         MarketingType.NUMBER
       ) as MarketingProductNumbersList[],
+      publishers_partners: this.listMarketing(
+        marketing,
+        MarketingType.PARTNER_EDITORS
+      ) as MarketingProductPartnerEditorsList[],
       reviews,
     };
   }
@@ -146,6 +151,11 @@ export class ProductViewerUseCase {
       [MarketingType.NUMBER]: (item: MarketingProductList) => ({
         number: item.titulo,
         description: item.descricao,
+      }),
+
+      [MarketingType.PARTNER_EDITORS]: (item: MarketingProductList) => ({
+        title: item.titulo,
+        image_background: item.url_imagem,
       }),
     };
 

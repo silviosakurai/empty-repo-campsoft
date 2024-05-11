@@ -61,6 +61,11 @@ export const reviewListResponseSchema = Type.Object({
   updated_at: Type.String({ format: "date-time" }),
 });
 
+export const marketingProductPartnerEditorsListSchema = Type.Object({
+  title: Type.Union([Type.String(), Type.Null()]),
+  image_background: Type.Union([Type.String(), Type.Null()]),
+});
+
 export const productViewSchema = Type.Object({
   product_id: Type.String(),
   status: Type.Union([
@@ -104,6 +109,9 @@ export const productViewSchemaResponse = Type.Object({
     nullable: true,
   }),
   numbers: Type.Array(marketingProductNumbersListSchema, {
+    nullable: true,
+  }),
+  publishers_partners: Type.Array(marketingProductPartnerEditorsListSchema, {
     nullable: true,
   }),
   reviews: Type.Array(reviewListResponseSchema, { nullable: true }),
