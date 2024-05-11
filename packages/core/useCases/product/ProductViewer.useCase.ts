@@ -10,6 +10,7 @@ import {
   MarketingProductInstitutionalMiddleList,
   MarketingProductList,
   MarketingProductMagazinesList,
+  MarketingProductNumbersList,
   MarketingProductSectionsList,
 } from "@core/interfaces/repositories/marketing";
 import { MarketingType } from "@core/common/enums/models/marketing";
@@ -64,6 +65,10 @@ export class ProductViewerUseCase {
         marketing,
         MarketingType.EBOOK_AUDIOBOOK
       ) as EbooksAudiolivrosListSchema[],
+      numbers: this.listMarketing(
+        marketing,
+        MarketingType.NUMBER
+      ) as MarketingProductNumbersList[],
     };
   }
 
@@ -133,6 +138,11 @@ export class ProductViewerUseCase {
           description: item.descricao,
           image_background: item.url_imagem,
         }) as MarketingProductInstitutionalMiddleList,
+
+      [MarketingType.NUMBER]: (item: MarketingProductList) => ({
+        number: item.titulo,
+        description: item.descricao,
+      }),
     };
 
     const result = marketing

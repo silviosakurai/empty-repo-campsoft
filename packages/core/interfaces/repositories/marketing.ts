@@ -4,6 +4,7 @@ import {
   marketingProductInstitucionalListSchema,
   marketingProductInstitutionalMiddleListSchema,
   marketingProductMagazinesListSchema,
+  marketingProductNumbersListSchema,
   marketingProductSectionsListSchema,
 } from "@core/schema/product/productViewSchema";
 import { Static } from "@sinclair/typebox";
@@ -30,6 +31,10 @@ export type EbooksAudiolivrosListSchema = Static<
 
 export type MarketingProductInstitutionalMiddleList = Static<
   typeof marketingProductInstitutionalMiddleListSchema
+>;
+
+export type MarketingProductNumbersList = Static<
+  typeof marketingProductNumbersListSchema
 >;
 
 export interface MarketingProductList {
