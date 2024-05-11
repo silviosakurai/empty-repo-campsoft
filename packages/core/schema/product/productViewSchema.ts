@@ -38,6 +38,13 @@ export const ebooksAudiolivrosListSchema = Type.Object({
   image_background: Type.Union([Type.String(), Type.Null()]),
 });
 
+export const marketingProductInstitutionalMiddleListSchema = Type.Object({
+  title: Type.Union([Type.String(), Type.Null()]),
+  subtitle: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+  image_background: Type.Union([Type.String(), Type.Null()]),
+});
+
 export const productViewSchema = Type.Object({
   product_id: Type.String(),
   status: Type.Union([
@@ -62,6 +69,12 @@ export const productViewSchemaResponse = Type.Object({
   institutional: Type.Array(marketingProductInstitucionalListSchema, {
     nullable: true,
   }),
+  institutional_middle: Type.Array(
+    marketingProductInstitutionalMiddleListSchema,
+    {
+      nullable: true,
+    }
+  ),
   highlights: Type.Array(marketingProductHighlightsListSchema, {
     nullable: true,
   }),

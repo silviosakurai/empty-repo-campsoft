@@ -2,6 +2,7 @@ import {
   ebooksAudiolivrosListSchema,
   marketingProductHighlightsListSchema,
   marketingProductInstitucionalListSchema,
+  marketingProductInstitutionalMiddleListSchema,
   marketingProductMagazinesListSchema,
   marketingProductSectionsListSchema,
 } from "@core/schema/product/productViewSchema";
@@ -25,6 +26,10 @@ export type MarketingProductSectionsList = Static<
 
 export type EbooksAudiolivrosListSchema = Static<
   typeof ebooksAudiolivrosListSchema
+>;
+
+export type MarketingProductInstitutionalMiddleList = Static<
+  typeof marketingProductInstitutionalMiddleListSchema
 >;
 
 export interface MarketingProductList {

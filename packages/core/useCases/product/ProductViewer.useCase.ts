@@ -7,6 +7,7 @@ import {
   EbooksAudiolivrosListSchema,
   MarketingProductHighlightsList,
   MarketingProductInstitucionalList,
+  MarketingProductInstitutionalMiddleList,
   MarketingProductList,
   MarketingProductMagazinesList,
   MarketingProductSectionsList,
@@ -43,6 +44,10 @@ export class ProductViewerUseCase {
         marketing,
         MarketingType.INSTITUTIONAL
       ) as MarketingProductInstitucionalList[],
+      institutional_middle: this.listMarketing(
+        marketing,
+        MarketingType.INSTITUTIONAL_MIDDLE
+      ) as MarketingProductInstitutionalMiddleList[],
       highlights: this.listMarketing(
         marketing,
         MarketingType.HIGHLIGHT
@@ -114,11 +119,20 @@ export class ProductViewerUseCase {
           title: item.titulo,
           image_background: item.url_imagem,
         }) as MarketingProductSectionsList,
+
       [MarketingType.EBOOK_AUDIOBOOK]: (item: MarketingProductList) =>
         ({
           title: item.titulo,
           image_background: item.url_imagem,
         }) as EbooksAudiolivrosListSchema,
+
+      [MarketingType.INSTITUTIONAL_MIDDLE]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          subtitle: item.sub_titulo,
+          description: item.descricao,
+          image_background: item.url_imagem,
+        }) as MarketingProductInstitutionalMiddleList,
     };
 
     const result = marketing
