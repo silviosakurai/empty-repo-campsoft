@@ -21,3 +21,14 @@ export type MarketingProductMagazinesList = Static<
 export type MarketingProductSectionsList = Static<
   typeof marketingProductSectionsListSchema
 >;
+
+export interface MarketingProductList {
+  marketing_produto_id: number;
+  marketing_produto_tipo_id: number;
+  id_produto: string;
+  titulo: string;
+  sub_titulo: string;
+  descricao: string;
+  url_imagem: string;
+  url_video: string;
+}
