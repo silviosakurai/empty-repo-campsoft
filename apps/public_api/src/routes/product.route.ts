@@ -24,7 +24,7 @@ export default async function productRoutes(server: FastifyInstance) {
     ],
   });
 
-  server.get('/products/:sku', {
+  server.get('/products/:slug', {
     schema: getProductSchema,
     handler: productController.view,
     preHandler: [

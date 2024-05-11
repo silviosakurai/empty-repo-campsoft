@@ -1,15 +1,170 @@
 import { injectable } from "tsyringe";
-import { ProductResponse } from "./dtos/ProductResponse.dto";
+import { ProductViewResponse } from "./dtos/ProductResponse.dto";
+import { ListPlanProductResponse } from "../plan/dtos/ListPlanResponse.dto";
+import { MarketingService } from "@core/services/marketing.service";
+import {
+  EbooksAudiolivrosListSchema,
+  MarketingProductHighlightsList,
+  MarketingProductInstitucionalList,
+  MarketingProductInstitutionalMiddleList,
+  MarketingProductList,
+  MarketingProductMagazinesList,
+  MarketingProductNumbersList,
+  MarketingProductPartnerEditorsList,
+  MarketingProductSectionsList,
+} from "@core/interfaces/repositories/marketing";
+import { MarketingType } from "@core/common/enums/models/marketing";
+import { ReviewService } from "@core/services/review.service";
 import { ProductService } from "@core/services/product.service";
+import { PlanService } from "@core/services/plan.service";
 
 @injectable()
 export class ProductViewerUseCase {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly planService: PlanService,
+    private readonly marketingService: MarketingService,
+    private readonly reviewService: ReviewService
+  ) {}
 
   async execute(
     companyId: number,
-    sku: string
-  ): Promise<ProductResponse | null> {
-    return this.productService.view(companyId, sku);
+    slug: string
+  ): Promise<ProductViewResponse | null> {
+    const product = await this.productService.view(companyId, slug);
+
+    if (!product) {
+      return null;
+    }
+
+    const [plansProduct, marketing, reviews] = await Promise.all([
+      this.listPlansByProduct(companyId, product.product_id),
+      this.marketingService.list(product.product_id),
+      this.reviewService.listReviewByProductId(product.product_id),
+    ]);
+
+    return {
+      ...product,
+      plans: plansProduct,
+      institutional: this.listMarketing(
+        marketing,
+        MarketingType.INSTITUTIONAL
+      ) as MarketingProductInstitucionalList[],
+      institutional_middle: this.listMarketing(
+        marketing,
+        MarketingType.INSTITUTIONAL_MIDDLE
+      ) as MarketingProductInstitutionalMiddleList[],
+      highlights: this.listMarketing(
+        marketing,
+        MarketingType.HIGHLIGHT
+      ) as MarketingProductHighlightsList[],
+      magazines: this.listMarketing(
+        marketing,
+        MarketingType.MAGAZINE
+      ) as MarketingProductMagazinesList[],
+      sections: this.listMarketing(
+        marketing,
+        MarketingType.SECTION
+      ) as MarketingProductSectionsList[],
+      ebooks_audiolivros: this.listMarketing(
+        marketing,
+        MarketingType.EBOOK_AUDIOBOOK
+      ) as EbooksAudiolivrosListSchema[],
+      numbers: this.listMarketing(
+        marketing,
+        MarketingType.NUMBER
+      ) as MarketingProductNumbersList[],
+      publishers_partners: this.listMarketing(
+        marketing,
+        MarketingType.PARTNER_EDITORS
+      ) as MarketingProductPartnerEditorsList[],
+      reviews,
+    };
+  }
+
+  async listPlansByProduct(companyId: number, productId: string) {
+    const plansProduct = await this.planService.listPlansByProduct(
+      companyId,
+      productId
+    );
+
+    const planNames = plansProduct.map((plan) => plan.name);
+
+    const formattedPlanNames =
+      planNames.length > 1
+        ? `${planNames.slice(0, -1).join(", ")} e ${planNames[planNames.length - 1]}.`
+        : `${planNames[0]}.`;
+
+    const lowestPrice = plansProduct.reduce((min, plan) => {
+      return plan.low_price < min ? plan.low_price : min;
+    }, Number.MAX_VALUE);
+
+    return {
+      plans_name: formattedPlanNames,
+      low_price: lowestPrice,
+    } as ListPlanProductResponse;
+  }
+
+  listMarketing(marketing: MarketingProductList[], type: MarketingType) {
+    const formatMapping = {
+      [MarketingType.HIGHLIGHT]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          subtitle: item.sub_titulo,
+          description: item.descricao,
+          image_background: item.url_imagem,
+        }) as MarketingProductHighlightsList,
+
+      [MarketingType.INSTITUTIONAL]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          description: item.descricao,
+          image_background: item.url_imagem,
+          video_url: item.url_video,
+        }) as MarketingProductInstitucionalList,
+
+      [MarketingType.MAGAZINE]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          image_background: item.url_imagem,
+        }) as MarketingProductMagazinesList,
+
+      [MarketingType.SECTION]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          image_background: item.url_imagem,
+        }) as MarketingProductSectionsList,
+
+      [MarketingType.EBOOK_AUDIOBOOK]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          image_background: item.url_imagem,
+        }) as EbooksAudiolivrosListSchema,
+
+      [MarketingType.INSTITUTIONAL_MIDDLE]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          subtitle: item.sub_titulo,
+          description: item.descricao,
+          image_background: item.url_imagem,
+        }) as MarketingProductInstitutionalMiddleList,
+
+      [MarketingType.NUMBER]: (item: MarketingProductList) => ({
+        number: item.titulo,
+        description: item.descricao,
+      }),
+
+      [MarketingType.PARTNER_EDITORS]: (item: MarketingProductList) => ({
+        title: item.titulo,
+        image_background: item.url_imagem,
+      }),
+    };
+
+    const result = marketing
+      .filter((item) => item.marketing_produto_tipo_id === type)
+      .map((item) => (formatMapping[type] ? formatMapping[type](item) : null))
+      .filter((item) => item !== null);
+
+    return result;
   }
 }

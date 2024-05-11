@@ -13,7 +13,7 @@ import { LoggerService } from "@core/services/logger.service";
 export class SmsService implements ISmsService {
   constructor(private readonly logger: LoggerService) {}
 
-  async send(input: ISmsServiceSendInput) {
+  async send(input: ISmsServiceSendInput): Promise<ISmsSentMessageResponse | null> {
     try {
       const response = await this.connection();
 

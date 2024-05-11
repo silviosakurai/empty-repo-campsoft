@@ -11,4 +11,8 @@ export class ReviewService {
   async list({ id_parceiro }: ITokenKeyData) {
     return this.reviewListerRepository.list(id_parceiro);
   }
+
+  async listReviewByProductId(productId: string) {
+    return this.reviewListerRepository.listReviewByProductId(productId);
+  }
 }
