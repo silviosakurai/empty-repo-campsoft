@@ -6,6 +6,7 @@ import {
   marketingProductMagazinesListSchema,
   marketingProductNumbersListSchema,
   marketingProductSectionsListSchema,
+  reviewListResponseSchema,
 } from "@core/schema/product/productViewSchema";
 import { Static } from "@sinclair/typebox";
 
@@ -36,6 +37,8 @@ export type MarketingProductInstitutionalMiddleList = Static<
 export type MarketingProductNumbersList = Static<
   typeof marketingProductNumbersListSchema
 >;
+
+export type ReviewListResponse = Static<typeof reviewListResponseSchema>;
 
 export interface MarketingProductList {
   marketing_produto_id: number;

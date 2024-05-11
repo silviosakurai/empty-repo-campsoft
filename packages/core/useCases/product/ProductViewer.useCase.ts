@@ -14,13 +14,15 @@ import {
   MarketingProductSectionsList,
 } from "@core/interfaces/repositories/marketing";
 import { MarketingType } from "@core/common/enums/models/marketing";
+import { ReviewService } from "@core/services/review.service";
 
 @injectable()
 export class ProductViewerUseCase {
   constructor(
     private readonly productService: ProductService,
     private readonly planService: PlanService,
-    private readonly marketingService: MarketingService
+    private readonly marketingService: MarketingService,
+    private readonly reviewService: ReviewService
   ) {}
 
   async execute(
@@ -33,9 +35,10 @@ export class ProductViewerUseCase {
       return null;
     }
 
-    const [plansProduct, marketing] = await Promise.all([
+    const [plansProduct, marketing, reviews] = await Promise.all([
       this.listPlansByProduct(companyId, product.product_id),
       this.marketingService.list(product.product_id),
+      this.reviewService.listReviewByProductId(product.product_id),
     ]);
 
     return {
@@ -69,6 +72,7 @@ export class ProductViewerUseCase {
         marketing,
         MarketingType.NUMBER
       ) as MarketingProductNumbersList[],
+      reviews,
     };
   }
 

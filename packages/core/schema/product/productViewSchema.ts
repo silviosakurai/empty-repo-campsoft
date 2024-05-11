@@ -50,6 +50,17 @@ export const marketingProductNumbersListSchema = Type.Object({
   description: Type.Union([Type.String(), Type.Null()]),
 });
 
+export const reviewListResponseSchema = Type.Object({
+  review_id: Type.Number(),
+  status: Type.String(),
+  name: Type.String(),
+  review: Type.String(),
+  photo: Type.String(),
+  rating: Type.Number(),
+  created_at: Type.String({ format: "date-time" }),
+  updated_at: Type.String({ format: "date-time" }),
+});
+
 export const productViewSchema = Type.Object({
   product_id: Type.String(),
   status: Type.Union([
@@ -95,4 +106,5 @@ export const productViewSchemaResponse = Type.Object({
   numbers: Type.Array(marketingProductNumbersListSchema, {
     nullable: true,
   }),
+  reviews: Type.Array(reviewListResponseSchema, { nullable: true }),
 });
