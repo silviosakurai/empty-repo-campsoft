@@ -13,4 +13,5 @@ export * from "./createProductGroupImageSchema.validation";
 export * from "./getProductGroupSchema.validation";
 export * from "./putProductGroupSchema.validation";
 export * from "./deleteProductDetailHowToAccessSchema.validation";
+export * from "./createProductGroupSchema.validation";
 export * from "./listProductGroupSchema.validation";

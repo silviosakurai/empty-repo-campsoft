@@ -9,6 +9,7 @@ import { createProductImage } from './methods/createProductImage';
 import { addProductToGroup } from './methods/addProductToGroup';
 import { deleteProductFromGroup } from './methods/deleteProductFromGroup';
 import { createProductGroupImage } from './methods/createProductGroupImage';
+import { createProductGroup } from './methods/createProductGroup';
 import { viewGroup } from './methods/viewGroup';
 import { updateProductGroup } from './methods/updateProductGroup';
 import { listProductGroup } from './methods/listProductGroup';
@@ -28,6 +29,7 @@ class ProductController {
   public addProductToGroup = addProductToGroup;
   public deleteProductFromGroup = deleteProductFromGroup;
   public createGroupImage = createProductGroupImage;
+  public createProductGroup = createProductGroup;
 }
 
 export default ProductController;
