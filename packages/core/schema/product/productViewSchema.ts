@@ -33,6 +33,11 @@ export const marketingProductInstitucionalListSchema = Type.Object({
   video_url: Type.Union([Type.String(), Type.Null()]),
 });
 
+export const ebooksAudiolivrosListSchema = Type.Object({
+  title: Type.Union([Type.String(), Type.Null()]),
+  image_background: Type.Union([Type.String(), Type.Null()]),
+});
+
 export const productViewSchema = Type.Object({
   product_id: Type.String(),
   status: Type.Union([
@@ -64,6 +69,9 @@ export const productViewSchemaResponse = Type.Object({
     nullable: true,
   }),
   sections: Type.Array(marketingProductSectionsListSchema, {
+    nullable: true,
+  }),
+  ebooks_audiolivros: Type.Array(ebooksAudiolivrosListSchema, {
     nullable: true,
   }),
 });

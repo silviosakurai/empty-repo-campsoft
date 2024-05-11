@@ -3,4 +3,5 @@ export enum MarketingType {
   INSTITUTIONAL = 2,
   MAGAZINE = 3,
   SECTION = 4,
+  EBOOK_AUDIOBOOK = 5,
 }

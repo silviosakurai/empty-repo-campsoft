@@ -4,6 +4,7 @@ import { ProductViewResponse } from "./dtos/ProductResponse.dto";
 import { ListPlanProductResponse } from "../plan/dtos/ListPlanResponse.dto";
 import { MarketingService } from "@core/services/marketing.service";
 import {
+  EbooksAudiolivrosListSchema,
   MarketingProductHighlightsList,
   MarketingProductInstitucionalList,
   MarketingProductList,
@@ -54,6 +55,10 @@ export class ProductViewerUseCase {
         marketing,
         MarketingType.SECTION
       ) as MarketingProductSectionsList[],
+      ebooks_audiolivros: this.listMarketing(
+        marketing,
+        MarketingType.EBOOK_AUDIOBOOK
+      ) as EbooksAudiolivrosListSchema[],
     };
   }
 
@@ -109,6 +114,11 @@ export class ProductViewerUseCase {
           title: item.titulo,
           image_background: item.url_imagem,
         }) as MarketingProductSectionsList,
+      [MarketingType.EBOOK_AUDIOBOOK]: (item: MarketingProductList) =>
+        ({
+          title: item.titulo,
+          image_background: item.url_imagem,
+        }) as EbooksAudiolivrosListSchema,
     };
 
     const result = marketing

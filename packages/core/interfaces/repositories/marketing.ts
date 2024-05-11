@@ -1,4 +1,5 @@
 import {
+  ebooksAudiolivrosListSchema,
   marketingProductHighlightsListSchema,
   marketingProductInstitucionalListSchema,
   marketingProductMagazinesListSchema,
@@ -20,6 +21,10 @@ export type MarketingProductMagazinesList = Static<
 
 export type MarketingProductSectionsList = Static<
   typeof marketingProductSectionsListSchema
+>;
+
+export type EbooksAudiolivrosListSchema = Static<
+  typeof ebooksAudiolivrosListSchema
 >;
 
 export interface MarketingProductList {
