@@ -1,9 +1,10 @@
 import { TFunction } from "i18next";
-import { OrderService, SignatureService } from "@core/services";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { injectable } from "tsyringe";
+import { OrderService } from "./order.service";
+import { SignatureService } from "./signature.service";
 
 @injectable()
 export class OrderValidationService {

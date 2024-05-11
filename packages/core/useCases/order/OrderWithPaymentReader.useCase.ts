@@ -1,18 +1,19 @@
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
-import { ClientService, FinanceService, OrderService } from "@core/services";
+import { FinanceService } from "@core/services/finance.service";
 import { ClientPaymentExternalGeneratorUseCase } from "../client/ClientPaymentExternalGenerator.useCase";
 import { FinanceSplitListIsMain } from "@core/common/enums/models/financeSplitList";
 import { PaymentSplitRulesListerResponse } from "@core/interfaces/repositories/payment";
 import { ISplitRuleRequest } from "@core/interfaces/services/payment/ISplitRule";
-import { PaymentSplitRulesListerRepository } from "@core/repositories/payment/PaymentSplitRulesLister.repository";
-// todo: debugar finance serve
+import { OrderService } from "@core/services/order.service";
+import { ClientService } from "@core/services/client.service";
+
 @injectable()
 export class OrderWithPaymentReaderUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly clientService: ClientService,
-    private readonly financeService: PaymentSplitRulesListerRepository,
+    private readonly financeService: FinanceService,
     private readonly paymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
@@ -53,7 +54,7 @@ export class OrderWithPaymentReaderUseCase {
     ruleId: number,
     t: TFunction<"translation", undefined>
   ) {
-    const sellers = await this.financeService.list(ruleId);
+    const sellers = await this.financeService.listSplitRules(ruleId);
 
     if (!sellers) {
       throw new Error(t("seller_not_found"));

@@ -1,16 +1,14 @@
 import { injectable } from "tsyringe";
-import { ProductService } from "@core/services";
 import { CreateProductRequest } from "./dtos/CreateProductRequest.dto";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductsCreatorUseCase {
-  constructor(
-    private readonly productService: ProductService,
-  ) {}
+  constructor(private readonly productService: ProductService) {}
 
   async execute(
     companyId: number,
-    body: CreateProductRequest,
+    body: CreateProductRequest
   ): Promise<boolean> {
     const productId = body.product_id;
 

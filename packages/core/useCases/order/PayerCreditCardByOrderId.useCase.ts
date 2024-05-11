@@ -1,8 +1,7 @@
-import { ClientService, OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { injectable } from "tsyringe";
 import { TFunction } from "i18next";
-import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { PayByCreditCardRequest } from "./dtos/PayByCreditCardRequest.dto";
 import { ClientCardCreatorUseCase } from "../client/ClientCardCreator.useCase";
@@ -13,11 +12,12 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
-import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 import { ListOrderById } from "@core/interfaces/repositories/order";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 import { amountToPay } from "@core/common/functions/amountToPay";
+import { OrderService } from "@core/services/order.service";
+import { ClientService } from "@core/services/client.service";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
@@ -27,7 +27,6 @@ export class PayerCreditCardByOrderIdUseCase {
     private readonly signatureService: SignatureService,
     private readonly cardCreatorUseCase: ClientCardCreatorUseCase,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
@@ -41,7 +40,7 @@ export class PayerCreditCardByOrderIdUseCase {
     let cardId = null as string | null;
 
     try {
-      signature = await this.findSignatureByOrderNumber.findByOrder(orderId);
+      signature = await this.signatureService.findByOrder(orderId);
 
       if (!signature) {
         throw new Error(t("signature_not_found"));

@@ -1,6 +1,6 @@
-import { PlanService } from "@core/services";
 import { injectable } from "tsyringe";
 import { Plan, PlanItem } from "@core/common/enums/models/plan";
+import { PlanService } from "@core/services/plan.service";
 
 @injectable()
 export class PlanUpgraderUseCase {

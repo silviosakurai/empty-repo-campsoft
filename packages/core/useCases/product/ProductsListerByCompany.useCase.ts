@@ -1,10 +1,10 @@
-import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ListProductGroupedByCompanyResponse } from "./dtos/ListProductResponse.dto";
 import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { ListProductByCompanyRequest } from "./dtos/ListProductByCompanyRequest.dto";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductsListerByCompanyUseCase {

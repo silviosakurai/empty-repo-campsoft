@@ -1,4 +1,3 @@
-import { ClientService } from "@core/services";
 import {
   ListClientGroupedByCompany,
   ListClienttGroupedByCompanyResponse,
@@ -10,6 +9,7 @@ import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { FastifyRedis } from "@fastify/redis";
+import { ClientService } from "@core/services/client.service";
 
 @injectable()
 export class ClientsWithCompaniesListerUseCase {

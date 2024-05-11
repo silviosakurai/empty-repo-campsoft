@@ -1,4 +1,4 @@
-import { OrderService } from "@core/services";
+import { OrderService } from "@core/services/order.service";
 import { SignatureService } from "@core/services/signature.service";
 import { injectable } from "tsyringe";
 

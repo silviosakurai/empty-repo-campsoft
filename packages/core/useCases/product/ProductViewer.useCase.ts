@@ -1,6 +1,6 @@
-import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ProductResponse } from "./dtos/ProductResponse.dto";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductViewerUseCase {

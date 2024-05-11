@@ -1,9 +1,8 @@
-import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
-import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
 import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import {
   OrderPaymentsMethodsEnum,
@@ -12,6 +11,7 @@ import {
 import { generateQRCodeAsJPEGBase64 } from "@core/common/functions/generateQRCodeAsJPEGBase64";
 import { amountToPay } from "@core/common/functions/amountToPay";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { OrderService } from "@core/services/order.service";
 
 @injectable()
 export class PayerPixByOrderIdUseCase {
