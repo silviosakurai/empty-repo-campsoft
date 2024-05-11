@@ -12,6 +12,7 @@ import { createProductGroupImage } from './methods/createProductGroupImage';
 import { createProductGroup } from './methods/createProductGroup';
 import { viewGroup } from './methods/viewGroup';
 import { updateProductGroup } from './methods/updateProductGroup';
+import { listProductGroup } from './methods/listProductGroup';
 
 @injectable()
 class ProductController {
@@ -23,6 +24,7 @@ class ProductController {
   public update = updateProduct;
   public createImage = createProductImage;
   public viewGroup = viewGroup;
+  public listGroup = listProductGroup;
   public putGroup = updateProductGroup;
   public addProductToGroup = addProductToGroup;
   public deleteProductFromGroup = deleteProductFromGroup;

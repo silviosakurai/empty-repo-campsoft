@@ -13,6 +13,7 @@ import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListe
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
 import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
+import { PlanListerByProductRepository } from "@core/repositories/plan/PlanListerByProduct.repository";
 
 @injectable()
 export class PlanService {
@@ -26,7 +27,8 @@ export class PlanService {
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
-    private readonly planListerOrderRepository: PlanListerOrderRepository
+    private readonly planListerOrderRepository: PlanListerOrderRepository,
+    private readonly planListerByProductRepository: PlanListerByProductRepository
   ) {}
 
   list = async (companyId: number, query: ListPlanRequest) => {
@@ -37,7 +39,7 @@ export class PlanService {
     return this.planListerByCompanyRepository.list(partnerIds, query);
   };
 
-   listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
+  listWithProducts = async (partnersId: number[], query: ListPlanRequest) => {
     return this.planListerWithProductsRepository.list(partnersId, query);
   };
 
@@ -148,5 +150,9 @@ export class PlanService {
     payload.products?.forEach((product) => productsOrderSet.add(product));
 
     return Array.from(productsOrderSet);
+  };
+
+  listPlansByProduct = async (partnerId: number, productId: string) => {
+    return this.planListerByProductRepository.list(partnerId, productId);
   };
 }

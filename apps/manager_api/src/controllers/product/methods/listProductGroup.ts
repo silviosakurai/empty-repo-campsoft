@@ -1,24 +1,23 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ProductViewerUseCase } from '@core/useCases/product/ProductViewer.useCase';
+import { ProductGroupListerUseCase } from '@core/useCases/product/ProductGroupLister.useCase';
 import { container } from 'tsyringe';
-import { ViewProductPublicRequest } from '@core/useCases/product/dtos/ViewProductRequest.dto';
+import { ListProductByCompanyRequest } from '@core/useCases/product/dtos/ListProductByCompanyRequest.dto';
 
-export const viewProduct = async (
+export const listProductGroup = async (
   request: FastifyRequest<{
-    Params: ViewProductPublicRequest;
+    Querystring: ListProductByCompanyRequest;
   }>,
   reply: FastifyReply
 ) => {
-  const productViewerUseCase = container.resolve(ProductViewerUseCase);
-  const { t, tokenKeyData } = request;
+  const productGroupListerUseCase = container.resolve(
+    ProductGroupListerUseCase
+  );
+  const { t, tokenJwtData } = request;
 
   try {
-    const response = await productViewerUseCase.execute(
-      tokenKeyData.id_parceiro,
-      request.params.slug
-    );
+    const response = await productGroupListerUseCase.execute(t, tokenJwtData);
 
     if (!response) {
       request.server.logger.warn(response, request.id);

@@ -1,15 +1,15 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { productViewSchemaResponse } from "@core/schema/product/productViewSchema";
+import { productGroupListSchema } from "@core/schema/product/productGroupListSchema";
 import { Type } from "@sinclair/typebox";
 
-export const getProductSchema = {
-  description: "Lista produto por id",
+export const listProductGroupSchema = {
+  description: "Lista grupo de produtos",
   tags: [TagSwagger.product],
   produces: ["application/json"],
   security: [
     {
-      authenticateKeyApi: [],
+      authenticateJwt: [],
     },
   ],
   headers: Type.Object({
@@ -21,15 +21,12 @@ export const getProductSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    slug: Type.String(),
-  }),
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: productViewSchemaResponse,
+        data: Type.Array(productGroupListSchema),
       },
       { description: "Successful" }
     ),

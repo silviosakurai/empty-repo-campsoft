@@ -19,7 +19,6 @@ export class WhatsAppTFASenderUserCase {
     loginUserTFA,
   }: SendCodeLoginTFARequest): Promise<boolean> {
     const code = await this.tfaService.generateAndVerifyToken();
-
     const notificationTemplate = {
       phoneNumber: loginUserTFA.login,
       clientId: loginUserTFA.clientId,

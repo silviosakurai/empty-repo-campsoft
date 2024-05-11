@@ -51,6 +51,7 @@ export enum PermissionsRoles {
   PRODUCT_CREATE_GROUP = "product_create_group",
   PRODUCT_EDIT_HOW_TO_ACCESS = "product_edit_how_to_access",
   PRODUCT_DELETE_HOW_TO_ACCESS = "product_delete_how_to_access",
+  PRODUCT_LIST_GROUP = "product_list_group",
   REVIEW_VIEW = "review_view",
   TFA_SEND_CODE = "tfa_send_code",
   TFA_VALIDATE_CODE = "tfa_validate_code",
