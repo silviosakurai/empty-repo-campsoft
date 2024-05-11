@@ -27,6 +27,7 @@ import { ProductGroupProductListerRepository } from "@core/repositories/product/
 import { ProductGroupUpdaterRepository } from "@core/repositories/product/ProductGroupUpdater.repository";
 import { UpdateProductGroupBodyRequest } from "@core/useCases/product/dtos/UpdateProductGroupRequest.dto";
 import { ListProductByCompanyRequest } from "@core/useCases/product/dtos/ListProductByCompanyRequest.dto";
+import { ProductGroupListerRepository } from "@core/repositories/product/ProductGroupLister.repository";
 import { ProductPartnerDeleterRepository } from "@core/repositories/product/ProductPartnerDeleter.repository";
 import { ProductPartnerViewerRepository } from "@core/repositories/product/ProductPartnerViewer.repository";
 
@@ -52,7 +53,8 @@ export class ProductService {
     private readonly productGroupProductListerRepository: ProductGroupProductListerRepository,
     private readonly productGroupProductCreatorRepository: ProductGroupProductCreatorRepository,
     private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
-    private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository
+    private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
+    private readonly ProductGroupListerRepository: ProductGroupListerRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -236,5 +238,9 @@ export class ProductService {
 
   updateGroupsImagesUrl(groupId: number, url: string) {
     return this.productGroupImagesUrlUpdaterRepository.update(groupId, url);
+  }
+
+  listProductGroup() {
+    return this.ProductGroupListerRepository.list();
   }
 }
