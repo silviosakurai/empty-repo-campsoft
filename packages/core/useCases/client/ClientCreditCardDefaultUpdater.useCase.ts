@@ -1,4 +1,4 @@
-import { ClientService } from "@core/services";
+import { ClientService } from "@core/services/client.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 

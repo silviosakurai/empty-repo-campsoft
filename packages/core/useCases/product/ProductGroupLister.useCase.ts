@@ -1,8 +1,8 @@
-import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { TFunction } from "i18next";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ControlAccessService } from "@core/services/controlAccess.service";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductGroupListerUseCase {

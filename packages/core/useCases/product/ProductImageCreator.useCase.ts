@@ -1,10 +1,10 @@
 import { injectable } from "tsyringe";
 import { CreateProductImageInput } from "./dtos/CreateProductImageRequest.dto";
-import { ProductService } from "@core/services";
 import { StorageService } from "@core/services/storage.service";
 import { ProductNotFoundError } from "@core/common/exceptions/ProductNotFoundError";
 import { TFunction } from "i18next";
 import { validateImage } from "@core/common/functions/validateImage";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductImageCreatorUseCase {

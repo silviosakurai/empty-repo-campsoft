@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
-import { PartnerService } from "@core/services";
 import { UpdatePartnerRequest } from "./dtos/UpdatePartnerRequest.dto";
+import { PartnerService } from "@core/services/partner.service";
 
 @injectable()
 export class PartnerUpdaterUseCase {
@@ -8,7 +8,7 @@ export class PartnerUpdaterUseCase {
 
   async execute(
     partnerId: number,
-    input: UpdatePartnerRequest,
+    input: UpdatePartnerRequest
   ): Promise<boolean> {
     return this.partnerService.update(partnerId, input);
   }

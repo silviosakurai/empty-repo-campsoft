@@ -1,11 +1,11 @@
 import { injectable } from "tsyringe";
 import { UpdateProductDetailHowToAccessRequest } from "@core/useCases/product/dtos/UpdateProductDetaiHowToAccessRequest.dto";
 import { UpdateParams } from "@core/useCases/product/dtos/ProductDetaiHowToAccess.dto";
-import { ProductService } from "@core/services";
 import { TFunction } from "i18next";
 import { ProductHowToAccessType } from "@core/common/enums/models/product";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ControlAccessService } from "@core/services/controlAccess.service";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductsDetailHowToAccessUpdaterUseCase {

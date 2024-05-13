@@ -82,7 +82,8 @@ export class OrderService {
     payload: CreateOrderRequestDto,
     planPrice: PlanPrice,
     user: ViewClientResponse,
-    totalPricesInstallments: OrderCreatePaymentsCard
+    totalPricesInstallments: OrderCreatePaymentsCard,
+    splitRuleId: number
   ): Promise<CreateOrder | null> => {
     const create = await this.orderCreatorRepository.create(
       tokenKeyData,
@@ -90,7 +91,8 @@ export class OrderService {
       payload,
       planPrice,
       user,
-      totalPricesInstallments
+      totalPricesInstallments,
+      splitRuleId
     );
 
     if (!create) {

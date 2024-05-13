@@ -1,10 +1,11 @@
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { EmailDisposableNotAllowedError } from "@core/common/exceptions/EmailIsDisposableError";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { ClientService, EmailService } from "@core/services";
 import { EmailDomainService } from "@core/services/emailDomain.service";
 import { injectable } from "tsyringe";
 import { TFunction } from "i18next";
+import { EmailService } from "@core/services/email.service";
+import { ClientService } from "@core/services/client.service";
 
 @injectable()
 export class ClientEmailNewsletterCreatorUseCase {

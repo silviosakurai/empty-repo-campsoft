@@ -1,7 +1,7 @@
-import { PartnerService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ListPartnerResponse } from "@core/useCases/partner/dtos/ListPartnerResponse.dto";
 import { ListPartnerRequest } from "./dtos/ListPartnerRequest.dto";
+import { PartnerService } from "@core/services/partner.service";
 
 @injectable()
 export class PartnerListerUseCase {

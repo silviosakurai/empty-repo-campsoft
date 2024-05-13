@@ -6,15 +6,15 @@ import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { tokenKeyDataMock } from "@core/common/tests/tokenKeyDataMock";
 import { loginUserMock } from "@core/common/tests/loginUserMock";
-import { EmailService } from "@core/services";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
+import { EmailService } from "@core/services/email.service";
 
 jest.mock("@core/services/tfa.service");
 jest.mock("@core/services/sms.service");
 
 const mockGeneratedCode = "123456";
 const mockLoginUser = "18999999999";
-const mockTemplate = { templateId: '1', template: "template" }
+const mockTemplate = { templateId: "1", template: "template" };
 
 describe("Unit::EmailTFASenderCase", () => {
   let emailTFASender: EmailTFASenderUserCase;
@@ -58,7 +58,7 @@ describe("Unit::EmailTFASenderCase", () => {
       expect.any(Object),
       expect.any(Object),
       TemplateModulo.CODIGO_TFA,
-      { code: mockGeneratedCode },
+      { code: mockGeneratedCode }
     );
     expect(mockTfaService.insertCodeUser).toHaveBeenCalledWith(
       TFAType.EMAIL,
@@ -86,7 +86,7 @@ describe("Unit::EmailTFASenderCase", () => {
       expect.any(Object),
       expect.any(Object),
       TemplateModulo.CODIGO_TFA,
-      { code: mockGeneratedCode },
+      { code: mockGeneratedCode }
     );
     expect(mockTfaService.insertCodeUser).not.toHaveBeenCalled();
     expect(result).toBe(false);

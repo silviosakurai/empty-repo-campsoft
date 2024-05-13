@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
-import { ProductService } from "@core/services";
 import { TFunction } from "i18next";
 import { ProductGroupNotFoundError } from "@core/common/exceptions/ProductGroupNotFoundError";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductGroupCreatorUseCase {

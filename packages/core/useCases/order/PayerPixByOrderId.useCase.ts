@@ -1,9 +1,8 @@
-import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
-import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
 import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import {
   OrderPaymentsMethodsEnum,
@@ -12,6 +11,7 @@ import {
 import { generateQRCodeAsJPEGBase64 } from "@core/common/functions/generateQRCodeAsJPEGBase64";
 import { amountToPay } from "@core/common/functions/amountToPay";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { OrderService } from "@core/services/order.service";
 
 @injectable()
 export class PayerPixByOrderIdUseCase {
@@ -24,10 +24,8 @@ export class PayerPixByOrderIdUseCase {
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
     try {
-      const { order, sellerId } = await this.orderWithPaymentReaderUseCase.view(
-        t,
-        orderId
-      );
+      const { order, sellerId, splitList } =
+        await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
       const amountPay = amountToPay(order);
 
@@ -35,6 +33,7 @@ export class PayerPixByOrderIdUseCase {
         amount: amountPay,
         description: order.observation,
         sellerId,
+        split_rules: splitList,
       });
 
       if (!result.data) {

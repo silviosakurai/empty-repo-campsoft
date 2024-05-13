@@ -6,11 +6,6 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import {
-  ClientService,
-  OrderValidationService,
-  ProductService,
-} from "@core/services";
-import {
   CreateOrder,
   OrderByNumberResponse,
 } from "@core/interfaces/repositories/order";
@@ -21,6 +16,9 @@ import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature"
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 import { PaymentService } from "@core/services/payment.service";
 import { VoucherService } from "@core/services/voucher.service";
+import { ProductService } from "@core/services/product.service";
+import { ClientService } from "@core/services/client.service";
+import { OrderValidationService } from "@core/services/orderValidation.service";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -40,7 +38,8 @@ export class CreateOrderUseCase {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    splitRuleId: number
   ) {
     await this.orderValidationService.validatePaymentMethod(
       t,
@@ -129,7 +128,8 @@ export class CreateOrderUseCase {
       payload,
       totalPrices,
       userFounded,
-      totalPricesInstallments
+      totalPricesInstallments,
+      splitRuleId
     );
 
     if (!createOrder) {

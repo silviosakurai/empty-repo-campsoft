@@ -6,8 +6,8 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 
-export const fiAccounts = mysqlTable("fi_contas", {
-  id_fi_contas: int("id_fi_contas").notNull().primaryKey(),
+export const financeAccounts = mysqlTable("financeiro_contas", {
+  id_financeiro_contas: int("id_financeiro_contas").notNull().primaryKey(),
   fi_conta_nome: varchar("fi_conta_nome", { length: 30 }),
   id_parceiro: int("id_parceiro"),
   status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
