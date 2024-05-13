@@ -25,9 +25,11 @@ export const financeSplitList = mysqlTable("financeiro_split_lista", {
     .notNull()
     .primaryKey(),
   id_financeiro_split_regras: int("id_financeiro_split_regras").notNull(),
-  id_fi_zoop_vendedor: varchar("id_fi_zoop_vendedor", { length: 36 }).notNull(),
-  id_fi_contas: int("id_fi_contas"),
-  id_fi_zoop_vendedor_conta: varchar("id_fi_zoop_vendedor_conta", {
+  id_financeiro_vendedor: varchar("id_financeiro_vendedor", {
+    length: 36,
+  }).notNull(),
+  id_financeiro_contas: int("id_financeiro_contas"),
+  id_financeiro_vendedor_conta: varchar("id_financeiro_vendedor_conta", {
     length: 32,
   }),
   status: mysqlEnum("status", [

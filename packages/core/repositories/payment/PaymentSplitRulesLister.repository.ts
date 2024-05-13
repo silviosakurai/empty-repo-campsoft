@@ -22,7 +22,7 @@ export class PaymentSplitRulesListerRepository {
     const results = await this.db
       .select({
         name: financeSplitRules.regra_nome,
-        recipient: financeSplitList.id_fi_zoop_vendedor,
+        recipient: financeSplitList.id_financeiro_vendedor,
         liable: sql`CASE
           WHEN ${financeSplitList.liable} = ${FinanceSplitListIsLiable.YES} THEN true
           ELSE false
