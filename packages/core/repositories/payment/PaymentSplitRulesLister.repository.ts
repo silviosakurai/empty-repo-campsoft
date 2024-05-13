@@ -64,4 +64,3 @@ export class PaymentSplitRulesListerRepository {
     return results;
   }
 }
-// todo: remover tabelas com zoop && remover a fi_contas
