@@ -35,6 +35,7 @@ export enum PermissionsRoles {
   ORDER_PAYMENT_BOLETO = "order_payment_boleto",
   ORDER_PAYMENT_CREDIT_CARD = "order_payment_credit_card",
   ORDER_PAYMENT_PIX = "order_payment_pix",
+  ORDER_HISTORIC_VIEW = "order_historic_view",
   PARTNER_LIST = "partner_list",
   PARTNER_CREATE = "partner_create",
   PARTNER_UPDATE = "partner_update",
