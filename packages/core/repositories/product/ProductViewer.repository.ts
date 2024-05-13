@@ -3,7 +3,7 @@ import { eq, and } from "drizzle-orm";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { product, productPartner, productType } from "@core/models";
-import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
+import { ProductView } from "@core/useCases/product/dtos/ProductResponse.dto";
 
 @injectable()
 export class ProductViewerRepository {
@@ -11,13 +11,12 @@ export class ProductViewerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async get(companyId: number, sku: string): Promise<ProductResponse | null> {
+  async get(companyId: number, slug: string): Promise<ProductView | null> {
     const result = await this.db
       .select({
         product_id: product.id_produto,
         status: product.status,
         name: product.produto,
-        long_description: product.descricao,
         short_description: product.descricao_curta,
         marketing_phrases: product.frases_marketing,
         content_provider_name: product.conteudista_nome,
@@ -39,10 +38,6 @@ export class ProductViewerRepository {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
         },
-        prices: {
-          face_value: product.preco_face,
-          price: product.preco,
-        },
         created_at: product.created_at,
         updated_at: product.updated_at,
       })
@@ -58,7 +53,7 @@ export class ProductViewerRepository {
       .where(
         and(
           eq(productPartner.id_parceiro, companyId),
-          eq(product.id_produto, sku)
+          eq(product.url_caminho, slug)
         )
       )
       .execute();
@@ -67,6 +62,6 @@ export class ProductViewerRepository {
       return null;
     }
 
-    return result[0] as unknown as ProductResponse;
+    return result[0] as ProductView;
   }
 }
