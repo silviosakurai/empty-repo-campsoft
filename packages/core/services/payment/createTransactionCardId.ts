@@ -13,8 +13,6 @@ import { ApiErrorCategoryZoop } from "@core/common/enums/ApiErrorCategoryZoop";
 export async function createTransactionCardId(
   input: ITransactionCardIdRequest
 ): Promise<ResponseService<ITransactionCardResponse>> {
-  console.log(input.amount);
-  console.log(input.split_rules);
   try {
     const response = await paymentApiInstance.post<
       ITransactionCardResponse & IZoopError
@@ -24,7 +22,7 @@ export async function createTransactionCardId(
       payment_type: PaymentType.credit,
       source: {
         usage: input.usage,
-        amount: input.amount,
+        amount: input.amount * 100,
         currency: "BRL",
         type: "card",
         card: {
@@ -47,7 +45,6 @@ export async function createTransactionCardId(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    console.log(error.response.data.error);
     if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
       throw new Error(error.response.data.error.category);
     }

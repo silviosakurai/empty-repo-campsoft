@@ -128,5 +128,6 @@
   "amount_to_pay_invalid": "Amount to pay invalid",
   "resource_not_found": "Sorry, the seller you are trying to use does not exist or has been deleted",
   "forbidden": "Your user is not authorized to access this resource.",
-  "main_seller_not_found": "Main seller not found."
+  "main_seller_not_found": "Main seller not found.",
+  "invalid_split_rule": "Invalid split rule."
 }

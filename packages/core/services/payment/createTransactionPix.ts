@@ -39,8 +39,6 @@ export async function createTransactionPix(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    console.log(error.response.data.error);
-
     if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
       throw new Error(error.response.data.error.category);
     }

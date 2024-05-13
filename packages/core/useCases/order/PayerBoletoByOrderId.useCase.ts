@@ -35,7 +35,7 @@ export class PayerByBoletoByOrderIdUseCase {
           description: order.observation,
           reference_id: order.order_id,
           sellerId,
-          // split_rules: splitList,
+          split_rules: splitList,
         });
 
       if (!result.data) {
