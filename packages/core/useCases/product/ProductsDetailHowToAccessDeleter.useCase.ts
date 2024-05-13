@@ -1,9 +1,9 @@
 import { injectable } from "tsyringe";
 import { UpdateParams } from "@core/useCases/product/dtos/ProductDetaiHowToAccess.dto";
-import { ProductService } from "@core/services";
 import { ControlAccessService } from "@core/services/controlAccess.service";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { TFunction } from "i18next";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductsDetailHowToAccessDeleterUseCase {

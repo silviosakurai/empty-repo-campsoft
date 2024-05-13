@@ -6,14 +6,14 @@ import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { TFAType } from "@core/common/enums/models/tfa";
 import { tokenKeyDataMock } from "@core/common/tests/tokenKeyDataMock";
 import { loginUserMock } from "@core/common/tests/loginUserMock";
-import { SmsService } from "@core/services";
+import { SmsService } from "@core/services/sms.service";
 
 jest.mock("@core/services/tfa.service");
 jest.mock("@core/services/sms.service");
 
 const mockGeneratedCode = "123456";
 const mockLoginUser = "18999999999";
-const mockTemplate = { templateId: '1', template: "template" }
+const mockTemplate = { templateId: "1", template: "template" };
 
 describe("Unit::SmsTFASenderCase", () => {
   let smsTFAUserSender: SmsTFAUserSenderCase;
@@ -30,10 +30,7 @@ describe("Unit::SmsTFASenderCase", () => {
     mockSmsService = {
       send: jest.fn().mockResolvedValue(true),
     } as unknown as jest.Mocked<SmsService>;
-    smsTFAUserSender = new SmsTFAUserSenderCase(
-      mockTfaService,
-      mockSmsService
-    );
+    smsTFAUserSender = new SmsTFAUserSenderCase(mockTfaService, mockSmsService);
   });
 
   afterEach(() => {

@@ -1,6 +1,6 @@
 import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { AuthService } from "@core/services";
+import { AuthService } from "@core/services/auth.service";
 import { ClientService } from "@core/services/client.service";
 import { ControlAccessService } from "@core/services/controlAccess.service";
 import { FastifyRedis } from "@fastify/redis";

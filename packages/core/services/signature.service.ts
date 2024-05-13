@@ -225,4 +225,8 @@ export class SignatureService {
       planId
     );
   };
+
+  findByOrder = async (orderNumber: string) => {
+    return this.findSignatureByOrderNumber.findByOrder(orderNumber);
+  };
 }
