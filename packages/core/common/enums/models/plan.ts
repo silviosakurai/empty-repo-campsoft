@@ -1,6 +1,7 @@
 import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto";
 import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
 import { Static } from "@sinclair/typebox";
+import { float } from "@opensearch-project/opensearch/api/types";
 
 export enum PlanVisivelSite {
   YES = "Y",
@@ -28,6 +29,17 @@ export type PlanPrice = {
   discount_value: number | null;
   discount_percentage: number | null;
   price_with_discount: number | null;
+  price_with_discount_order_previous?: number | null;
+  discount_coupon?: number | null;
+  discount_product?: number | null;
+};
+
+export type PlanPriceCreate = {
+  months: number;
+  price: number | null;
+  discount_value: number | null;
+  discount_percentage: number | null;
+  price_with_discount: float;
   price_with_discount_order_previous?: number | null;
   discount_coupon?: number | null;
   discount_product?: number | null;

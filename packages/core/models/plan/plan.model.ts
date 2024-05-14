@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const plan = mysqlTable("plano", {
-  id_plano: int("id_plano").notNull().primaryKey(),
+  id_plano: int("id_plano").autoincrement().notNull().primaryKey(),
   status: mysqlEnum("status", [Status.ACTIVE, Status.INACTIVE]).default(
     Status.ACTIVE
   ),

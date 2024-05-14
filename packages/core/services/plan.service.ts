@@ -12,6 +12,8 @@ import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequ
 import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
+import { PlanCreatorRepository } from "@core/repositories/plan/PlanCreator.repository";
+import { CreatePlanRequest } from "@core/useCases/plan/dtos/CreatePlanRequest.dto";
 import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 import { PlanListerByProductRepository } from "@core/repositories/plan/PlanListerByProduct.repository";
 
@@ -23,6 +25,7 @@ export class PlanService {
     private readonly planListerWithProductsRepository: PlanListerWithProductsRepository,
     private readonly planViewerRepository: PlanViewerRepository,
     private readonly planViewerByCompanyRepository: PlanViewerByCompanyRepository,
+    private readonly planCreatorRepository: PlanCreatorRepository,
     private readonly planViewerWithProductsRepository: PlanViewerWithProductsRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
@@ -30,6 +33,10 @@ export class PlanService {
     private readonly planListerOrderRepository: PlanListerOrderRepository,
     private readonly planListerByProductRepository: PlanListerByProductRepository
   ) {}
+
+  create = async (body: CreatePlanRequest) => {
+    return this.planCreatorRepository.create(body);
+  };
 
   list = async (companyId: number, query: ListPlanRequest) => {
     return this.planListerRepository.list(companyId, query);
