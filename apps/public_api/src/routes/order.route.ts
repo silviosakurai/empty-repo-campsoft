@@ -10,6 +10,7 @@ import {
   postOrderPaymentBoletoSchema,
   postOrderPaymentCardSchema,
   postOrderPaymentPixSchema,
+  ordersHistoricByNumberParamSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -20,6 +21,7 @@ import {
   orderPaymentCreditCardPermissions,
   orderPaymentPixPermissions,
   orderListPermissions,
+  orderHistoricViewPermissions,
 } from '@/permissions';
 
 export default async function orderRoutes(server: FastifyInstance) {
@@ -131,5 +133,16 @@ export default async function orderRoutes(server: FastifyInstance) {
         server.authenticateJwt(request, reply, orderPaymentPixPermissions),
     ],
     schema: postOrderPaymentPixSchema,
+  });
+
+  server.get('/orders/:orderNumber/historic', {
+    schema: ordersHistoricByNumberParamSchema,
+    handler: orderController.viewPaymentHistoric,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderHistoricViewPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderHistoricViewPermissions),
+    ],
   });
 }

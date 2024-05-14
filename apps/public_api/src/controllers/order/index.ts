@@ -7,6 +7,7 @@ import { createOrder } from './methods/createOrder';
 import { paymentByBoleto } from './methods/paymentByBoleto';
 import { paymentByCreditCard } from './methods/paymentByCreditCard';
 import { paymentByPix } from './methods/paymentByPix';
+import { viewPaymentHistoric } from './methods/viewPaymentHistoric';
 
 @injectable()
 class OrderController {
@@ -18,6 +19,7 @@ class OrderController {
   public paymentByBoleto = paymentByBoleto;
   public paymentByCreditCard = paymentByCreditCard;
   public paymentByPix = paymentByPix;
+  public viewPaymentHistoric = viewPaymentHistoric;
 }
 
 export default OrderController;

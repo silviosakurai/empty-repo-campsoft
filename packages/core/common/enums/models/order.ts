@@ -1,3 +1,6 @@
+import { orderHistoricViewSchema } from "@core/schema/order/orderHistoricViewSchema";
+import { Static } from "@sinclair/typebox";
+
 export enum OrderRecorrencia {
   NO = "0",
   YES = "1",
@@ -26,3 +29,5 @@ export enum OrderStatusEnum {
   FAILED = 4,
   UPGRADED = 5,
 }
+
+export type OrderHistoricResponse = Static<typeof orderHistoricViewSchema>;
