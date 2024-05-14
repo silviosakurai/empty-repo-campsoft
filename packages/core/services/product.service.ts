@@ -34,7 +34,7 @@ import { ProductGroupCreatorRepository } from "@core/repositories/product/Produc
 import { ProductGroupListerRepository } from "@core/repositories/product/ProductGroupLister.repository";
 import { ProductPartnerDeleterRepository } from "@core/repositories/product/ProductPartnerDeleter.repository";
 import { ProductPartnerViewerRepository } from "@core/repositories/product/ProductPartnerViewer.repository";
-import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductLister.repository copy";
+import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductListerNoPaginationRepository.repository";
 
 @injectable()
 export class ProductService {
