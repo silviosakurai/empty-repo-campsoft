@@ -17,7 +17,7 @@ export const login = async (
   const { t } = request;
 
   try {
-    const responseAuth = await loginAuthUseCase.execute({
+    const responseAuth = await loginAuthUseCase.getLoginManager({
       login,
       password,
     });
@@ -31,10 +31,6 @@ export const login = async (
       });
     }
 
-    const permissions = await loginAuthUseCase.getPermissions(
-      responseAuth.client_id
-    );
-
     const payload = {
       clientId: responseAuth.client_id,
     } as ViewApiJwtRequest;
@@ -46,7 +42,6 @@ export const login = async (
       httpStatusCode: HTTPStatusCode.OK,
       data: {
         result: responseAuth,
-        permissions,
         token,
       },
     });

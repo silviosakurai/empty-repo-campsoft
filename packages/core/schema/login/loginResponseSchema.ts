@@ -1,6 +1,12 @@
 import { Type } from "@sinclair/typebox";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
 
+export const signatureLoginPublicSchema = Type.Object({
+  signature_id: Type.String({ format: "uuid" }),
+  plan_id: Type.Number(),
+  name: Type.String(),
+});
+
 export const loginResponseSchema = Type.Object({
   client_id: Type.String({ format: "uuid" }),
   status: Type.String({ enum: Object.values(ClientStatus) }),
@@ -12,4 +18,5 @@ export const loginResponseSchema = Type.Object({
   cpf: Type.String(),
   gender: Type.String({ enum: Object.values(ClientGender) }),
   photo: Type.Union([Type.String(), Type.Null()]),
+  signature: Type.Array(signatureLoginPublicSchema),
 });
