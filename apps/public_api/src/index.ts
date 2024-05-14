@@ -15,7 +15,6 @@ import loggerServicePlugin from '@core/plugins/logger';
 import swaggerPlugin from '@/plugins/swagger';
 import corsPlugin from '@core/plugins/cors';
 import schedulePlugin from '@core/plugins/schedule';
-import startJobs from '@core/jobs/index';
 
 const server = fastify({
   genReqId: () => v4(),
@@ -40,8 +39,6 @@ server.register(jwtPlugin);
 server.register(swaggerPlugin);
 server.register(corsPlugin);
 server.register(schedulePlugin);
-
-startJobs(server);
 
 const start = async () => {
   try {
