@@ -35,6 +35,7 @@ import { ProductGroupListerRepository } from "@core/repositories/product/Product
 import { ProductPartnerDeleterRepository } from "@core/repositories/product/ProductPartnerDeleter.repository";
 import { ProductPartnerViewerRepository } from "@core/repositories/product/ProductPartnerViewer.repository";
 import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductListerNoPaginationRepository.repository";
+import { ProductListerNoPaginationUserLoggedRepository } from "@core/repositories/product/ProductListerNoPaginationUserLogged.repository";
 
 @injectable()
 export class ProductService {
@@ -61,7 +62,8 @@ export class ProductService {
     private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
     private readonly productGroupCreatorRepository: ProductGroupCreatorRepository,
     private readonly ProductGroupListerRepository: ProductGroupListerRepository,
-    private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository
+    private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository,
+    private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository,
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -89,6 +91,12 @@ export class ProductService {
     query: ListAllProductRequest
   ) => {
     return this.productListerNoPaginationRepository.list(companyId, query);
+  };
+  listNoPaginationUserLogged = async (
+    productIds: string[],
+    query: ListAllProductRequest
+  ) => {
+    return this.productListerNoPaginationUserLoggedRepository.list(productIds, query);
   };
 
   listByCompanyIds = async (
