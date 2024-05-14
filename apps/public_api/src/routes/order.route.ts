@@ -10,6 +10,7 @@ import {
   postOrderPaymentBoletoSchema,
   postOrderPaymentCardSchema,
   postOrderPaymentPixSchema,
+  ordersHistoricByNumberParamSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -134,9 +135,9 @@ export default async function orderRoutes(server: FastifyInstance) {
     schema: postOrderPaymentPixSchema,
   });
 
-  server.get('/orders/orderNumber/historic', {
-    schema: ordersSchema,
-    handler: orderController.list,
+  server.get('/orders/:orderNumber/historic', {
+    schema: ordersHistoricByNumberParamSchema,
+    handler: orderController.viewPaymentHistoric,
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, orderHistoricViewPermissions),
