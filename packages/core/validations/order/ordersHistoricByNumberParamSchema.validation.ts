@@ -30,7 +30,7 @@ export const ordersHistoricByNumberParamSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: orderHistoricViewSchema,
+        data: Type.Array(orderHistoricViewSchema),
       },
       { description: "Successful" }
     ),

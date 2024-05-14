@@ -25,7 +25,6 @@ import {
 import { CouponService } from "./coupon.service";
 import { OrderStatusUpdaterRepository } from "@core/repositories/order/OrderStatusUpdater.repository";
 import { OrderViewerByTransactionIdRepository } from "@core/repositories/order/OrderViewerByTransactionId.repository";
-import { order } from "@core/models";
 
 @injectable()
 export class OrderService {
@@ -135,7 +134,7 @@ export class OrderService {
   };
 
   viewPaymentHistoric = async (
-    orderNumber: ViewOrderPaymentHistoricRequest,
+    orderNumber: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ) => {

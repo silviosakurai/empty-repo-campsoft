@@ -5,6 +5,6 @@ export const orderHistoricViewSchema = Type.Object({
   payment_order_id: Type.String(),
   date: Type.String(),
   method: orderPaymentMethodSchema,
-  value: Type.String(),
+  value: Type.Number(),
   status: Type.String(),
 });

@@ -1,13 +1,20 @@
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
-import { orderPayment } from "@core/models";
+import {
+  order,
+  orderPayment,
+  orderPaymentMethod,
+  orderPaymentStatus,
+  clientCards,
+} from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { and, eq, sql } from "drizzle-orm";
-
-import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
-import { ViewOrderPaymentHistoricRequest } from "@core/useCases/order/dtos/ViewOrderPaymentHistoricRequest.dto";
+import {
+  OrderHistoricResponse,
+  OrderPaymentsMethodsEnum,
+} from "@core/common/enums/models/order";
 
 @injectable()
 export class OrderPaymentHistoricViewerRepository {
@@ -16,79 +23,69 @@ export class OrderPaymentHistoricViewerRepository {
   ) {}
 
   async view(
-    orderNumber: ViewOrderPaymentHistoricRequest,
+    orderNumber: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
-  ) {
-    try {
-      const result = await this.db
-        .select({
-          payment_order_id: sql<string>`BIN_TO_UUID(${orderPayment.id_pedido_pagamento})`,
-        })
-        .from(orderPayment)
-        .where(
-          and(
-            eq(orderPayment.id_pedido, sql<string>`UUID_TO_BIN(${orderNumber})`)
-          )
+  ): Promise<OrderHistoricResponse[]> {
+    const result = await this.db
+      .select({
+        payment_order_id: sql<string>`BIN_TO_UUID(${orderPayment.id_pedido_pagamento})`,
+        date: orderPayment.data_pagamento,
+        method: {
+          type: orderPaymentMethod.pedido_pag_metodo,
+          code: sql<string>`CASE 
+            WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.CARD} 
+              THEN ${clientCards.last_digits}
+            WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.VOUCHER} 
+              THEN ${orderPayment.voucher}
+              ELSE ${orderPayment.codigo_pagamento}
+            END`,
+          brand: sql<string>`CASE 
+            WHEN ${orderPayment.id_pedido_pag_metodo} = ${OrderPaymentsMethodsEnum.CARD} 
+              THEN ${clientCards.brand}
+              ELSE NULL
+            END`,
+        },
+        value: sql<number>`CASE 
+          WHEN ${orderPayment.id_pedido_pagamento_atrelado} IS NOT NULL AND ${orderPayment.valor_desconto_ordem_anterior} > 0
+            THEN ${orderPayment.valor_desconto_ordem_anterior}
+            ELSE ${orderPayment.valor_total}
+          END`,
+        status: orderPaymentStatus.pedido_pagamento_status,
+      })
+      .from(orderPayment)
+      .innerJoin(
+        orderPaymentMethod,
+        eq(
+          orderPaymentMethod.id_pedido_pag_metodo,
+          orderPayment.id_pedido_pag_metodo
         )
-        .execute();
+      )
+      .innerJoin(
+        orderPaymentStatus,
+        eq(
+          orderPaymentStatus.id_pedido_pagamento_status,
+          orderPayment.id_pedido_pagamento_status
+        )
+      )
+      .innerJoin(order, eq(order.id_pedido, orderPayment.id_pedido))
+      .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
+      .where(
+        and(
+          eq(orderPayment.id_pedido, sql<string>`UUID_TO_BIN(${orderNumber})`),
+          eq(
+            orderPayment.id_cliente,
+            sql<string>`UUID_TO_BIN(${tokenJwtData.clientId})`
+          ),
+          eq(order.id_parceiro, tokenKeyData.id_parceiro)
+        )
+      )
+      .execute();
 
-      // const result = await this.db
-      //   .select({
-      //     order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
-      //     client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
-      //     seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
-      //     status: orderStatus.pedido_status,
-      //     totals: {
-      //       subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
-      //       discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
-      //       discount_coupon_value: sql<number>`CASE
-      //         WHEN ${order.valor_cupom} IS NOT NULL
-      //           THEN SUM(${order.valor_cupom})
-      //         ELSE 0
-      //       END`.mapWith(Number),
-      //       discount_product_value: sql<number>`CASE
-      //         WHEN ${order.desconto_produto} IS NOT NULL
-      //           THEN SUM(${order.desconto_produto})
-      //         ELSE 0
-      //       END`.mapWith(Number),
-      //       discount_percentage: sql<number>`CASE
-      //         WHEN ${order.valor_total} > 0
-      //           THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
-      //         ELSE 0
-      //       END`.mapWith(Number),
-      //       total: sql`${order.valor_total}`.mapWith(Number),
-      //     },
-      //     installments: {
-      //       installment: order.pedido_parcelas_vezes,
-      //       value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
-      //     },
-      //     created_at: order.created_at,
-      //     updated_at: order.updated_at,
-      //   })
-      //   .from(order)
-      //   .innerJoin(
-      //     orderStatus,
-      //     eq(orderStatus.id_pedido_status, order.id_pedido_status)
-      //   )
-      //   .where(
-      //     and(
-      //       eq(order.id_parceiro, tokenKeyData.id_parceiro),
-      //       eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
-      //     )
-      //   )
-      //   .groupBy(order.id_pedido)
-      //   .execute();
-      console.log("orderNumber", orderNumber);
-      console.log("result", result);
-
-      if (result.length === 0) {
-        return [];
-      }
-
-      return result;
-    } catch (error) {
-      console.log("error", error);
+    if (result.length === 0) {
+      return [] as OrderHistoricResponse[];
     }
+
+    return result as OrderHistoricResponse[];
   }
 }

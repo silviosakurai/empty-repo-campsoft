@@ -14,7 +14,7 @@ export const viewPaymentHistoric = async (
 
   try {
     const response = await orderHistoricUseCase.execute(
-      { orderNumber: request.params.orderNumber },
+      request.params.orderNumber,
       tokenKeyData,
       tokenJwtData
     );
