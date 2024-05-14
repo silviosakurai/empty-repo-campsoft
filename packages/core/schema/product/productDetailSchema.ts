@@ -2,6 +2,7 @@ import { Type } from "@sinclair/typebox";
 import { imagesProductSchema } from "../image/imagesProductSchema";
 import { productTypeSchema } from "./productTypeSchema";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
+import { productHowToAccess } from "./productHowToAccess";
 
 export const productDetailSchema = Type.Object({
   product_id: Type.String(),
@@ -13,6 +14,7 @@ export const productDetailSchema = Type.Object({
   slug: Type.String(),
   images: imagesProductSchema,
   product_type: productTypeSchema,
+  how_to_access: productHowToAccess,
   status: Type.String({ enum: Object.values(ProductVoucherStatus) }),
   current_expiration: Type.String({ format: "date-time" }),
   expiration_date: Type.String({ format: "date-time" }),

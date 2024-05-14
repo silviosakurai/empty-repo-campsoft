@@ -1,5 +1,6 @@
 import { CouponRescueStatus } from "@core/common/enums/models/coupon";
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
+import { HowTo } from "./products";
 
 export interface IVerifyEligibilityUser {
   cupom_resgatar_codigo: string;
@@ -59,6 +60,20 @@ export interface PlanProducts {
   slug: string;
   images: Images;
   product_type: ProductType;
+}
+
+export interface PlanProductsWithHowTo {
+  product_id: string;
+  status: string;
+  name: string;
+  long_description: string;
+  short_description: string;
+  marketing_phrases: string;
+  content_provider_name: string;
+  slug: string;
+  images: Images;
+  product_type: ProductType;
+  how_to_access: HowTo | null;
 }
 
 export interface AvailableProducts {
