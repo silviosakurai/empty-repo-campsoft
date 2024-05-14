@@ -1,5 +1,8 @@
 import { injectable } from "tsyringe";
-import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
+import {
+  ListAllProductRequest,
+  ListProductRequest,
+} from "@core/useCases/product/dtos/ListProductRequest.dto";
 import { ProductListerRepository } from "@core/repositories/product/ProductLister.repository";
 import { ProductViewerRepository } from "@core/repositories/product/ProductViewer.repository";
 import { CrossSellProductListerRepository } from "@core/repositories/product/CrossSellProductLister.repository";
@@ -31,6 +34,7 @@ import { ProductGroupCreatorRepository } from "@core/repositories/product/Produc
 import { ProductGroupListerRepository } from "@core/repositories/product/ProductGroupLister.repository";
 import { ProductPartnerDeleterRepository } from "@core/repositories/product/ProductPartnerDeleter.repository";
 import { ProductPartnerViewerRepository } from "@core/repositories/product/ProductPartnerViewer.repository";
+import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductLister.repository copy";
 
 @injectable()
 export class ProductService {
@@ -56,7 +60,8 @@ export class ProductService {
     private readonly productDeleterFromGroupRepository: ProductGroupProductDeleterRepository,
     private readonly productGroupImagesUrlUpdaterRepository: ProductGroupImagesUrlUpdaterRepository,
     private readonly productGroupCreatorRepository: ProductGroupCreatorRepository,
-    private readonly ProductGroupListerRepository: ProductGroupListerRepository
+    private readonly ProductGroupListerRepository: ProductGroupListerRepository,
+    private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -77,6 +82,13 @@ export class ProductService {
 
   list = async (companyId: number, query: ListProductRequest) => {
     return this.productListerRepository.list(companyId, query);
+  };
+
+  listNoPagination = async (
+    companyId: number,
+    query: ListAllProductRequest
+  ) => {
+    return this.productListerNoPaginationRepository.list(companyId, query);
   };
 
   listByCompanyIds = async (

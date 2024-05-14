@@ -14,3 +14,14 @@ export interface ListProductRequest {
   per_page: number;
   current_page: number;
 }
+
+export interface ListAllProductRequest {
+  id?: string;
+  status?: Status;
+  name?: string;
+  description?: string;
+  product_type?: string;
+  slug?: string;
+  sort_by?: ProductFields;
+  sort_order?: SortOrder;
+}
