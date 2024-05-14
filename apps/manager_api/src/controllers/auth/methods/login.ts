@@ -23,7 +23,7 @@ export const login = async (
     });
 
     if (!responseAuth) {
-      request.server.logger.info(responseAuth, request.id);
+      request.server.logger.info(request.id);
 
       return sendResponse(reply, {
         message: t('login_invalid'),
@@ -31,12 +31,8 @@ export const login = async (
       });
     }
 
-    const permissions = await loginAuthUseCase.getPermissions(
-      responseAuth.client_id
-    );
-
     const payload = {
-      clientId: responseAuth.client_id,
+      clientId: responseAuth.auth.client_id,
     } as ViewApiJwtRequest;
 
     const token = await reply.jwtSign(payload);
@@ -45,8 +41,8 @@ export const login = async (
       message: t('login_success'),
       httpStatusCode: HTTPStatusCode.OK,
       data: {
-        result: responseAuth,
-        permissions,
+        result: responseAuth.auth,
+        permissions: responseAuth.permissions,
         token,
       },
     });
