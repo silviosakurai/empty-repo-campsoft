@@ -1,10 +1,10 @@
-import { PlanService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ListPlanRequest } from "./dtos/ListPlanRequest.dto";
 import { FastifyRedis } from "@fastify/redis";
 import { PermissionsRoles } from "@core/common/enums/PermissionsRoles";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ControlAccessService } from "@core/services/controlAccess.service";
+import { PlanService } from "@core/services/plan.service";
 
 @injectable()
 export class PlansListerWithProductsUseCase {

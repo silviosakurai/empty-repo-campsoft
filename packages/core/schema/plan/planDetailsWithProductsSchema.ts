@@ -1,7 +1,7 @@
 import { ProductVoucherStatus } from "@core/common/enums/models/product";
 import { Type } from "@sinclair/typebox";
 import { productsAvailableSchema } from "../product/productsAvailableSchema";
-import { productDetailPlanProductsSchema } from "../product/productDetailPlanProductsSchema";
+import { productDetailPlanProductsWithHowToSchema } from "../product/productDetailPlanProductsWithHowToSchema";
 
 export const planDetailsWithProductsSchema = Type.Object({
   plan_id: Type.Number(),
@@ -15,6 +15,6 @@ export const planDetailsWithProductsSchema = Type.Object({
   current_expiration: Type.String({ format: "date-time" }),
   expiration_date: Type.String({ format: "date-time" }),
   redemption_date: Type.String({ format: "date-time" }),
-  plan_products: Type.Array(productDetailPlanProductsSchema),
+  plan_products: Type.Array(productDetailPlanProductsWithHowToSchema),
   product_groups: Type.Array(productsAvailableSchema),
 });

@@ -43,7 +43,7 @@ interface Images {
   background_image: string;
 }
 
-interface HowTo {
+export interface HowTo {
   desktop: string;
   mobile: string;
   url_web: string;

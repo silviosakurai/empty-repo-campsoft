@@ -3,12 +3,13 @@ import { injectable } from "tsyringe";
 import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 import { CreateClientResponse } from "@core/useCases/client/dtos/CreateClientResponse.dto";
 import { IUserExistsFunction } from "@core/interfaces/repositories/client";
-import { EmailService, WhatsappService } from "@core/services";
 import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { PermissionService } from "@core/services/permission.service";
 import { CreateClientRequestPartnerDto } from "./dtos/CreateClientRequestPartner.dto";
+import { EmailService } from "@core/services/email.service";
+import { WhatsappService } from "@core/services/whatsapp.service";
 
 @injectable()
 export class ClientCreatorPartnerUseCase {
@@ -21,7 +22,7 @@ export class ClientCreatorPartnerUseCase {
 
   async create(
     partnerIds: number[],
-    input: CreateClientRequestPartnerDto,
+    input: CreateClientRequestPartnerDto
   ): Promise<CreateClientResponse | null> {
     const response = await this.confirmIfRegisteredPreviously({
       cpf: input.cpf,

@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import {
   getProductCrossSellSchema,
   getProductSchema,
+  listProductAllSchema,
   listProductSchema,
 } from '@core/validations/product';
 import {
@@ -18,6 +19,15 @@ export default async function productRoutes(server: FastifyInstance) {
   server.get('/products', {
     schema: listProductSchema,
     handler: productController.list,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, productListPermissions),
+    ],
+  });
+
+  server.get('/products/all', {
+    schema: listProductAllSchema,
+    handler: productController.listAll,
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, productListPermissions),

@@ -452,6 +452,7 @@ export class OrdersListerRepository {
         order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+        split_rule_id: order.id_financeiro_split_regra,
         company_id: order.id_parceiro,
         seller_id: order.id_vendedor,
         status_id: order.id_pedido_status,

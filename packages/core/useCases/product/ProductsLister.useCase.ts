@@ -1,7 +1,13 @@
-import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
-import { ListProductRequest } from "@core/useCases/product/dtos/ListProductRequest.dto";
-import { ListProductResponse } from "./dtos/ListProductResponse.dto";
+import {
+  ListAllProductRequest,
+  ListProductRequest,
+} from "@core/useCases/product/dtos/ListProductRequest.dto";
+import {
+  ListProductResponse,
+  ProductListerNoPagination,
+} from "./dtos/ListProductResponse.dto";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductsListerUseCase {
@@ -12,5 +18,12 @@ export class ProductsListerUseCase {
     query: ListProductRequest
   ): Promise<ListProductResponse | null> {
     return this.productService.list(companyId, query);
+  }
+
+  async listNoPagination(
+    companyId: number,
+    query: ListAllProductRequest
+  ): Promise<ProductListerNoPagination[]> {
+    return this.productService.listNoPagination(companyId, query);
   }
 }

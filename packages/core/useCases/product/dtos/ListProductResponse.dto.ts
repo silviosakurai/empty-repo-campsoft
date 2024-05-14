@@ -10,6 +10,7 @@ import { productHowToAccess } from "@core/schema/product/productHowToAccess";
 import { productTypeSchema } from "@core/schema/product/productTypeSchema";
 import { pricesProductSchema } from "@core/schema/price/pricesProductSchema";
 import { Status } from "@core/common/enums/Status";
+import { productDetailHowToAccessWithDatesSchema } from "@core/schema/product/productDetailHowToAccessWithDatesSchema";
 
 export interface ListProductResult {
   results: ProductResponse[];
@@ -50,3 +51,7 @@ export interface ProductList {
   created_at: string | null;
   updated_at: string | null;
 }
+
+export type ProductListerNoPagination = Static<
+  typeof productDetailHowToAccessWithDatesSchema
+>;

@@ -1,8 +1,9 @@
-import { AuthService, ClientService } from "@core/services";
 import { injectable } from "tsyringe";
 import { UpdatePasswordClientRequestDto } from "./dtos/UpdatePasswordClientRequest.dto";
 import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { encodePassword } from "@core/common/functions/encodePassword";
+import { ClientService } from "@core/services/client.service";
+import { AuthService } from "@core/services/auth.service";
 
 @injectable()
 export class ClientPasswordUpdaterUseCase {

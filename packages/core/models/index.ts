@@ -5,7 +5,7 @@ export * from "./client";
 export * from "./partner";
 export * from "./coupon";
 export * from "./email";
-export * from "./fi";
+export * from "./finance";
 export * from "./order";
 export * from "./pdv";
 export * from "./permission";

@@ -38,4 +38,5 @@ export enum ApiErrorCategoryZoop {
   RemoveCardById = "remove_card_by_id",
   ResourceNotFound = "resource_not_found",
   Forbidden = "forbidden",
+  InvalidSplitRule = "invalid_split_rule",
 }

@@ -1,8 +1,8 @@
-import { ClientService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ClientPaymentCreatorUseCase } from "../order/ClientPaymentCreator.useCase";
 import { TFunction } from "i18next";
 import { ViewClientResponse } from "./dtos/ViewClientResponse.dto";
+import { ClientService } from "@core/services/client.service";
 
 @injectable()
 export class ClientPaymentExternalGeneratorUseCase {

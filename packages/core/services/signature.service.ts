@@ -16,6 +16,7 @@ import {
 import { OrdersUpdaterRepository } from "@core/repositories/order/OrdersUpdater.repository";
 import { OrderStatusEnum } from "@core/common/enums/models/order";
 import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
+import { SignatureActiveByClientIdListerRepository } from "@core/repositories/signature/SignatureActiveByClientIdLister.repository";
 
 @injectable()
 export class SignatureService {
@@ -27,7 +28,8 @@ export class SignatureService {
     private readonly signatureCreatorRepository: SignatureCreatorRepository,
     private readonly signaturePaidActiveRepository: SignaturePaidActiveRepository,
     private readonly signatureUpgradedRepository: SignatureUpgradedRepository,
-    private readonly ordersUpdaterRepository: OrdersUpdaterRepository
+    private readonly ordersUpdaterRepository: OrdersUpdaterRepository,
+    private readonly signatureActiveByClientIdListerRepository: SignatureActiveByClientIdListerRepository
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -224,5 +226,13 @@ export class SignatureService {
       clientId,
       planId
     );
+  };
+
+  findByOrder = async (orderNumber: string) => {
+    return this.findSignatureByOrderNumber.findByOrder(orderNumber);
+  };
+
+  findActiveByClientId = async (clientId: string) => {
+    return this.signatureActiveByClientIdListerRepository.find(clientId);
   };
 }

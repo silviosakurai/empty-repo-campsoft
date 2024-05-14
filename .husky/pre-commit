@@ -1,4 +1,0 @@
-turbo run lint --filter=manager
-turbo run lint --filter=public
-turbo run lint --filter=webhooks
-turbo run lint --filter=websocket

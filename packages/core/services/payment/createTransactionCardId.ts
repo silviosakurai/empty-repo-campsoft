@@ -22,13 +22,14 @@ export async function createTransactionCardId(
       payment_type: PaymentType.credit,
       source: {
         usage: input.usage,
-        amount: input.amount,
+        amount: input.amount * 100,
         currency: "BRL",
         type: "card",
         card: {
           id: input.cardId,
         },
       },
+      split_rules: input.split_rules,
     });
 
     if (response.status === HTTPStatusCode.CREATED) {

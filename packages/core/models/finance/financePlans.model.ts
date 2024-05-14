@@ -7,8 +7,8 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const fiZoopPlan = mysqlTable("fi_zoop_planos", {
-  id_fi_zoop_planos: varchar("id_fi_zoop_planos", { length: 32 })
+export const financePlans = mysqlTable("financeiro_planos", {
+  id_financeiro_planos: varchar("id_financeiro_planos", { length: 32 })
     .notNull()
     .primaryKey(),
   id_plano: int("id_plano"),

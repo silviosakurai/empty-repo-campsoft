@@ -6,14 +6,19 @@ import {
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
+import { FinanceSplitRulesStatus } from "@core/common/enums/models/financeSplitRules";
 
-export const fiAccountsSplitRules = mysqlTable("fi_contas_split_regra", {
-  id_fi_contas_split_regra: int("id_fi_contas_split_regra")
+export const financeSplitRules = mysqlTable("financeiro_split_regras", {
+  id_financeiro_split_regras: int("id_financeiro_split_regras")
     .notNull()
     .primaryKey(),
-  status: mysqlEnum("status", ["ativo", "inativo"]).notNull().default("ativo"),
+  status: mysqlEnum("status", [
+    FinanceSplitRulesStatus.active,
+    FinanceSplitRulesStatus.inactive,
+  ])
+    .notNull()
+    .default(FinanceSplitRulesStatus.active),
   regra_nome: varchar("regra_nome", { length: 35 }),
-  regra_tipo: mysqlEnum("regra_tipo", ["assinatura", "venda"]).default("venda"),
   obs: varchar("obs", { length: 200 }),
   created_at: datetime("created_at", { mode: "string" }).default(
     sql`CURRENT_TIMESTAMP`
