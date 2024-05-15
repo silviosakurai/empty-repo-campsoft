@@ -4,7 +4,7 @@ import { ClientEmailActivatorUseCase } from '@core/useCases/client/ClientEmailAc
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 
-export const activateClientEmail = async (
+export const activateEmail = async (
   request: FastifyRequest<{ Params: { token: string } }>,
   reply: FastifyReply
 ) => {
@@ -25,8 +25,6 @@ export const activateClientEmail = async (
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {
-    console.log(error);
-
     request.server.logger.error(error, request.id);
 
     return sendResponse(reply, {

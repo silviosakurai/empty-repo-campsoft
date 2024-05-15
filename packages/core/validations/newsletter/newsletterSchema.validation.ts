@@ -2,13 +2,13 @@ import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
-export const userActivatePasswordSchema = {
-  description: "Ativa o e-mail do usuário pelo token",
-  tags: [TagSwagger.user],
+export const newsletterSchema = {
+  description: "Registra o e-mail em newsletter",
+  tags: [TagSwagger.newsletter],
   produces: ["application/json"],
   security: [
     {
-      authenticateJwt: [],
+      authenticateKeyApi: [],
     },
   ],
   headers: Type.Object({
@@ -20,14 +20,15 @@ export const userActivatePasswordSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    token: Type.String({ format: "uuid" }),
+  body: Type.Object({
+    email: Type.String({ format: "email" }),
   }),
   response: {
-    200: Type.Object(
+    201: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
+        data: Type.Null(),
       },
       { description: "Successful" }
     ),
@@ -39,13 +40,13 @@ export const userActivatePasswordSchema = {
       },
       { description: "Unauthorized" }
     ),
-    404: Type.Object(
+    409: Type.Object(
       {
         status: Type.Boolean({ default: false }),
         message: Type.String(),
         data: Type.Null(),
       },
-      { description: "Not Found" }
+      { description: "Conflict" }
     ),
     500: Type.Object(
       {

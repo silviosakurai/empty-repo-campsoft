@@ -140,7 +140,6 @@ export class EmailListerRepository {
       .insert(emailHistory)
       .values({
         id_template_email: templateId,
-        id_cliente: notificationTemplate.clientId ?? null,
         remetente_email: sender ?? "",
         destinatario_email: notificationTemplate.email ?? "",
         email_token_externo: emailToken,
