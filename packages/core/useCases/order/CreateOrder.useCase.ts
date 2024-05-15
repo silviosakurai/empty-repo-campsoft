@@ -168,29 +168,26 @@ export class CreateOrderUseCase {
     payload: CreateOrderRequestDto,
     orderId: string
   ): Promise<void> {
-    if (
-      payload.payment?.voucher &&
-      payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.VOUCHER
-    ) {
-      return this.paymentService.payWithVoucher(
-        t,
-        tokenKeyData,
-        tokenJwtData,
-        orderId,
-        payload.payment.voucher
-      );
-    }
+    const paymentType = payload.payment?.type?.toString();
 
-    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD) {
-      return this.paymentService.payWithCard(t, orderId, payload.payment);
-    }
-
-    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.BOLETO) {
-      return this.paymentService.payWithBoleto(t, orderId);
-    }
-
-    if (payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.PIX) {
-      return this.paymentService.payWithPix(t, orderId);
+    switch (paymentType) {
+      case OrderPaymentsMethodsEnum.VOUCHER:
+        if (payload.payment?.voucher) {
+          return this.paymentService.payWithVoucher(
+            t,
+            tokenKeyData,
+            tokenJwtData,
+            orderId,
+            payload.payment.voucher
+          );
+        }
+        break;
+      case OrderPaymentsMethodsEnum.CARD:
+        return this.paymentService.payWithCard(t, orderId, payload.payment);
+      case OrderPaymentsMethodsEnum.BOLETO:
+        return this.paymentService.payWithBoleto(t, orderId);
+      case OrderPaymentsMethodsEnum.PIX:
+        return this.paymentService.payWithPix(t, orderId);
     }
   }
 
@@ -214,18 +211,31 @@ export class CreateOrderUseCase {
       throw new Error(t("error_create_signature"));
     }
 
-    const createSignatureProducts =
-      await this.signatureService.createSignatureProducts(
-        productsOrder,
-        createSignature.id_assinatura_cliente,
-        findSignatureActiveByClientId
-      );
+    await this.createSignatureProducts(
+      t,
+      productsOrder,
+      createSignature.id_assinatura_cliente,
+      findSignatureActiveByClientId
+    );
+
+    return createSignature;
+  }
+
+  private async createSignatureProducts(
+    t: TFunction<"translation", undefined>,
+    productsOrder: string[],
+    signatureId: string,
+    findSignatureActiveByClientId: ISignatureActiveByClient[]
+  ) {
+    const createSignatureProducts = await this.signatureService.createSignatureProducts(
+      productsOrder,
+      signatureId,
+      findSignatureActiveByClientId
+    );
 
     if (!createSignatureProducts) {
       throw new Error(t("error_create_signature_products"));
     }
-
-    return createSignature;
   }
 
   async viewOrderCreated(
