@@ -1,12 +1,5 @@
-import {
-  mysqlTable,
-  int,
-  datetime,
-  varchar,
-  mysqlEnum,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, int, datetime, varchar } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import { TemplateDeactivatable } from "@core/common/enums/models/template";
 
 export const templateType = mysqlTable("template_tipo", {
   id_template_tipo: int("id_template_tipo")

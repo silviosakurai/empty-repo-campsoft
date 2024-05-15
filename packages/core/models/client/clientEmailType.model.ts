@@ -1,10 +1,4 @@
-import {
-  mysqlTable,
-  int,
-  timestamp,
-  varchar,
-  mysqlEnum,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, int, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 export const clientEmailType = mysqlTable("cliente_email_tipo", {
   id_cliente_email_tipo: int("id_cliente_email_tipo").notNull().primaryKey(),
