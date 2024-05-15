@@ -11,6 +11,7 @@ import {
   ProductDetail,
 } from "@core/interfaces/repositories/voucher";
 import { orderListResponseSchema } from "@core/schema/order/orderListResponseSchema";
+import { orderListWithRecurrenceSchema } from "@core/schema/order/orderListWithRecurrenceSchema";
 import { Static } from "@sinclair/typebox";
 
 export interface AvailableProductsWithProducts extends AvailableProducts {
@@ -38,3 +39,7 @@ export interface ListOrderResponse {
 }
 
 export type ListOrderResponseDto = Static<typeof orderListResponseSchema>;
+
+export type ListOrderResponseWithCurrence = Static<
+  typeof orderListWithRecurrenceSchema
+>;

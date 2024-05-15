@@ -2,7 +2,6 @@ import OrderController from '@/controllers/order';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
-  ordersSchema,
   getPaymentsSchema,
   postCancelOrderSchema,
   ordersByNumberParamSchema,
@@ -11,6 +10,7 @@ import {
   postOrderPaymentCardSchema,
   postOrderPaymentPixSchema,
   ordersHistoricByNumberParamSchema,
+  ordersWithRecurrenceSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -28,7 +28,7 @@ export default async function orderRoutes(server: FastifyInstance) {
   const orderController = container.resolve(OrderController);
 
   server.get('/orders', {
-    schema: ordersSchema,
+    schema: ordersWithRecurrenceSchema,
     handler: orderController.list,
     preHandler: [
       (request, reply) =>

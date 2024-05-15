@@ -2,7 +2,7 @@ import { OrderService } from "@core/services/order.service";
 import { injectable } from "tsyringe";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { ListOrderResponseDto } from "@core/useCases/order/dtos/ListOrderResponse.dto";
+import { ListOrderResponseWithCurrence } from "@core/useCases/order/dtos/ListOrderResponse.dto";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 
 @injectable()
@@ -10,31 +10,18 @@ export class OrdersListerUseCase {
   constructor(private readonly orderService: OrderService) {}
 
   async execute(
-    input: ListOrderRequestDto,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
-  ): Promise<ListOrderResponseDto> {
-    const [results, count] = await Promise.all([
-      this.orderService.list(input, tokenKeyData, tokenJwtData),
-      this.orderService.countTotal(tokenKeyData, tokenJwtData),
+  ): Promise<ListOrderResponseWithCurrence[]> {
+    const [results] = await Promise.all([
+      this.orderService.listWithRecurrence(tokenKeyData, tokenJwtData),
     ]);
 
     if (!results.length) {
-      return this.emptyResult(input);
+      return [];
     }
-
-    const totalPages = Math.ceil(count / input.per_page);
-
-    return {
-      paging: {
-        total: count,
-        current_page: input.current_page,
-        per_page: input.per_page,
-        count: results.length,
-        total_pages: totalPages,
-      },
-      results: results,
-    };
+    console.log(results);
+    return results;
   }
 
   private emptyResult(input: ListOrderRequestDto) {

@@ -32,7 +32,10 @@ import {
   AvailableProducts,
   PlanProducts,
 } from "@core/interfaces/repositories/voucher";
-import { ListOrderResponse } from "@core/useCases/order/dtos/ListOrderResponse.dto";
+import {
+  ListOrderResponse,
+  ListOrderResponseWithCurrence,
+} from "@core/useCases/order/dtos/ListOrderResponse.dto";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 import { enrichPaymentOrder } from "@core/common/functions/enrichPaymentOrder";
 
@@ -110,6 +113,55 @@ export class OrdersListerRepository {
     );
 
     return enrichPromises as ListOrderResponse[];
+  }
+
+  async listWithRecurrence(
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ): Promise<ListOrderResponseWithCurrence[]> {
+    try {
+      const result = await this.db
+        .select({
+          order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
+          status: orderStatus.pedido_status,
+          validity: clientSignature.data_inicio,
+          origin: schema.apiKey.api_nome,
+          recurrence: sql<string>`${order.recorrencia_periodo}`,
+          price: order.valor_total,
+          created_at: order.created_at,
+          updated_at: order.updated_at,
+        })
+        .from(order)
+        .innerJoin(
+          orderStatus,
+          eq(orderStatus.id_pedido_status, order.id_pedido_status)
+        )
+        .innerJoin(
+          schema.apiKey,
+          eq(schema.apiKey.api_chave, sql<number>`${tokenKeyData.id_api_key}`)
+        )
+        .innerJoin(
+          clientSignature,
+          eq(clientSignature.id_cliente, order.id_cliente)
+        )
+        .where(
+          and(
+            eq(order.id_parceiro, tokenKeyData.id_parceiro),
+            eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
+          )
+        )
+        .groupBy(order.id_pedido)
+        .execute();
+
+      if (result.length === 0) {
+        return [];
+      }
+      console.log(result);
+      return result as ListOrderResponseWithCurrence[];
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
   }
 
   async countTotal(
@@ -493,5 +545,28 @@ export class OrdersListerRepository {
     }
 
     return result[0].count > 0;
+  }
+
+  getPeriodName(monthNumber: number): string {
+    const periods = [
+      "Mensal", // 1
+      "Bimestral", // 2
+      "Trimestral", // 3
+      "Quadrimestral", // 4
+      "Quintimestral", // 5
+      "Semestral", // 6
+      "Setimestral", // 7
+      "Octimestral", // 8
+      "Nonimestral", // 9
+      "Decimestral", // 10
+      "Undecimestral", // 11
+      "Dodecimestral", // 12
+    ];
+
+    if (monthNumber < 1 || monthNumber > 12) {
+      return "Período inválido";
+    }
+
+    return periods[monthNumber - 1];
   }
 }

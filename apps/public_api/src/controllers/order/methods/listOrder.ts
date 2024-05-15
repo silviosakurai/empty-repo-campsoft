@@ -17,7 +17,6 @@ export const listOrder = async (
 
   try {
     const response = await ordersListerUseCase.execute(
-      input,
       tokenKeyData,
       tokenJwtData
     );
