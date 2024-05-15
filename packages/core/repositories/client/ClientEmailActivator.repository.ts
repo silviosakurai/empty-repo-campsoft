@@ -1,9 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 import { clientEmail } from "@core/models/client";
-import { ClientEmailVerified } from "@core/common/enums/models/clientEmail";
+import {
+  ClientEmailVerified,
+  EmailType,
+} from "@core/common/enums/models/clientEmail";
 
 @injectable()
 export class ClientEmailActivatorRepository {
@@ -18,7 +21,12 @@ export class ClientEmailActivatorRepository {
         verificado: ClientEmailVerified.YES,
         verificado_data: new Date().toISOString(),
       })
-      .where(eq(clientEmail.token, sql`UUID_TO_BIN(${token})`));
+      .where(
+        and(
+          eq(clientEmail.token, sql`UUID_TO_BIN(${token})`),
+          eq(clientEmail.id_cliente_email_tipo, EmailType.NEWSLETTER)
+        )
+      );
 
     if (!results[0].affectedRows) {
       return false;

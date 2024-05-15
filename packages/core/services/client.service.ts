@@ -1,4 +1,7 @@
-import { IClientConnectClient, IClientConnectClientAndCompany } from "@core/interfaces/services/IClient.service";
+import {
+  IClientConnectClient,
+  IClientConnectClientAndCompany,
+} from "@core/interfaces/services/IClient.service";
 import { ClientCreatorRepository } from "@core/repositories/client/ClientCreator.repository";
 import { ClientAccessCreatorRepository } from "@core/repositories/client/ClientAccessCreator.repository";
 import { ClientByCpfEmailPhoneReaderRepository } from "@core/repositories/client/ClientByCPFEmailPhoneReader.repository";
@@ -12,7 +15,6 @@ import { UpdatePhoneClientRequestDto } from "@core/useCases/client/dtos/UpdatePh
 import { ClientPhoneUpdaterRepository } from "@core/repositories/client/ClientPhoneUpdater.repository";
 import {
   ClientCardRepositoryInput,
-  ClientEmailCreatorInput,
   FindClientByCpfEmailPhoneInput,
   FindClientByEmailPhoneInput,
 } from "@core/interfaces/repositories/client";
@@ -22,7 +24,6 @@ import { ClientByEmailPhoneRepository } from "@core/repositories/client/ClientBy
 import { ClientEraserRepository } from "@core/repositories/client/ClientEraser.repository";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import { ClientEmailNewsletterCreatorRepository } from "@core/repositories/client/ClientEmailNewsletterCreator.repository";
 import { ClientEmailViewerByEmailRepository } from "@core/repositories/client/ClientEmailViewerByEmail.repository";
 import { ClientEmailCreatorRepository } from "@core/repositories/client/ClientEmailCreator.repository";
 import { ClientAddressViewerRepository } from "@core/repositories/client/ClientAddressViewer.repository";
@@ -68,7 +69,6 @@ export class ClientService {
     private readonly clientPasswordUpdaterRepository: ClientPasswordUpdaterRepository,
     private readonly clientEmailViewerByEmailRepository: ClientEmailViewerByEmailRepository,
     private readonly clientByCpfEmailPhoneRepository: ClientByCpfEmailPhoneReaderRepository,
-    private readonly emailNewsletterCreatorRepository: ClientEmailNewsletterCreatorRepository,
     private readonly clientPasswordRecoveryMethodsRepository: ClientPasswordRecoveryMethodsRepository,
     private readonly clientImageUpdaterRepository: ClientImageUpdaterRepository,
     private readonly clientPaymentViewerRepository: ClientPaymentViewerRepository,
@@ -157,7 +157,7 @@ export class ClientService {
   connectClient = async (input: IClientConnectClient) => {
     return this.clientAccessCreatorRepository.createToPartner(input);
   };
-  
+
   connectClientAndCompany = async (input: IClientConnectClientAndCompany) => {
     return this.clientAccessCreatorRepository.create(input);
   };
@@ -222,22 +222,12 @@ export class ClientService {
     return this.clientEraserRepository.deleteById(userId, userFounded);
   };
 
-  createEmailNewsletter = async (
-    clientId: string,
-    clientEmailTypeId: number
-  ) => {
-    return this.emailNewsletterCreatorRepository.create(
-      clientId,
-      clientEmailTypeId
-    );
-  };
-
   clientEmailViewByEmail = async (email: string) => {
     return this.clientEmailViewerByEmailRepository.view(email);
   };
 
-  createEmail = async (input: ClientEmailCreatorInput) => {
-    return this.emailCreatorRepository.create(input);
+  createEmail = async (email: string) => {
+    return this.emailCreatorRepository.create(email);
   };
 
   activateEmail = async (token: string) => {

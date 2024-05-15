@@ -13,12 +13,6 @@ export const templateType = mysqlTable("template_tipo", {
     .notNull()
     .primaryKey()
     .autoincrement(),
-  desativavel: mysqlEnum("desativavel", [
-    TemplateDeactivatable.YES,
-    TemplateDeactivatable.NO,
-  ])
-    .default(TemplateDeactivatable.YES)
-    .notNull(),
   tipo: varchar("tipo", { length: 50 }).notNull(),
   obs: varchar("obs", { length: 200 }).notNull(),
   created_at: datetime("created_at", { mode: "string" })

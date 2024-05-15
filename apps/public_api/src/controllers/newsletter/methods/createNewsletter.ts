@@ -5,20 +5,15 @@ import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { EmailDisposableNotAllowedError } from '@core/common/exceptions/EmailIsDisposableError';
 
-export const createClientNewsletter = async (
+export const createNewsletter = async (
   request: FastifyRequest<{ Body: { email: string } }>,
   reply: FastifyReply
 ) => {
   const service = container.resolve(ClientEmailNewsletterCreatorUseCase);
-  const { t, tokenJwtData, tokenKeyData } = request;
+  const { t, tokenKeyData } = request;
 
   try {
-    const response = await service.create(
-      tokenJwtData.clientId,
-      request.body.email,
-      tokenKeyData,
-      t
-    );
+    const response = await service.create(request.body.email, tokenKeyData, t);
 
     if (!response) {
       request.server.logger.warn(response, request.id);
