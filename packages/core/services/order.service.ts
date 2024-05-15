@@ -2,7 +2,6 @@ import { injectable } from "tsyringe";
 import { OrdersListerRepository } from "@core/repositories/order/OrdersLister.repository";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { ViewOrderPaymentHistoricRequest } from "@core/useCases/order/dtos/ViewOrderPaymentHistoricRequest.dto";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
 import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";

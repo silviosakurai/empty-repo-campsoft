@@ -13,7 +13,6 @@ import {
   PlanVisivelSite,
   ProductsGroups,
 } from "@core/common/enums/models/plan";
-import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
 import { ProductGroupProductListerRepository } from "../product/ProductGroupProductLister.repository";
@@ -34,7 +33,7 @@ export class PlanListerByCompanyRepository {
   async list(
     partnerIds: number[],
     query: ListPlanRequest
-  ): Promise<ListPlanResponse | null> {
+  ): Promise<ListPlanResponse[] | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -58,8 +57,6 @@ export class PlanListerByCompanyRepository {
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
       .where(and(inArray(planPartner.id_parceiro, partnerIds), ...filters));
 
-    const totalResult: ViewPlanRepositoryDTO[] = await allQuery.execute();
-
     const paginatedQuery = allQuery
       .limit(query.per_page)
       .offset((query.current_page - 1) * query.per_page);
@@ -71,17 +68,7 @@ export class PlanListerByCompanyRepository {
 
     const plansCompleted = await this.getPlansRelactions(plans);
 
-    const paging = setPaginationData(
-      plans.length,
-      totalResult.length,
-      query.per_page,
-      query.current_page
-    );
-
-    return {
-      paging,
-      results: plansCompleted,
-    };
+    return plansCompleted;
   }
 
   async listWithoutPagination(companyId: number): Promise<Plan[]> {
