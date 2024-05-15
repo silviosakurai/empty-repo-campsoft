@@ -26,7 +26,6 @@ export const listPlanSchema = {
     ),
   }),
   querystring: Type.Object({
-    ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({

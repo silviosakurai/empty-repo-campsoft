@@ -26,7 +26,6 @@ export const listPlanByCompanySchema = {
     ),
   }),
   querystring: Type.Object({
-    ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({
