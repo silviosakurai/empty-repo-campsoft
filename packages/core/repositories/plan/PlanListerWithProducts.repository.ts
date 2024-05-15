@@ -13,7 +13,6 @@ import {
   PlanVisivelSite,
   ProductsGroups,
 } from "@core/common/enums/models/plan";
-import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { PlanPriceListerRepository } from "./PlanPriceLister.repository";
 import { PlanItemListerRepository } from "./PlanItemLister.repository";
 import { ProductListerRepository } from "../product/ProductLister.repository";
