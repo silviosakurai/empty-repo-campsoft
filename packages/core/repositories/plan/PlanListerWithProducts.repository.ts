@@ -34,7 +34,7 @@ export class PlanListerWithProductsRepository {
   async list(
     partnersId: number[],
     query: ListPlanRequest
-  ): Promise<ListPlanResponse | null> {
+  ): Promise<ListPlanResponse[] | null> {
     const filters = this.setFilters(query);
 
     const allQuery = this.db
@@ -58,8 +58,6 @@ export class PlanListerWithProductsRepository {
       .orderBy(this.setOrderBy(query.sort_by, query.sort_order))
       .where(and(...filters, inArray(planPartner.id_parceiro, partnersId)));
 
-    const totalResult: ViewPlanRepositoryResponse[] = await allQuery.execute();
-
     const paginatedQuery = allQuery
       .limit(query.per_page)
       .offset((query.current_page - 1) * query.per_page);
@@ -71,17 +69,7 @@ export class PlanListerWithProductsRepository {
 
     const plansCompleted = await this.getPlansRelactions(plans);
 
-    const paging = setPaginationData(
-      plans.length,
-      totalResult.length,
-      query.per_page,
-      query.current_page
-    );
-
-    return {
-      paging,
-      results: plansCompleted,
-    };
+    return plansCompleted;
   }
 
   private setFilters(query: ListPlanRequest): SQLWrapper[] {

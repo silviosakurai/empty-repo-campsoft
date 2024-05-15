@@ -22,7 +22,6 @@ export const listPlan = async (
       request.query,
       redis
     );
-
     if (!response) {
       request.server.logger.info(response, request.id);
 

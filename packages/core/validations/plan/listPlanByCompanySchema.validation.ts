@@ -4,7 +4,7 @@ import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
-import { planListResponseSchema } from "@core/schema/plan/planListResponseSchema";
+import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
 import { Type } from "@sinclair/typebox";
 
 export const listPlanByCompanySchema = {
@@ -51,7 +51,7 @@ export const listPlanByCompanySchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: planListResponseSchema,
+        data: Type.Array(planDetailsWithProductsAvailableSchema),
       },
       { description: "Successful" }
     ),
