@@ -24,7 +24,7 @@ export const login = async (
 
     if (responseAuth) {
       const payload = {
-        clientId: responseAuth.auth.client_id,
+        clientId: responseAuth.client_id,
       } as ViewApiJwtRequest;
 
       const token = await reply.jwtSign(payload);
