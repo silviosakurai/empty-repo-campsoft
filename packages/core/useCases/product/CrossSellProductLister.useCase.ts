@@ -11,13 +11,15 @@ export class CrossSellProductListerUseCase {
     private readonly productService: ProductService,
     private readonly signatureService: SignatureService
   ) {}
-  /*  */
+
   async list(
     input: CrossSellProductRequest
   ): Promise<ListProductResponseCrossSell | null> {
     const records = await this.productService.listCrossSell(input);
 
-    if (!records) return null;
+    if (!records) {
+      return this.emptyResult(input);
+    }
 
     const signatures = await this.signatureService.findByClientId(
       input.client_id
@@ -58,6 +60,19 @@ export class CrossSellProductListerUseCase {
         ),
         discount_value: price - price_with_discount,
       },
+    };
+  }
+
+  private emptyResult(input: CrossSellProductRequest) {
+    return {
+      paging: {
+        total: 0,
+        current_page: input.current_page,
+        per_page: input.per_page,
+        count: 0,
+        total_pages: 0,
+      },
+      results: [],
     };
   }
 }
