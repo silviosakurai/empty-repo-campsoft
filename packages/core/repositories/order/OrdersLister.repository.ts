@@ -166,7 +166,6 @@ export class OrdersListerRepository {
           WHEN 11 THEN 'Undecimestral'
           WHEN 12 THEN 'Dodecimestral' 
           END`,
-          price: sql<number>`${order.valor_total}`.mapWith(Number),
           created_at: order.created_at,
           updated_at: order.updated_at,
         })
@@ -193,7 +192,6 @@ export class OrdersListerRepository {
 
       return enrichPromises as ListOrderWithCurrenceResponse[];
     } catch (e) {
-      console.log(e);
       return [];
     }
   }

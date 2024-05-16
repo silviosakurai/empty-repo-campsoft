@@ -11,7 +11,6 @@ export const orderListWithRecurrenceSchema = Type.Object({
   validity: Type.String({ format: "date-time" }),
   origin: Type.String(),
   recurrence: Type.String({ nullable: true }),
-  price: Type.Union([Type.Number(), Type.Null()]),
   totals: orderTotalsSchema,
   installments: paymentInstallmentsSchema,
   payments: Type.Array(orderPaymentsSchema),
