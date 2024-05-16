@@ -1,10 +1,9 @@
 import { AuthService } from "@core/services/auth.service";
 import { injectable } from "tsyringe";
 import { LoginRequest } from "@core/useCases/auth/dtos/LoginRequest.dto";
-import { LoginCompleteResponse } from "@core/useCases/auth/dtos/LoginResponse.dto";
 import {
   LoginResponse,
-  LoginResponseManager,
+  LoginCompleteResponse
 } from "@core/useCases/auth/dtos/LoginResponse.dto";
 import { PermissionService } from "@core/services/permission.service";
 import { SignatureService } from "@core/services/signature.service";
