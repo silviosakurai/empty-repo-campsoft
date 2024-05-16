@@ -34,7 +34,7 @@ import {
 } from "@core/interfaces/repositories/voucher";
 import {
   ListOrderResponse,
-  ListOrderResponseWithCurrence,
+  ListOrderWithCurrenceResponse,
 } from "@core/useCases/order/dtos/ListOrderResponse.dto";
 import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.dto";
 import { enrichPaymentOrder } from "@core/common/functions/enrichPaymentOrder";
@@ -118,16 +118,55 @@ export class OrdersListerRepository {
   async listWithRecurrence(
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
-  ): Promise<ListOrderResponseWithCurrence[]> {
+  ): Promise<ListOrderWithCurrenceResponse[]> {
     try {
       const result = await this.db
         .select({
           order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
+          client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+          seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
           status: orderStatus.pedido_status,
-          validity: clientSignature.data_inicio,
-          origin: schema.apiKey.api_nome,
-          recurrence: sql<string>`${order.recorrencia_periodo}`,
-          price: order.valor_total,
+          totals: {
+            subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
+            discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
+            discount_coupon_value: sql<number>`CASE
+            WHEN ${order.valor_cupom} IS NOT NULL 
+              THEN SUM(${order.valor_cupom}) 
+            ELSE 0
+          END`.mapWith(Number),
+            discount_product_value: sql<number>`CASE
+            WHEN ${order.desconto_produto} IS NOT NULL 
+              THEN SUM(${order.desconto_produto}) 
+            ELSE 0
+          END`.mapWith(Number),
+            discount_percentage: sql<number>`CASE 
+            WHEN ${order.valor_total} > 0 
+              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
+            ELSE 0 
+          END`.mapWith(Number),
+            total: sql`${order.valor_total}`.mapWith(Number),
+          },
+          installments: {
+            installment: order.pedido_parcelas_vezes,
+            value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
+          },
+          validity: sql<string>`(SELECT data_inicio from assinatura_cliente where id_cliente = UUID_TO_BIN(${tokenJwtData.clientId})) as validity`,
+          origin: sql<string>`(SELECT api_nome from api_key where api_chave = ${tokenKeyData.id_api_key}) as origin`,
+          recurrence: sql<string>`CASE pedido.recorrencia_periodo
+          WHEN 1 THEN 'Mensal'
+          WHEN 2 THEN 'Bimestral'
+          WHEN 3 THEN 'Trimestral'
+          WHEN 4 THEN 'Quadrimestral'
+          WHEN 5 THEN 'Quintimestral'
+          WHEN 6 THEN 'Semestral'
+          WHEN 7 THEN 'Setimestral'
+          WHEN 8 THEN 'Octimestral'
+          WHEN 9 THEN 'Nonimestral'
+          WHEN 10 THEN 'Decimestral'
+          WHEN 11 THEN 'Undecimestral'
+          WHEN 12 THEN 'Dodecimestral' 
+          END`,
+          price: sql<number>`${order.valor_total}`.mapWith(Number),
           created_at: order.created_at,
           updated_at: order.updated_at,
         })
@@ -136,28 +175,23 @@ export class OrdersListerRepository {
           orderStatus,
           eq(orderStatus.id_pedido_status, order.id_pedido_status)
         )
-        .innerJoin(
-          schema.apiKey,
-          eq(schema.apiKey.api_chave, sql<number>`${tokenKeyData.id_api_key}`)
-        )
-        .innerJoin(
-          clientSignature,
-          eq(clientSignature.id_cliente, order.id_cliente)
-        )
         .where(
           and(
             eq(order.id_parceiro, tokenKeyData.id_parceiro),
             eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
           )
         )
-        .groupBy(order.id_pedido)
         .execute();
-
       if (result.length === 0) {
         return [];
       }
-      console.log(result);
-      return result as ListOrderResponseWithCurrence[];
+
+      const enrichPromises = await this.enrichPaymentsAndPlansPromises(
+        tokenKeyData,
+        result
+      );
+
+      return enrichPromises as ListOrderWithCurrenceResponse[];
     } catch (e) {
       console.log(e);
       return [];
@@ -545,28 +579,5 @@ export class OrdersListerRepository {
     }
 
     return result[0].count > 0;
-  }
-
-  getPeriodName(monthNumber: number): string {
-    const periods = [
-      "Mensal", // 1
-      "Bimestral", // 2
-      "Trimestral", // 3
-      "Quadrimestral", // 4
-      "Quintimestral", // 5
-      "Semestral", // 6
-      "Setimestral", // 7
-      "Octimestral", // 8
-      "Nonimestral", // 9
-      "Decimestral", // 10
-      "Undecimestral", // 11
-      "Dodecimestral", // 12
-    ];
-
-    if (monthNumber < 1 || monthNumber > 12) {
-      return "Período inválido";
-    }
-
-    return periods[monthNumber - 1];
   }
 }

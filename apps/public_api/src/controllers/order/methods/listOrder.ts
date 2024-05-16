@@ -13,7 +13,6 @@ export const listOrder = async (
 ) => {
   const ordersListerUseCase = container.resolve(OrdersListerUseCase);
   const { t, tokenKeyData, tokenJwtData } = request;
-  const input = request.query;
 
   try {
     const response = await ordersListerUseCase.execute(

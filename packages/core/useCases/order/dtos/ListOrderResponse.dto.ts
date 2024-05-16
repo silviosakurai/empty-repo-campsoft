@@ -11,7 +11,6 @@ import {
   ProductDetail,
 } from "@core/interfaces/repositories/voucher";
 import { orderListResponseSchema } from "@core/schema/order/orderListResponseSchema";
-import { orderListWithRecurrenceSchema } from "@core/schema/order/orderListWithRecurrenceSchema";
 import { Static } from "@sinclair/typebox";
 
 export interface AvailableProductsWithProducts extends AvailableProducts {
@@ -40,6 +39,20 @@ export interface ListOrderResponse {
 
 export type ListOrderResponseDto = Static<typeof orderListResponseSchema>;
 
-export type ListOrderResponseWithCurrence = Static<
-  typeof orderListWithRecurrenceSchema
->;
+export type ListOrderWithCurrenceResponse = {
+  order_id: string;
+  client_id: string;
+  seller_id: string;
+  status: string;
+  totals: TotalsOrder;
+  installments: Installments;
+  payments: OrderPayments[];
+  products: ProductDetail[];
+  plan: PlanDetailsWithProducts;
+  validity: string;
+  origin: string;
+  recurrence: string;
+  price: number;
+  created_at: string;
+  updated_at: string;
+};
