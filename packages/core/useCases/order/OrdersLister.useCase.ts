@@ -12,9 +12,10 @@ export class OrdersListerUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ): Promise<ListOrderWithCurrenceResponse[]> {
-    const [results] = await Promise.all([
-      this.orderService.listWithRecurrence(tokenKeyData, tokenJwtData),
-    ]);
+    const results = await this.orderService.listWithRecurrence(
+      tokenKeyData,
+      tokenJwtData
+    );
 
     if (!results.length) {
       return [];

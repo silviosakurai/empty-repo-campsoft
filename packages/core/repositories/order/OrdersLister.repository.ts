@@ -17,6 +17,7 @@ import {
   productGroupProduct,
   clientSignature,
   clientCards,
+  financeSplitRules,
 } from "@core/models";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
@@ -119,81 +120,86 @@ export class OrdersListerRepository {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData
   ): Promise<ListOrderWithCurrenceResponse[]> {
-    try {
-      const result = await this.db
-        .select({
-          order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
-          client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
-          seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
-          status: orderStatus.pedido_status,
-          totals: {
-            subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
-            discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
-            discount_coupon_value: sql<number>`CASE
+    const result = await this.db
+      .select({
+        order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
+        client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+        seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
+        status: orderStatus.pedido_status,
+        totals: {
+          subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
+          discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
+          discount_coupon_value: sql<number>`CASE
             WHEN ${order.valor_cupom} IS NOT NULL 
               THEN SUM(${order.valor_cupom}) 
             ELSE 0
           END`.mapWith(Number),
-            discount_product_value: sql<number>`CASE
+          discount_product_value: sql<number>`CASE
             WHEN ${order.desconto_produto} IS NOT NULL 
               THEN SUM(${order.desconto_produto}) 
             ELSE 0
           END`.mapWith(Number),
-            discount_percentage: sql<number>`CASE 
+          discount_percentage: sql<number>`CASE 
             WHEN ${order.valor_total} > 0 
               THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
             ELSE 0 
           END`.mapWith(Number),
-            total: sql`${order.valor_total}`.mapWith(Number),
-          },
-          installments: {
-            installment: order.pedido_parcelas_vezes,
-            value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
-          },
-          validity: sql<string>`(SELECT data_inicio from assinatura_cliente where id_cliente = UUID_TO_BIN(${tokenJwtData.clientId})) as validity`,
-          origin: sql<string>`(SELECT api_nome from api_key where api_chave = ${tokenKeyData.id_api_key}) as origin`,
-          recurrence: sql<string>`CASE pedido.recorrencia_periodo
-          WHEN 1 THEN 'Mensal'
-          WHEN 2 THEN 'Bimestral'
-          WHEN 3 THEN 'Trimestral'
-          WHEN 4 THEN 'Quadrimestral'
-          WHEN 5 THEN 'Quintimestral'
-          WHEN 6 THEN 'Semestral'
-          WHEN 7 THEN 'Setimestral'
-          WHEN 8 THEN 'Octimestral'
-          WHEN 9 THEN 'Nonimestral'
-          WHEN 10 THEN 'Decimestral'
-          WHEN 11 THEN 'Undecimestral'
-          WHEN 12 THEN 'Dodecimestral' 
+          total: sql`${order.valor_total}`.mapWith(Number),
+        },
+        installments: {
+          installment: order.pedido_parcelas_vezes,
+          value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
+        },
+        validity: clientSignature.data_inicio,
+        origin: financeSplitRules.regra_nome,
+        recurrence: sql<string>`CASE ${order.recorrencia_periodo}
+            WHEN 1 THEN 'Mensal'
+            WHEN 2 THEN 'Bimestral'
+            WHEN 3 THEN 'Trimestral'
+            WHEN 4 THEN 'Quadrimestral'
+            WHEN 5 THEN 'Quintimestral'
+            WHEN 6 THEN 'Semestral'
+            WHEN 7 THEN 'Setimestral'
+            WHEN 8 THEN 'Octimestral'
+            WHEN 9 THEN 'Nonimestral'
+            WHEN 10 THEN 'Decimestral'
+            WHEN 11 THEN 'Undecimestral'
+            WHEN 12 THEN 'Dodecimestral' 
           END`,
-          created_at: order.created_at,
-          updated_at: order.updated_at,
-        })
-        .from(order)
-        .innerJoin(
-          orderStatus,
-          eq(orderStatus.id_pedido_status, order.id_pedido_status)
+        created_at: order.created_at,
+        updated_at: order.updated_at,
+      })
+      .from(order)
+      .innerJoin(
+        orderStatus,
+        eq(orderStatus.id_pedido_status, order.id_pedido_status)
+      )
+      .leftJoin(clientSignature, eq(clientSignature.id_pedido, order.id_pedido))
+      .leftJoin(
+        financeSplitRules,
+        eq(
+          financeSplitRules.id_financeiro_split_regras,
+          order.id_financeiro_split_regra
         )
-        .where(
-          and(
-            eq(order.id_parceiro, tokenKeyData.id_parceiro),
-            eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
-          )
+      )
+      .where(
+        and(
+          eq(order.id_parceiro, tokenKeyData.id_parceiro),
+          eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
-        .execute();
-      if (result.length === 0) {
-        return [];
-      }
+      )
+      .execute();
 
-      const enrichPromises = await this.enrichPaymentsAndPlansPromises(
-        tokenKeyData,
-        result
-      );
-
-      return enrichPromises as ListOrderWithCurrenceResponse[];
-    } catch (e) {
+    if (result.length === 0) {
       return [];
     }
+
+    const enrichPromises = await this.enrichPaymentsAndPlansPromises(
+      tokenKeyData,
+      result
+    );
+
+    return enrichPromises as ListOrderWithCurrenceResponse[];
   }
 
   async countTotal(
