@@ -123,15 +123,19 @@ export class CreateOrderByManagerUseCase {
       throw new Error(t("installments_not_calculated"));
     }
 
-    const createOrder = await this.orderService.createByManager(
+    const orderIds = {
       sellerId,
+      splitRuleId,
+    }
+
+    const createOrder = await this.orderService.createByManager(
       tokenKeyData,
       tokenJwtData,
       payload,
       totalPrices,
       userFounded,
       totalPricesInstallments,
-      splitRuleId
+      orderIds,
     );
 
     if (!createOrder) {

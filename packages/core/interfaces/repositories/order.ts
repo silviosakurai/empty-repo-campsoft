@@ -95,6 +95,11 @@ interface Seller {
   seller_name: string | undefined;
 }
 
+export interface OrderIds {
+  sellerId: string;
+  splitRuleId: number;
+}
+
 export interface OrderCreatePaymentsCard {
   installments: number;
   value: number;

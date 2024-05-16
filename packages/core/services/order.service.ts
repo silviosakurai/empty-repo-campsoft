@@ -14,6 +14,7 @@ import {
   CreateOrder,
   ListOrderById,
   OrderCreatePaymentsCard,
+  OrderIds,
   OrderPaymentUpdateInput,
 } from "@core/interfaces/repositories/order";
 import { OrderPaymentCreatorRepository } from "@core/repositories/order/OrderPaymentCreator.repository";
@@ -135,24 +136,22 @@ export class OrderService {
   };
 
   createByManager = async (
-    sellerId: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
     planPrice: PlanPrice,
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard,
-    splitRuleId: number
+    orderIds: OrderIds,
   ): Promise<CreateOrder | null> => {
     const create = await this.orderCreatorByManagerRepository.create(
-      sellerId,
       tokenKeyData,
       tokenJwtData,
       payload,
       planPrice,
       user,
       totalPricesInstallments,
-      splitRuleId
+      orderIds,
     );
 
     if (!create) {

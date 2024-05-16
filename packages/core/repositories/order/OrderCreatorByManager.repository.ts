@@ -15,6 +15,7 @@ import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientRespons
 import {
   CreateOrder,
   OrderCreatePaymentsCard,
+  OrderIds,
 } from "@core/interfaces/repositories/order";
 
 @injectable()
@@ -24,23 +25,22 @@ export class OrderCreatorByManagerRepository {
   ) {}
 
   async create(
-    sellerId: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
     planPrice: PlanPrice,
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard,
-    splitRuleId: number
+    orderIds: OrderIds,
   ): Promise<CreateOrder | null> {
     const valuesObject: typeof schema.order.$inferInsert = {
       id_cliente:
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
       id_parceiro: tokenKeyData.id_parceiro,
-      id_vendedor: sql`UUID_TO_BIN(${sellerId})` as unknown as string,
+      id_vendedor: sql`UUID_TO_BIN(${orderIds.sellerId})` as unknown as string,
       id_pedido_status: OrderStatusEnum.PENDING,
       id_plano: payload.plan.plan_id ?? null,
-      id_financeiro_split_regra: splitRuleId,
+      id_financeiro_split_regra: orderIds.splitRuleId,
       recorrencia: payload.subscribe
         ? OrderRecorrencia.YES
         : OrderRecorrencia.NO,
