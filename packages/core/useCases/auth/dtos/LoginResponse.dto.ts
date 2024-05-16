@@ -5,8 +5,5 @@ import { Static } from "@fastify/type-provider-typebox";
 
 export type LoginResponse = Static<typeof loginResponseSchema>;
 
-export type LoginCompleteResponse =  { 
-  auth: LoginResponse,
-  permissions: PermissionFindByCliendId[]
-};
+export type LoginCompleteResponse =  LoginResponse & { permissions: PermissionFindByCliendId[] };
 export type LoginResponseManager = Static<typeof loginResponseManagerSchema>;
