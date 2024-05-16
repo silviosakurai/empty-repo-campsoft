@@ -72,6 +72,29 @@ export interface OrderByNumberResponse {
   updated_at: string;
 }
 
+export interface OrderByNumberByManagerResponse {
+  order_id: string;
+  client: Client;
+  seller: Seller;
+  status: string;
+  totals: TotalsOrder;
+  installments: Installments;
+  payments: OrderPayments[];
+  plan: FindOrderByNumberPlans | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Client {
+  client_id: string | undefined;
+  client_name: string | undefined;
+}
+
+interface Seller {
+  seller_id: string | undefined;
+  seller_name: string | undefined;
+}
+
 export interface OrderCreatePaymentsCard {
   installments: number;
   value: number;

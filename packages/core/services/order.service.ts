@@ -24,16 +24,20 @@ import {
 import { CouponService } from "./coupon.service";
 import { OrderStatusUpdaterRepository } from "@core/repositories/order/OrderStatusUpdater.repository";
 import { OrderViewerByTransactionIdRepository } from "@core/repositories/order/OrderViewerByTransactionId.repository";
+import { OrderByNumberViewerByManagerRepository } from "@core/repositories/order/OrderByNumberViewerByManager.repository";
+import { OrderCreatorByManagerRepository } from "@core/repositories/order/OrderCreatorByManager.repository";
 
 @injectable()
 export class OrderService {
   constructor(
     private readonly couponService: CouponService,
     private readonly orderCreatorRepository: OrderCreatorRepository,
+    private readonly orderCreatorByManagerRepository: OrderCreatorByManagerRepository,
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
     private readonly orderStatusUpdaterRepository: OrderStatusUpdaterRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
+    private readonly orderByNumberViewerByManagerRepository: OrderByNumberViewerByManagerRepository,
     private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
     private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository,
     private readonly orderPaymentHistoricViewerRepository: OrderPaymentHistoricViewerRepository
@@ -66,6 +70,18 @@ export class OrderService {
     );
   };
 
+  viewOrderByNumberByManager = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.orderByNumberViewerByManagerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
   listPayment = async (orderId: string) => {
     return this.paymentListerRepository.list(orderId);
   };
@@ -88,6 +104,38 @@ export class OrderService {
     splitRuleId: number
   ): Promise<CreateOrder | null> => {
     const create = await this.orderCreatorRepository.create(
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      planPrice,
+      user,
+      totalPricesInstallments,
+      splitRuleId
+    );
+
+    if (!create) {
+      return null;
+    }
+
+    if (payload.coupon_code) {
+      await this.couponService.updateCoupon(payload.coupon_code);
+    }
+
+    return create;
+  };
+
+  createByManager = async (
+    sellerId: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: CreateOrderRequestDto,
+    planPrice: PlanPrice,
+    user: ViewClientResponse,
+    totalPricesInstallments: OrderCreatePaymentsCard,
+    splitRuleId: number
+  ): Promise<CreateOrder | null> => {
+    const create = await this.orderCreatorByManagerRepository.create(
+      sellerId,
       tokenKeyData,
       tokenJwtData,
       payload,
