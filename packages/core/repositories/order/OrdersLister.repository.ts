@@ -16,6 +16,7 @@ import {
   planItem,
   productGroupProduct,
   clientSignature,
+  signatureStatus,
   clientCards,
   financeSplitRules,
 } from "@core/models";
@@ -150,9 +151,12 @@ export class OrdersListerRepository {
           installment: order.pedido_parcelas_vezes,
           value: sql`${order.pedido_parcelas_valor}`.mapWith(Number),
         },
-        validity: clientSignature.data_inicio,
-        origin: financeSplitRules.regra_nome,
-        recurrence: sql<string>`CASE ${order.recorrencia_periodo}
+        signature: {
+          status_id: signatureStatus.id_assinatura_status,
+          status: signatureStatus.assinatura_status,
+          validity: clientSignature.data_inicio,
+          origin: financeSplitRules.regra_nome,
+          recurrence: sql<string>`CASE ${order.recorrencia_periodo}
             WHEN 1 THEN 'Mensal'
             WHEN 2 THEN 'Bimestral'
             WHEN 3 THEN 'Trimestral'
@@ -166,6 +170,7 @@ export class OrdersListerRepository {
             WHEN 11 THEN 'Undecimestral'
             WHEN 12 THEN 'Dodecimestral' 
           END`,
+        },
         created_at: order.created_at,
         updated_at: order.updated_at,
       })
@@ -175,6 +180,13 @@ export class OrdersListerRepository {
         eq(orderStatus.id_pedido_status, order.id_pedido_status)
       )
       .leftJoin(clientSignature, eq(clientSignature.id_pedido, order.id_pedido))
+      .leftJoin(
+        signatureStatus,
+        eq(
+          signatureStatus.id_assinatura_status,
+          clientSignature.id_assinatura_status
+        )
+      )
       .leftJoin(
         financeSplitRules,
         eq(
