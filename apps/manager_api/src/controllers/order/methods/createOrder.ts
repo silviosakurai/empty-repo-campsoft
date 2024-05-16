@@ -30,7 +30,7 @@ export const createOrder = async (
       tokenKeyData,
       clientIdBody,
       request.body,
-      splitRuleId.publicSplitRuleId
+      splitRuleId.managerSplitRuleId,
     );
 
     return sendResponse(reply, {
