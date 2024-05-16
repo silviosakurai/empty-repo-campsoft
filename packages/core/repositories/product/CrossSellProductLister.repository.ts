@@ -87,7 +87,7 @@ export class CrossSellProductListerRepository {
       )
       .orderBy(this.setOrderBy(input.sort_by, input.sort_order))
       .groupBy(product.id_produto)
-      .where(and(ne(productCrossSell.id_plano, input.plan_id), ...filters));
+      .where(and(eq(productCrossSell.id_plano, input.plan_id), ...filters));
 
     const paginatedQuery = allQuery
       .limit(input.per_page)
