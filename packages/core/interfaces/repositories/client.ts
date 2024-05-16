@@ -22,7 +22,6 @@ export interface IPasswordRecoveryMethods {
 export interface ClientEmailCreatorInput {
   email: string;
   emailType: number;
-  clientId: string;
 }
 
 export interface ClientEmailViewResponse {

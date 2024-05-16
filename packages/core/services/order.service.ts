@@ -51,6 +51,16 @@ export class OrderService {
     return this.ordersListerRepository.list(input, tokenKeyData, tokenJwtData);
   };
 
+  listWithRecurrence = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.ordersListerRepository.listWithRecurrence(
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
   countTotal = async (
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData

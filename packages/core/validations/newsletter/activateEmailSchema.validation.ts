@@ -2,13 +2,13 @@ import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 
-export const userActivatePasswordSchema = {
+export const activateEmailSchema = {
   description: "Ativa o e-mail do usuário pelo token",
-  tags: [TagSwagger.user],
+  tags: [TagSwagger.newsletter],
   produces: ["application/json"],
   security: [
     {
-      authenticateJwt: [],
+      authenticateKeyApi: [],
     },
   ],
   headers: Type.Object({
@@ -28,6 +28,7 @@ export const userActivatePasswordSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
+        data: Type.Null(),
       },
       { description: "Successful" }
     ),

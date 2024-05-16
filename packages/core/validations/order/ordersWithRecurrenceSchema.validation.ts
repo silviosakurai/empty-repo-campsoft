@@ -1,10 +1,11 @@
-import { Type } from "@fastify/type-provider-typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { orderListWithRecurrenceSchema } from "@core/schema/order/orderListWithRecurrenceSchema";
+import { Type } from "@sinclair/typebox";
 
-export const createUserNewsletterSchema = {
-  description: "Registra o e-mail do cliente na newsletter",
-  tags: [TagSwagger.user],
+export const ordersWithRecurrenceSchema = {
+  description: "Seleciona todos os pedidos do usuário",
+  tags: [TagSwagger.order],
   produces: ["application/json"],
   security: [
     {
@@ -21,15 +22,12 @@ export const createUserNewsletterSchema = {
       })
     ),
   }),
-  body: Type.Object({
-    email: Type.String({ format: "email" }),
-  }),
   response: {
-    201: Type.Object(
+    200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: Type.Object({}),
+        data: Type.Array(orderListWithRecurrenceSchema),
       },
       { description: "Successful" }
     ),
@@ -41,13 +39,13 @@ export const createUserNewsletterSchema = {
       },
       { description: "Unauthorized" }
     ),
-    409: Type.Object(
+    404: Type.Object(
       {
         status: Type.Boolean({ default: false }),
         message: Type.String(),
         data: Type.Null(),
       },
-      { description: "Conflict" }
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {
