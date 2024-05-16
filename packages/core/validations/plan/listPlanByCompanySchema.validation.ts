@@ -3,7 +3,6 @@ import { PlanFields } from "@core/common/enums/models/plan";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
 import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
 import { Type } from "@sinclair/typebox";
 
@@ -26,7 +25,6 @@ export const listPlanByCompanySchema = {
     ),
   }),
   querystring: Type.Object({
-    ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({
