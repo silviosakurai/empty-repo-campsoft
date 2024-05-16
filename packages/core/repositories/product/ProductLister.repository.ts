@@ -12,6 +12,7 @@ import {
 } from "@core/common/enums/models/product";
 import { ListProductResponse } from "@core/useCases/product/dtos/ListProductResponse.dto";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
+import { Status } from "@core/common/enums/Status";
 
 @injectable()
 export class ProductListerRepository {
@@ -144,12 +145,13 @@ export class ProductListerRepository {
       .where(
         and(
           eq(productPartner.id_parceiro, companyId),
+          eq(product.status, Status.ACTIVE),
           inArray(product.id_produto, productIds)
         )
       )
       .execute();
 
-    return products as unknown as ProductResponse[];
+    return products as ProductResponse[];
   }
 
   private setFilters(query: ListProductRequest): SQLWrapper[] {

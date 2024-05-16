@@ -1,10 +1,11 @@
-import { Type } from "@fastify/type-provider-typebox";
+import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { planCreateSchema } from "@core/schema/plan/planCreateSchema";
 
-export const userActivatePasswordSchema = {
-  description: "Ativa o e-mail do usuário pelo token",
-  tags: [TagSwagger.user],
+export const postPlanSchema = {
+  description: "Cadastra um novo plano",
+  tags: [TagSwagger.plan],
   produces: ["application/json"],
   security: [
     {
@@ -20,9 +21,7 @@ export const userActivatePasswordSchema = {
       })
     ),
   }),
-  params: Type.Object({
-    token: Type.String({ format: "uuid" }),
-  }),
+  body: planCreateSchema,
   response: {
     200: Type.Object(
       {

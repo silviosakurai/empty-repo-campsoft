@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const planItem = mysqlTable("plano_item", {
-  id_plano_item: int("id_plano_item").notNull().primaryKey(),
+  id_plano_item: int("id_plano_item").autoincrement().notNull().primaryKey(),
   id_plano: int("id_plano").notNull(),
   id_produto: varchar("id_produto", { length: 10 }),
   id_produto_grupo: int("id_produto_grupo"),

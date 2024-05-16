@@ -8,10 +8,7 @@ import {
   int,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import {
-  ClientEmailVerified,
-  ClientSentEmail,
-} from "@core/common/enums/models/clientEmail";
+import { ClientEmailVerified } from "@core/common/enums/models/clientEmail";
 
 export const clientEmail = mysqlTable("cliente_email", {
   token: varbinary("token", { length: 16 })
@@ -20,10 +17,6 @@ export const clientEmail = mysqlTable("cliente_email", {
     .default(sql`uuid_to_bin(uuid())`),
   id_cliente: varchar("id_cliente", { length: 16 }),
   email: varchar("email", { length: 200 }),
-  enviado_email: mysqlEnum("enviado_email", [
-    ClientSentEmail.YES,
-    ClientSentEmail.NO,
-  ]).default(ClientSentEmail.NO),
   verificado: mysqlEnum("verificado", [
     ClientEmailVerified.YES,
     ClientEmailVerified.NO,

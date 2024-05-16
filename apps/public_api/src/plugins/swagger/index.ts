@@ -63,6 +63,10 @@ const swaggerPlugin = async (fastify: FastifyInstance) => {
           description: 'End-points relacionados à saúde da aplicação',
         },
         {
+          name: TagSwagger.newsletter,
+          description: 'End-points relacionados à newsletter',
+        },
+        {
           name: TagSwagger.order,
           description: 'End-points relacionados ao pedido',
         },

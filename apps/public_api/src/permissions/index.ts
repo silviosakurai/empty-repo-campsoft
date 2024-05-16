@@ -8,3 +8,4 @@ export * from './product.permission';
 export * from './review.permission';
 export * from './tfa.permission';
 export * from './voucher.permission';
+export * from './newsletter.permission';

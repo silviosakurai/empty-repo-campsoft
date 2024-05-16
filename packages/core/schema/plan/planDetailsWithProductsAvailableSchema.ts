@@ -19,6 +19,6 @@ export const planDetailsWithProductsAvailableSchema = Type.Object({
   prices: Type.Array(pricesMonthSchema),
   products: Type.Array(productDetailPlanProductsHowToAccessSchema),
   product_groups: Type.Array(productsAvailableHowToAccessSchema),
-  created_at: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
-  updated_at: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
+  created_at: Type.String({ format: "date-time" }),
+  updated_at: Type.String({ format: "date-time" }),
 });

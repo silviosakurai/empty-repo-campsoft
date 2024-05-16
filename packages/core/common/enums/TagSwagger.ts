@@ -12,4 +12,5 @@ export enum TagSwagger {
   review = "review",
   webhook = "webhook",
   websocket = "websocket",
+  newsletter = "newsletter",
 }

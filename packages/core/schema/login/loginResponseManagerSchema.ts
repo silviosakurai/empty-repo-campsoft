@@ -1,5 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import { ClientGender, ClientStatus } from "@core/common/enums/models/client";
+import { permissionUserLoginSchema } from "../permission/permissionUserLoginSchema";
 
 export const loginResponseManagerSchema = Type.Object({
   client_id: Type.String({ format: "uuid" }),
@@ -12,4 +13,5 @@ export const loginResponseManagerSchema = Type.Object({
   cpf: Type.String(),
   gender: Type.String({ enum: Object.values(ClientGender) }),
   photo: Type.Union([Type.String(), Type.Null()]),
+  permissions: Type.Array(permissionUserLoginSchema),
 });

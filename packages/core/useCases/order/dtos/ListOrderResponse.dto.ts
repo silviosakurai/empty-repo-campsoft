@@ -37,4 +37,21 @@ export interface ListOrderResponse {
   updated_at: string;
 }
 
+export interface ListOrderWithCurrenceResponse {
+  order_id: string;
+  client_id: string;
+  seller_id: string;
+  status: string;
+  totals: TotalsOrder;
+  installments: Installments;
+  payments: OrderPayments[];
+  products: ProductDetail[];
+  plan: PlanDetailsWithProducts;
+  validity: string;
+  origin: string;
+  recurrence: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export type ListOrderResponseDto = Static<typeof orderListResponseSchema>;

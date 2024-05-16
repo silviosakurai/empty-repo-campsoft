@@ -17,7 +17,7 @@ export const login = async (
   const { t } = request;
 
   try {
-    const responseAuth = await loginAuthUseCase.execute({
+    const responseAuth = await loginAuthUseCase.getLoginPublic({
       login,
       password,
     });

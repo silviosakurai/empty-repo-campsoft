@@ -39,6 +39,7 @@
   "error_list_products_order": "Erro ao listar os produtos do pedido",
   "error_create_signature_products": "Erro ao criar a assinatura dos produtos",
   "error_create_product": "Erro ao criar o produto",
+  "error_create_plan": "Erro ao criar o plano",
   "payment_method_not_card": "Para assinatura recorrente é necessário que o método de pagamento seja cartão",
   "payment_method_invalid": "Método de pagamento inválido",
   "previous_order_not_found": "Pedido anterior não encontrado",

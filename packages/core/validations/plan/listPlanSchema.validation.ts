@@ -3,8 +3,7 @@ import { PlanFields } from "@core/common/enums/models/plan";
 import { SortOrder } from "@core/common/enums/SortOrder";
 import { Status } from "@core/common/enums/Status";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { pagingRequestSchema } from "@core/schema/paging/pagingRequestSchema";
-import { planListResponseSchema } from "@core/schema/plan/planListResponseSchema";
+import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
 import { Type } from "@sinclair/typebox";
 
 export const listPlanSchema = {
@@ -26,7 +25,6 @@ export const listPlanSchema = {
     ),
   }),
   querystring: Type.Object({
-    ...pagingRequestSchema.properties,
     id: Type.Optional(Type.String()),
     status: Type.Optional(
       Type.String({
@@ -51,7 +49,7 @@ export const listPlanSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: planListResponseSchema,
+        data: Type.Array(planDetailsWithProductsAvailableSchema),
       },
       { description: "Successful" }
     ),

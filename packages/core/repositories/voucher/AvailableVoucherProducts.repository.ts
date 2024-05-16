@@ -57,6 +57,13 @@ export class AvailableVoucherProductsRepository {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
         },
+        how_to_access: {
+          desktop: product.como_acessar_desk,
+          mobile: product.como_acessar_mob,
+          url_web: product.como_acessar_url,
+          url_ios: product.como_acessar_url_ios,
+          url_android: product.como_acessar_url_and,
+        },
         status: sql`CASE 
           WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 
             THEN ${ProductVoucherStatus.EXPIRED}
@@ -167,6 +174,13 @@ export class AvailableVoucherProductsRepository {
         product_type: {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
+        },
+        how_to_access: {
+          desktop: product.como_acessar_desk,
+          mobile: product.como_acessar_mob,
+          url_web: product.como_acessar_url,
+          url_ios: product.como_acessar_url_ios,
+          url_android: product.como_acessar_url_and,
         },
         status: sql`CASE 
           WHEN ${couponRescueItem.validade_ate} IS NOT NULL AND ${couponRescueItem.validade_ate} < ${validUntil} 

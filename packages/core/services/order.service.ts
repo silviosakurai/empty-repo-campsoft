@@ -6,6 +6,7 @@ import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.
 import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
 import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
 import { OrderCreatorRepository } from "@core/repositories/order/OrderCreator.repository";
+import { OrderPaymentHistoricViewerRepository } from "@core/repositories/order/OrderPaymentHistoricViewer.repository";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
@@ -34,7 +35,8 @@ export class OrderService {
     private readonly orderStatusUpdaterRepository: OrderStatusUpdaterRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
     private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
-    private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository
+    private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository,
+    private readonly orderPaymentHistoricViewerRepository: OrderPaymentHistoricViewerRepository
   ) {}
 
   list = async (
@@ -43,6 +45,16 @@ export class OrderService {
     tokenJwtData: ITokenJwtData
   ) => {
     return this.ordersListerRepository.list(input, tokenKeyData, tokenJwtData);
+  };
+
+  listWithRecurrence = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.ordersListerRepository.listWithRecurrence(
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   countTotal = async (
@@ -128,5 +140,17 @@ export class OrderService {
 
   viewByTransactionId = async (transactionId: string) => {
     return this.viewerByTransactionIdRepository.find(transactionId);
+  };
+
+  viewPaymentHistoric = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.orderPaymentHistoricViewerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 }

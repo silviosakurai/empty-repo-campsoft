@@ -1,6 +1,16 @@
 import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
+import { signatureLoginPublicSchema } from "@core/schema/login/loginResponseSchema";
+import { Static } from "@sinclair/typebox";
 
 export interface ISignatureFindByClientId {
+  product_id: string;
+}
+
+export interface ISignatureLister {
+  id: string;
+}
+
+export interface ISignatureProductLister {
   product_id: string;
 }
 
@@ -39,3 +49,7 @@ export interface ISelectSignatureProductsActive {
   signature_id: string;
   product_id: string;
 }
+
+export type IFindSignatureActiveByClientId = Static<
+  typeof signatureLoginPublicSchema
+>;
