@@ -3,7 +3,7 @@ import { injectable } from "tsyringe";
 import { LoginRequest } from "@core/useCases/auth/dtos/LoginRequest.dto";
 import {
   LoginResponse,
-  LoginResponseManager,
+  LoginCompleteResponse
 } from "@core/useCases/auth/dtos/LoginResponse.dto";
 import { PermissionService } from "@core/services/permission.service";
 import { SignatureService } from "@core/services/signature.service";
@@ -39,7 +39,7 @@ export class LoginAuthUseCase {
   async getLoginManager({
     login,
     password,
-  }: LoginRequest): Promise<LoginResponseManager | null> {
+  }: LoginRequest): Promise<LoginCompleteResponse | null> {
     const responseAuth = await this.authService.authenticate(login, password);
 
     if (!responseAuth) {

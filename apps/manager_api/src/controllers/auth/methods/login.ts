@@ -23,7 +23,7 @@ export const login = async (
     });
 
     if (!responseAuth) {
-      request.server.logger.info(responseAuth, request.id);
+      request.server.logger.info(request.id);
 
       return sendResponse(reply, {
         message: t('login_invalid'),
