@@ -30,3 +30,17 @@ export const orderCreateRequestSchema = Type.Object({
   coupon_code: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   payment: orderPaymentSchema,
 });
+
+export const orderCreateByManagerRequestSchema = Type.Object({
+  previous_order_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  activate_now: Type.Optional(Type.Boolean()),
+  client_id: Type.String(),
+  plan: orderPlanSchema,
+  products: Type.Optional(
+    Type.Union([Type.Array(Type.String(), { nullable: true }), Type.Null()])
+  ),
+  months: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  subscribe: Type.Union([Type.Boolean(), Type.Null()]),
+  coupon_code: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  payment: orderPaymentSchema,
+});

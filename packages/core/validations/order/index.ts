@@ -8,4 +8,5 @@ export * from "./createOrderPaymentBoletoSchema.validation";
 export * from "./createOrderPaymentCardSchema.validation";
 export * from "./createOrderPaymentPixSchema.validation";
 export * from "./ordersHistoricByNumberParamSchema.validation";
+export * from "./createOrderByManagerSchema.validation";
 export * from "./ordersWithRecurrenceSchema.validation";

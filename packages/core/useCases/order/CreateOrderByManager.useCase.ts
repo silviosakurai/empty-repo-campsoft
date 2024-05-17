@@ -7,7 +7,7 @@ import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequ
 import { TFunction } from "i18next";
 import {
   CreateOrder,
-  OrderByNumberResponse,
+  OrderByNumberByManagerResponse,
 } from "@core/interfaces/repositories/order";
 import { SignatureService } from "@core/services/signature.service";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
@@ -21,7 +21,7 @@ import { ClientService } from "@core/services/client.service";
 import { OrderValidationService } from "@core/services/orderValidation.service";
 
 @injectable()
-export class CreateOrderUseCase {
+export class CreateOrderByManagerUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly planService: PlanService,
@@ -36,6 +36,7 @@ export class CreateOrderUseCase {
 
   async execute(
     t: TFunction<"translation", undefined>,
+    sellerId: string,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
@@ -122,14 +123,19 @@ export class CreateOrderUseCase {
       throw new Error(t("installments_not_calculated"));
     }
 
-    const createOrder = await this.orderService.create(
+    const orderIds = {
+      sellerId,
+      splitRuleId,
+    }
+
+    const createOrder = await this.orderService.createByManager(
       tokenKeyData,
       tokenJwtData,
       payload,
       totalPrices,
       userFounded,
       totalPricesInstallments,
-      splitRuleId
+      orderIds,
     );
 
     if (!createOrder) {
@@ -242,8 +248,8 @@ export class CreateOrderUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     orderId: string
-  ): Promise<OrderByNumberResponse | null> {
-    const results = await this.orderService.viewOrderByNumber(
+  ): Promise<OrderByNumberByManagerResponse | null> {
+    const results = await this.orderService.viewOrderByNumberByManager(
       orderId,
       tokenKeyData,
       tokenJwtData
