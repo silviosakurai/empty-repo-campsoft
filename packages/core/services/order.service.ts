@@ -180,14 +180,12 @@ export class OrderService {
 
   createOrderPayment = async (
     order: ListOrderById,
-    signatureId: string,
     methodId: OrderPaymentsMethodsEnum,
     statusPayment: OrderStatusEnum,
     input: OrderPaymentUpdateInput
   ) => {
     return this.orderPaymentCreatorRepository.create(
       order,
-      signatureId,
       methodId,
       statusPayment,
       input

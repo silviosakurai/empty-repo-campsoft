@@ -206,7 +206,6 @@ export class PaymentService {
 
     await this.orderService.createOrderPayment(
       order,
-      signature.signature_id,
       OrderPaymentsMethodsEnum.VOUCHER,
       statusPayment,
       {

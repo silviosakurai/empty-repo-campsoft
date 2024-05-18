@@ -131,6 +131,7 @@ export interface ListOrderById {
   order_id: string;
   order_id_previous: string;
   client_id: string;
+  cart_id: string;
   seller_id?: string;
   company_id: number;
   status_id: number;

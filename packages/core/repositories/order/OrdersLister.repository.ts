@@ -279,10 +279,7 @@ export class OrdersListerRepository {
       )
       .innerJoin(
         clientSignature,
-        eq(
-          clientSignature.id_assinatura_cliente,
-          orderPayment.id_assinatura_cliente
-        )
+        eq(clientSignature.id_pedido, orderPayment.id_pedido)
       )
       .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
@@ -548,6 +545,7 @@ export class OrdersListerRepository {
         order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+        cart_id: sql<string>`BIN_TO_UUID(${order.id_carrinho})`,
         split_rule_id: order.id_financeiro_split_regra,
         company_id: order.id_parceiro,
         seller_id: order.id_vendedor,

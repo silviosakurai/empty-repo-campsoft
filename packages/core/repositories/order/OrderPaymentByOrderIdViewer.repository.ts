@@ -66,10 +66,7 @@ export class OrderPaymentByOrderIdViewerRepository {
       )
       .innerJoin(
         clientSignature,
-        eq(
-          clientSignature.id_assinatura_cliente,
-          orderPayment.id_assinatura_cliente
-        )
+        eq(clientSignature.id_pedido, orderPayment.id_pedido)
       )
       .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))

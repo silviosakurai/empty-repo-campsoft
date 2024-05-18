@@ -14,6 +14,10 @@ import { OrderStatusEnum } from "@core/common/enums/models/order";
 import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
 import { SignatureActiveByClientIdListerRepository } from "@core/repositories/signature/SignatureActiveByClientIdLister.repository";
 import { CartDocument } from "@core/interfaces/repositories/cart";
+import { TFunction } from "i18next";
+import { ListOrderById } from "@core/interfaces/repositories/order";
+import OpenSearchService from "./openSearch.service";
+import { OrderService } from "./order.service";
 
 @injectable()
 export class SignatureService {
@@ -26,7 +30,9 @@ export class SignatureService {
     private readonly signaturePaidActiveRepository: SignaturePaidActiveRepository,
     private readonly signatureUpgradedRepository: SignatureUpgradedRepository,
     private readonly ordersUpdaterRepository: OrdersUpdaterRepository,
-    private readonly signatureActiveByClientIdListerRepository: SignatureActiveByClientIdListerRepository
+    private readonly signatureActiveByClientIdListerRepository: SignatureActiveByClientIdListerRepository,
+    private readonly openSearchService: OpenSearchService,
+    private readonly orderService: OrderService
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -61,34 +67,25 @@ export class SignatureService {
     );
   };
 
-  create = async (
-    partnerId: number,
-    tokenJwtData: ITokenJwtData,
-    cart: CartDocument,
-    orderId: string
-  ) => {
-    return this.signatureCreatorRepository.create(
-      partnerId,
-      tokenJwtData,
-      cart,
-      orderId
-    );
-  };
-
-  createSignatureProducts = async (signatureId: string, cart: CartDocument) => {
-    return this.signatureCreatorRepository.createSignatureProducts(
-      signatureId,
-      cart
-    );
-  };
-
   activePaidSignature = async (
-    orderNumber: string,
+    orderId: string,
     previousOrderId: string | null = null,
     activateNow: boolean = true
   ) => {
+    const order = await this.orderService.listOrderById(orderId);
+
+    if (!order) {
+      return false;
+    }
+
+    const signatureId = await this.createSignature(order);
+
+    if (!signatureId) {
+      return false;
+    }
+
     const signature =
-      await this.findSignatureByOrderNumber.findByOrder(orderNumber);
+      await this.findSignatureByOrderNumber.findByOrder(orderId);
 
     if (!signature) {
       return false;
@@ -115,7 +112,7 @@ export class SignatureService {
     );
 
     return this.ordersUpdaterRepository.updateOrderStatus(
-      orderNumber,
+      orderId,
       OrderStatusEnum.APPROVED
     );
   };
@@ -226,5 +223,56 @@ export class SignatureService {
 
   findActiveByClientId = async (clientId: string) => {
     return this.signatureActiveByClientIdListerRepository.find(clientId);
+  };
+
+  create = async (
+    partnerId: number,
+    clientId: string,
+    cart: CartDocument,
+    orderId: string
+  ) => {
+    return this.signatureCreatorRepository.create(
+      partnerId,
+      clientId,
+      cart,
+      orderId
+    );
+  };
+
+  createSignatureProducts = async (signatureId: string, cart: CartDocument) => {
+    return this.signatureCreatorRepository.createSignatureProducts(
+      signatureId,
+      cart
+    );
+  };
+
+  createSignature = async (order: ListOrderById): Promise<string | null> => {
+    const cart = await this.openSearchService.getCart(order.cart_id);
+
+    if (!cart) {
+      return null;
+    }
+
+    const createSignature = await this.create(
+      order.company_id,
+      order.client_id,
+      cart,
+      order.order_id
+    );
+
+    if (!createSignature) {
+      return null;
+    }
+
+    const createSignatureProducts = await this.createSignatureProducts(
+      createSignature,
+      cart
+    );
+
+    if (!createSignatureProducts) {
+      return null;
+    }
+
+    return createSignature;
   };
 }

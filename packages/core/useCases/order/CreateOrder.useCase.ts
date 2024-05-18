@@ -12,7 +12,6 @@ import { PaymentService } from "@core/services/payment.service";
 import { ClientService } from "@core/services/client.service";
 import { OrderValidationService } from "@core/services/orderValidation.service";
 import OpenSearchService from "@core/services/openSearch.service";
-import { CartDocument } from "@core/interfaces/repositories/cart";
 
 @injectable()
 export class CreateOrderUseCase {
@@ -73,14 +72,6 @@ export class CreateOrderUseCase {
       throw new Error(t("error_create_order"));
     }
 
-    await this.createSignature(
-      t,
-      tokenKeyData,
-      tokenJwtData,
-      createOrder,
-      cart
-    );
-
     await this.payWith(t, payload, createOrder);
 
     return this.viewOrderCreated(tokenKeyData, tokenJwtData, createOrder);
@@ -100,42 +91,6 @@ export class CreateOrderUseCase {
         return this.paymentService.payWithBoleto(t, orderId);
       case OrderPaymentsMethodsEnum.PIX:
         return this.paymentService.payWithPix(t, orderId);
-    }
-  }
-
-  private async createSignature(
-    t: TFunction<"translation", undefined>,
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
-    createOrder: string,
-    cart: CartDocument
-  ) {
-    const createSignature = await this.signatureService.create(
-      tokenKeyData.id_parceiro,
-      tokenJwtData,
-      cart,
-      createOrder
-    );
-
-    if (!createSignature) {
-      throw new Error(t("error_create_signature"));
-    }
-
-    await this.createSignatureProducts(t, createSignature, cart);
-
-    return createSignature;
-  }
-
-  private async createSignatureProducts(
-    t: TFunction<"translation", undefined>,
-    signatureId: string,
-    cart: CartDocument
-  ) {
-    const createSignatureProducts =
-      await this.signatureService.createSignatureProducts(signatureId, cart);
-
-    if (!createSignatureProducts) {
-      throw new Error(t("error_create_signature_products"));
     }
   }
 

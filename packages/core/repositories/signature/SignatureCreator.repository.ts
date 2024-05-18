@@ -3,7 +3,6 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { clientSignature, clientProductSignature } from "@core/models";
 import { sql } from "drizzle-orm";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import {
   ClientProductSignatureProcess,
   ClientProductSignatureStatus,
@@ -21,7 +20,7 @@ export class SignatureCreatorRepository {
 
   async create(
     partnerId: number,
-    tokenJwtData: ITokenJwtData,
+    clientId: string,
     cart: CartDocument,
     orderId: string
   ): Promise<string | null> {
@@ -31,7 +30,7 @@ export class SignatureCreatorRepository {
       .insert(clientSignature)
       .values({
         id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
-        id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
+        id_cliente: sql`UUID_TO_BIN(${clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
         id_parceiro: partnerId,
         ciclo: 0,
