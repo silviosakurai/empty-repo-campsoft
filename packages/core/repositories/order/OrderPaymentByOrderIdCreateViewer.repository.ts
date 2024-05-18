@@ -2,10 +2,10 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import {
+  order,
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
-  clientSignature,
   clientCards,
 } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
@@ -44,12 +44,13 @@ export class OrderPaymentByOrderIdCreateViewerRepository {
           code: orderPayment.codigo_pagamento,
           expire_at: orderPayment.data_vencimento,
         },
-        cycle: clientSignature.ciclo,
+        cycle: order.recorrencia_periodo,
         created_at: orderPayment.created_at,
         updated_at: orderPayment.updated_at,
       })
       .from(orderPayment)
       .groupBy(orderPayment.id_pedido)
+      .innerJoin(order, eq(order.id_pedido, orderPayment.id_pedido))
       .innerJoin(
         orderPaymentMethod,
         eq(
@@ -63,10 +64,6 @@ export class OrderPaymentByOrderIdCreateViewerRepository {
           orderPaymentStatus.id_pedido_pagamento_status,
           orderPayment.id_pedido_pagamento_status
         )
-      )
-      .innerJoin(
-        clientSignature,
-        eq(clientSignature.id_pedido, orderPayment.id_pedido)
       )
       .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
