@@ -32,6 +32,7 @@ export class OrderByNumberViewerByManagerRepository {
         order_id: sql`BIN_TO_UUID(${order.id_pedido})`.mapWith(String),
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
+        plan_id: order.id_plano,
         status: orderStatus.pedido_status,
         totals: {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
@@ -87,7 +88,10 @@ export class OrderByNumberViewerByManagerRepository {
   }
 
   private async completePaymentsAndPlansPromises(
-    result: Omit<OrderByNumberResponse, "payments" | "products" | "plan">,
+    result: Omit<
+      OrderByNumberResponse,
+      "payments" | "products" | "plan" | "single_products"
+    >,
     cart: CartDocumentManager
   ): Promise<OrderByNumberByManagerResponse | null> {
     const [client, seller, payments, plan] = await Promise.all([

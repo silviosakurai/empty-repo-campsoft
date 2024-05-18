@@ -3,6 +3,7 @@ import { orderTotalsSchema } from "./orderTotalsSchema";
 import { paymentInstallmentsSchema } from "../payment/paymentInstallmentsSchema";
 import { orderPaymentsSchema } from "./orderPaymentsSchema";
 import { planDetailsWithProductsSelectedSchema } from "../plan/planDetailsWithProductsSelectedSchema";
+import { productSingleViewSchema } from "../product/productSingleViewSchema";
 
 export const orderListSchema = Type.Object({
   order_id: Type.String(),
@@ -12,6 +13,10 @@ export const orderListSchema = Type.Object({
   totals: orderTotalsSchema,
   installments: paymentInstallmentsSchema,
   payments: Type.Array(orderPaymentsSchema),
+  single_products: Type.Union([
+    Type.Array(productSingleViewSchema),
+    Type.Null(),
+  ]),
   plan: Type.Union([planDetailsWithProductsSelectedSchema, Type.Null()]),
   created_at: Type.String({ format: "date-time" }),
   updated_at: Type.String({ format: "date-time" }),

@@ -2,6 +2,7 @@ import { Status } from "@core/common/enums/Status";
 import { orderPaymentsSchema } from "@core/schema/order/orderPaymentsSchema";
 import { FindOrderByNumberPlans } from "@core/useCases/order/dtos/FindOrderByNumberResponse.dto";
 import { Static } from "@sinclair/typebox";
+import { ProductSingleView } from "./signature";
 
 export interface ListOrder {
   order_id: string;
@@ -60,6 +61,7 @@ interface Pix {
 }
 
 export interface OrderByNumberResponse {
+  plan_id: number | null;
   order_id: string;
   client_id: string;
   seller_id: string;
@@ -68,6 +70,7 @@ export interface OrderByNumberResponse {
   installments: Installments;
   payments: OrderPayments[];
   plan: FindOrderByNumberPlans | null;
+  single_products: ProductSingleView[] | null;
   created_at: string;
   updated_at: string;
 }

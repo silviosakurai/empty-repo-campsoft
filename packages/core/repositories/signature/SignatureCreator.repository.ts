@@ -30,6 +30,7 @@ export class SignatureCreatorRepository {
     const result = await this.db
       .insert(clientSignature)
       .values({
+        id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
         id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
         id_parceiro: partnerId,
