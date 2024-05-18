@@ -4,10 +4,10 @@ import { CouponListerRepository } from "@core/repositories/coupon/CouponLister.r
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ICouponVerifyEligibilityUser } from "@core/interfaces/repositories/coupon";
 import { PlanPrice } from "@core/common/enums/models/plan";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { CouponViewerByIdRepository } from "@core/repositories/coupon/CouponViewerById.repository";
 import { CouponUpdaterRepository } from "@core/repositories/coupon/CouponUpdater.repository";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class CouponService {
@@ -48,7 +48,7 @@ export class CouponService {
   applyDiscountCoupon = (
     coupon: ICouponVerifyEligibilityUser[],
     planPrice: PlanPrice,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     finalPrice: number
   ): PlanPrice => {
     let discountCoupon = 0;
@@ -81,7 +81,7 @@ export class CouponService {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<ICouponVerifyEligibilityUser[]> => {
     if (!payload.coupon_code) {
       return [] as ICouponVerifyEligibilityUser[];

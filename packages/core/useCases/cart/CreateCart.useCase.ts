@@ -1,197 +1,117 @@
 import { CreateCartRequest } from "./dtos/CreateCartRequest.dto";
 import { injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
-import { CartOrder, CreateCartResponse } from "./dtos/CreateCartResponse.dto";
-import { Plan } from "@core/common/enums/models/plan";
-import { PlanUpgraderUseCase } from "../plan/PlanUpgrader.useCase";
-import OpenSearchService from "@core/services/openSearch.service";
-import { ProductResponse } from "../product/dtos/ProductResponse.dto";
-import { CouponService } from "@core/services/coupon.service";
+import { TFunction } from "i18next";
+import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { CartValidationService } from "@core/services/cartValidation.service";
 import { PlanService } from "@core/services/plan.service";
 import { ProductService } from "@core/services/product.service";
+import { SignatureService } from "@core/services/signature.service";
+import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
+import { PriceService } from "@core/services/price.service";
+import OpenSearchService from "@core/services/openSearch.service";
+import { CartDocumentResponse } from "@core/interfaces/repositories/cart";
+import { CartService } from "@core/services/cart.service";
 
 @injectable()
 export class CreateCartUseCase {
   constructor(
+    private readonly cartValidationService: CartValidationService,
     private readonly planService: PlanService,
-    private readonly couponService: CouponService,
     private readonly productService: ProductService,
+    private readonly signatureService: SignatureService,
+    private readonly priceService: PriceService,
     private readonly openSearchService: OpenSearchService,
-    private readonly planUpgraderUseCase: PlanUpgraderUseCase
+    private readonly cartService: CartService
   ) {}
 
-  async create(input: CreateCartRequest, companyId: number, clientId: string) {
-    const products = input.products_id?.length
-      ? await this.productService.findProductsByIds(
-          companyId,
-          input.products_id
+  async create(
+    t: TFunction<"translation", undefined>,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: CreateCartRequest
+  ): Promise<CartDocumentResponse> {
+    await this.cartValidationService.validate(t, tokenJwtData, payload);
+
+    const [isPlanProductAndProductGroups, isPlanProductCrossSell, productsIds] =
+      await Promise.all([
+        this.planService.isPlanProductAndProductGroups(tokenKeyData, payload),
+        this.productService.isPlanProductCrossSell(tokenKeyData, payload),
+        this.planService.listPlanByOrderComplete(tokenKeyData, payload),
+      ]);
+
+    if (!isPlanProductAndProductGroups || !isPlanProductCrossSell) {
+      throw new Error(t("product_not_eligible_for_plan"));
+    }
+
+    if (!productsIds) {
+      throw new Error(t("error_list_products_order"));
+    }
+
+    const findSignatureActiveByClientId =
+      await this.signatureService.findSignatureActiveByClientId(
+        tokenJwtData.clientId,
+        payload.plan.plan_id,
+        productsIds
+      );
+
+    const productsIdByOrder = await this.findSignatureActiveByClientId(
+      findSignatureActiveByClientId,
+      productsIds
+    );
+
+    if (!productsIdByOrder.length) {
+      throw new Error(t("you_already_have_all_active_products"));
+    }
+
+    const totalPrices = await this.priceService.totalPricesOrder(
+      t,
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      findSignatureActiveByClientId
+    );
+
+    if (!totalPrices) {
+      throw new Error(t("plan_price_not_found"));
+    }
+
+    const cartId = uuidv4();
+
+    const createCard = await this.openSearchService.indexCart(
+      tokenJwtData.clientId,
+      cartId,
+      payload,
+      totalPrices,
+      productsIdByOrder,
+      findSignatureActiveByClientId
+    );
+
+    if (!createCard) {
+      throw new Error(t("error_create_cart"));
+    }
+
+    return this.cartService.getCartWithInfo(createCard);
+  }
+
+  private async findSignatureActiveByClientId(
+    findSignatureActiveByClientId: ISignatureActiveByClient[],
+    productsIds: string[]
+  ): Promise<string[]> {
+    if (findSignatureActiveByClientId.length > 0) {
+      const idsProductsToRemove = findSignatureActiveByClientId
+        .filter(
+          (signature) => signature.recurrence === ClientSignatureRecorrencia.YES
         )
-      : [];
+        .map((signature) => signature.product_id);
 
-    if (!input.plans_id?.length) {
-      const cart = await this.createCart([], products, [], clientId);
-
-      return cart;
+      productsIds = productsIds.filter(
+        (product) => !idsProductsToRemove.includes(product)
+      );
     }
 
-    const plans = await Promise.all(
-      input.plans_id.map(
-        (item) => this.planService.view(companyId, item) as Promise<Plan>
-      )
-    );
-
-    const productsIdToDiscount = plans
-      .map((item) => item?.products?.map((product) => product?.product_id))
-      .join()
-      .split(",");
-
-    const allPlansWithDiscounts = await this.generateDiscountProductsValue(
-      companyId,
-      clientId,
-      productsIdToDiscount
-    );
-
-    const discountCouponValue = input.discount_coupon
-      ? (await this.couponService.view(input.discount_coupon, companyId))[0]
-          .discount_coupon_value ?? 0
-      : 0;
-
-    if (!allPlansWithDiscounts.length) {
-      const totals = this.generateOrders(plans, discountCouponValue);
-
-      const cart = await this.createCart(totals, products, plans, clientId);
-
-      return cart;
-    }
-
-    const selectedPlansWithDiscount = this.setSelectedPlans(
-      allPlansWithDiscounts,
-      input.plans_id
-    );
-
-    const plansAsCartInterface = this.formatPlanValuesToCart(
-      selectedPlansWithDiscount
-    );
-
-    const totals = this.generateOrders(
-      plansAsCartInterface,
-      discountCouponValue
-    );
-
-    const cart = await this.createCart(
-      totals,
-      products,
-      plansAsCartInterface,
-      clientId
-    );
-
-    return cart;
-  }
-
-  private async createCart(
-    totals: CartOrder[],
-    products: ProductResponse[],
-    plans: Plan[],
-    clientId: string
-  ) {
-    const cart: CreateCartResponse = {
-      id: uuidv4(),
-      totals: totals,
-      products,
-      plans,
-    };
-
-    await this.openSearchService.indexCart(clientId, cart);
-
-    return cart;
-  }
-
-  private generateOrders(
-    plans: Plan[],
-    discountCouponValue: number
-  ): CartOrder[] {
-    const totals: CartOrder[] = [];
-    for (const plan of plans) {
-      if (plan.prices.length) {
-        for (const price of plan.prices) {
-          const discount_percentage = price.discount_percentage ?? 0;
-          const discount_coupon_value = discountCouponValue;
-          const subtotal_price = price.price ?? 0;
-          const discount_item_value = price.discount_value ?? 0;
-          const discount_products_value = parseFloat(
-            (discount_item_value * +(price.discount_percentage ?? 0)).toFixed(2)
-          );
-
-          totals.push({
-            subtotal_price,
-            discount_coupon_value,
-            discount_percentage,
-            discount_item_value,
-            discount_products_value,
-            installments: price.months
-              ? new Array(+price.months).fill({}).map((_, index) => ({
-                  installment: index + 1,
-                  value: +(subtotal_price / +(price.months ?? 0)).toFixed(2),
-                }))
-              : [],
-            total: parseFloat(
-              (
-                subtotal_price -
-                (discount_coupon_value + discount_item_value)
-              ).toFixed(2)
-            ),
-          });
-        }
-      }
-    }
-
-    return totals;
-  }
-
-  private async generateDiscountProductsValue(
-    companyId: number,
-    clientId: string,
-    productsId: string[]
-  ) {
-    const results = await this.planUpgraderUseCase.execute(
-      companyId,
-      clientId,
-      productsId
-    );
-
-    if (!results) return [];
-
-    return results;
-  }
-
-  private setSelectedPlans(
-    plansWithDiscount: Plan[],
-    selectedPlansId: number[]
-  ) {
-    const selectedPlans = plansWithDiscount.filter((item) =>
-      selectedPlansId.some((selectedPlanId) => selectedPlanId === item.plan_id)
-    );
-
-    return selectedPlans;
-  }
-
-  private formatPlanValuesToCart(plans: Plan[]): Plan[] {
-    return plans.map(
-      (item): Plan => ({
-        plan_id: item.plan_id,
-        status: item.status,
-        visible_site: item.visible_site,
-        business_id: item.business_id,
-        plan: item.plan,
-        image: item.image,
-        description: item.description,
-        short_description: item.short_description,
-        created_at: item.created_at,
-        updated_at: item.updated_at,
-        prices: item.prices,
-        products: item.products,
-        product_groups: item.product_groups,
-      })
-    );
+    return productsIds;
   }
 }

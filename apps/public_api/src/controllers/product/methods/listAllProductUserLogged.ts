@@ -20,15 +20,6 @@ export const listAllProductUserLogged = async (
       request.query
     );
 
-    if (!response) {
-      request.server.logger.warn(response, request.id);
-
-      return sendResponse(reply, {
-        message: t('product_not_found'),
-        httpStatusCode: HTTPStatusCode.NOT_FOUND,
-      });
-    }
-
     return sendResponse(reply, {
       data: response,
       httpStatusCode: HTTPStatusCode.OK,

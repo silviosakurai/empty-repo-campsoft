@@ -1,6 +1,7 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { cartCreatorResponseSchema } from "@core/schema/cart/cartCreatorResponseSchema";
+import { cartCreateRequestSchema } from "@core/schema/cart/cartCreateRequestSchema";
+import { cartListResponseSchema } from "@core/schema/cart/cartListResponseSchema";
 import { Type } from "@sinclair/typebox";
 
 export const cartCreatorSchemaValidation = {
@@ -16,20 +17,31 @@ export const cartCreatorSchemaValidation = {
       })
     ),
   }),
-  body: Type.Object({
-    discount_coupon: Type.Number(),
-    months: Type.Number(),
-    plans_id: Type.Array(Type.Number()),
-    products_id: Type.Array(Type.Optional(Type.Number())),
-  }),
+  body: cartCreateRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: cartCreatorResponseSchema,
+        data: cartListResponseSchema,
       },
       { description: "Successful" }
+    ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
     ),
     500: Type.Object(
       {

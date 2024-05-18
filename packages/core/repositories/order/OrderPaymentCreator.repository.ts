@@ -21,7 +21,6 @@ export class OrderPaymentCreatorRepository {
 
   async create(
     order: ListOrderById,
-    signatureId: string,
     methodId: OrderPaymentsMethodsEnum,
     statusPayment: OrderStatusEnum,
     input: OrderPaymentUpdateInput
@@ -33,8 +32,6 @@ export class OrderPaymentCreatorRepository {
         sql`UUID_TO_BIN(${order.order_id_previous})` as unknown as string,
       id_pedido: sql`UUID_TO_BIN(${order.order_id})` as unknown as string,
       id_cliente: sql`UUID_TO_BIN(${order.client_id})` as unknown as string,
-      id_assinatura_cliente:
-        sql`UUID_TO_BIN(${signatureId})` as unknown as string,
       id_pedido_pagamento_status: statusPayment,
       valor_preco: order.total_price,
       valor_desconto: order.total_discount,

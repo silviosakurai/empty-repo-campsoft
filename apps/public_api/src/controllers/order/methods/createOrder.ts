@@ -17,14 +17,12 @@ export const createOrder = async (
   const { t, tokenKeyData, tokenJwtData } = request;
 
   try {
-    const splitRuleId = generalEnvironment;
-
     const response = await createOrderUseCase.execute(
       t,
       tokenKeyData,
       tokenJwtData,
       request.body,
-      splitRuleId.publicSplitRuleId
+      generalEnvironment.publicSplitRuleId
     );
 
     return sendResponse(reply, {

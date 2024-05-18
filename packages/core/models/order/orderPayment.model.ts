@@ -20,7 +20,6 @@ export const orderPayment = mysqlTable("pedido_pagamento", {
   }),
   id_pedido: varbinary("id_pedido", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
-  id_assinatura_cliente: varbinary("id_assinatura_cliente", { length: 16 }),
   id_pedido_pagamento_status: int("id_pedido_pagamento_status"),
   valor_preco: double("valor_preco").notNull().default(0.0),
   valor_desconto: double("valor_desconto").notNull().default(0.0),

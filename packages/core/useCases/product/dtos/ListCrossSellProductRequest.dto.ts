@@ -5,6 +5,7 @@ import { IPaginationQueryString } from "@core/common/interfaces/IPaginationQuery
 export interface CrossSellProductRequest extends IPaginationQueryString {
   client_id: string;
   plan_id: number;
+  months: number;
   id?: string;
   name?: string;
   description?: string;

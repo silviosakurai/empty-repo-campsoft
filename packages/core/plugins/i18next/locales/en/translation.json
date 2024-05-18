@@ -130,5 +130,9 @@
   "resource_not_found": "Sorry, the seller you are trying to use does not exist or has been deleted",
   "forbidden": "Your user is not authorized to access this resource.",
   "main_seller_not_found": "Main seller not found.",
-  "invalid_split_rule": "Invalid split rule."
+  "invalid_split_rule": "Invalid split rule.",
+  "you_already_have_all_active_products": "You already have all active products",
+  "cart_not_found": "Cart not found",
+  "error_update_cart": "Error update cart",
+  "error_create_cart": "Error create cart"
 }

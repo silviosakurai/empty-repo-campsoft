@@ -3,7 +3,6 @@ import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
-import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
@@ -18,8 +17,7 @@ export class PayerPixByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
@@ -40,13 +38,6 @@ export class PayerPixByOrderIdUseCase {
         return result;
       }
 
-      const signature =
-        await this.findSignatureByOrderNumber.findByOrder(orderId);
-
-      if (!signature) {
-        throw new Error(t("signature_not_found"));
-      }
-
       const pixCodeAsBase64 = await generateQRCodeAsJPEGBase64(
         result.data.payment_method.qr_code.emv
       );
@@ -57,7 +48,6 @@ export class PayerPixByOrderIdUseCase {
 
       await this.orderService.createOrderPayment(
         order,
-        signature.signature_id,
         OrderPaymentsMethodsEnum.PIX,
         OrderStatusEnum.PENDING,
         {

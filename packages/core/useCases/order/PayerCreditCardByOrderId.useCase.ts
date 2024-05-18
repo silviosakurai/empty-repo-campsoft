@@ -12,7 +12,6 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
-import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 import { ListOrderById } from "@core/interfaces/repositories/order";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 import { amountToPay } from "@core/common/functions/amountToPay";
@@ -36,16 +35,9 @@ export class PayerCreditCardByOrderIdUseCase {
     input: PayByCreditCardRequest
   ) {
     let order = null as ListOrderById | null;
-    let signature = null as ISignatureByOrder | null;
     let cardId = null as string | null;
 
     try {
-      signature = await this.signatureService.findByOrder(orderId);
-
-      if (!signature) {
-        throw new Error(t("signature_not_found"));
-      }
-
       const orderData = await this.orderWithPaymentReaderUseCase.view(
         t,
         orderId
@@ -90,7 +82,6 @@ export class PayerCreditCardByOrderIdUseCase {
         ),
         this.orderService.createOrderPayment(
           order,
-          signature.signature_id,
           OrderPaymentsMethodsEnum.CARD,
           OrderStatusEnum.APPROVED,
           {
@@ -116,10 +107,9 @@ export class PayerCreditCardByOrderIdUseCase {
         OrderStatusEnum.FAILED
       );
 
-      if (signature && order) {
+      if (order) {
         this.orderService.createOrderPayment(
           order,
-          signature.signature_id,
           OrderPaymentsMethodsEnum.CARD,
           OrderStatusEnum.FAILED,
           {

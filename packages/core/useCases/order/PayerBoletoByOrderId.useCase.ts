@@ -3,7 +3,6 @@ import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
-import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
@@ -17,7 +16,6 @@ export class PayerByBoletoByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
@@ -42,16 +40,8 @@ export class PayerByBoletoByOrderIdUseCase {
         return result;
       }
 
-      const signature =
-        await this.findSignatureByOrderNumber.findByOrder(orderId);
-
-      if (!signature) {
-        throw new Error(t("signature_not_found"));
-      }
-
       await this.orderService.createOrderPayment(
         order,
-        signature.signature_id,
         OrderPaymentsMethodsEnum.BOLETO,
         OrderStatusEnum.PENDING,
         {

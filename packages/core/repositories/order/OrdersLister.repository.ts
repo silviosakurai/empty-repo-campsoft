@@ -160,15 +160,9 @@ export class OrdersListerRepository {
             WHEN 1 THEN 'Mensal'
             WHEN 2 THEN 'Bimestral'
             WHEN 3 THEN 'Trimestral'
-            WHEN 4 THEN 'Quadrimestral'
-            WHEN 5 THEN 'Quintimestral'
             WHEN 6 THEN 'Semestral'
-            WHEN 7 THEN 'Setimestral'
-            WHEN 8 THEN 'Octimestral'
-            WHEN 9 THEN 'Nonimestral'
-            WHEN 10 THEN 'Decimestral'
-            WHEN 11 THEN 'Undecimestral'
-            WHEN 12 THEN 'Dodecimestral' 
+            WHEN 12 THEN 'Anual' 
+            ELSE CONCAT(${order.recorrencia_periodo}, ' meses')
           END`,
         },
         created_at: order.created_at,
@@ -264,7 +258,7 @@ export class OrdersListerRepository {
           code: orderPayment.codigo_pagamento,
           expire_at: orderPayment.data_vencimento,
         },
-        cycle: clientSignature.ciclo,
+        cycle: order.recorrencia_periodo,
         created_at: orderPayment.created_at,
         updated_at: orderPayment.updated_at,
       })
@@ -283,13 +277,7 @@ export class OrdersListerRepository {
           orderPayment.id_pedido_pagamento_status
         )
       )
-      .innerJoin(
-        clientSignature,
-        eq(
-          clientSignature.id_assinatura_cliente,
-          orderPayment.id_assinatura_cliente
-        )
-      )
+      .innerJoin(order, eq(order.id_pedido, orderPayment.id_pedido))
       .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))
       .where(and(eq(orderPayment.id_pedido, sql`UUID_TO_BIN(${orderId})`)))
       .execute();
@@ -554,6 +542,7 @@ export class OrdersListerRepository {
         order_id: sql<string>`BIN_TO_UUID(${order.id_pedido})`,
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
+        cart_id: sql<string>`BIN_TO_UUID(${order.id_carrinho})`,
         split_rule_id: order.id_financeiro_split_regra,
         company_id: order.id_parceiro,
         seller_id: order.id_vendedor,

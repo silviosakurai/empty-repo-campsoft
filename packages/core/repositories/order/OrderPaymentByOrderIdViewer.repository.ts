@@ -5,7 +5,7 @@ import {
   orderPayment,
   orderPaymentMethod,
   orderPaymentStatus,
-  clientSignature,
+  order,
   clientCards,
 } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
@@ -44,12 +44,13 @@ export class OrderPaymentByOrderIdViewerRepository {
           code: orderPayment.codigo_pagamento,
           expire_at: orderPayment.data_vencimento,
         },
-        cycle: clientSignature.ciclo,
+        cycle: order.recorrencia_periodo,
         created_at: orderPayment.created_at,
         updated_at: orderPayment.updated_at,
       })
       .from(orderPayment)
       .groupBy(orderPayment.id_pedido)
+      .innerJoin(order, eq(order.id_pedido, orderPayment.id_pedido))
       .innerJoin(
         orderPaymentMethod,
         eq(
@@ -62,13 +63,6 @@ export class OrderPaymentByOrderIdViewerRepository {
         eq(
           orderPaymentStatus.id_pedido_pagamento_status,
           orderPayment.id_pedido_pagamento_status
-        )
-      )
-      .innerJoin(
-        clientSignature,
-        eq(
-          clientSignature.id_assinatura_cliente,
-          orderPayment.id_assinatura_cliente
         )
       )
       .leftJoin(clientCards, eq(clientCards.card_id, orderPayment.card_id))

@@ -1,6 +1,6 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { orderCreateByManagerRequestSchema } from "@core/schema/order/orderCreateRequestSchema";
+import { orderCreateRequestSchema } from "@core/schema/order/orderCreateRequestSchema";
 import { orderListByManagerSchema } from "@core/schema/order/orderListByManagerSchema";
 import { Type } from "@sinclair/typebox";
 
@@ -23,7 +23,7 @@ export const createOrderByManagerSchema = {
       })
     ),
   }),
-  body: orderCreateByManagerRequestSchema,
+  body: orderCreateRequestSchema,
   response: {
     200: Type.Object(
       {

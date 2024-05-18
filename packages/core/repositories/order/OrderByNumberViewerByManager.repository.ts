@@ -5,10 +5,13 @@ import { order, orderStatus } from "@core/models";
 import { and, eq, sql } from "drizzle-orm";
 import { OrderPaymentByOrderIdViewerRepository } from "./OrderPaymentByOrderIdViewer.repository";
 import { OrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer.repository";
-import { OrderByNumberByManagerResponse, OrderByNumberResponse } from "@core/interfaces/repositories/order";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import {
+  OrderByNumberByManagerResponse,
+  OrderByNumberResponse,
+} from "@core/interfaces/repositories/order";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ClientViewerRepository } from "../client/ClientViewer.repository";
+import { CartDocumentManager } from "@core/interfaces/repositories/cart";
 
 @injectable()
 export class OrderByNumberViewerByManagerRepository {
@@ -16,19 +19,20 @@ export class OrderByNumberViewerByManagerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
     private readonly orderPlansByOrderIdViewer: OrderPlansByOrderIdViewerRepository,
     private readonly orderPaymentByOrderIdViewer: OrderPaymentByOrderIdViewerRepository,
-    private readonly clientViewerRepository: ClientViewerRepository,
+    private readonly clientViewerRepository: ClientViewerRepository
   ) {}
 
   async view(
     orderNumber: string,
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData
+    tokenJwtData: ITokenJwtData,
+    cart: CartDocumentManager
   ): Promise<OrderByNumberByManagerResponse | null> {
     const record = await this.db
       .select({
         order_id: sql`BIN_TO_UUID(${order.id_pedido})`.mapWith(String),
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
+        plan_id: order.id_plano,
         status: orderStatus.pedido_status,
         totals: {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
@@ -66,7 +70,7 @@ export class OrderByNumberViewerByManagerRepository {
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderNumber})`),
-          eq(order.id_parceiro, tokenKeyData.id_parceiro),
+          eq(order.id_parceiro, cart.partner_id),
           eq(order.id_cliente, sql`UUID_TO_BIN(${tokenJwtData.clientId})`)
         )
       );
@@ -77,21 +81,24 @@ export class OrderByNumberViewerByManagerRepository {
 
     const results = await this.completePaymentsAndPlansPromises(
       record[0],
-      tokenKeyData
+      cart
     );
 
     return results;
   }
 
   private async completePaymentsAndPlansPromises(
-    result: Omit<OrderByNumberResponse, "payments" | "products" | "plan">,
-    tokenKeyData: ITokenKeyData
+    result: Omit<
+      OrderByNumberResponse,
+      "payments" | "products" | "plan" | "single_products"
+    >,
+    cart: CartDocumentManager
   ): Promise<OrderByNumberByManagerResponse | null> {
     const [client, seller, payments, plan] = await Promise.all([
       this.clientViewerRepository.view(result.client_id),
       this.clientViewerRepository.view(result.seller_id),
       this.orderPaymentByOrderIdViewer.find(result.order_id),
-      this.orderPlansByOrderIdViewer.view(result.order_id, tokenKeyData),
+      this.orderPlansByOrderIdViewer.view(result.order_id, cart.partner_id),
     ]);
 
     const newResult = {

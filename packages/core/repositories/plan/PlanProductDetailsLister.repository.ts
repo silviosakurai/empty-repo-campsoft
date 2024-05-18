@@ -9,7 +9,6 @@ import {
   planPartner,
 } from "@core/models";
 import { and, eq } from "drizzle-orm";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PlanProducts } from "@core/interfaces/repositories/voucher";
 
 @injectable()
@@ -18,10 +17,7 @@ export class PlanProductDetailsListerRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async list(
-    planId: number,
-    tokenKeyData: ITokenKeyData
-  ): Promise<PlanProducts[]> {
+  async list(planId: number, partnerId: number): Promise<PlanProducts[]> {
     const result = await this.db
       .select({
         product_id: planItem.id_produto,
@@ -52,10 +48,7 @@ export class PlanProductDetailsListerRepository {
       )
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
-        and(
-          eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
-        )
+        and(eq(plan.id_plano, planId), eq(planPartner.id_parceiro, partnerId))
       )
       .execute();
 

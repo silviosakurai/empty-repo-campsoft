@@ -14,7 +14,7 @@ import { SignatureService } from "@core/services/signature.service";
 export class ProductsListerUseCase {
   constructor(
     private readonly productService: ProductService,
-    private readonly signatureService: SignatureService,
+    private readonly signatureService: SignatureService
   ) {}
 
   async execute(
@@ -34,11 +34,11 @@ export class ProductsListerUseCase {
   async listLoggedNoPagination(
     clientId: string,
     query: ListAllProductRequest
-  ): Promise<ProductListerNoPagination[] | null> {
+  ): Promise<ProductListerNoPagination[]> {
     const signatures = await this.signatureService.findByClientId(clientId);
 
     if (!signatures) {
-      return null;
+      return [] as ProductListerNoPagination[];
     }
 
     const productIds = signatures.map((signature) => signature.product_id);

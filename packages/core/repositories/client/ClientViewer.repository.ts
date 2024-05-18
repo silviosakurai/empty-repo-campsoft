@@ -38,7 +38,7 @@ export class ClientViewerRepository {
       return null;
     }
 
-    return result[0] as unknown as ViewClientResponse;
+    return result[0] as ViewClientResponse;
   }
 
   async viewById(

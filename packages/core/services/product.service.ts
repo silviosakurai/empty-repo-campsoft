@@ -8,7 +8,6 @@ import { ProductViewerRepository } from "@core/repositories/product/ProductViewe
 import { CrossSellProductListerRepository } from "@core/repositories/product/CrossSellProductLister.repository";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductRequest.dto";
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";
@@ -36,6 +35,8 @@ import { ProductPartnerDeleterRepository } from "@core/repositories/product/Prod
 import { ProductPartnerViewerRepository } from "@core/repositories/product/ProductPartnerViewer.repository";
 import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductListerNoPaginationRepository.repository";
 import { ProductListerNoPaginationUserLoggedRepository } from "@core/repositories/product/ProductListerNoPaginationUserLogged.repository";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
+import { ProductListerByCartRepository } from "@core/repositories/product/ProductListerByCart.repository";
 
 @injectable()
 export class ProductService {
@@ -64,6 +65,7 @@ export class ProductService {
     private readonly ProductGroupListerRepository: ProductGroupListerRepository,
     private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository,
     private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository,
+    private readonly productListerByCartRepository: ProductListerByCartRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -96,7 +98,10 @@ export class ProductService {
     productIds: string[],
     query: ListAllProductRequest
   ) => {
-    return this.productListerNoPaginationUserLoggedRepository.list(productIds, query);
+    return this.productListerNoPaginationUserLoggedRepository.list(
+      productIds,
+      query
+    );
   };
 
   listByCompanyIds = async (
@@ -169,7 +174,7 @@ export class ProductService {
 
   isPlanProductCrossSell = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<boolean> => {
     const selectedProducts = payload.products ?? [];
 
@@ -269,4 +274,8 @@ export class ProductService {
   listProductGroup() {
     return this.ProductGroupListerRepository.list();
   }
+
+  listByIdsCart = async (productIds: string[]) => {
+    return this.productListerByCartRepository.listByIds(productIds);
+  };
 }
