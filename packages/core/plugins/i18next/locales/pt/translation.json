@@ -132,5 +132,7 @@
   "main_seller_not_found": "Vendedor principal não encontrado.",
   "invalid_split_rule": "Regra de split invalida.",
   "you_already_have_all_active_products": "Você já possui todos os produtos ativos",
-  "cart_not_found": "Carrinho não encontrado"
+  "cart_not_found": "Carrinho não encontrado",
+  "error_update_cart": "Erro ao atualizar o carrinho",
+  "error_create_cart": "Erro ao criar o carrinho"
 }

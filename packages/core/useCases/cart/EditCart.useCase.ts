@@ -11,6 +11,8 @@ import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature"
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 import { PriceService } from "@core/services/price.service";
 import OpenSearchService from "@core/services/openSearch.service";
+import { CartDocumentResponse } from "@core/interfaces/repositories/cart";
+import { CartService } from "@core/services/cart.service";
 
 @injectable()
 export class EditCartUseCase {
@@ -20,7 +22,8 @@ export class EditCartUseCase {
     private readonly productService: ProductService,
     private readonly signatureService: SignatureService,
     private readonly priceService: PriceService,
-    private readonly openSearchService: OpenSearchService
+    private readonly openSearchService: OpenSearchService,
+    private readonly cartService: CartService
   ) {}
 
   async edit(
@@ -29,7 +32,7 @@ export class EditCartUseCase {
     tokenJwtData: ITokenJwtData,
     cartId: string,
     payload: CreateCartRequest
-  ) {
+  ): Promise<CartDocumentResponse> {
     const getCart = await this.openSearchService.getCart(cartId);
 
     if (!getCart) {
@@ -81,13 +84,19 @@ export class EditCartUseCase {
       throw new Error(t("plan_price_not_found"));
     }
 
-    return await this.openSearchService.updateCart(
+    const getCartEdit = await this.openSearchService.updateCart(
       cartId,
       payload,
       totalPrices,
       productsIdByOrder,
       findSignatureActiveByClientId
     );
+
+    if (!getCartEdit) {
+      throw new Error(t("error_update_cart"));
+    }
+
+    return this.cartService.getCartWithInfo(getCartEdit);
   }
 
   private async findSignatureActiveByClientId(

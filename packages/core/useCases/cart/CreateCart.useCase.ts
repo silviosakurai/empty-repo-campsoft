@@ -12,6 +12,8 @@ import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature"
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 import { PriceService } from "@core/services/price.service";
 import OpenSearchService from "@core/services/openSearch.service";
+import { CartDocumentResponse } from "@core/interfaces/repositories/cart";
+import { CartService } from "@core/services/cart.service";
 
 @injectable()
 export class CreateCartUseCase {
@@ -21,7 +23,8 @@ export class CreateCartUseCase {
     private readonly productService: ProductService,
     private readonly signatureService: SignatureService,
     private readonly priceService: PriceService,
-    private readonly openSearchService: OpenSearchService
+    private readonly openSearchService: OpenSearchService,
+    private readonly cartService: CartService
   ) {}
 
   async create(
@@ -29,7 +32,7 @@ export class CreateCartUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateCartRequest
-  ) {
+  ): Promise<CartDocumentResponse> {
     await this.cartValidationService.validate(t, tokenJwtData, payload);
 
     const [isPlanProductAndProductGroups, isPlanProductCrossSell, productsIds] =
@@ -77,13 +80,19 @@ export class CreateCartUseCase {
 
     const cartId = uuidv4();
 
-    return await this.openSearchService.indexCart(
+    const createCard = await this.openSearchService.indexCart(
       cartId,
       payload,
       totalPrices,
       productsIdByOrder,
       findSignatureActiveByClientId
     );
+
+    if (!createCard) {
+      throw new Error(t("error_create_cart"));
+    }
+
+    return this.cartService.getCartWithInfo(createCard);
   }
 
   private async findSignatureActiveByClientId(
