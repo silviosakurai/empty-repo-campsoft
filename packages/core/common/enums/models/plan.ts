@@ -3,6 +3,7 @@ import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDe
 import { Static } from "@sinclair/typebox";
 import { float } from "@opensearch-project/opensearch/api/types";
 import { planPriceSchema } from "@core/schema/plan/planPriceSchema";
+import { planViewerCartSchema } from "@core/schema/cart/cartListResponseSchema";
 
 export enum PlanVisivelSite {
   YES = "Y",
@@ -54,3 +55,4 @@ export type GroupProductGroupMapper = {
 
 export type Plan = Static<typeof planDetailsWithProductsAvailableSchema>;
 export type PlanPrice = Static<typeof planPriceSchema>;
+export type PlanViewerCart = Static<typeof planViewerCartSchema>;

@@ -36,6 +36,7 @@ import { ProductPartnerViewerRepository } from "@core/repositories/product/Produ
 import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductListerNoPaginationRepository.repository";
 import { ProductListerNoPaginationUserLoggedRepository } from "@core/repositories/product/ProductListerNoPaginationUserLogged.repository";
 import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
+import { ProductListerByCartRepository } from "@core/repositories/product/ProductListerByCart.repository";
 
 @injectable()
 export class ProductService {
@@ -63,7 +64,8 @@ export class ProductService {
     private readonly productGroupCreatorRepository: ProductGroupCreatorRepository,
     private readonly ProductGroupListerRepository: ProductGroupListerRepository,
     private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository,
-    private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository
+    private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository,
+    private readonly productListerByCartRepository: ProductListerByCartRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -272,4 +274,8 @@ export class ProductService {
   listProductGroup() {
     return this.ProductGroupListerRepository.list();
   }
+
+  listByIdsCart = async (productIds: string[]) => {
+    return this.productListerByCartRepository.listByIds(productIds);
+  };
 }

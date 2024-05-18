@@ -16,6 +16,7 @@ import { CreatePlanRequest } from "@core/useCases/plan/dtos/CreatePlanRequest.dt
 import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 import { PlanListerByProductRepository } from "@core/repositories/plan/PlanListerByProduct.repository";
 import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
+import { PlanViewerCartRepository } from "@core/repositories/plan/PlanViewerCart.repository";
 
 @injectable()
 export class PlanService {
@@ -31,7 +32,8 @@ export class PlanService {
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
     private readonly planListerOrderRepository: PlanListerOrderRepository,
-    private readonly planListerByProductRepository: PlanListerByProductRepository
+    private readonly planListerByProductRepository: PlanListerByProductRepository,
+    private readonly planViewerCartRepository: PlanViewerCartRepository
   ) {}
 
   create = async (body: CreatePlanRequest) => {
@@ -161,5 +163,9 @@ export class PlanService {
 
   listPlansByProduct = async (partnerId: number, productId: string) => {
     return this.planListerByProductRepository.list(partnerId, productId);
+  };
+
+  viewCart = async (planId: number) => {
+    return this.planViewerCartRepository.view(planId);
   };
 }
