@@ -87,8 +87,6 @@ class OpenSearchService {
         body: message,
       });
     } catch (error: any) {
-      console.error(`Error sending log to OpenSearch: ${error.message}`);
-
       if (error.message.includes("illegal_argument_exception")) {
         try {
           await this.client.index({
@@ -109,6 +107,7 @@ class OpenSearchService {
   }
 
   async indexCart(
+    clientId: string,
     cartId: string,
     payload: CreateCartRequest,
     totalPrices: PlanPrice,
@@ -116,6 +115,7 @@ class OpenSearchService {
     signatureActiveByClientId: ISignatureActiveByClient[]
   ): Promise<CartDocument | null> {
     const body = {
+      client_id: clientId,
       cart_id: cartId,
       payload,
       total_prices: totalPrices,
@@ -126,33 +126,6 @@ class OpenSearchService {
     try {
       await this.client.index({
         index: `cart`,
-        body,
-      });
-    } catch (error) {
-      return null;
-    }
-
-    return body;
-  }
-
-  async updateCart(
-    cartId: string,
-    payload: CreateCartRequest,
-    totalPrices: PlanPrice,
-    productsIdByOrder: string[],
-    signatureActiveByClientId: ISignatureActiveByClient[]
-  ): Promise<CartDocument | null> {
-    const body: CartDocument = {
-      cart_id: cartId,
-      payload,
-      total_prices: totalPrices,
-      products_id: productsIdByOrder,
-      signature_active: signatureActiveByClientId,
-    };
-
-    try {
-      await this.client.index({
-        index: "cart",
         id: cartId,
         body,
       });
@@ -165,12 +138,14 @@ class OpenSearchService {
 
   async getCart(cartId: string): Promise<CartDocument | null> {
     try {
+      await this.client.indices.refresh({ index: "cart" });
+
       const response = await this.client.search<SearchResponse<CartDocument>>({
         index: "cart",
         body: {
           query: {
-            match: {
-              cart_id: cartId,
+            term: {
+              _id: cartId,
             },
           },
         },
@@ -217,38 +192,6 @@ class OpenSearchService {
     return body;
   }
 
-  async updateManagerCart(
-    cartId: string,
-    clientId: string,
-    partnerId: number,
-    payload: CreateCartRequest,
-    totalPrices: PlanPrice,
-    productsIdByOrder: string[],
-    signatureActiveByClientId: ISignatureActiveByClient[]
-  ): Promise<CartDocumentManager | null> {
-    const body = {
-      cart_id: cartId,
-      client_id: clientId,
-      partner_id: partnerId,
-      payload,
-      total_prices: totalPrices,
-      products_id: productsIdByOrder,
-      signature_active: signatureActiveByClientId,
-    } as CartDocumentManager;
-
-    try {
-      await this.client.index({
-        index: "manager-cart",
-        id: cartId,
-        body,
-      });
-    } catch (error) {
-      return null;
-    }
-
-    return body;
-  }
-
   async getManagerCart(cartId: string): Promise<CartDocumentManager | null> {
     try {
       const response = await this.client.search<
@@ -257,8 +200,8 @@ class OpenSearchService {
         index: "manager-cart",
         body: {
           query: {
-            match: {
-              cart_id: cartId,
+            term: {
+              _id: cartId,
             },
           },
         },

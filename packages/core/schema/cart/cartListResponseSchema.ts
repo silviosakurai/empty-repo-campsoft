@@ -19,6 +19,7 @@ export const productViewerCartSchema = Type.Object({
 });
 
 export const cartListSchema = Type.Object({
+  client_id: Type.String({ format: "uuid" }),
   cart_id: Type.String({ format: "uuid" }),
   total_prices: planPriceSchema,
   products_id: Type.Array(Type.String()),

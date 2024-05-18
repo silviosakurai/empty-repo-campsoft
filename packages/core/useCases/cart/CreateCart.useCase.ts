@@ -81,6 +81,7 @@ export class CreateCartUseCase {
     const cartId = uuidv4();
 
     const createCard = await this.openSearchService.indexCart(
+      tokenJwtData.clientId,
       cartId,
       payload,
       totalPrices,

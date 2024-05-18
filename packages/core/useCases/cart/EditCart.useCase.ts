@@ -84,7 +84,8 @@ export class EditCartUseCase {
       throw new Error(t("plan_price_not_found"));
     }
 
-    const getCartEdit = await this.openSearchService.updateCart(
+    const getCartEdit = await this.openSearchService.indexCart(
+      tokenJwtData.clientId,
       cartId,
       payload,
       totalPrices,
