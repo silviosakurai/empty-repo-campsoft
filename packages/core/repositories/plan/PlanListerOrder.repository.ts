@@ -4,9 +4,9 @@ import { plan, planItem, planPartner } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { Status } from "@core/common/enums/Status";
 import { PlanListerOrderResponse } from "@core/interfaces/repositories/plan";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class PlanListerOrderRepository {
@@ -16,7 +16,7 @@ export class PlanListerOrderRepository {
 
   async listByPlanOrder(
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<PlanListerOrderResponse[]> {
     const result = await this.db
       .select({

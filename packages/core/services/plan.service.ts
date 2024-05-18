@@ -16,6 +16,7 @@ import { PlanCreatorRepository } from "@core/repositories/plan/PlanCreator.repos
 import { CreatePlanRequest } from "@core/useCases/plan/dtos/CreatePlanRequest.dto";
 import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 import { PlanListerByProductRepository } from "@core/repositories/plan/PlanListerByProduct.repository";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class PlanService {
@@ -91,7 +92,7 @@ export class PlanService {
 
   listByPlanOrder = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ) => {
     return this.planListerOrderRepository.listByPlanOrder(
       tokenKeyData,
@@ -101,7 +102,7 @@ export class PlanService {
 
   isPlanProductAndProductGroups = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<boolean> => {
     const selectedProducts = payload.plan.selected_products ?? [];
 
@@ -136,7 +137,7 @@ export class PlanService {
 
   listPlanByOrderComplete = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<string[] | null> => {
     const productsOrderSet = new Set<string>();
 

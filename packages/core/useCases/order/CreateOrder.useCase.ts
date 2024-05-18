@@ -227,11 +227,12 @@ export class CreateOrderUseCase {
     signatureId: string,
     findSignatureActiveByClientId: ISignatureActiveByClient[]
   ) {
-    const createSignatureProducts = await this.signatureService.createSignatureProducts(
-      productsOrder,
-      signatureId,
-      findSignatureActiveByClientId
-    );
+    const createSignatureProducts =
+      await this.signatureService.createSignatureProducts(
+        productsOrder,
+        signatureId,
+        findSignatureActiveByClientId
+      );
 
     if (!createSignatureProducts) {
       throw new Error(t("error_create_signature_products"));

@@ -2,6 +2,7 @@ import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { cartCreatorResponseSchema } from "@core/schema/cart/cartCreatorResponseSchema";
 import { Type } from "@sinclair/typebox";
+import { cartCreateRequestSchema } from "./cartCreateRequestSchema";
 
 export const cartCreatorSchemaValidation = {
   description: "Cria um novo carrinho",
@@ -16,12 +17,7 @@ export const cartCreatorSchemaValidation = {
       })
     ),
   }),
-  body: Type.Object({
-    discount_coupon: Type.Number(),
-    months: Type.Number(),
-    plans_id: Type.Array(Type.Number()),
-    products_id: Type.Array(Type.Optional(Type.Number())),
-  }),
+  body: cartCreateRequestSchema,
   response: {
     200: Type.Object(
       {

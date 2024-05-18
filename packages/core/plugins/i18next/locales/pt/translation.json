@@ -130,5 +130,6 @@
   "resource_not_found": "Desculpe, o vendedor que você está tentando usar não existe ou foi excluído",
   "forbidden": "Seu usuário não está autorizado a acessar este recurso.",
   "main_seller_not_found": "Vendedor principal não encontrado.",
-  "invalid_split_rule": "Regra de split invalida."
+  "invalid_split_rule": "Regra de split invalida.",
+  "you_already_have_all_active_products": "Você já possui todos os produtos ativos"
 }

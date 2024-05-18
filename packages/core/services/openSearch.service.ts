@@ -2,7 +2,9 @@ import { Client } from "@opensearch-project/opensearch";
 import { injectable } from "tsyringe";
 import { openSearchEnvironment } from "@core/config/environments";
 import { LogLevel } from "@core/common/enums/LogLevel";
-import { CreateCartResponse } from "@core/useCases/cart/dtos/CreateCartResponse.dto";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
+import { PlanPrice } from "@core/common/enums/models/plan";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 
 @injectable()
 class OpenSearchService {
@@ -90,14 +92,25 @@ class OpenSearchService {
     }
   }
 
-  async indexCart(clientId: string, cart: CreateCartResponse) {
+  async indexCart(
+    cartId: string,
+    payload: CreateCartRequest,
+    totalPrices: PlanPrice,
+    productsIdByOrder: string[],
+    signatureActiveByClientId: ISignatureActiveByClient[]
+  ) {
     try {
       await this.client.index({
-        index: "cart",
-        body: { ...cart, client_id: clientId },
+        index: `cart`,
+        body: {
+          cart_id: cartId,
+          payload,
+          total_prices: totalPrices,
+          products_id: productsIdByOrder,
+          signature_active: signatureActiveByClientId,
+        },
       });
     } catch (error) {
-      console.error(`Error indexing cart: ${error}`);
       throw error;
     }
   }

@@ -142,7 +142,7 @@ export class OrderService {
     planPrice: PlanPrice,
     user: ViewClientResponse,
     totalPricesInstallments: OrderCreatePaymentsCard,
-    orderIds: OrderIds,
+    orderIds: OrderIds
   ): Promise<CreateOrder | null> => {
     const create = await this.orderCreatorByManagerRepository.create(
       tokenKeyData,
@@ -151,7 +151,7 @@ export class OrderService {
       planPrice,
       user,
       totalPricesInstallments,
-      orderIds,
+      orderIds
     );
 
     if (!create) {

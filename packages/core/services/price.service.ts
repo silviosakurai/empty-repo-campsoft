@@ -14,6 +14,7 @@ import { OrderService } from "./order.service";
 import { SignatureService } from "./signature.service";
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class PriceService {
@@ -42,7 +43,7 @@ export class PriceService {
 
   findPriceByProductsIdAndMonth = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     coupon: ICouponVerifyEligibilityUser[]
   ): Promise<PlanPriceCrossSellOrder | null> => {
     const selectedProducts = payload.products ?? [];
@@ -92,7 +93,7 @@ export class PriceService {
   };
 
   findPriceByPlanIdAndMonth = async (
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     coupon: ICouponVerifyEligibilityUser[]
   ): Promise<PlanPrice | null> => {
     let finalPrice = 0;
@@ -117,7 +118,7 @@ export class PriceService {
   };
 
   applyDiscountPreviousOrderByActivateNow = async (
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<number> => {
     if (payload?.activate_now && payload?.previous_order_id) {
       const orderPrevious = await this.orderService.listOrderById(
@@ -140,7 +141,7 @@ export class PriceService {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     findSignatureActiveByClientId: ISignatureActiveByClient[]
   ): Promise<PlanPrice | null> => {
     const coupon = await this.couponService.applyAndValidateDiscountCoupon(
@@ -170,7 +171,7 @@ export class PriceService {
   private applyDiscountPrice = async (
     planPrice: PlanPrice,
     planPriceCrossSell: PlanPriceCrossSellOrder | null,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     findSignatureActiveByClientId: ISignatureActiveByClient[]
   ) => {
     const finalPrice = Number(planPrice.price);

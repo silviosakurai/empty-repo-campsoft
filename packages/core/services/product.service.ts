@@ -36,6 +36,7 @@ import { ProductPartnerDeleterRepository } from "@core/repositories/product/Prod
 import { ProductPartnerViewerRepository } from "@core/repositories/product/ProductPartnerViewer.repository";
 import { ProductListerNoPaginationRepository } from "@core/repositories/product/ProductListerNoPaginationRepository.repository";
 import { ProductListerNoPaginationUserLoggedRepository } from "@core/repositories/product/ProductListerNoPaginationUserLogged.repository";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class ProductService {
@@ -63,7 +64,7 @@ export class ProductService {
     private readonly productGroupCreatorRepository: ProductGroupCreatorRepository,
     private readonly ProductGroupListerRepository: ProductGroupListerRepository,
     private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository,
-    private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository,
+    private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -96,7 +97,10 @@ export class ProductService {
     productIds: string[],
     query: ListAllProductRequest
   ) => {
-    return this.productListerNoPaginationUserLoggedRepository.list(productIds, query);
+    return this.productListerNoPaginationUserLoggedRepository.list(
+      productIds,
+      query
+    );
   };
 
   listByCompanyIds = async (
@@ -169,7 +173,7 @@ export class ProductService {
 
   isPlanProductCrossSell = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<boolean> => {
     const selectedProducts = payload.products ?? [];
 

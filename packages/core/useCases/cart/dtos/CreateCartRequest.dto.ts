@@ -1,6 +1,4 @@
-export interface CreateCartRequest {
-  discount_coupon: number;
-  months: number;
-  plans_id: number[] | null;
-  products_id: string[] | null;
-}
+import { cartCreateRequestSchema } from "@core/validations/cart/cartCreateRequestSchema";
+import { Static } from "@sinclair/typebox";
+
+export type CreateCartRequest = Static<typeof cartCreateRequestSchema>;

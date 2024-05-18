@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import { CreateCartRequest } from '@core/useCases/cart/dtos/CreateCartRequest.dto';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
+import CreditCardExpirationDateIsInvalidError from '@core/common/exceptions/CreditCardExpirationDateIsInvalidError';
 
 export const createCart = async (
   request: FastifyRequest<{ Body: CreateCartRequest }>,
@@ -14,9 +15,10 @@ export const createCart = async (
 
   try {
     const data = await service.create(
-      request.body,
-      tokenKeyData.id_parceiro,
-      tokenJwtData.clientId
+      t,
+      tokenKeyData,
+      tokenJwtData,
+      request.body
     );
 
     return sendResponse(reply, {
@@ -25,7 +27,20 @@ export const createCart = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
-    console.log(error);
+
+    if (error instanceof CreditCardExpirationDateIsInvalidError) {
+      return sendResponse(reply, {
+        message: t('expired_card_error'),
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
+
+    if (error instanceof Error) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     return sendResponse(reply, {
       message: t('internal_server_error'),
