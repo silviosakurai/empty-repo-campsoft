@@ -94,6 +94,7 @@ export class ProductService {
   ) => {
     return this.productListerNoPaginationRepository.list(companyId, query);
   };
+
   listNoPaginationUserLogged = async (
     productIds: string[],
     query: ListAllProductRequest

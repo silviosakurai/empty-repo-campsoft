@@ -9,6 +9,12 @@ export const cartEditSchema = {
   description: "Edita um carrinho",
   tags: [TagSwagger.cart],
   produces: ["application/json"],
+  security: [
+    {
+      authenticateKeyApi: [],
+      authenticateJwt: [],
+    },
+  ],
   headers: Type.Object({
     "Accept-Language": Type.Optional(
       Type.String({
