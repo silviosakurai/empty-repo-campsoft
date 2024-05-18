@@ -7,6 +7,7 @@ import {
   plan,
   planItem,
   productCrossSell,
+  product,
 } from "@core/models";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { ProductSingleView } from "@core/interfaces/repositories/signature";
@@ -29,6 +30,8 @@ export class FindSignatureSingleProductsRepository {
     const response = await this.db
       .select({
         product_id: clientProductSignature.id_produto,
+        name: product.produto,
+        slug: product.url_caminho,
         status: clientProductSignature.status,
         activation_date: clientProductSignature.data_ativacao,
         price: productCrossSell.preco_desconto,
@@ -41,6 +44,12 @@ export class FindSignatureSingleProductsRepository {
             WHEN 12 THEN 'Anual' 
             ELSE CONCAT(${clientSignature.recorrencia_periodo}, ' meses')
           END`,
+        images: {
+          main_image: product.imagem,
+          icon: product.icon,
+          logo: product.logo,
+          background_image: product.imagem_background,
+        },
       })
       .from(clientSignature)
       .innerJoin(
@@ -66,6 +75,7 @@ export class FindSignatureSingleProductsRepository {
           eq(productCrossSell.meses, clientSignature.recorrencia_periodo)
         )
       )
+      .innerJoin(product, eq(product.id_produto, productCrossSell.id_produto))
       .where(
         and(
           eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
