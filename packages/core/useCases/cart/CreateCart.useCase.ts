@@ -77,19 +77,13 @@ export class CreateCartUseCase {
 
     const cartId = uuidv4();
 
-    await this.openSearchService.indexCart(
+    return await this.openSearchService.indexCart(
       cartId,
       payload,
       totalPrices,
       productsIdByOrder,
       findSignatureActiveByClientId
     );
-
-    return {
-      cart_id: cartId,
-      prices: totalPrices,
-      products_id: productsIdByOrder,
-    };
   }
 
   private async findSignatureActiveByClientId(

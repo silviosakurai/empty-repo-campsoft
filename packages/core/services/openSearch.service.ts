@@ -112,16 +112,20 @@ class OpenSearchService {
     productsIdByOrder: string[],
     signatureActiveByClientId: ISignatureActiveByClient[]
   ) {
+    const body = {
+      cart_id: cartId,
+      payload,
+      total_prices: totalPrices,
+      products_id: productsIdByOrder,
+      signature_active: signatureActiveByClientId,
+    } as CartDocument;
+
     await this.client.index({
       index: `cart`,
-      body: {
-        cart_id: cartId,
-        payload,
-        total_prices: totalPrices,
-        products_id: productsIdByOrder,
-        signature_active: signatureActiveByClientId,
-      } as CartDocument,
+      body,
     });
+
+    return body;
   }
 
   async getCart(cartId: string): Promise<CartDocument | null> {

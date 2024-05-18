@@ -3,9 +3,14 @@ import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
   cartCreatorSchemaValidation,
+  cartEditSchema,
   cartListSchema,
 } from '@core/validations/cart';
-import { cartCreatePermissions, cartReadPermissions } from '@/permissions';
+import {
+  cartCreatePermissions,
+  cartReadPermissions,
+  cartUpdatePermissions,
+} from '@/permissions';
 
 export default async function cartRoutes(server: FastifyInstance) {
   const cartController = container.resolve(CartController);
@@ -18,6 +23,17 @@ export default async function cartRoutes(server: FastifyInstance) {
         server.authenticateKeyApi(request, reply, cartCreatePermissions),
       (request, reply) =>
         server.authenticateJwt(request, reply, cartCreatePermissions),
+    ],
+  });
+
+  server.put('/cart/:cartId', {
+    schema: cartEditSchema,
+    handler: cartController.findCartById,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, cartUpdatePermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, cartUpdatePermissions),
     ],
   });
 

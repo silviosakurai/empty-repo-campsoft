@@ -8,6 +8,7 @@ export enum PermissionsRoles {
   BANNER_DELETE = "banner_delete",
   CART_CREATE = "cart_create",
   CART_READ = "cart_read",
+  CART_EDIT = "cart_edit",
   USER_LIST = "user_list",
   USER_VIEW = "user_view",
   USER_CREATE = "user_create",
