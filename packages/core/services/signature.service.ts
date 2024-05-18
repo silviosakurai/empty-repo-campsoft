@@ -6,17 +6,14 @@ import { CancelSignatureRepository } from "@core/repositories/signature/CancelSi
 import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import { injectable } from "tsyringe";
 import { SignatureCreatorRepository } from "@core/repositories/signature/SignatureCreator.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { SignaturePaidActiveRepository } from "@core/repositories/signature/SignaturePaidActive.repository";
 import { SignatureUpgradedRepository } from "@core/repositories/signature/SignatureUpgraded.repository";
-import {
-  ISignatureActiveByClient,
-  ISignatureByOrder,
-} from "@core/interfaces/repositories/signature";
+import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 import { OrdersUpdaterRepository } from "@core/repositories/order/OrdersUpdater.repository";
 import { OrderStatusEnum } from "@core/common/enums/models/order";
 import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
 import { SignatureActiveByClientIdListerRepository } from "@core/repositories/signature/SignatureActiveByClientIdLister.repository";
+import { CartDocument } from "@core/interfaces/repositories/cart";
 
 @injectable()
 export class SignatureService {
@@ -65,28 +62,23 @@ export class SignatureService {
   };
 
   create = async (
-    tokenKeyData: ITokenKeyData,
+    partnerId: number,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto,
+    cart: CartDocument,
     orderId: string
   ) => {
     return this.signatureCreatorRepository.create(
-      tokenKeyData,
+      partnerId,
       tokenJwtData,
-      payload,
+      cart,
       orderId
     );
   };
 
-  createSignatureProducts = async (
-    products: string[],
-    signatureId: string,
-    findSignatureActiveByClientId: ISignatureActiveByClient[]
-  ) => {
+  createSignatureProducts = async (signatureId: string, cart: CartDocument) => {
     return this.signatureCreatorRepository.createSignatureProducts(
-      products,
       signatureId,
-      findSignatureActiveByClientId
+      cart
     );
   };
 

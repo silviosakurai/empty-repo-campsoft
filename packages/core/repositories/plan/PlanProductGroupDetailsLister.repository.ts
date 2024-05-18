@@ -24,7 +24,7 @@ export class PlanProductGroupDetailsListerRepository {
 
   async list(
     planId: number,
-    tokenKeyData: ITokenKeyData
+    partnerId: number
   ): Promise<FindOrderByNumberAvailableProducts[]> {
     const results = await this.db
       .select({
@@ -44,10 +44,7 @@ export class PlanProductGroupDetailsListerRepository {
         eq(productGroup.id_produto_grupo, productGroupProduct.id_produto_grupo)
       )
       .where(
-        and(
-          eq(plan.id_plano, planId),
-          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
-        )
+        and(eq(plan.id_plano, planId), eq(planPartner.id_parceiro, partnerId))
       )
       .groupBy(productGroupProduct.id_produto_grupo)
       .execute();

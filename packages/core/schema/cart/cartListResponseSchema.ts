@@ -10,3 +10,13 @@ export const cartListResponseSchema = Type.Object({
   products_id: Type.Array(Type.String()),
   signature_active: Type.Array(signatureActiveSchema),
 });
+
+export const cartListManagerResponseSchema = Type.Object({
+  cart_id: Type.String({ format: "uuid" }),
+  client_id: Type.String({ format: "uuid" }),
+  partner_id: Type.Number(),
+  payload: cartCreateRequestSchema,
+  total_prices: planPriceSchema,
+  products_id: Type.Array(Type.String()),
+  signature_active: Type.Array(signatureActiveSchema),
+});

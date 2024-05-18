@@ -11,7 +11,6 @@ import { ProductService } from "./product.service";
 import { CouponService } from "./coupon.service";
 import { PlanService } from "./plan.service";
 import { OrderService } from "./order.service";
-import { SignatureService } from "./signature.service";
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
 import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
@@ -22,8 +21,7 @@ export class PriceService {
     private readonly productService: ProductService,
     private readonly couponService: CouponService,
     private readonly planService: PlanService,
-    private readonly orderService: OrderService,
-    private readonly signatureService: SignatureService
+    private readonly orderService: OrderService
   ) {}
 
   calculatePriceInstallments = (

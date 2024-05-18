@@ -2,35 +2,26 @@ import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { CreateOrderByManagerUseCase } from '@core/useCases/order/CreateOrderByManager.useCase';
-import { CreateOrderByManagerRequestDto } from '@core/useCases/order/dtos/CreateOrderByManagerRequest.dto';
 import { container } from 'tsyringe';
 import CreditCardExpirationDateIsInvalidError from '@core/common/exceptions/CreditCardExpirationDateIsInvalidError';
 import { generalEnvironment } from '@core/config/environments';
+import { CreateOrderRequestDto } from '@core/useCases/order/dtos/CreateOrderRequest.dto';
 
 export const createOrder = async (
   request: FastifyRequest<{
-    Body: CreateOrderByManagerRequestDto;
+    Body: CreateOrderRequestDto;
   }>,
   reply: FastifyReply
 ) => {
   const createOrderUseCase = container.resolve(CreateOrderByManagerUseCase);
-  const { t, tokenKeyData, tokenJwtData } = request;
-
-  const clientIdBody = {
-    clientId: request.body.client_id,
-    access: [],
-  }
+  const { t, tokenJwtData } = request;
 
   try {
-    const splitRuleId = generalEnvironment;
-
     const response = await createOrderUseCase.execute(
       t,
-      tokenJwtData.clientId,
-      tokenKeyData,
-      clientIdBody,
+      tokenJwtData,
       request.body,
-      splitRuleId.managerSplitRuleId,
+      generalEnvironment.managerSplitRuleId
     );
 
     return sendResponse(reply, {

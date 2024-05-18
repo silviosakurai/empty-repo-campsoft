@@ -2,17 +2,16 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { clientSignature, clientProductSignature } from "@core/models";
-import { and, desc, eq, sql } from "drizzle-orm";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { sql } from "drizzle-orm";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import {
   ClientProductSignatureProcess,
   ClientProductSignatureStatus,
   ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
-import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
+import { CartDocument } from "@core/interfaces/repositories/cart";
+import { v4 as uuidv4 } from "uuid";
 
 @injectable()
 export class SignatureCreatorRepository {
@@ -21,24 +20,26 @@ export class SignatureCreatorRepository {
   ) {}
 
   async create(
-    tokenKeyData: ITokenKeyData,
+    partnerId: number,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto,
+    cart: CartDocument,
     orderId: string
-  ): Promise<{ id_assinatura_cliente: string } | null> {
+  ): Promise<string | null> {
+    const signatureId = uuidv4();
+
     const result = await this.db
       .insert(clientSignature)
       .values({
         id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
-        id_parceiro: tokenKeyData.id_parceiro,
+        id_parceiro: partnerId,
         ciclo: 0,
         id_assinatura_status: SignatureStatus.PENDING,
-        id_plano: payload.plan.plan_id,
-        recorrencia: payload.subscribe
+        id_plano: cart.payload.plan.plan_id,
+        recorrencia: cart.payload.subscribe
           ? ClientSignatureRecorrencia.YES
           : ClientSignatureRecorrencia.NO,
-        recorrencia_periodo: payload.months ?? 0,
+        recorrencia_periodo: cart.payload.months ?? 0,
       })
       .execute();
 
@@ -46,28 +47,15 @@ export class SignatureCreatorRepository {
       return null;
     }
 
-    const signatureFounded = await this.findLastSignatureByIdClient(
-      tokenJwtData.clientId,
-      tokenKeyData.id_parceiro,
-      orderId
-    );
-
-    if (!signatureFounded) {
-      return null;
-    }
-
-    return {
-      id_assinatura_cliente: signatureFounded.id_assinatura_cliente,
-    } as { id_assinatura_cliente: string };
+    return signatureId;
   }
 
   async createSignatureProducts(
-    products: string[],
     signatureId: string,
-    findSignatureActiveByClientId: ISignatureActiveByClient[]
+    cart: CartDocument
   ): Promise<boolean> {
-    const insertProducts = products.map((product) => {
-      const productAlreadyExists = findSignatureActiveByClientId.find(
+    const insertProducts = cart.products_id.map((product) => {
+      const productAlreadyExists = cart.signature_active.find(
         (signature) => signature.product_id === product
       );
 
@@ -93,32 +81,5 @@ export class SignatureCreatorRepository {
     }
 
     return true;
-  }
-
-  async findLastSignatureByIdClient(
-    clientId: string,
-    companyId: number,
-    orderId: string
-  ): Promise<{ id_assinatura_cliente: string } | null> {
-    const result = await this.db
-      .select({
-        id_assinatura_cliente: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
-      })
-      .from(clientSignature)
-      .where(
-        and(
-          eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(clientSignature.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(clientSignature.id_parceiro, companyId)
-        )
-      )
-      .orderBy(desc(clientSignature.created_at))
-      .execute();
-
-    if (!result.length) {
-      return null;
-    }
-
-    return result[0] as { id_assinatura_cliente: string };
   }
 }

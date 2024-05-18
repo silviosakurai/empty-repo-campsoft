@@ -87,7 +87,10 @@ export class OrderByNumberViewerRepository {
   ): Promise<OrderByNumberResponse | null> {
     const [payments, plan] = await Promise.all([
       this.orderPaymentByOrderIdViewer.find(result.order_id),
-      this.orderPlansByOrderIdViewer.view(result.order_id, tokenKeyData),
+      this.orderPlansByOrderIdViewer.view(
+        result.order_id,
+        tokenKeyData.id_parceiro
+      ),
     ]);
 
     return {
