@@ -1,9 +1,7 @@
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { OrdersListerFromManagersUseCase } from '@core/useCases/order/OrdersListerFromManagers.useCase';
 import { ListOrderRequestDto } from '@core/useCases/order/dtos/ListOrderRequest.dto';
-import { container } from 'tsyringe';
 
 export const listOrder = async (
   request: FastifyRequest<{
@@ -11,28 +9,10 @@ export const listOrder = async (
   }>,
   reply: FastifyReply
 ) => {
-  const ordersListerUseCase = container.resolve(
-    OrdersListerFromManagersUseCase
-  );
-  const { t, tokenKeyData, tokenJwtData } = request;
-  const input = request.query;
+  const { t } = request;
 
   try {
-    const response = await ordersListerUseCase.execute(
-      input,
-      tokenKeyData,
-      tokenJwtData
-    );
-
-    if (!response) {
-      return sendResponse(reply, {
-        message: t('order_not_found'),
-        httpStatusCode: HTTPStatusCode.NOT_FOUND,
-      });
-    }
-
     return sendResponse(reply, {
-      data: response,
       httpStatusCode: HTTPStatusCode.OK,
     });
   } catch (error) {

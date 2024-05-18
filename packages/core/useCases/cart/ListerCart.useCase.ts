@@ -17,6 +17,8 @@ export class ListerCartUseCase {
       throw new Error(t("cart_not_found"));
     }
 
+    console.log("getCart", getCart);
+
     return getCart;
   }
 }
