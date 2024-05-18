@@ -1,5 +1,5 @@
-import { planPriceSchema } from "@core/validations/plan/planPriceSchema";
 import { Type } from "@sinclair/typebox";
+import { planPriceSchema } from "../plan/planPriceSchema";
 
 export const cartCreatorResponseSchema = Type.Object({
   cart_id: Type.String({ format: "uuid" }),

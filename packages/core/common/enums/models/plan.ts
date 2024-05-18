@@ -2,7 +2,7 @@ import { ProductResponse } from "@core/useCases/product/dtos/ProductResponse.dto
 import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
 import { Static } from "@sinclair/typebox";
 import { float } from "@opensearch-project/opensearch/api/types";
-import { planPriceSchema } from "@core/validations/plan/planPriceSchema";
+import { planPriceSchema } from "@core/schema/plan/planPriceSchema";
 
 export enum PlanVisivelSite {
   YES = "Y",

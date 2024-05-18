@@ -1,7 +1,7 @@
-import { cartCreateRequestSchema } from "@core/validations/cart";
-import { planPriceSchema } from "@core/validations/plan/planPriceSchema";
 import { Type } from "@sinclair/typebox";
 import { signatureActiveSchema } from "../signature/signatureActiveSchema";
+import { cartCreateRequestSchema } from "./cartCreateRequestSchema";
+import { planPriceSchema } from "../plan/planPriceSchema";
 
 export const cartListResponseSchema = Type.Object({
   cart_id: Type.String({ format: "uuid" }),

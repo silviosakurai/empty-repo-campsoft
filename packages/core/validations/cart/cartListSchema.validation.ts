@@ -1,8 +1,8 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { Type } from "@sinclair/typebox";
-import { cartListRequestSchema } from "./cartListRequestSchema.validation";
 import { cartListResponseSchema } from "@core/schema/cart/cartListResponseSchema";
+import { cartListRequestSchema } from "@core/schema/cart/cartListRequestSchema";
 
 export const cartListSchema = {
   description: "Lista o carrinho pelo id",
@@ -26,6 +26,22 @@ export const cartListSchema = {
         data: cartListResponseSchema,
       },
       { description: "Successful" }
+    ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
     ),
     500: Type.Object(
       {

@@ -1,8 +1,8 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { cartCreateRequestSchema } from "@core/schema/cart/cartCreateRequestSchema";
 import { cartCreatorResponseSchema } from "@core/schema/cart/cartCreatorResponseSchema";
 import { Type } from "@sinclair/typebox";
-import { cartCreateRequestSchema } from "./cartCreateRequestSchema.validation";
 
 export const cartCreatorSchemaValidation = {
   description: "Cria um novo carrinho",
@@ -26,6 +26,22 @@ export const cartCreatorSchemaValidation = {
         data: cartCreatorResponseSchema,
       },
       { description: "Successful" }
+    ),
+    400: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Bad Request" }
+    ),
+    401: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Unauthorized" }
     ),
     500: Type.Object(
       {
