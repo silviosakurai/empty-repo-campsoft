@@ -8,7 +8,6 @@ import { ProductViewerRepository } from "@core/repositories/product/ProductViewe
 import { CrossSellProductListerRepository } from "@core/repositories/product/CrossSellProductLister.repository";
 import { CrossSellProductRequest } from "@core/useCases/product/dtos/ListCrossSellProductRequest.dto";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { CreateProductRequest } from "@core/useCases/product/dtos/CreateProductRequest.dto";
 import { ProductCreatorRepository } from "@core/repositories/product/ProductCreator.repository";
 import { ProductListerGroupedByCompanyRepository } from "@core/repositories/product/ProductListerGroupedByCompany.repository";

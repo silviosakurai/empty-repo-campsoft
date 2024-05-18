@@ -17,7 +17,6 @@ import {
   eq,
   inArray,
   like,
-  ne,
   sql,
 } from "drizzle-orm";
 import { setPaginationData } from "@core/common/functions/createPaginationData";

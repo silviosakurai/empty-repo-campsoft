@@ -4,7 +4,6 @@ import { CouponListerRepository } from "@core/repositories/coupon/CouponLister.r
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ICouponVerifyEligibilityUser } from "@core/interfaces/repositories/coupon";
 import { PlanPrice } from "@core/common/enums/models/plan";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { CouponViewerByIdRepository } from "@core/repositories/coupon/CouponViewerById.repository";
 import { CouponUpdaterRepository } from "@core/repositories/coupon/CouponUpdater.repository";

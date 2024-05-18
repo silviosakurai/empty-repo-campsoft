@@ -8,7 +8,6 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PlanProductGroupDetailsListerRepository } from "@core/repositories/plan/PlanProductGroupDetailsLister.repository";
 import { PlanProduct } from "@core/interfaces/repositories/plan";
 import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrder.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
