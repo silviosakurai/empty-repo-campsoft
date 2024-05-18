@@ -28,7 +28,7 @@ export default async function cartRoutes(server: FastifyInstance) {
 
   server.put('/cart/:cartId', {
     schema: cartEditSchema,
-    handler: cartController.findCartById,
+    handler: cartController.editCart,
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, cartUpdatePermissions),

@@ -111,7 +111,7 @@ class OpenSearchService {
     totalPrices: PlanPrice,
     productsIdByOrder: string[],
     signatureActiveByClientId: ISignatureActiveByClient[]
-  ) {
+  ): Promise<CartDocument | null> {
     const body = {
       cart_id: cartId,
       payload,
@@ -120,29 +120,65 @@ class OpenSearchService {
       signature_active: signatureActiveByClientId,
     } as CartDocument;
 
-    await this.client.index({
-      index: `cart`,
-      body,
-    });
+    try {
+      await this.client.index({
+        index: `cart`,
+        body,
+      });
+    } catch (error) {
+      return null;
+    }
+
+    return body;
+  }
+
+  async updateCart(
+    cartId: string,
+    payload: CreateCartRequest,
+    totalPrices: PlanPrice,
+    productsIdByOrder: string[],
+    signatureActiveByClientId: ISignatureActiveByClient[]
+  ): Promise<CartDocument | null> {
+    const body: CartDocument = {
+      cart_id: cartId,
+      payload,
+      total_prices: totalPrices,
+      products_id: productsIdByOrder,
+      signature_active: signatureActiveByClientId,
+    };
+
+    try {
+      await this.client.index({
+        index: "cart",
+        id: cartId,
+        body,
+      });
+    } catch (error) {
+      return null;
+    }
 
     return body;
   }
 
   async getCart(cartId: string): Promise<CartDocument | null> {
-    const response = await this.client.search<SearchResponse<CartDocument>>({
-      index: "cart",
-      body: {
-        query: {
-          match: {
-            cart_id: cartId,
+    try {
+      const response = await this.client.search<SearchResponse<CartDocument>>({
+        index: "cart",
+        body: {
+          query: {
+            match: {
+              cart_id: cartId,
+            },
           },
         },
-      },
-    });
+      });
 
-    if (response.statusCode === 200 && response.body.hits.total.value > 0) {
-      return response.body.hits.hits[0]._source;
-    } else {
+      if (response.statusCode === 200 && response.body.hits.total.value > 0) {
+        return response.body.hits.hits[0]._source;
+      }
+
+      return null;
+    } catch (error) {
       return null;
     }
   }
