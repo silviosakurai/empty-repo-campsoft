@@ -1,7 +1,10 @@
 import CartController from '@/controllers/cart';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
-import { cartCreatorSchemaValidation } from '@core/validations/cart';
+import {
+  cartCreatorSchemaValidation,
+  cartListSchema,
+} from '@core/validations/cart';
 import { cartCreatePermissions, cartReadPermissions } from '@/permissions';
 
 export default async function cartRoutes(server: FastifyInstance) {
@@ -19,8 +22,8 @@ export default async function cartRoutes(server: FastifyInstance) {
   });
 
   server.get('/cart/:cartId', {
-    schema: cartCreatorSchemaValidation,
-    handler: cartController.create,
+    schema: cartListSchema,
+    handler: cartController.findCartById,
     preHandler: [
       (request, reply) =>
         server.authenticateKeyApi(request, reply, cartReadPermissions),

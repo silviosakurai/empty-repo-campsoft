@@ -131,5 +131,6 @@
   "forbidden": "Seu usuário não está autorizado a acessar este recurso.",
   "main_seller_not_found": "Vendedor principal não encontrado.",
   "invalid_split_rule": "Regra de split invalida.",
-  "you_already_have_all_active_products": "Você já possui todos os produtos ativos"
+  "you_already_have_all_active_products": "Você já possui todos os produtos ativos",
+  "cart_not_found": "Carrinho não encontrado"
 }

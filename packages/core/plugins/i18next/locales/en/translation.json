@@ -131,5 +131,6 @@
   "forbidden": "Your user is not authorized to access this resource.",
   "main_seller_not_found": "Main seller not found.",
   "invalid_split_rule": "Invalid split rule.",
-  "you_already_have_all_active_products": "You already have all active products"
+  "you_already_have_all_active_products": "You already have all active products",
+  "cart_not_found": "Cart not found"
 }

@@ -9,15 +9,13 @@ import { CartDocument } from "@core/interfaces/repositories/cart";
 
 interface SearchResponse<T> {
   statusCode: number;
-  body: {
-    hits: {
-      total: {
-        value: number;
-      };
-      hits: Array<{
-        _source: T;
-      }>;
+  hits: {
+    total: {
+      value: number;
     };
+    hits: Array<{
+      _source: T;
+    }>;
   };
 }
 
@@ -126,7 +124,7 @@ class OpenSearchService {
     });
   }
 
-  async getCart(cartId: string): Promise<CartDocument[]> {
+  async getCart(cartId: string): Promise<CartDocument | null> {
     const response = await this.client.search<SearchResponse<CartDocument>>({
       index: "cart",
       body: {
@@ -138,13 +136,10 @@ class OpenSearchService {
       },
     });
 
-    if (
-      response.statusCode === 200 &&
-      response.body.body.hits.total.value > 0
-    ) {
-      return response.body.body.hits.hits.map((hit) => hit._source);
+    if (response.statusCode === 200 && response.body.hits.total.value > 0) {
+      return response.body.hits.hits[0]._source;
     } else {
-      return [] as CartDocument[];
+      return null;
     }
   }
 }

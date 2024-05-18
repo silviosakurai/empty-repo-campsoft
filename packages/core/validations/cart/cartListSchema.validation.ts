@@ -1,11 +1,11 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
-import { cartCreatorResponseSchema } from "@core/schema/cart/cartCreatorResponseSchema";
 import { Type } from "@sinclair/typebox";
-import { cartCreateRequestSchema } from "./cartCreateRequestSchema.validation";
+import { cartListRequestSchema } from "./cartListRequestSchema.validation";
+import { cartListResponseSchema } from "@core/schema/cart/cartListResponseSchema";
 
-export const cartCreatorSchemaValidation = {
-  description: "Cria um novo carrinho",
+export const cartListSchema = {
+  description: "Lista o carrinho pelo id",
   tags: [TagSwagger.cart],
   produces: ["application/json"],
   headers: Type.Object({
@@ -17,13 +17,13 @@ export const cartCreatorSchemaValidation = {
       })
     ),
   }),
-  body: cartCreateRequestSchema,
+  params: cartListRequestSchema,
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: cartCreatorResponseSchema,
+        data: cartListResponseSchema,
       },
       { description: "Successful" }
     ),

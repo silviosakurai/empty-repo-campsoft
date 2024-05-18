@@ -1,24 +1,28 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { CreateCartUseCase } from '@core/useCases/cart/CreateCart.useCase';
+import { ListerCartUseCase } from '@core/useCases/cart/ListerCart.useCase';
 import { container } from 'tsyringe';
-import { CreateCartRequest } from '@core/useCases/cart/dtos/CreateCartRequest.dto';
+import { ListCartRequest } from '@core/useCases/cart/dtos/ListCartRequest.dto';
 import { sendResponse } from '@core/common/functions/sendResponse';
 import { HTTPStatusCode } from '@core/common/enums/HTTPStatusCode';
 
-export const createCart = async (
-  request: FastifyRequest<{ Body: CreateCartRequest }>,
+export const findCartById = async (
+  request: FastifyRequest<{ Params: ListCartRequest }>,
   reply: FastifyReply
 ) => {
-  const service = container.resolve(CreateCartUseCase);
-  const { t, tokenKeyData, tokenJwtData } = request;
+  const listerCartUseCase = container.resolve(ListerCartUseCase);
+  const { t } = request;
+
+  const cartId = request.params.cartId;
+
+  if (!cartId) {
+    return sendResponse(reply, {
+      message: t('cart_id_required'),
+      httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+    });
+  }
 
   try {
-    const data = await service.create(
-      t,
-      tokenKeyData,
-      tokenJwtData,
-      request.body
-    );
+    const data = await listerCartUseCase.getCart(t, cartId);
 
     return sendResponse(reply, {
       data,
