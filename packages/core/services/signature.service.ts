@@ -14,7 +14,6 @@ import { OrderStatusEnum } from "@core/common/enums/models/order";
 import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
 import { SignatureActiveByClientIdListerRepository } from "@core/repositories/signature/SignatureActiveByClientIdLister.repository";
 import { CartDocument } from "@core/interfaces/repositories/cart";
-import { TFunction } from "i18next";
 import { ListOrderById } from "@core/interfaces/repositories/order";
 import OpenSearchService from "./openSearch.service";
 import { OrderService } from "./order.service";
