@@ -9,7 +9,6 @@ import {
   OrderByNumberByManagerResponse,
   OrderByNumberResponse,
 } from "@core/interfaces/repositories/order";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { ClientViewerRepository } from "../client/ClientViewer.repository";
 import { CartDocumentManager } from "@core/interfaces/repositories/cart";

@@ -10,7 +10,6 @@ import { OrderPaymentHistoricViewerRepository } from "@core/repositories/order/O
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 import {
-  CreateOrder,
   ListOrderById,
   OrderCreatePaymentsCard,
   OrderPaymentUpdateInput,

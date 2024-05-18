@@ -1,6 +1,5 @@
 import { injectable } from "tsyringe";
 import { OrderService } from "@core/services/order.service";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";

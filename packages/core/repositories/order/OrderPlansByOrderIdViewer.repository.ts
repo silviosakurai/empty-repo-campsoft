@@ -4,7 +4,6 @@ import { and, eq, sql } from "drizzle-orm";
 import * as schema from "@core/models";
 import { plan, order, planPrice, planPartner } from "@core/models";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PricesByPlanIdListerRepository } from "../plan/PricesByPlanIdLister.repository";
 import { PlanProductDetailsListerRepository } from "../plan/PlanProductDetailsLister.repository";
 import { PlanDetails } from "@core/interfaces/repositories/order";
