@@ -28,6 +28,7 @@ import {
   CartDocument,
   CartDocumentManager,
 } from "@core/interfaces/repositories/cart";
+import { OrderByNumberCreateViewerRepository } from "@core/repositories/order/OrderByNumberCreateViewer.repository";
 
 @injectable()
 export class OrderService {
@@ -42,7 +43,8 @@ export class OrderService {
     private readonly orderByNumberViewerByManagerRepository: OrderByNumberViewerByManagerRepository,
     private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
     private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository,
-    private readonly orderPaymentHistoricViewerRepository: OrderPaymentHistoricViewerRepository
+    private readonly orderPaymentHistoricViewerRepository: OrderPaymentHistoricViewerRepository,
+    private readonly orderByNumberCreateViewerRepository: OrderByNumberCreateViewerRepository
   ) {}
 
   list = async (
@@ -76,6 +78,18 @@ export class OrderService {
     tokenJwtData: ITokenJwtData
   ) => {
     return this.orderByNumberViewerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
+  viewOrderByNumberByCreate = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.orderByNumberCreateViewerRepository.view(
       orderNumber,
       tokenKeyData,
       tokenJwtData

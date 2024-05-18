@@ -4,7 +4,7 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
-import { OrderByNumberResponse } from "@core/interfaces/repositories/order";
+import { OrderByNumberCreateResponse } from "@core/interfaces/repositories/order";
 import { SignatureService } from "@core/services/signature.service";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PriceService } from "@core/services/price.service";
@@ -143,8 +143,8 @@ export class CreateOrderUseCase {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     orderId: string
-  ): Promise<OrderByNumberResponse | null> {
-    const results = await this.orderService.viewOrderByNumber(
+  ): Promise<OrderByNumberCreateResponse | null> {
+    const results = await this.orderService.viewOrderByNumberByCreate(
       orderId,
       tokenKeyData,
       tokenJwtData

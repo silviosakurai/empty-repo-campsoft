@@ -36,6 +36,7 @@ export class OrderCreatorRepository {
       id_pedido: sql`UUID_TO_BIN(${orderId})` as unknown as string,
       id_cliente:
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
+      id_carrinho: sql`UUID_TO_BIN(${payload.cart_id})` as unknown as string,
       id_parceiro: tokenKeyData.id_parceiro,
       id_pedido_status: OrderStatusEnum.PENDING,
       id_plano: cart.payload.plan.plan_id ?? null,

@@ -160,15 +160,9 @@ export class OrdersListerRepository {
             WHEN 1 THEN 'Mensal'
             WHEN 2 THEN 'Bimestral'
             WHEN 3 THEN 'Trimestral'
-            WHEN 4 THEN 'Quadrimestral'
-            WHEN 5 THEN 'Quintimestral'
             WHEN 6 THEN 'Semestral'
-            WHEN 7 THEN 'Setimestral'
-            WHEN 8 THEN 'Octimestral'
-            WHEN 9 THEN 'Nonimestral'
-            WHEN 10 THEN 'Decimestral'
-            WHEN 11 THEN 'Undecimestral'
-            WHEN 12 THEN 'Dodecimestral' 
+            WHEN 12 THEN 'Anual' 
+            ELSE CONCAT(${order.recorrencia_periodo}, ' meses')
           END`,
         },
         created_at: order.created_at,

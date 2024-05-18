@@ -19,6 +19,7 @@ export const order = mysqlTable("pedido", {
     .default(sql`uuid_to_bin(uuid())`),
   id_pedido_anterior: varbinary("id_pedido_anterior", { length: 16 }),
   id_cliente: varbinary("id_cliente", { length: 16 }),
+  id_carrinho: varbinary("id_carrinho", { length: 16 }),
   id_vendedor: varbinary("id_vendedor", { length: 16 }),
   id_parceiro: int("id_parceiro").notNull(),
   id_pedido_status: int("id_pedido_status").notNull(),
