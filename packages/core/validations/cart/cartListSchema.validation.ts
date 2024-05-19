@@ -8,6 +8,12 @@ export const cartListSchema = {
   description: "Lista o carrinho pelo id",
   tags: [TagSwagger.cart],
   produces: ["application/json"],
+  security: [
+    {
+      authenticateKeyApi: [],
+      authenticateJwt: [],
+    },
+  ],
   headers: Type.Object({
     "Accept-Language": Type.Optional(
       Type.String({

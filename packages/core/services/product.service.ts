@@ -37,6 +37,7 @@ import { ProductListerNoPaginationRepository } from "@core/repositories/product/
 import { ProductListerNoPaginationUserLoggedRepository } from "@core/repositories/product/ProductListerNoPaginationUserLogged.repository";
 import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 import { ProductListerByCartRepository } from "@core/repositories/product/ProductListerByCart.repository";
+import { ProductListerByVoucherRepository } from "@core/repositories/product/ProductListerByVoucher.repository";
 
 @injectable()
 export class ProductService {
@@ -65,7 +66,8 @@ export class ProductService {
     private readonly ProductGroupListerRepository: ProductGroupListerRepository,
     private readonly productListerNoPaginationRepository: ProductListerNoPaginationRepository,
     private readonly productListerNoPaginationUserLoggedRepository: ProductListerNoPaginationUserLoggedRepository,
-    private readonly productListerByCartRepository: ProductListerByCartRepository
+    private readonly productListerByCartRepository: ProductListerByCartRepository,
+    private readonly productListerByVoucherRepository: ProductListerByVoucherRepository
   ) {}
 
   create = async (input: CreateProductRequest) => {
@@ -94,6 +96,7 @@ export class ProductService {
   ) => {
     return this.productListerNoPaginationRepository.list(companyId, query);
   };
+
   listNoPaginationUserLogged = async (
     productIds: string[],
     query: ListAllProductRequest
@@ -277,5 +280,17 @@ export class ProductService {
 
   listByIdsCart = async (productIds: string[]) => {
     return this.productListerByCartRepository.listByIds(productIds);
+  };
+
+  listProductsByVoucher = async (
+    partnerId: number,
+    voucher: string
+  ): Promise<string[]> => {
+    const products = await this.productListerByVoucherRepository.list(
+      partnerId,
+      voucher
+    );
+
+    return products.map((product) => product.product_id);
   };
 }

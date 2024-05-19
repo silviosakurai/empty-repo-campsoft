@@ -5,7 +5,6 @@ import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { TFunction } from "i18next";
 import { OrderByNumberCreateResponse } from "@core/interfaces/repositories/order";
-import { SignatureService } from "@core/services/signature.service";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { PriceService } from "@core/services/price.service";
 import { PaymentService } from "@core/services/payment.service";
@@ -18,7 +17,6 @@ export class CreateOrderUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly clientService: ClientService,
-    private readonly signatureService: SignatureService,
     private readonly priceService: PriceService,
     private readonly paymentService: PaymentService,
     private readonly orderValidationService: OrderValidationService,

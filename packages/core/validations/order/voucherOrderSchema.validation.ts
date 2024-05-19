@@ -1,13 +1,11 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { createOrderListSchema } from "@core/schema/order/createOrderListSchema";
 import { Type } from "@sinclair/typebox";
-import { cartListResponseSchema } from "@core/schema/cart/cartListResponseSchema";
-import { cartListRequestSchema } from "@core/schema/cart/cartListRequestSchema";
-import { cartCreateRequestSchema } from "@core/schema/cart/cartCreateRequestSchema";
 
-export const cartEditSchema = {
-  description: "Edita um carrinho",
-  tags: [TagSwagger.cart],
+export const voucherOrderSchema = {
+  description: "Realiza um pedido e aplica um voucher",
+  tags: [TagSwagger.order],
   produces: ["application/json"],
   security: [
     {
@@ -24,14 +22,15 @@ export const cartEditSchema = {
       })
     ),
   }),
-  params: cartListRequestSchema,
-  body: cartCreateRequestSchema,
+  body: Type.Object({
+    voucher: Type.String(),
+  }),
   response: {
     200: Type.Object(
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: cartListResponseSchema,
+        data: createOrderListSchema,
       },
       { description: "Successful" }
     ),
@@ -50,6 +49,14 @@ export const cartEditSchema = {
         data: Type.Null(),
       },
       { description: "Unauthorized" }
+    ),
+    404: Type.Object(
+      {
+        status: Type.Boolean({ default: false }),
+        message: Type.String(),
+        data: Type.Null(),
+      },
+      { description: "Not Found" }
     ),
     500: Type.Object(
       {

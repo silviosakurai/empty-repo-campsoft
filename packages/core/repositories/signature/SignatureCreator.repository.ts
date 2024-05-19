@@ -11,6 +11,7 @@ import {
 } from "@core/common/enums/models/signature";
 import { CartDocument } from "@core/interfaces/repositories/cart";
 import { v4 as uuidv4 } from "uuid";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 
 @injectable()
 export class SignatureCreatorRepository {
@@ -50,12 +51,75 @@ export class SignatureCreatorRepository {
     return signatureId;
   }
 
+  async createByVoucher(
+    partnerId: number,
+    clientId: string,
+    orderId: string,
+    planId: number
+  ): Promise<string | null> {
+    const signatureId = uuidv4();
+
+    const result = await this.db
+      .insert(clientSignature)
+      .values({
+        id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
+        id_cliente: sql`UUID_TO_BIN(${clientId})`,
+        id_pedido: sql`UUID_TO_BIN(${orderId})`,
+        id_parceiro: partnerId,
+        ciclo: 0,
+        id_assinatura_status: SignatureStatus.PENDING,
+        id_plano: planId,
+        recorrencia: ClientSignatureRecorrencia.NO,
+      })
+      .execute();
+
+    if (!result[0].affectedRows) {
+      return null;
+    }
+
+    return signatureId;
+  }
+
   async createSignatureProducts(
     signatureId: string,
     cart: CartDocument
   ): Promise<boolean> {
     const insertProducts = cart.products_id.map((product) => {
       const productAlreadyExists = cart.signature_active.find(
+        (signature) => signature.product_id === product
+      );
+
+      return {
+        id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
+        id_produto: product,
+        processar: ClientProductSignatureProcess.NO,
+        status: ClientProductSignatureStatus.INACTIVE,
+        data_expiracao:
+          productAlreadyExists?.recurrence === ClientSignatureRecorrencia.YES
+            ? null
+            : productAlreadyExists?.expiration_date,
+      };
+    });
+
+    const result = await this.db
+      .insert(clientProductSignature)
+      .values(insertProducts)
+      .execute();
+
+    if (!result[0].affectedRows) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async createSignatureProductsByVoucher(
+    signatureId: string,
+    productsId: string[],
+    signatureActive: ISignatureActiveByClient[]
+  ): Promise<boolean> {
+    const insertProducts = productsId.map((product) => {
+      const productAlreadyExists = signatureActive.find(
         (signature) => signature.product_id === product
       );
 

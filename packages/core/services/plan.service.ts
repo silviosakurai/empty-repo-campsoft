@@ -91,14 +91,8 @@ export class PlanService {
     );
   };
 
-  listByPlanOrder = async (
-    tokenKeyData: ITokenKeyData,
-    payload: CreateCartRequest
-  ) => {
-    return this.planListerOrderRepository.listByPlanOrder(
-      tokenKeyData,
-      payload
-    );
+  listByPlanOrder = async (partnerId: number, planId: number) => {
+    return this.planListerOrderRepository.listByPlanOrder(partnerId, planId);
   };
 
   isPlanProductAndProductGroups = async (
@@ -147,7 +141,10 @@ export class PlanService {
     );
 
     if (productsOrderSet.size === 0) {
-      const planList = await this.listByPlanOrder(tokenKeyData, payload);
+      const planList = await this.listByPlanOrder(
+        tokenKeyData.id_parceiro,
+        payload.plan.plan_id
+      );
 
       if (!planList || planList.length === 0) {
         return null;

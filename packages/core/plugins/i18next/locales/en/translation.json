@@ -134,5 +134,7 @@
   "you_already_have_all_active_products": "You already have all active products",
   "cart_not_found": "Cart not found",
   "error_update_cart": "Error update cart",
-  "error_create_cart": "Error create cart"
+  "error_create_cart": "Error create cart",
+  "voucher_not_have_active_plans": "This voucher does not have any active plans",
+  "error_pay_with_voucher": "Error pay with voucher"
 }

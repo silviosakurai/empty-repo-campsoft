@@ -543,6 +543,8 @@ export class OrdersListerRepository {
         order_id_previous: sql<string>`BIN_TO_UUID(${order.id_pedido_anterior})`,
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         cart_id: sql<string>`BIN_TO_UUID(${order.id_carrinho})`,
+        plan_id: order.id_plano,
+        voucher: order.cupom_resgatar_codigo,
         split_rule_id: order.id_financeiro_split_regra,
         company_id: order.id_parceiro,
         seller_id: order.id_vendedor,

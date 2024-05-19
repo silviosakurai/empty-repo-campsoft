@@ -8,6 +8,12 @@ export const cartCreatorSchemaValidation = {
   description: "Cria um novo carrinho",
   tags: [TagSwagger.cart],
   produces: ["application/json"],
+  security: [
+    {
+      authenticateKeyApi: [],
+      authenticateJwt: [],
+    },
+  ],
   headers: Type.Object({
     "Accept-Language": Type.Optional(
       Type.String({

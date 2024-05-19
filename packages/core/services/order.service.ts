@@ -7,7 +7,10 @@ import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister
 import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
 import { OrderCreatorRepository } from "@core/repositories/order/OrderCreator.repository";
 import { OrderPaymentHistoricViewerRepository } from "@core/repositories/order/OrderPaymentHistoricViewer.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import {
+  CreateOrderRequestDto,
+  VoucherOrderRequestDto,
+} from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 import {
   ListOrderById,
@@ -29,6 +32,7 @@ import {
   CartDocumentManager,
 } from "@core/interfaces/repositories/cart";
 import { OrderByNumberCreateViewerRepository } from "@core/repositories/order/OrderByNumberCreateViewer.repository";
+import { OrderCreatorByVoucherRepository } from "@core/repositories/order/OrderCreatorByVoucher.repository";
 
 @injectable()
 export class OrderService {
@@ -44,7 +48,8 @@ export class OrderService {
     private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
     private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository,
     private readonly orderPaymentHistoricViewerRepository: OrderPaymentHistoricViewerRepository,
-    private readonly orderByNumberCreateViewerRepository: OrderByNumberCreateViewerRepository
+    private readonly orderByNumberCreateViewerRepository: OrderByNumberCreateViewerRepository,
+    private readonly orderCreatorByVoucherRepository: OrderCreatorByVoucherRepository
   ) {}
 
   list = async (
@@ -210,5 +215,27 @@ export class OrderService {
       tokenKeyData,
       tokenJwtData
     );
+  };
+
+  createOrderByVoucher = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: VoucherOrderRequestDto,
+    user: ViewClientResponse,
+    planId: number
+  ): Promise<string | null> => {
+    const create = await this.orderCreatorByVoucherRepository.create(
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      user,
+      planId
+    );
+
+    if (!create) {
+      return null;
+    }
+
+    return create;
   };
 }

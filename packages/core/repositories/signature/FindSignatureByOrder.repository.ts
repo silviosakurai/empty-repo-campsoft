@@ -112,7 +112,7 @@ export class FindSignatureByOrderNumber {
           clientSignature.id_assinatura_cliente
         )
       )
-      .innerJoin(
+      .leftJoin(
         planItem,
         and(
           eq(planItem.id_plano, planId),
@@ -121,6 +121,7 @@ export class FindSignatureByOrderNumber {
       )
       .where(
         and(
+          eq(clientSignature.id_plano, planId),
           eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(
@@ -129,7 +130,9 @@ export class FindSignatureByOrderNumber {
           ),
           inArray(clientProductSignature.id_produto, productsIds)
         )
-      );
+      )
+      .groupBy(clientProductSignature.id_produto)
+      .execute();
 
     if (response.length === 0) {
       return [] as ISignatureActiveByClient[];
