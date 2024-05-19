@@ -269,8 +269,16 @@ export class SignaturePaidActiveRepository {
 
   async updateSignaturePlanOld(
     signature: ISignatureByOrder,
-    validUntil: string
+    validUntil: string,
+    isVoucher: boolean = false
   ): Promise<boolean> {
+    const noApplyRecorrence = isVoucher
+      ? and(
+          eq(clientSignature.id_plano, signature.plan_id),
+          eq(clientSignature.recorrencia, ClientSignatureRecorrencia.NO)
+        )
+      : eq(clientSignature.id_plano, signature.plan_id);
+
     const result = await this.db
       .update(clientSignature)
       .set({
@@ -281,7 +289,6 @@ export class SignaturePaidActiveRepository {
       })
       .where(
         and(
-          eq(clientSignature.id_plano, signature.plan_id),
           eq(clientSignature.id_assinatura_status, SignatureStatus.ACTIVE),
           eq(
             clientSignature.id_cliente,
@@ -290,7 +297,8 @@ export class SignaturePaidActiveRepository {
           ne(
             clientSignature.id_assinatura_cliente,
             sql`UUID_TO_BIN(${signature.signature_id})`
-          )
+          ),
+          noApplyRecorrence
         )
       )
       .execute();
@@ -363,7 +371,8 @@ export class SignaturePaidActiveRepository {
         ciclo: signature.cycle + 1,
         data_inicio: validUntil,
         data_assinatura_ate:
-          voucherProductsAndPlans.plan?.expiration_date ?? null,
+          voucherProductsAndPlans.plan?.expiration_date ??
+          addMonthsToCurrentDate(validUntil, signature.recurrence_period),
         data_proxima_cobranca: null,
         data_ultimo_pagamento: validUntil,
         data_cancelamento: null,
@@ -379,6 +388,8 @@ export class SignaturePaidActiveRepository {
     if (!result[0].affectedRows) {
       return null;
     }
+
+    await this.updateSignaturePlanOld(signature, validUntil, true);
 
     return true;
   }
@@ -401,7 +412,9 @@ export class SignaturePaidActiveRepository {
         status: ClientProductSignatureStatus.ACTIVE,
         data_ativacao: null,
         data_agendamento: validUntil,
-        data_expiracao: voucherProductsAndPlans.plan?.expiration_date,
+        data_expiracao:
+          voucherProductsAndPlans.plan?.expiration_date ??
+          addMonthsToCurrentDate(validUntil, signature.recurrence_period),
       })
       .where(whereUpdate)
       .execute();
