@@ -3,10 +3,8 @@ import * as schema from "@core/models";
 import { plan, planItem, planPartner } from "@core/models";
 import { inject, injectable } from "tsyringe";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { Status } from "@core/common/enums/Status";
 import { PlanListerOrderResponse } from "@core/interfaces/repositories/plan";
-import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class PlanListerOrderRepository {
@@ -15,8 +13,8 @@ export class PlanListerOrderRepository {
   ) {}
 
   async listByPlanOrder(
-    tokenKeyData: ITokenKeyData,
-    payload: CreateCartRequest
+    partnerId: number,
+    planId: number
   ): Promise<PlanListerOrderResponse[]> {
     const result = await this.db
       .select({
@@ -27,9 +25,9 @@ export class PlanListerOrderRepository {
       .innerJoin(planPartner, eq(planPartner.id_plano, plan.id_plano))
       .where(
         and(
-          eq(plan.id_plano, payload.plan.plan_id),
+          eq(plan.id_plano, planId),
           eq(plan.status, Status.ACTIVE),
-          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro),
+          eq(planPartner.id_parceiro, partnerId),
           isNotNull(planItem.id_produto)
         )
       )

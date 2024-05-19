@@ -3,7 +3,6 @@ import { VoucherService } from "./voucher.service";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { TFunction } from "i18next";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
 import {
   ISignatureByOrder,
@@ -28,7 +27,6 @@ export class PaymentService {
     private readonly orderService: OrderService,
     private readonly voucherService: VoucherService,
     private readonly signatureService: SignatureService,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber,
     private readonly payerCreditCardByOrderIdUseCase: PayerCreditCardByOrderIdUseCase,
     private readonly payerByBoletoByOrderIdUseCase: PayerByBoletoByOrderIdUseCase,
     private readonly payerPixByOrderIdUseCase: PayerPixByOrderIdUseCase
@@ -161,35 +159,10 @@ export class PaymentService {
       throw new Error(t("order_not_found"));
     }
 
-    const signature =
-      await this.findSignatureByOrderNumber.findByOrder(orderId);
-
-    if (!signature) {
-      throw new Error(t("signature_not_found"));
-    }
-
     const voucherProductsAndPlans = await this.voucherProductsAndPlans(
       tokenKeyData,
       tokenJwtData,
       voucher
-    );
-
-    const findProductsBySignatureNotPlan =
-      await this.findSignatureByOrderNumber.findProductsBySignatureNotPlan(
-        signature.client_id,
-        signature.signature_id,
-        signature.plan_id
-      );
-
-    if (!findProductsBySignatureNotPlan) {
-      throw new Error(t("products_not_found"));
-    }
-
-    this.validateProductsAndPlansByVoucher(
-      t,
-      voucherProductsAndPlans,
-      signature,
-      findProductsBySignatureNotPlan
     );
 
     const payment = await this.signatureService.activePaidSignatureWithVoucher(
@@ -204,7 +177,7 @@ export class PaymentService {
       statusPayment = OrderStatusEnum.APPROVED;
     }
 
-    await this.orderService.createOrderPayment(
+    return this.orderService.createOrderPayment(
       order,
       OrderPaymentsMethodsEnum.VOUCHER,
       statusPayment,

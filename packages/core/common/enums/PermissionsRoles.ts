@@ -32,6 +32,7 @@ export enum PermissionsRoles {
   ORDER_LIST = "order_list",
   ORDER_VIEW = "order_view",
   ORDER_CREATE = "order_create",
+  ORDER_VOUCHER = "order_voucher",
   ORDER_PAYMENTS_VIEW = "order_payments_view",
   ORDER_CANCEL = "order_cancel",
   ORDER_PAYMENT_BOLETO = "order_payment_boleto",

@@ -2,11 +2,12 @@ import { injectable, inject } from "tsyringe";
 import * as schema from "@core/models";
 import { couponRescueCode, couponRescue, couponRescueItem } from "@core/models";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { and, eq, isNotNull } from "drizzle-orm";
+import { and, eq, gte, isNotNull } from "drizzle-orm";
 import { CouponRescueCodeStatus } from "@core/common/enums/models/voucher";
 import { IGetVoucherInfo } from "@core/interfaces/repositories/voucher";
 import { CouponRescueItemTypeTime } from "@core/common/enums/models/coupon";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
+import { currentTime } from "@core/common/functions/currentTime";
 
 @injectable()
 export class VoucherDetailsRepository {
@@ -51,5 +52,43 @@ export class VoucherDetailsRepository {
     }
 
     return result[0] as IGetVoucherInfo;
+  }
+
+  async getPlanVoucher(
+    partnerId: number,
+    voucher: string
+  ): Promise<number | null> {
+    const validUntil = currentTime();
+
+    const result = await this.db
+      .select({
+        id_plano: couponRescueItem.id_plano,
+      })
+      .from(couponRescueCode)
+      .innerJoin(
+        couponRescue,
+        eq(couponRescue.id_cupom_resgatar, couponRescueCode.id_cupom_resgatar)
+      )
+      .innerJoin(
+        couponRescueItem,
+        eq(couponRescueItem.id_cupom_resgatar, couponRescue.id_cupom_resgatar)
+      )
+      .where(
+        and(
+          eq(couponRescueCode.cupom_resgatar_codigo, voucher),
+          eq(couponRescueCode.status, CouponRescueCodeStatus.ACTIVE),
+          eq(couponRescue.id_parceiro, partnerId),
+          eq(couponRescueItem.tempo_tipo, CouponRescueItemTypeTime.MONTH),
+          isNotNull(couponRescueItem.id_plano),
+          gte(couponRescueItem.validade_ate, validUntil)
+        )
+      )
+      .execute();
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result[0].id_plano as number;
   }
 }

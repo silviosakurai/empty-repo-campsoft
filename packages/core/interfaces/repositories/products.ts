@@ -89,3 +89,8 @@ export interface ProductImageRepositoryCreateInput {
   iconUrl: string | null;
   logoUrl: string | null;
 }
+
+export interface ProductListerByVoucher {
+  coupon_rescue_code: string;
+  product_id: string;
+}

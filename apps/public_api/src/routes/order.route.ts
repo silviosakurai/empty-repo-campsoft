@@ -11,6 +11,7 @@ import {
   postOrderPaymentPixSchema,
   ordersHistoricByNumberParamSchema,
   ordersWithRecurrenceSchema,
+  voucherOrderSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -22,6 +23,7 @@ import {
   orderPaymentPixPermissions,
   orderListPermissions,
   orderHistoricViewPermissions,
+  orderVoucherPermissions,
 } from '@/permissions';
 
 export default async function orderRoutes(server: FastifyInstance) {
@@ -46,6 +48,17 @@ export default async function orderRoutes(server: FastifyInstance) {
         server.authenticateKeyApi(request, reply, orderCreatePermissions),
       (request, reply) =>
         server.authenticateJwt(request, reply, orderCreatePermissions),
+    ],
+  });
+
+  server.post('/orders/voucher', {
+    schema: voucherOrderSchema,
+    handler: orderController.voucherOrder,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderVoucherPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderVoucherPermissions),
     ],
   });
 
