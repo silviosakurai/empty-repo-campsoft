@@ -380,8 +380,6 @@ export class SignaturePaidActiveRepository {
       return null;
     }
 
-    await this.updateSignaturePlanOld(signature, validUntil);
-
     return true;
   }
 

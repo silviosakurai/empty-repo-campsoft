@@ -25,7 +25,7 @@ export interface ISignatureByOrder {
   signature_id: string;
   client_id: string;
   plan_id: number;
-  recurrence: number;
+  recurrence: ClientSignatureRecorrencia;
   recurrence_period: number;
   cycle: number;
   start_date: string;
