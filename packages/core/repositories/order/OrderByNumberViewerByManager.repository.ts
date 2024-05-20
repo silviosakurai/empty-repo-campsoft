@@ -37,20 +37,14 @@ export class OrderByNumberViewerByManagerRepository {
         totals: {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
           discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
-          discount_coupon_value: sql<number>`CASE
-            WHEN ${order.valor_cupom} IS NOT NULL 
-              THEN SUM(${order.valor_cupom}) 
-            ELSE 0
-          END`.mapWith(Number),
+          discount_coupon_value:
+            sql<number>`COALESCE(${order.valor_cupom}, 0)`.mapWith(Number),
+          discount_product_value:
+            sql<number>`COALESCE(${order.desconto_produto}, 0)`.mapWith(Number),
           discount_percentage: sql<number>`CASE 
-            WHEN ${order.valor_total} > 0 
-              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
+            WHEN ${order.valor_total} > 0 AND ${order.valor_desconto} IS NOT NULL
+              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100, 2)
             ELSE 0 
-          END`.mapWith(Number),
-          discount_product_value: sql<number>`CASE
-            WHEN ${order.desconto_produto} IS NOT NULL 
-              THEN SUM(${order.desconto_produto}) 
-            ELSE 0
           END`.mapWith(Number),
           total: sql`${order.valor_total}`.mapWith(Number),
         },

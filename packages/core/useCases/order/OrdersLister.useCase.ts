@@ -20,6 +20,7 @@ export class OrdersListerUseCase {
     if (!results.length) {
       return [];
     }
+
     return results;
   }
 }
