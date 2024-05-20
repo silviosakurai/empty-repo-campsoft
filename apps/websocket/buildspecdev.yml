@@ -6,7 +6,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 932828879848.dkr.ecr.us-east-1.amazonaws.com
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=dev}
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
       - REPOSITORY_URI=932828879848.dkr.ecr.us-east-1.amazonaws.com/maniadeapp-socket
   build:
     commands:
@@ -20,6 +20,6 @@ phases:
       - echo Pushing the Docker image...
       - docker push $REPOSITORY_URI:dev
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - printf '[{"name":"maniadeapp-socket","imageUri":"%s"}]' $REPOSITORY_URI:dev > imagedefinitions.json
+      - printf '[{"name":"maniadeapp-socket-dev","imageUri":"%s"}]' $REPOSITORY_URI:dev > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
