@@ -13,13 +13,13 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI . -f apps/websocket/Dockerfile
-      - docker tag $REPOSITORY_URI:dev $REPOSITORY_URI:$IMAGE_TAG
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - docker push $REPOSITORY_URI:dev
+      - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - printf '[{"name":"maniadeapp-socket-dev","imageUri":"%s"}]' $REPOSITORY_URI:dev > imagedefinitions.json
+      - printf '[{"name":"maniadeapp-socket-dev","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
