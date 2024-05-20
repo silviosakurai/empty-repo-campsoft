@@ -211,8 +211,8 @@ export class PriceService {
     return {
       months: planPrice.months,
       price: Number(finalPrice.toFixed(2)),
-      discount_value: Number(discountValue.toFixed(2)),
-      discount_percentage: Number(discountPercentage.toFixed(2)),
+      discount_value: Math.max(0, Number(discountValue.toFixed(2))),
+      discount_percentage: Math.max(0, Number(discountPercentage.toFixed(2))),
       price_with_discount: Math.max(0, Number(finalPriceDiscount.toFixed(2))),
       price_with_discount_order_previous: Math.max(
         0,
