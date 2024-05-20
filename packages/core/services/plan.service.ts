@@ -8,12 +8,15 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PlanProductGroupDetailsListerRepository } from "@core/repositories/plan/PlanProductGroupDetailsLister.repository";
 import { PlanProduct } from "@core/interfaces/repositories/plan";
 import { PlanListerOrderRepository } from "@core/repositories/plan/PlanListerOrder.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { PlanListerByCompanyRepository } from "@core/repositories/plan/PlanListerByCompany.repository";
 import { PlanViewerByCompanyRepository } from "@core/repositories/plan/PlanViewerByCompany.repository";
 import { PlanListerWithProductsRepository } from "@core/repositories/plan/PlanListerWithProducts.repository";
+import { PlanCreatorRepository } from "@core/repositories/plan/PlanCreator.repository";
+import { CreatePlanRequest } from "@core/useCases/plan/dtos/CreatePlanRequest.dto";
 import { PlanViewerWithProductsRepository } from "@core/repositories/plan/PlanViewerWithProducts.repository";
 import { PlanListerByProductRepository } from "@core/repositories/plan/PlanListerByProduct.repository";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
+import { PlanViewerCartRepository } from "@core/repositories/plan/PlanViewerCart.repository";
 
 @injectable()
 export class PlanService {
@@ -23,13 +26,19 @@ export class PlanService {
     private readonly planListerWithProductsRepository: PlanListerWithProductsRepository,
     private readonly planViewerRepository: PlanViewerRepository,
     private readonly planViewerByCompanyRepository: PlanViewerByCompanyRepository,
+    private readonly planCreatorRepository: PlanCreatorRepository,
     private readonly planViewerWithProductsRepository: PlanViewerWithProductsRepository,
     private readonly planUpgraderRepository: PlanUpgraderRepository,
     private readonly planPriceListerRepository: PlanPriceListerRepository,
     private readonly planProductGroupDetailsListerRepository: PlanProductGroupDetailsListerRepository,
     private readonly planListerOrderRepository: PlanListerOrderRepository,
-    private readonly planListerByProductRepository: PlanListerByProductRepository
+    private readonly planListerByProductRepository: PlanListerByProductRepository,
+    private readonly planViewerCartRepository: PlanViewerCartRepository
   ) {}
+
+  create = async (body: CreatePlanRequest) => {
+    return this.planCreatorRepository.create(body);
+  };
 
   list = async (companyId: number, query: ListPlanRequest) => {
     return this.planListerRepository.list(companyId, query);
@@ -82,19 +91,13 @@ export class PlanService {
     );
   };
 
-  listByPlanOrder = async (
-    tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
-  ) => {
-    return this.planListerOrderRepository.listByPlanOrder(
-      tokenKeyData,
-      payload
-    );
+  listByPlanOrder = async (partnerId: number, planId: number) => {
+    return this.planListerOrderRepository.listByPlanOrder(partnerId, planId);
   };
 
   isPlanProductAndProductGroups = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<boolean> => {
     const selectedProducts = payload.plan.selected_products ?? [];
 
@@ -129,7 +132,7 @@ export class PlanService {
 
   listPlanByOrderComplete = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<string[] | null> => {
     const productsOrderSet = new Set<string>();
 
@@ -138,7 +141,10 @@ export class PlanService {
     );
 
     if (productsOrderSet.size === 0) {
-      const planList = await this.listByPlanOrder(tokenKeyData, payload);
+      const planList = await this.listByPlanOrder(
+        tokenKeyData.id_parceiro,
+        payload.plan.plan_id
+      );
 
       if (!planList || planList.length === 0) {
         return null;
@@ -154,5 +160,9 @@ export class PlanService {
 
   listPlansByProduct = async (partnerId: number, productId: string) => {
     return this.planListerByProductRepository.list(partnerId, productId);
+  };
+
+  viewCart = async (planId: number) => {
+    return this.planViewerCartRepository.view(planId);
   };
 }

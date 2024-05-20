@@ -1,4 +1,3 @@
-import { PlanService, ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ProductViewResponse } from "./dtos/ProductResponse.dto";
 import { ListPlanProductResponse } from "../plan/dtos/ListPlanResponse.dto";
@@ -16,6 +15,8 @@ import {
 } from "@core/interfaces/repositories/marketing";
 import { MarketingType } from "@core/common/enums/models/marketing";
 import { ReviewService } from "@core/services/review.service";
+import { ProductService } from "@core/services/product.service";
+import { PlanService } from "@core/services/plan.service";
 
 @injectable()
 export class ProductViewerUseCase {

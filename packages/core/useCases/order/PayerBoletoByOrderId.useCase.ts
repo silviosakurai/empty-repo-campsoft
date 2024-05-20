@@ -1,29 +1,27 @@
-import { OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { TFunction } from "i18next";
 import { injectable } from "tsyringe";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
-import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
-import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
 import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
 import { amountToPay } from "@core/common/functions/amountToPay";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
+import { OrderService } from "@core/services/order.service";
 
 @injectable()
 export class PayerByBoletoByOrderIdUseCase {
   constructor(
     private readonly orderService: OrderService,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
   async pay(t: TFunction<"translation", undefined>, orderId: string) {
     try {
-      const { order, externalId, sellerId } =
+      const { order, externalId, sellerId, splitList } =
         await this.orderWithPaymentReaderUseCase.view(t, orderId);
 
       const amountPay = amountToPay(order);
@@ -35,22 +33,15 @@ export class PayerByBoletoByOrderIdUseCase {
           description: order.observation,
           reference_id: order.order_id,
           sellerId,
+          split_rules: splitList,
         });
 
       if (!result.data) {
         return result;
       }
 
-      const signature =
-        await this.findSignatureByOrderNumber.findByOrder(orderId);
-
-      if (!signature) {
-        throw new Error(t("signature_not_found"));
-      }
-
       await this.orderService.createOrderPayment(
         order,
-        signature.signature_id,
         OrderPaymentsMethodsEnum.BOLETO,
         OrderStatusEnum.PENDING,
         {

@@ -17,23 +17,19 @@ export const login = async (
   const { t } = request;
 
   try {
-    const responseAuth = await loginAuthUseCase.execute({
+    const responseAuth = await loginAuthUseCase.getLoginManager({
       login,
       password,
     });
 
     if (!responseAuth) {
-      request.server.logger.info(responseAuth, request.id);
+      request.server.logger.info(request.id);
 
       return sendResponse(reply, {
         message: t('login_invalid'),
         httpStatusCode: HTTPStatusCode.UNAUTHORIZED,
       });
     }
-
-    const permissions = await loginAuthUseCase.getPermissions(
-      responseAuth.client_id
-    );
 
     const payload = {
       clientId: responseAuth.client_id,
@@ -46,7 +42,6 @@ export const login = async (
       httpStatusCode: HTTPStatusCode.OK,
       data: {
         result: responseAuth,
-        permissions,
         token,
       },
     });

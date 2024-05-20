@@ -1,14 +1,12 @@
-import { ProductService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ListProductGroupedByPartnerResponse } from "./dtos/ListProductResponse.dto";
 import { setPaginationData } from "@core/common/functions/createPaginationData";
 import { ListProductByCompanyRequest } from "./dtos/ListProductByCompanyRequest.dto";
+import { ProductService } from "@core/services/product.service";
 
 @injectable()
 export class ProductsListerByPartnerUseCase {
-  constructor(
-    private readonly productService: ProductService,
-  ) {}
+  constructor(private readonly productService: ProductService) {}
 
   async execute(
     partnerId: number,

@@ -39,6 +39,7 @@
   "error_list_products_order": "Error list products order!",
   "error_create_signature_products": "Error create signature products!",
   "error_create_product": "Error create products!",
+  "error_create_plan": "Error create plans!",
   "payment_method_not_card": "For recurring subscription, the payment method must be a card",
   "payment_method_invalid": "Payment method invalid!",
   "previous_order_not_found": "Previous order not found!",
@@ -127,5 +128,13 @@
   "error_generating_qr_code_pix": "Error generating QR code PIX",
   "amount_to_pay_invalid": "Amount to pay invalid",
   "resource_not_found": "Sorry, the seller you are trying to use does not exist or has been deleted",
-  "forbidden": "Your user is not authorized to access this resource."
+  "forbidden": "Your user is not authorized to access this resource.",
+  "main_seller_not_found": "Main seller not found.",
+  "invalid_split_rule": "Invalid split rule.",
+  "you_already_have_all_active_products": "You already have all active products",
+  "cart_not_found": "Cart not found",
+  "error_update_cart": "Error update cart",
+  "error_create_cart": "Error create cart",
+  "voucher_not_have_active_plans": "This voucher does not have any active plans",
+  "error_pay_with_voucher": "Error pay with voucher"
 }

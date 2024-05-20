@@ -1,9 +1,11 @@
 import { TFunction } from "i18next";
-import { OrderService, SignatureService } from "@core/services";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { OrderPaymentsMethodsEnum } from "@core/common/enums/models/order";
 import { injectable } from "tsyringe";
+import { OrderService } from "./order.service";
+import { SignatureService } from "./signature.service";
+import { CartDocument } from "@core/interfaces/repositories/cart";
 
 @injectable()
 export class OrderValidationService {
@@ -15,17 +17,17 @@ export class OrderValidationService {
   async validatePaymentMethod(
     t: TFunction<"translation", undefined>,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    cart: CartDocument
   ) {
-    this.validateCardPaymentMethod(t, payload);
+    this.validateCardPaymentMethod(t, payload, cart);
     this.validatePaymentMethodType(t, payload);
-    this.validateMonthsRequired(t, payload);
+    this.validateMonthsRequired(t, cart);
 
-    await this.validatePreviousOrder(t, payload);
-    await this.validateSignaturePlan(t, tokenJwtData, payload);
-
-    this.validateVoucherUsage(t, payload);
-    this.validateCouponAndVoucherIncompatibility(t, payload);
+    await Promise.all([
+      this.validatePreviousOrder(t, cart),
+      this.validateSignaturePlan(t, tokenJwtData, cart),
+    ]);
 
     if (
       payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.CARD &&
@@ -44,10 +46,11 @@ export class OrderValidationService {
 
   private validateCardPaymentMethod(
     t: TFunction<"translation", undefined>,
-    payload: CreateOrderRequestDto
+    payload: CreateOrderRequestDto,
+    cart: CartDocument
   ) {
     if (
-      payload.subscribe &&
+      cart.payload.subscribe &&
       payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.CARD
     ) {
       throw new Error(t("payment_method_not_card"));
@@ -62,7 +65,6 @@ export class OrderValidationService {
       OrderPaymentsMethodsEnum.CARD,
       OrderPaymentsMethodsEnum.BOLETO,
       OrderPaymentsMethodsEnum.PIX,
-      OrderPaymentsMethodsEnum.VOUCHER,
     ];
     if (
       !validTypes.includes(
@@ -75,23 +77,20 @@ export class OrderValidationService {
 
   private validateMonthsRequired(
     t: TFunction<"translation", undefined>,
-    payload: CreateOrderRequestDto
+    cart: CartDocument
   ) {
-    if (
-      payload.payment?.type?.toString() !== OrderPaymentsMethodsEnum.VOUCHER &&
-      !payload.months
-    ) {
+    if (!cart.payload.months) {
       throw new Error(t("months_required_by_methods"));
     }
   }
 
   private async validatePreviousOrder(
     t: TFunction<"translation", undefined>,
-    payload: CreateOrderRequestDto
+    cart: CartDocument
   ) {
-    if (payload?.previous_order_id) {
+    if (cart.payload?.previous_order_id) {
       const orderIsExists = await this.orderService.orderIsExists(
-        payload.previous_order_id
+        cart.payload.previous_order_id
       );
 
       if (!orderIsExists) {
@@ -103,39 +102,18 @@ export class OrderValidationService {
   private async validateSignaturePlan(
     t: TFunction<"translation", undefined>,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto
+    cart: CartDocument
   ) {
-    if (payload.subscribe) {
+    if (cart.payload.subscribe) {
       const isSignaturePlanActive =
         await this.signatureService.isSignaturePlanActiveByClientId(
           tokenJwtData.clientId,
-          payload.plan.plan_id
+          cart.payload.plan.plan_id
         );
 
       if (isSignaturePlanActive) {
         throw new Error(t("plan_already_active"));
       }
-    }
-  }
-
-  private validateVoucherUsage(
-    t: TFunction<"translation", undefined>,
-    payload: CreateOrderRequestDto
-  ) {
-    if (
-      payload.payment?.type?.toString() === OrderPaymentsMethodsEnum.VOUCHER &&
-      payload?.activate_now === false
-    ) {
-      throw new Error(t("voucher_activate_now_false"));
-    }
-  }
-
-  private validateCouponAndVoucherIncompatibility(
-    t: TFunction<"translation", undefined>,
-    payload: CreateOrderRequestDto
-  ) {
-    if (payload.coupon_code && payload.payment?.voucher) {
-      throw new Error(t("coupon_code_with_voucher_not_allowed"));
     }
   }
 

@@ -8,13 +8,15 @@ import { OrderPlansByOrderIdViewerRepository } from "./OrderPlansByOrderIdViewer
 import { OrderByNumberResponse } from "@core/interfaces/repositories/order";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
+import { FindSignatureSingleProductsRepository } from "../signature/FindSignatureSingleProducts.repository";
 
 @injectable()
 export class OrderByNumberViewerRepository {
   constructor(
     @inject("Database") private readonly db: MySql2Database<typeof schema>,
     private readonly orderPlansByOrderIdViewer: OrderPlansByOrderIdViewerRepository,
-    private readonly orderPaymentByOrderIdViewer: OrderPaymentByOrderIdViewerRepository
+    private readonly orderPaymentByOrderIdViewer: OrderPaymentByOrderIdViewerRepository,
+    private readonly findSignatureSingleProductsRepository: FindSignatureSingleProductsRepository
   ) {}
 
   async view(
@@ -27,24 +29,19 @@ export class OrderByNumberViewerRepository {
         order_id: sql`BIN_TO_UUID(${order.id_pedido})`.mapWith(String),
         client_id: sql<string>`BIN_TO_UUID(${order.id_cliente})`,
         seller_id: sql<string>`BIN_TO_UUID(${order.id_vendedor})`,
+        plan_id: order.id_plano,
         status: orderStatus.pedido_status,
         totals: {
           subtotal_price: sql`${order.valor_preco}`.mapWith(Number),
           discount_item_value: sql`${order.valor_desconto}`.mapWith(Number),
-          discount_coupon_value: sql<number>`CASE
-            WHEN ${order.valor_cupom} IS NOT NULL 
-              THEN SUM(${order.valor_cupom}) 
-            ELSE 0
-          END`.mapWith(Number),
+          discount_coupon_value:
+            sql<number>`COALESCE(${order.valor_cupom}, 0)`.mapWith(Number),
+          discount_product_value:
+            sql<number>`COALESCE(${order.desconto_produto}, 0)`.mapWith(Number),
           discount_percentage: sql<number>`CASE 
-            WHEN ${order.valor_total} > 0 
-              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100)
+            WHEN ${order.valor_total} > 0 AND ${order.valor_desconto} IS NOT NULL
+              THEN ROUND((${order.valor_desconto} / ${order.valor_total}) * 100, 2)
             ELSE 0 
-          END`.mapWith(Number),
-          discount_product_value: sql<number>`CASE
-            WHEN ${order.desconto_produto} IS NOT NULL 
-              THEN SUM(${order.desconto_produto}) 
-            ELSE 0
           END`.mapWith(Number),
           total: sql`${order.valor_total}`.mapWith(Number),
         },
@@ -75,25 +72,39 @@ export class OrderByNumberViewerRepository {
 
     const results = await this.completePaymentsAndPlansPromises(
       record[0],
-      tokenKeyData
+      tokenKeyData,
+      tokenJwtData
     );
 
     return results;
   }
 
   private async completePaymentsAndPlansPromises(
-    result: Omit<OrderByNumberResponse, "payments" | "products" | "plan">,
-    tokenKeyData: ITokenKeyData
+    result: Omit<
+      OrderByNumberResponse,
+      "payments" | "products" | "plan" | "single_products"
+    >,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
   ): Promise<OrderByNumberResponse | null> {
-    const [payments, plan] = await Promise.all([
+    const [payments, plan, single_products] = await Promise.all([
       this.orderPaymentByOrderIdViewer.find(result.order_id),
-      this.orderPlansByOrderIdViewer.view(result.order_id, tokenKeyData),
+      this.orderPlansByOrderIdViewer.view(
+        result.order_id,
+        tokenKeyData.id_parceiro
+      ),
+      this.findSignatureSingleProductsRepository.find(
+        result.plan_id,
+        tokenKeyData.id_parceiro,
+        tokenJwtData.clientId
+      ),
     ]);
 
     return {
       ...result,
       payments,
       plan,
+      single_products,
     };
   }
 }

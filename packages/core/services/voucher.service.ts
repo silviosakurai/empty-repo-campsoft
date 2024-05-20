@@ -107,18 +107,6 @@ export class VoucherService {
     );
   };
 
-  isProductsVoucherEligible = async (
-    tokenKeyData: ITokenKeyData,
-    voucher: string | null | undefined,
-    selectedProducts: string[] | null | undefined
-  ) => {
-    return this.voucherEligibilityVerifierRepository.isProductsVoucherEligible(
-      tokenKeyData,
-      voucher,
-      selectedProducts
-    );
-  };
-
   updateVoucher = async (voucher: string) => {
     return this.voucherUpdaterRepository.updateVoucher(voucher);
   };
@@ -128,5 +116,9 @@ export class VoucherService {
       tokenKeyData,
       voucher
     );
+  };
+
+  getPlanVoucher = async (partnerId: number, voucher: string) => {
+    return this.voucherDetailsRepository.getPlanVoucher(partnerId, voucher);
   };
 }

@@ -15,10 +15,8 @@ import {
   getUserBillingAddressSchema,
   putUserBillingAddressSchema,
   putUserShippingAddressSchema,
-  userActivatePasswordSchema,
   patchUserShippingAddressSchema,
   patchUserImageSchemaSchema,
-  createUserNewsletterSchema,
   createUserCreditCardSchema,
   updateUserCreditCardDefaultSchema,
   listUserCreditCardSchema,
@@ -34,7 +32,6 @@ import {
   userCreditCardCreatePermissions,
   userDeletePermissions,
   userImageUpdatePermissions,
-  userNewsletterSubscribePermissions,
   userRecoveryPasswordPathPermissions,
   userRecoveryPasswordPermissions,
   userUpdatePasswordPermissions,
@@ -236,11 +233,6 @@ export default async function clientRoutes(server: FastifyInstance) {
     ],
   });
 
-  server.patch('/user/email-activation/:token', {
-    schema: userActivatePasswordSchema,
-    handler: clientController.activateClientEmail,
-  });
-
   server.patch('/user/shipping-address', {
     schema: patchUserShippingAddressSchema,
     handler: clientController.patchShippingAddress,
@@ -268,25 +260,6 @@ export default async function clientRoutes(server: FastifyInstance) {
         server.authenticateKeyApi(request, reply, userImageUpdatePermissions),
       (request, reply) =>
         server.authenticateJwt(request, reply, userImageUpdatePermissions),
-    ],
-  });
-
-  server.post('/user/newsletter', {
-    schema: createUserNewsletterSchema,
-    handler: clientController.createClientNewsletter,
-    preHandler: [
-      (request, reply) =>
-        server.authenticateKeyApi(
-          request,
-          reply,
-          userNewsletterSubscribePermissions
-        ),
-      (request, reply) =>
-        server.authenticateJwt(
-          request,
-          reply,
-          userNewsletterSubscribePermissions
-        ),
     ],
   });
 

@@ -4,7 +4,6 @@ import { and, eq, sql } from "drizzle-orm";
 import * as schema from "@core/models";
 import { plan, order, planPrice, planPartner } from "@core/models";
 import { PlanVisivelSite } from "@core/common/enums/models/plan";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { PricesByPlanIdListerRepository } from "../plan/PricesByPlanIdLister.repository";
 import { PlanProductDetailsListerRepository } from "../plan/PlanProductDetailsLister.repository";
 import { PlanDetails } from "@core/interfaces/repositories/order";
@@ -22,7 +21,7 @@ export class OrderPlansByOrderIdViewerRepository {
 
   async view(
     orderId: string,
-    tokenKeyData: ITokenKeyData
+    partnerId: number
   ): Promise<FindOrderByNumberPlans | null> {
     const results = await this.db
       .select({
@@ -45,7 +44,7 @@ export class OrderPlansByOrderIdViewerRepository {
       .where(
         and(
           eq(order.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(planPartner.id_parceiro, tokenKeyData.id_parceiro)
+          eq(planPartner.id_parceiro, partnerId)
         )
       )
       .groupBy(plan.id_plano)
@@ -55,17 +54,17 @@ export class OrderPlansByOrderIdViewerRepository {
       return null;
     }
 
-    return this.complementPlansWithProducts(tokenKeyData, results[0]);
+    return this.complementPlansWithProducts(partnerId, results[0]);
   }
 
   private async complementPlansWithProducts(
-    tokenKeyData: ITokenKeyData,
+    partnerId: number,
     result: PlanDetails
   ): Promise<FindOrderByNumberPlans> {
     const [prices, planProducts, productGroups] = await Promise.all([
       this.pricesByPlanIdLister.find(result.plan_id),
-      this.planProductDetailsLister.list(result.plan_id, tokenKeyData),
-      this.planProductGroupDetailsLister.list(result.plan_id, tokenKeyData),
+      this.planProductDetailsLister.list(result.plan_id, partnerId),
+      this.planProductGroupDetailsLister.list(result.plan_id, partnerId),
     ]);
 
     return {

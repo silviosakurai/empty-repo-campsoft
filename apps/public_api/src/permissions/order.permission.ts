@@ -21,3 +21,9 @@ export const orderPaymentCreditCardPermissions = [
 ];
 
 export const orderPaymentPixPermissions = [PermissionsRoles.ORDER_PAYMENT_PIX];
+
+export const orderHistoricViewPermissions = [
+  PermissionsRoles.ORDER_HISTORIC_VIEW,
+];
+
+export const orderVoucherPermissions = [PermissionsRoles.ORDER_VOUCHER];

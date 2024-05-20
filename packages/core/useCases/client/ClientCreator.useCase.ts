@@ -8,12 +8,13 @@ import { ITokenTfaData } from "@core/common/interfaces/ITokenTfaData";
 import { ClientCompanyStatus } from "@core/common/enums/models/clientCompany";
 import { CreateClientResponse } from "@core/useCases/client/dtos/CreateClientResponse.dto";
 import { IUserExistsFunction } from "@core/interfaces/repositories/client";
-import { EmailService, WhatsappService } from "@core/services";
 import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { NotificationTemplate } from "@core/interfaces/services/IClient.service";
 import { IReplaceTemplate } from "@core/common/interfaces/IReplaceTemplate";
 import { TemplateModulo } from "@core/common/enums/TemplateMessage";
 import { PermissionService } from "@core/services/permission.service";
+import { EmailService } from "@core/services/email.service";
+import { WhatsappService } from "@core/services/whatsapp.service";
 
 @injectable()
 export class ClientCreatorUseCase {

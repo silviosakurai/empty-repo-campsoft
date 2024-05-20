@@ -31,6 +31,7 @@ import {
   AvailableProducts,
   PlanDetails,
   PlanProducts,
+  PlanProductsWithHowTo,
 } from "@core/interfaces/repositories/voucher";
 
 @injectable()
@@ -209,7 +210,7 @@ export class AvailableVoucherPlansRepository {
   async fetchPlanProductDetails(
     tokenKeyData: ITokenKeyData,
     planId: number
-  ): Promise<PlanProducts[]> {
+  ): Promise<PlanProductsWithHowTo[]> {
     const result = await this.db
       .select({
         product_id: planItem.id_produto,
@@ -229,6 +230,13 @@ export class AvailableVoucherPlansRepository {
         product_type: {
           product_type_id: productType.id_produto_tipo,
           product_type_name: productType.produto_tipo,
+        },
+        how_to_access: {
+          desktop: product.como_acessar_desk,
+          mobile: product.como_acessar_mob,
+          url_web: product.como_acessar_url,
+          url_ios: product.como_acessar_url_ios,
+          url_android: product.como_acessar_url_and,
         },
       })
       .from(plan)
@@ -251,7 +259,7 @@ export class AvailableVoucherPlansRepository {
       return [];
     }
 
-    return result as PlanProducts[];
+    return result as PlanProductsWithHowTo[];
   }
 
   async fetchPlanProductGroupsDetails(

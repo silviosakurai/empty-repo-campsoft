@@ -23,6 +23,7 @@ export async function createTransactionPix(
       amount: input.amount,
       payment_type: PaymentType.pix,
       pix_expiration_date_time: input.expiration,
+      split_rules: input.split_rules,
     });
 
     if (response.status === HTTPStatusCode.CREATED) {
@@ -38,8 +39,6 @@ export async function createTransactionPix(
       message: response.data.error.message,
     };
   } catch (error: any) {
-    console.log(error.response.data.error);
-
     if (existsInApiErrorCategoryZoop(error.response.data.error.category)) {
       throw new Error(error.response.data.error.category);
     }

@@ -1,8 +1,7 @@
-import { ClientService, OrderService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { injectable } from "tsyringe";
 import { TFunction } from "i18next";
-import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentViewer.useCase";
+import { OrderWithPaymentReaderUseCase } from "./OrderWithPaymentReader.useCase";
 import { ResponseService } from "@core/common/interfaces/IResponseServices";
 import { PayByCreditCardRequest } from "./dtos/PayByCreditCardRequest.dto";
 import { ClientCardCreatorUseCase } from "../client/ClientCardCreator.useCase";
@@ -13,11 +12,11 @@ import {
   OrderPaymentsMethodsEnum,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
-import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
-import { ISignatureByOrder } from "@core/interfaces/repositories/signature";
 import { ListOrderById } from "@core/interfaces/repositories/order";
 import { existsInApiErrorCategoryZoop } from "@core/common/functions/existsInApiErrorCategoryZoop";
 import { amountToPay } from "@core/common/functions/amountToPay";
+import { OrderService } from "@core/services/order.service";
+import { ClientService } from "@core/services/client.service";
 
 @injectable()
 export class PayerCreditCardByOrderIdUseCase {
@@ -27,8 +26,7 @@ export class PayerCreditCardByOrderIdUseCase {
     private readonly signatureService: SignatureService,
     private readonly cardCreatorUseCase: ClientCardCreatorUseCase,
     private readonly paymentGatewayService: PaymentGatewayService,
-    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase,
-    private readonly findSignatureByOrderNumber: FindSignatureByOrderNumber
+    private readonly orderWithPaymentReaderUseCase: OrderWithPaymentReaderUseCase
   ) {}
 
   async pay(
@@ -37,16 +35,9 @@ export class PayerCreditCardByOrderIdUseCase {
     input: PayByCreditCardRequest
   ) {
     let order = null as ListOrderById | null;
-    let signature = null as ISignatureByOrder | null;
     let cardId = null as string | null;
 
     try {
-      signature = await this.findSignatureByOrderNumber.findByOrder(orderId);
-
-      if (!signature) {
-        throw new Error(t("signature_not_found"));
-      }
-
       const orderData = await this.orderWithPaymentReaderUseCase.view(
         t,
         orderId
@@ -76,6 +67,7 @@ export class PayerCreditCardByOrderIdUseCase {
         sellerId: orderData.sellerId,
         cardId: creditCard.external_id,
         usage: "single_use",
+        split_rules: orderData.splitList,
       });
 
       if (!result.data) {
@@ -90,7 +82,6 @@ export class PayerCreditCardByOrderIdUseCase {
         ),
         this.orderService.createOrderPayment(
           order,
-          signature.signature_id,
           OrderPaymentsMethodsEnum.CARD,
           OrderStatusEnum.APPROVED,
           {
@@ -116,10 +107,9 @@ export class PayerCreditCardByOrderIdUseCase {
         OrderStatusEnum.FAILED
       );
 
-      if (signature && order) {
+      if (order) {
         this.orderService.createOrderPayment(
           order,
-          signature.signature_id,
           OrderPaymentsMethodsEnum.CARD,
           OrderStatusEnum.FAILED,
           {

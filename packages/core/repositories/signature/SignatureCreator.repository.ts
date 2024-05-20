@@ -2,16 +2,15 @@ import { MySql2Database } from "drizzle-orm/mysql2";
 import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { clientSignature, clientProductSignature } from "@core/models";
-import { and, desc, eq, sql } from "drizzle-orm";
-import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
-import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
+import { sql } from "drizzle-orm";
 import {
   ClientProductSignatureProcess,
   ClientProductSignatureStatus,
   ClientSignatureRecorrencia,
   SignatureStatus,
 } from "@core/common/enums/models/signature";
+import { CartDocument } from "@core/interfaces/repositories/cart";
+import { v4 as uuidv4 } from "uuid";
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 
 @injectable()
@@ -21,24 +20,27 @@ export class SignatureCreatorRepository {
   ) {}
 
   async create(
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto,
+    partnerId: number,
+    clientId: string,
+    cart: CartDocument,
     orderId: string
-  ): Promise<{ id_assinatura_cliente: string } | null> {
+  ): Promise<string | null> {
+    const signatureId = uuidv4();
+
     const result = await this.db
       .insert(clientSignature)
       .values({
-        id_cliente: sql`UUID_TO_BIN(${tokenJwtData.clientId})`,
+        id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
+        id_cliente: sql`UUID_TO_BIN(${clientId})`,
         id_pedido: sql`UUID_TO_BIN(${orderId})`,
-        id_parceiro: tokenKeyData.id_parceiro,
+        id_parceiro: partnerId,
         ciclo: 0,
         id_assinatura_status: SignatureStatus.PENDING,
-        id_plano: payload.plan.plan_id,
-        recorrencia: payload.subscribe
+        id_plano: cart.payload.plan.plan_id,
+        recorrencia: cart.payload.subscribe
           ? ClientSignatureRecorrencia.YES
           : ClientSignatureRecorrencia.NO,
-        recorrencia_periodo: payload.months ?? 0,
+        recorrencia_periodo: cart.payload.months ?? 0,
       })
       .execute();
 
@@ -46,28 +48,44 @@ export class SignatureCreatorRepository {
       return null;
     }
 
-    const signatureFounded = await this.findLastSignatureByIdClient(
-      tokenJwtData.clientId,
-      tokenKeyData.id_parceiro,
-      orderId
-    );
+    return signatureId;
+  }
 
-    if (!signatureFounded) {
+  async createByVoucher(
+    partnerId: number,
+    clientId: string,
+    orderId: string,
+    planId: number
+  ): Promise<string | null> {
+    const signatureId = uuidv4();
+
+    const result = await this.db
+      .insert(clientSignature)
+      .values({
+        id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
+        id_cliente: sql`UUID_TO_BIN(${clientId})`,
+        id_pedido: sql`UUID_TO_BIN(${orderId})`,
+        id_parceiro: partnerId,
+        ciclo: 0,
+        id_assinatura_status: SignatureStatus.PENDING,
+        id_plano: planId,
+        recorrencia: ClientSignatureRecorrencia.NO,
+      })
+      .execute();
+
+    if (!result[0].affectedRows) {
       return null;
     }
 
-    return {
-      id_assinatura_cliente: signatureFounded.id_assinatura_cliente,
-    } as { id_assinatura_cliente: string };
+    return signatureId;
   }
 
   async createSignatureProducts(
-    products: string[],
     signatureId: string,
-    findSignatureActiveByClientId: ISignatureActiveByClient[]
+    cart: CartDocument
   ): Promise<boolean> {
-    const insertProducts = products.map((product) => {
-      const productAlreadyExists = findSignatureActiveByClientId.find(
+    const insertProducts = cart.products_id.map((product) => {
+      const productAlreadyExists = cart.signature_active.find(
         (signature) => signature.product_id === product
       );
 
@@ -95,30 +113,37 @@ export class SignatureCreatorRepository {
     return true;
   }
 
-  async findLastSignatureByIdClient(
-    clientId: string,
-    companyId: number,
-    orderId: string
-  ): Promise<{ id_assinatura_cliente: string } | null> {
+  async createSignatureProductsByVoucher(
+    signatureId: string,
+    productsId: string[],
+    signatureActive: ISignatureActiveByClient[]
+  ): Promise<boolean> {
+    const insertProducts = productsId.map((product) => {
+      const productAlreadyExists = signatureActive.find(
+        (signature) => signature.product_id === product
+      );
+
+      return {
+        id_assinatura_cliente: sql`UUID_TO_BIN(${signatureId})`,
+        id_produto: product,
+        processar: ClientProductSignatureProcess.NO,
+        status: ClientProductSignatureStatus.INACTIVE,
+        data_expiracao:
+          productAlreadyExists?.recurrence === ClientSignatureRecorrencia.YES
+            ? null
+            : productAlreadyExists?.expiration_date,
+      };
+    });
+
     const result = await this.db
-      .select({
-        id_assinatura_cliente: sql`BIN_TO_UUID(${clientSignature.id_assinatura_cliente})`,
-      })
-      .from(clientSignature)
-      .where(
-        and(
-          eq(clientSignature.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(clientSignature.id_pedido, sql`UUID_TO_BIN(${orderId})`),
-          eq(clientSignature.id_parceiro, companyId)
-        )
-      )
-      .orderBy(desc(clientSignature.created_at))
+      .insert(clientProductSignature)
+      .values(insertProducts)
       .execute();
 
-    if (!result.length) {
-      return null;
+    if (!result[0].affectedRows) {
+      return false;
     }
 
-    return result[0] as { id_assinatura_cliente: string };
+    return true;
   }
 }

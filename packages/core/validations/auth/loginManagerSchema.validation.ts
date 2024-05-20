@@ -2,7 +2,6 @@ import { Type } from "@sinclair/typebox";
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
 import { loginResponseManagerSchema } from "@core/schema/login/loginResponseManagerSchema";
-import { permissionUserLoginSchema } from "@core/schema/permission/permissionUserLoginSchema";
 
 export const loginManagerSchema = {
   description: "Autentica o usuário e gera um token de acesso JWT",
@@ -28,7 +27,6 @@ export const loginManagerSchema = {
         message: Type.String(),
         data: Type.Object({
           result: loginResponseManagerSchema,
-          permissions: Type.Array(permissionUserLoginSchema),
           token: Type.String(),
         }),
       },

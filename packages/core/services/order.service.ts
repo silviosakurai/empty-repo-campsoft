@@ -6,11 +6,13 @@ import { ListOrderRequestDto } from "@core/useCases/order/dtos/ListOrderRequest.
 import { PaymentListerRepository } from "@core/repositories/order/PaymentsLister.repository";
 import { OrderByNumberViewerRepository } from "@core/repositories/order/OrderByNumberViewer.repository";
 import { OrderCreatorRepository } from "@core/repositories/order/OrderCreator.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
-import { PlanPrice } from "@core/common/enums/models/plan";
+import { OrderPaymentHistoricViewerRepository } from "@core/repositories/order/OrderPaymentHistoricViewer.repository";
+import {
+  CreateOrderRequestDto,
+  VoucherOrderRequestDto,
+} from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
 import {
-  CreateOrder,
   ListOrderById,
   OrderCreatePaymentsCard,
   OrderPaymentUpdateInput,
@@ -23,18 +25,31 @@ import {
 import { CouponService } from "./coupon.service";
 import { OrderStatusUpdaterRepository } from "@core/repositories/order/OrderStatusUpdater.repository";
 import { OrderViewerByTransactionIdRepository } from "@core/repositories/order/OrderViewerByTransactionId.repository";
+import { OrderByNumberViewerByManagerRepository } from "@core/repositories/order/OrderByNumberViewerByManager.repository";
+import { OrderCreatorByManagerRepository } from "@core/repositories/order/OrderCreatorByManager.repository";
+import {
+  CartDocument,
+  CartDocumentManager,
+} from "@core/interfaces/repositories/cart";
+import { OrderByNumberCreateViewerRepository } from "@core/repositories/order/OrderByNumberCreateViewer.repository";
+import { OrderCreatorByVoucherRepository } from "@core/repositories/order/OrderCreatorByVoucher.repository";
 
 @injectable()
 export class OrderService {
   constructor(
     private readonly couponService: CouponService,
     private readonly orderCreatorRepository: OrderCreatorRepository,
+    private readonly orderCreatorByManagerRepository: OrderCreatorByManagerRepository,
     private readonly ordersListerRepository: OrdersListerRepository,
     private readonly paymentListerRepository: PaymentListerRepository,
     private readonly orderStatusUpdaterRepository: OrderStatusUpdaterRepository,
     private readonly orderByNumberViewerRepository: OrderByNumberViewerRepository,
+    private readonly orderByNumberViewerByManagerRepository: OrderByNumberViewerByManagerRepository,
     private readonly orderPaymentCreatorRepository: OrderPaymentCreatorRepository,
-    private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository
+    private readonly viewerByTransactionIdRepository: OrderViewerByTransactionIdRepository,
+    private readonly orderPaymentHistoricViewerRepository: OrderPaymentHistoricViewerRepository,
+    private readonly orderByNumberCreateViewerRepository: OrderByNumberCreateViewerRepository,
+    private readonly orderCreatorByVoucherRepository: OrderCreatorByVoucherRepository
   ) {}
 
   list = async (
@@ -43,6 +58,16 @@ export class OrderService {
     tokenJwtData: ITokenJwtData
   ) => {
     return this.ordersListerRepository.list(input, tokenKeyData, tokenJwtData);
+  };
+
+  listWithRecurrence = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.ordersListerRepository.listWithRecurrence(
+      tokenKeyData,
+      tokenJwtData
+    );
   };
 
   countTotal = async (
@@ -64,6 +89,30 @@ export class OrderService {
     );
   };
 
+  viewOrderByNumberByCreate = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.orderByNumberCreateViewerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
+  viewOrderByNumberByManager = async (
+    orderNumber: string,
+    tokenJwtData: ITokenJwtData,
+    cart: CartDocumentManager
+  ) => {
+    return this.orderByNumberViewerByManagerRepository.view(
+      orderNumber,
+      tokenJwtData,
+      cart
+    );
+  };
+
   listPayment = async (orderId: string) => {
     return this.paymentListerRepository.list(orderId);
   };
@@ -80,25 +129,55 @@ export class OrderService {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
-    planPrice: PlanPrice,
+    cart: CartDocument,
     user: ViewClientResponse,
-    totalPricesInstallments: OrderCreatePaymentsCard
-  ): Promise<CreateOrder | null> => {
+    totalPricesInstallments: OrderCreatePaymentsCard,
+    splitRuleId: number
+  ): Promise<string | null> => {
     const create = await this.orderCreatorRepository.create(
       tokenKeyData,
       tokenJwtData,
       payload,
-      planPrice,
+      cart,
       user,
-      totalPricesInstallments
+      totalPricesInstallments,
+      splitRuleId
     );
 
     if (!create) {
       return null;
     }
 
-    if (payload.coupon_code) {
-      await this.couponService.updateCoupon(payload.coupon_code);
+    if (cart.payload.coupon_code) {
+      await this.couponService.updateCoupon(cart.payload.coupon_code);
+    }
+
+    return create;
+  };
+
+  createByManager = async (
+    tokenJwtData: ITokenJwtData,
+    payload: CreateOrderRequestDto,
+    cart: CartDocumentManager,
+    user: ViewClientResponse,
+    totalPricesInstallments: OrderCreatePaymentsCard,
+    splitRuleId: number
+  ): Promise<string | null> => {
+    const create = await this.orderCreatorByManagerRepository.create(
+      tokenJwtData,
+      payload,
+      cart,
+      user,
+      totalPricesInstallments,
+      splitRuleId
+    );
+
+    if (!create) {
+      return null;
+    }
+
+    if (cart.payload.coupon_code) {
+      await this.couponService.updateCoupon(cart.payload.coupon_code);
     }
 
     return create;
@@ -106,14 +185,12 @@ export class OrderService {
 
   createOrderPayment = async (
     order: ListOrderById,
-    signatureId: string,
     methodId: OrderPaymentsMethodsEnum,
     statusPayment: OrderStatusEnum,
     input: OrderPaymentUpdateInput
   ) => {
     return this.orderPaymentCreatorRepository.create(
       order,
-      signatureId,
       methodId,
       statusPayment,
       input
@@ -126,5 +203,39 @@ export class OrderService {
 
   viewByTransactionId = async (transactionId: string) => {
     return this.viewerByTransactionIdRepository.find(transactionId);
+  };
+
+  viewPaymentHistoric = async (
+    orderNumber: string,
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData
+  ) => {
+    return this.orderPaymentHistoricViewerRepository.view(
+      orderNumber,
+      tokenKeyData,
+      tokenJwtData
+    );
+  };
+
+  createOrderByVoucher = async (
+    tokenKeyData: ITokenKeyData,
+    tokenJwtData: ITokenJwtData,
+    payload: VoucherOrderRequestDto,
+    user: ViewClientResponse,
+    planId: number
+  ): Promise<string | null> => {
+    const create = await this.orderCreatorByVoucherRepository.create(
+      tokenKeyData,
+      tokenJwtData,
+      payload,
+      user,
+      planId
+    );
+
+    if (!create) {
+      return null;
+    }
+
+    return create;
   };
 }

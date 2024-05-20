@@ -46,10 +46,6 @@ export const userAddressShippingPatchPermissions = [
 
 export const userImageUpdatePermissions = [PermissionsRoles.USER_IMAGE_UPDATE];
 
-export const userNewsletterSubscribePermissions = [
-  PermissionsRoles.USER_NEWSLETTER_SUBSCRIBE,
-];
-
 export const userCreditCardCreatePermissions = [
   PermissionsRoles.USER_CREDIT_CARD_CREATE,
 ];

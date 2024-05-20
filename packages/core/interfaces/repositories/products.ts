@@ -43,7 +43,7 @@ interface Images {
   background_image: string;
 }
 
-interface HowTo {
+export interface HowTo {
   desktop: string;
   mobile: string;
   url_web: string;
@@ -88,4 +88,9 @@ export interface ProductImageRepositoryCreateInput {
   imageUrl: string | null;
   iconUrl: string | null;
   logoUrl: string | null;
+}
+
+export interface ProductListerByVoucher {
+  coupon_rescue_code: string;
+  product_id: string;
 }

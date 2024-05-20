@@ -5,17 +5,15 @@ import { ITokenKeyData } from "@core/common/interfaces/ITokenKeyData";
 import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { ITokenJwtData } from "@core/common/interfaces/ITokenJwtData";
 import { order } from "@core/models";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   OrderRecorrencia,
   OrderStatusEnum,
 } from "@core/common/enums/models/order";
-import { PlanPrice } from "@core/common/enums/models/plan";
 import { ViewClientResponse } from "@core/useCases/client/dtos/ViewClientResponse.dto";
-import {
-  CreateOrder,
-  OrderCreatePaymentsCard,
-} from "@core/interfaces/repositories/order";
+import { OrderCreatePaymentsCard } from "@core/interfaces/repositories/order";
+import { CartDocument } from "@core/interfaces/repositories/cart";
+import { v4 as uuidv4 } from "uuid";
 
 @injectable()
 export class OrderCreatorRepository {
@@ -27,31 +25,39 @@ export class OrderCreatorRepository {
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
     payload: CreateOrderRequestDto,
-    planPrice: PlanPrice,
+    cart: CartDocument,
     user: ViewClientResponse,
-    totalPricesInstallments: OrderCreatePaymentsCard
-  ): Promise<CreateOrder | null> {
+    totalPricesInstallments: OrderCreatePaymentsCard,
+    splitRuleId: number
+  ): Promise<string | null> {
+    const orderId = uuidv4();
+
     const valuesObject: typeof schema.order.$inferInsert = {
+      id_pedido: sql`UUID_TO_BIN(${orderId})` as unknown as string,
       id_cliente:
         sql`UUID_TO_BIN(${tokenJwtData.clientId})` as unknown as string,
+      id_carrinho: sql`UUID_TO_BIN(${payload.cart_id})` as unknown as string,
       id_parceiro: tokenKeyData.id_parceiro,
       id_pedido_status: OrderStatusEnum.PENDING,
-      id_plano: payload.plan.plan_id ?? null,
-      recorrencia: payload.subscribe
+      id_plano: cart.payload.plan.plan_id ?? null,
+      id_financeiro_split_regra: splitRuleId,
+      recorrencia: cart.payload.subscribe
         ? OrderRecorrencia.YES
         : OrderRecorrencia.NO,
-      recorrencia_periodo: payload.months ?? 0,
-      valor_preco: Number(planPrice.price ?? 0),
-      valor_desconto: Number(planPrice.discount_value ?? 0),
-      valor_total: Number(planPrice.price_with_discount ?? 0),
-      valor_cupom: Number(planPrice.discount_coupon ?? 0),
-      desconto_produto: Number(planPrice.discount_product ?? 0),
+      recorrencia_periodo: cart.payload.months ?? 0,
+      valor_preco: Number(cart.total_prices.price ?? 0),
+      valor_desconto: Number(cart.total_prices.discount_value ?? 0),
+      valor_total: Number(cart.total_prices.price_with_discount ?? 0),
+      valor_cupom: Number(cart.total_prices.discount_coupon ?? 0),
+      desconto_produto: Number(cart.total_prices.discount_product ?? 0),
       valor_desconto_ordem_anterior: Number(
-        planPrice.price_with_discount_order_previous ?? 0
+        cart.total_prices.price_with_discount_order_previous ?? 0
       ),
       pedido_parcelas_valor: totalPricesInstallments.value,
       pedido_parcelas_vezes: totalPricesInstallments.installments,
-      ativacao_imediata: payload?.activate_now ? payload.activate_now : true,
+      ativacao_imediata: cart.payload?.activate_now
+        ? cart.payload.activate_now
+        : true,
       cliente_email: user.email,
       cliente_primeiro_nome: user.first_name,
       cliente_ultimo_nome: user.last_name,
@@ -59,13 +65,13 @@ export class OrderCreatorRepository {
       cliente_telefone: user.phone,
     };
 
-    if (payload.previous_order_id) {
+    if (cart.payload.previous_order_id) {
       valuesObject.id_pedido_anterior =
-        sql`UUID_TO_BIN(${payload.previous_order_id})` as unknown as string;
+        sql`UUID_TO_BIN(${cart.payload.previous_order_id})` as unknown as string;
     }
 
-    if (payload.coupon_code) {
-      valuesObject.cupom_carrinho_codigo = payload.coupon_code;
+    if (cart.payload.coupon_code) {
+      valuesObject.cupom_carrinho_codigo = cart.payload.coupon_code;
     }
 
     if (payload.payment?.voucher) {
@@ -78,42 +84,6 @@ export class OrderCreatorRepository {
       return null;
     }
 
-    const orderFounded = await this.findLastOrderByIdClient(
-      tokenJwtData.clientId,
-      tokenKeyData.id_parceiro
-    );
-
-    if (!orderFounded) {
-      return null;
-    }
-
-    return orderFounded;
-  }
-
-  async findLastOrderByIdClient(
-    clientId: string,
-    companyId: number
-  ): Promise<CreateOrder | null> {
-    const result = await this.db
-      .select({
-        order_id: sql`BIN_TO_UUID(${order.id_pedido})`,
-        order_id_previous: sql`BIN_TO_UUID(${order.id_pedido_anterior})`,
-        active_now: order.ativacao_imediata,
-      })
-      .from(order)
-      .where(
-        and(
-          eq(order.id_cliente, sql`UUID_TO_BIN(${clientId})`),
-          eq(order.id_parceiro, companyId)
-        )
-      )
-      .orderBy(desc(order.created_at))
-      .execute();
-
-    if (!result.length) {
-      return null;
-    }
-
-    return result[0] as CreateOrder;
+    return orderId;
   }
 }

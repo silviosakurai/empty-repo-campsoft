@@ -1,13 +1,15 @@
 import { Plan } from "@core/common/enums/models/plan";
 import { Static } from "@sinclair/typebox";
-import { planListResponseSchema } from "@core/schema/plan/planListResponseSchema";
 import { planProductSchema } from "@core/schema/product/productViewSchema";
+import { planDetailsWithProductsAvailableSchema } from "@core/schema/plan/planDetailsWithProductsAvailableSchema";
 
 export interface ListPlanResult {
   results: Plan[];
 }
 
-export type ListPlanResponse = Static<typeof planListResponseSchema>;
+export type ListPlanResponse = Static<
+  typeof planDetailsWithProductsAvailableSchema
+>;
 
 export type ListPlanProductResponse = Static<typeof planProductSchema>;
 

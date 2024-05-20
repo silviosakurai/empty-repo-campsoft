@@ -14,9 +14,10 @@ export const createCart = async (
 
   try {
     const data = await service.create(
-      request.body,
-      tokenKeyData.id_parceiro,
-      tokenJwtData.clientId
+      t,
+      tokenKeyData,
+      tokenJwtData,
+      request.body
     );
 
     return sendResponse(reply, {
@@ -25,7 +26,13 @@ export const createCart = async (
     });
   } catch (error) {
     request.server.logger.error(error, request.id);
-    console.log(error);
+
+    if (error instanceof Error) {
+      return sendResponse(reply, {
+        message: error.message,
+        httpStatusCode: HTTPStatusCode.BAD_REQUEST,
+      });
+    }
 
     return sendResponse(reply, {
       message: t('internal_server_error'),

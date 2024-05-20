@@ -2,7 +2,6 @@ import OrderController from '@/controllers/order';
 import { FastifyInstance } from 'fastify';
 import { container } from 'tsyringe';
 import {
-  ordersSchema,
   getPaymentsSchema,
   postCancelOrderSchema,
   ordersByNumberParamSchema,
@@ -10,6 +9,9 @@ import {
   postOrderPaymentBoletoSchema,
   postOrderPaymentCardSchema,
   postOrderPaymentPixSchema,
+  ordersHistoricByNumberParamSchema,
+  ordersWithRecurrenceSchema,
+  voucherOrderSchema,
 } from '@core/validations/order';
 import {
   orderCreatePermissions,
@@ -20,13 +22,15 @@ import {
   orderPaymentCreditCardPermissions,
   orderPaymentPixPermissions,
   orderListPermissions,
+  orderHistoricViewPermissions,
+  orderVoucherPermissions,
 } from '@/permissions';
 
 export default async function orderRoutes(server: FastifyInstance) {
   const orderController = container.resolve(OrderController);
 
   server.get('/orders', {
-    schema: ordersSchema,
+    schema: ordersWithRecurrenceSchema,
     handler: orderController.list,
     preHandler: [
       (request, reply) =>
@@ -44,6 +48,17 @@ export default async function orderRoutes(server: FastifyInstance) {
         server.authenticateKeyApi(request, reply, orderCreatePermissions),
       (request, reply) =>
         server.authenticateJwt(request, reply, orderCreatePermissions),
+    ],
+  });
+
+  server.post('/orders/voucher', {
+    schema: voucherOrderSchema,
+    handler: orderController.voucherOrder,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderVoucherPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderVoucherPermissions),
     ],
   });
 
@@ -131,5 +146,16 @@ export default async function orderRoutes(server: FastifyInstance) {
         server.authenticateJwt(request, reply, orderPaymentPixPermissions),
     ],
     schema: postOrderPaymentPixSchema,
+  });
+
+  server.get('/orders/:orderNumber/historic', {
+    schema: ordersHistoricByNumberParamSchema,
+    handler: orderController.viewPaymentHistoric,
+    preHandler: [
+      (request, reply) =>
+        server.authenticateKeyApi(request, reply, orderHistoricViewPermissions),
+      (request, reply) =>
+        server.authenticateJwt(request, reply, orderHistoricViewPermissions),
+    ],
   });
 }

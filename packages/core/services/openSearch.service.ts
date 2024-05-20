@@ -2,7 +2,25 @@ import { Client } from "@opensearch-project/opensearch";
 import { injectable } from "tsyringe";
 import { openSearchEnvironment } from "@core/config/environments";
 import { LogLevel } from "@core/common/enums/LogLevel";
-import { CreateCartResponse } from "@core/useCases/cart/dtos/CreateCartResponse.dto";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
+import { PlanPrice } from "@core/common/enums/models/plan";
+import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
+import {
+  CartDocument,
+  CartDocumentManager,
+} from "@core/interfaces/repositories/cart";
+
+interface SearchResponse<T> {
+  statusCode: number;
+  hits: {
+    total: {
+      value: number;
+    };
+    hits: Array<{
+      _source: T;
+    }>;
+  };
+}
 
 @injectable()
 class OpenSearchService {
@@ -69,8 +87,6 @@ class OpenSearchService {
         body: message,
       });
     } catch (error: any) {
-      console.error(`Error sending log to OpenSearch: ${error.message}`);
-
       if (error.message.includes("illegal_argument_exception")) {
         try {
           await this.client.index({
@@ -90,15 +106,114 @@ class OpenSearchService {
     }
   }
 
-  async indexCart(clientId: string, cart: CreateCartResponse) {
+  async indexCart(
+    clientId: string,
+    cartId: string,
+    payload: CreateCartRequest,
+    totalPrices: PlanPrice,
+    productsIdByOrder: string[],
+    signatureActiveByClientId: ISignatureActiveByClient[]
+  ): Promise<CartDocument | null> {
+    const body = {
+      client_id: clientId,
+      cart_id: cartId,
+      payload,
+      total_prices: totalPrices,
+      products_id: productsIdByOrder,
+      signature_active: signatureActiveByClientId,
+    } as CartDocument;
+
     try {
       await this.client.index({
-        index: "cart",
-        body: { ...cart, client_id: clientId },
+        index: `cart`,
+        id: cartId,
+        body,
       });
     } catch (error) {
-      console.error(`Error indexing cart: ${error}`);
-      throw error;
+      return null;
+    }
+
+    return body;
+  }
+
+  async getCart(cartId: string): Promise<CartDocument | null> {
+    try {
+      await this.client.indices.refresh({ index: "cart" });
+
+      const response = await this.client.search<SearchResponse<CartDocument>>({
+        index: "cart",
+        body: {
+          query: {
+            term: {
+              _id: cartId,
+            },
+          },
+        },
+      });
+
+      if (response.statusCode === 200 && response.body.hits.total.value > 0) {
+        return response.body.hits.hits[0]._source;
+      }
+
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async indexManagerCart(
+    cartId: string,
+    clientId: string,
+    partnerId: number,
+    payload: CreateCartRequest,
+    totalPrices: PlanPrice,
+    productsIdByOrder: string[],
+    signatureActiveByClientId: ISignatureActiveByClient[]
+  ): Promise<CartDocumentManager | null> {
+    const body = {
+      cart_id: cartId,
+      client_id: clientId,
+      partner_id: partnerId,
+      payload,
+      total_prices: totalPrices,
+      products_id: productsIdByOrder,
+      signature_active: signatureActiveByClientId,
+    } as CartDocumentManager;
+
+    try {
+      await this.client.index({
+        index: `manager-cart`,
+        body,
+      });
+    } catch (error) {
+      return null;
+    }
+
+    return body;
+  }
+
+  async getManagerCart(cartId: string): Promise<CartDocumentManager | null> {
+    try {
+      const response = await this.client.search<
+        SearchResponse<CartDocumentManager>
+      >({
+        index: "manager-cart",
+        body: {
+          query: {
+            term: {
+              _id: cartId,
+            },
+          },
+        },
+      });
+
+      if (response.statusCode === 200 && response.body.hits.total.value > 0) {
+        return response.body.hits.hits[0]._source;
+      }
+
+      return null;
+    } catch (error) {
+      return null;
     }
   }
 }

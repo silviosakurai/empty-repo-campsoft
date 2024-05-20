@@ -11,9 +11,9 @@ import { ProductService } from "./product.service";
 import { CouponService } from "./coupon.service";
 import { PlanService } from "./plan.service";
 import { OrderService } from "./order.service";
-import { SignatureService } from "./signature.service";
 import { ISignatureActiveByClient } from "@core/interfaces/repositories/signature";
 import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
+import { CreateCartRequest } from "@core/useCases/cart/dtos/CreateCartRequest.dto";
 
 @injectable()
 export class PriceService {
@@ -21,8 +21,7 @@ export class PriceService {
     private readonly productService: ProductService,
     private readonly couponService: CouponService,
     private readonly planService: PlanService,
-    private readonly orderService: OrderService,
-    private readonly signatureService: SignatureService
+    private readonly orderService: OrderService
   ) {}
 
   calculatePriceInstallments = (
@@ -42,7 +41,7 @@ export class PriceService {
 
   findPriceByProductsIdAndMonth = async (
     tokenKeyData: ITokenKeyData,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     coupon: ICouponVerifyEligibilityUser[]
   ): Promise<PlanPriceCrossSellOrder | null> => {
     const selectedProducts = payload.products ?? [];
@@ -92,7 +91,7 @@ export class PriceService {
   };
 
   findPriceByPlanIdAndMonth = async (
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     coupon: ICouponVerifyEligibilityUser[]
   ): Promise<PlanPrice | null> => {
     let finalPrice = 0;
@@ -117,7 +116,7 @@ export class PriceService {
   };
 
   applyDiscountPreviousOrderByActivateNow = async (
-    payload: CreateOrderRequestDto
+    payload: CreateCartRequest
   ): Promise<number> => {
     if (payload?.activate_now && payload?.previous_order_id) {
       const orderPrevious = await this.orderService.listOrderById(
@@ -140,7 +139,7 @@ export class PriceService {
     t: TFunction<"translation", undefined>,
     tokenKeyData: ITokenKeyData,
     tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     findSignatureActiveByClientId: ISignatureActiveByClient[]
   ): Promise<PlanPrice | null> => {
     const coupon = await this.couponService.applyAndValidateDiscountCoupon(
@@ -170,7 +169,7 @@ export class PriceService {
   private applyDiscountPrice = async (
     planPrice: PlanPrice,
     planPriceCrossSell: PlanPriceCrossSellOrder | null,
-    payload: CreateOrderRequestDto,
+    payload: CreateCartRequest,
     findSignatureActiveByClientId: ISignatureActiveByClient[]
   ) => {
     const finalPrice = Number(planPrice.price);
@@ -212,8 +211,8 @@ export class PriceService {
     return {
       months: planPrice.months,
       price: Number(finalPrice.toFixed(2)),
-      discount_value: Number(discountValue.toFixed(2)),
-      discount_percentage: Number(discountPercentage.toFixed(2)),
+      discount_value: Math.max(0, Number(discountValue.toFixed(2))),
+      discount_percentage: Math.max(0, Number(discountPercentage.toFixed(2))),
       price_with_discount: Math.max(0, Number(finalPriceDiscount.toFixed(2))),
       price_with_discount_order_previous: Math.max(
         0,

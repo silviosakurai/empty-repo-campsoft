@@ -1,7 +1,7 @@
 import { Language } from "@core/common/enums/Language";
 import { TagSwagger } from "@core/common/enums/TagSwagger";
+import { createOrderListSchema } from "@core/schema/order/createOrderListSchema";
 import { orderCreateRequestSchema } from "@core/schema/order/orderCreateRequestSchema";
-import { orderListSchema } from "@core/schema/order/orderListSchema";
 import { Type } from "@sinclair/typebox";
 
 export const createOrderSchema = {
@@ -29,7 +29,7 @@ export const createOrderSchema = {
       {
         status: Type.Boolean(),
         message: Type.String(),
-        data: orderListSchema,
+        data: createOrderListSchema,
       },
       { description: "Successful" }
     ),

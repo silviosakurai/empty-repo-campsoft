@@ -6,7 +6,6 @@ import { CancelSignatureRepository } from "@core/repositories/signature/CancelSi
 import { FindSignatureByOrderNumber } from "@core/repositories/signature/FindSignatureByOrder.repository";
 import { injectable } from "tsyringe";
 import { SignatureCreatorRepository } from "@core/repositories/signature/SignatureCreator.repository";
-import { CreateOrderRequestDto } from "@core/useCases/order/dtos/CreateOrderRequest.dto";
 import { SignaturePaidActiveRepository } from "@core/repositories/signature/SignaturePaidActive.repository";
 import { SignatureUpgradedRepository } from "@core/repositories/signature/SignatureUpgraded.repository";
 import {
@@ -16,6 +15,13 @@ import {
 import { OrdersUpdaterRepository } from "@core/repositories/order/OrdersUpdater.repository";
 import { OrderStatusEnum } from "@core/common/enums/models/order";
 import { IVoucherProductsAndPlans } from "@core/interfaces/repositories/voucher";
+import { SignatureActiveByClientIdListerRepository } from "@core/repositories/signature/SignatureActiveByClientIdLister.repository";
+import { CartDocument } from "@core/interfaces/repositories/cart";
+import { ListOrderById } from "@core/interfaces/repositories/order";
+import OpenSearchService from "./openSearch.service";
+import { OrderService } from "./order.service";
+import { ProductListerByVoucherRepository } from "@core/repositories/product/ProductListerByVoucher.repository";
+import { ClientSignatureRecorrencia } from "@core/common/enums/models/signature";
 
 @injectable()
 export class SignatureService {
@@ -27,7 +33,11 @@ export class SignatureService {
     private readonly signatureCreatorRepository: SignatureCreatorRepository,
     private readonly signaturePaidActiveRepository: SignaturePaidActiveRepository,
     private readonly signatureUpgradedRepository: SignatureUpgradedRepository,
-    private readonly ordersUpdaterRepository: OrdersUpdaterRepository
+    private readonly ordersUpdaterRepository: OrdersUpdaterRepository,
+    private readonly signatureActiveByClientIdListerRepository: SignatureActiveByClientIdListerRepository,
+    private readonly productListerByVoucherRepository: ProductListerByVoucherRepository,
+    private readonly openSearchService: OpenSearchService,
+    private readonly orderService: OrderService
   ) {}
 
   findByClientId = async (client_id: string) => {
@@ -62,39 +72,25 @@ export class SignatureService {
     );
   };
 
-  create = async (
-    tokenKeyData: ITokenKeyData,
-    tokenJwtData: ITokenJwtData,
-    payload: CreateOrderRequestDto,
-    orderId: string
-  ) => {
-    return this.signatureCreatorRepository.create(
-      tokenKeyData,
-      tokenJwtData,
-      payload,
-      orderId
-    );
-  };
-
-  createSignatureProducts = async (
-    products: string[],
-    signatureId: string,
-    findSignatureActiveByClientId: ISignatureActiveByClient[]
-  ) => {
-    return this.signatureCreatorRepository.createSignatureProducts(
-      products,
-      signatureId,
-      findSignatureActiveByClientId
-    );
-  };
-
   activePaidSignature = async (
-    orderNumber: string,
+    orderId: string,
     previousOrderId: string | null = null,
     activateNow: boolean = true
   ) => {
+    const order = await this.orderService.listOrderById(orderId);
+
+    if (!order) {
+      return false;
+    }
+
+    const signatureId = await this.createSignature(order);
+
+    if (!signatureId) {
+      return false;
+    }
+
     const signature =
-      await this.findSignatureByOrderNumber.findByOrder(orderNumber);
+      await this.findSignatureByOrderNumber.findByOrder(orderId);
 
     if (!signature) {
       return false;
@@ -121,7 +117,7 @@ export class SignatureService {
     );
 
     return this.ordersUpdaterRepository.updateOrderStatus(
-      orderNumber,
+      orderId,
       OrderStatusEnum.APPROVED
     );
   };
@@ -130,6 +126,18 @@ export class SignatureService {
     orderNumber: string,
     voucherProductsAndPlans: IVoucherProductsAndPlans
   ) => {
+    const order = await this.orderService.listOrderById(orderNumber);
+
+    if (!order) {
+      return false;
+    }
+
+    const signatureId = await this.createSignatureByVoucher(order);
+
+    if (!signatureId) {
+      return false;
+    }
+
     const signature =
       await this.findSignatureByOrderNumber.findByOrder(orderNumber);
 
@@ -224,5 +232,151 @@ export class SignatureService {
       clientId,
       planId
     );
+  };
+
+  findByOrder = async (orderNumber: string) => {
+    return this.findSignatureByOrderNumber.findByOrder(orderNumber);
+  };
+
+  findActiveByClientId = async (clientId: string) => {
+    return this.signatureActiveByClientIdListerRepository.find(clientId);
+  };
+
+  create = async (
+    partnerId: number,
+    clientId: string,
+    cart: CartDocument,
+    orderId: string
+  ) => {
+    return this.signatureCreatorRepository.create(
+      partnerId,
+      clientId,
+      cart,
+      orderId
+    );
+  };
+
+  createByVoucher = async (
+    partnerId: number,
+    clientId: string,
+    orderId: string,
+    planId: number
+  ) => {
+    return this.signatureCreatorRepository.createByVoucher(
+      partnerId,
+      clientId,
+      orderId,
+      planId
+    );
+  };
+
+  createSignatureProducts = async (signatureId: string, cart: CartDocument) => {
+    return this.signatureCreatorRepository.createSignatureProducts(
+      signatureId,
+      cart
+    );
+  };
+
+  createSignatureProductsByVoucher = async (
+    signatureId: string,
+    productsId: string[],
+    signatureActive: ISignatureActiveByClient[]
+  ) => {
+    return this.signatureCreatorRepository.createSignatureProductsByVoucher(
+      signatureId,
+      productsId,
+      signatureActive
+    );
+  };
+
+  createSignature = async (order: ListOrderById): Promise<string | null> => {
+    const cart = await this.openSearchService.getCart(order.cart_id);
+
+    if (!cart) {
+      return null;
+    }
+
+    const createSignature = await this.create(
+      order.company_id,
+      order.client_id,
+      cart,
+      order.order_id
+    );
+
+    if (!createSignature) {
+      return null;
+    }
+
+    const createSignatureProducts = await this.createSignatureProducts(
+      createSignature,
+      cart
+    );
+
+    if (!createSignatureProducts) {
+      return null;
+    }
+
+    return createSignature;
+  };
+
+  createSignatureByVoucher = async (
+    order: ListOrderById
+  ): Promise<string | null> => {
+    const createSignature = await this.createByVoucher(
+      order.company_id,
+      order.client_id,
+      order.order_id,
+      order.plan_id
+    );
+
+    if (!createSignature) {
+      return null;
+    }
+
+    const productsByVoucher = await this.productListerByVoucherRepository.list(
+      order.company_id,
+      order.voucher
+    );
+
+    if (!productsByVoucher) {
+      return null;
+    }
+
+    let products = productsByVoucher.map((product) => product.product_id);
+
+    const findSignatureActiveByClientId =
+      await this.findSignatureActiveByClientId(
+        order.client_id,
+        order.plan_id,
+        products
+      );
+
+    if (!findSignatureActiveByClientId) {
+      return null;
+    }
+
+    if (findSignatureActiveByClientId.length > 0) {
+      const idsProductsToRemove = findSignatureActiveByClientId
+        .filter(
+          (signature) => signature.recurrence === ClientSignatureRecorrencia.YES
+        )
+        .map((signature) => signature.product_id);
+
+      products = products.filter(
+        (product) => !idsProductsToRemove.includes(product)
+      );
+    }
+
+    const createSignatureProducts = await this.createSignatureProductsByVoucher(
+      createSignature,
+      products,
+      findSignatureActiveByClientId
+    );
+
+    if (!createSignatureProducts) {
+      return null;
+    }
+
+    return createSignature;
   };
 }

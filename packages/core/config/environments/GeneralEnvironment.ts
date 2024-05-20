@@ -19,6 +19,8 @@ export class GeneralEnvironment {
   private readonly PAYMENT_API_BASE_URL: string | undefined;
   private readonly PAYMENT_API_KEY: string | undefined;
   private readonly PAYMENT_MARKETPLACE_KEY: string | undefined;
+  private readonly PUBLIC_SPLIT_RULE_ID: string | undefined;
+  private readonly MANAGER_SPLIT_RULE_ID: string | undefined;
 
   constructor() {
     this.APP_ENVIRONMENT = process.env
@@ -34,6 +36,8 @@ export class GeneralEnvironment {
     this.PAYMENT_API_BASE_URL = process.env.PAYMENT_API_BASE_URL;
     this.PAYMENT_API_KEY = process.env.PAYMENT_API_KEY;
     this.PAYMENT_MARKETPLACE_KEY = process.env.PAYMENT_MARKETPLACE_KEY;
+    this.PUBLIC_SPLIT_RULE_ID = process.env.PUBLIC_SPLIT_RULE_ID;
+    this.MANAGER_SPLIT_RULE_ID = process.env.MANAGER_SPLIT_RULE_ID;
   }
 
   public get appEnvironment(): AppEnvironment {
@@ -147,6 +151,26 @@ export class GeneralEnvironment {
     }
 
     return this.PAYMENT_MARKETPLACE_KEY;
+  }
+
+  public get publicSplitRuleId(): number {
+    if (!this.PUBLIC_SPLIT_RULE_ID) {
+      throw new InvalidConfigurationError(
+        "PUBLIC_SPLIT_RULE_ID is not defined."
+      );
+    }
+
+    return +this.PUBLIC_SPLIT_RULE_ID;
+  }
+
+  public get managerSplitRuleId(): number {
+    if (!this.MANAGER_SPLIT_RULE_ID) {
+      throw new InvalidConfigurationError(
+        "MANAGER_SPLIT_RULE_ID is not defined."
+      );
+    }
+
+    return +this.MANAGER_SPLIT_RULE_ID;
   }
 
   public get protocol(): string {

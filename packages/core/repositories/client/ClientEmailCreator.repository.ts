@@ -2,8 +2,7 @@ import { inject, injectable } from "tsyringe";
 import * as schema from "@core/models";
 import { clientEmail } from "@core/models/client";
 import { MySql2Database } from "drizzle-orm/mysql2";
-import { sql } from "drizzle-orm";
-import { ClientEmailCreatorInput } from "@core/interfaces/repositories/client";
+import { EmailType } from "@core/common/enums/models/clientEmail";
 
 @injectable()
 export class ClientEmailCreatorRepository {
@@ -11,13 +10,12 @@ export class ClientEmailCreatorRepository {
     @inject("Database") private readonly db: MySql2Database<typeof schema>
   ) {}
 
-  async create(input: ClientEmailCreatorInput) {
+  async create(email: string) {
     const result = await this.db
       .insert(clientEmail)
       .values({
-        id_cliente: sql`UUID_TO_BIN(${input.clientId})`,
-        email: input.email,
-        id_cliente_email_tipo: input.emailType,
+        email: email,
+        id_cliente_email_tipo: EmailType.NEWSLETTER,
       })
       .execute();
 

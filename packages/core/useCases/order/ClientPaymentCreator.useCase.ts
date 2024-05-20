@@ -1,10 +1,10 @@
-import { ClientService } from "@core/services";
 import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 import { injectable } from "tsyringe";
 import { ViewClientResponse } from "../client/dtos/ViewClientResponse.dto";
 import { TFunction } from "i18next";
 import { ViewClientBillingAddressResponse } from "../client/dtos/ViewClientAddressResponse.dto";
 import { formatOnlyDateToString } from "@core/common/functions/formatOnlyDateToString";
+import { ClientService } from "@core/services/client.service";
 
 @injectable()
 export class ClientPaymentCreatorUseCase {

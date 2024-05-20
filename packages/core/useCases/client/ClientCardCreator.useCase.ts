@@ -1,15 +1,16 @@
 import { ICreateCreditCardTokenRequest } from "@core/interfaces/services/payment/ICreateCreditCardToken";
-import { ClientService, ZoopGatewayService } from "@core/services";
 import { injectable } from "tsyringe";
 import { ClientPaymentExternalGeneratorUseCase } from "./ClientPaymentExternalGenerator.useCase";
 import { TFunction } from "i18next";
 import { getLastFourDigits } from "@core/common/functions/getLastFourDigits";
+import { ClientService } from "@core/services/client.service";
+import { PaymentGatewayService } from "@core/services/paymentGateway.service";
 
 @injectable()
 export class ClientCardCreatorUseCase {
   constructor(
     private readonly clientService: ClientService,
-    private readonly gatewayService: ZoopGatewayService,
+    private readonly gatewayService: PaymentGatewayService,
     private readonly clientPaymentExternalGeneratorUseCase: ClientPaymentExternalGeneratorUseCase
   ) {}
 
