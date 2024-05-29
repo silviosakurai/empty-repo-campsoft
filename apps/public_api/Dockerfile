@@ -1,0 +1,38 @@
+FROM public.ecr.aws/docker/library/node:20.11.1-alpine as builder
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY pnpm-lock.yaml* ./
+
+COPY . .
+
+ENV PNPM_HOME="/usr/local/share/pnpm"
+ENV PATH="${PNPM_HOME}:${PATH}"
+
+RUN npm install -g pnpm
+RUN pnpm add -g turbo
+RUN pnpm install
+
+RUN turbo run build --filter=public
+
+RUN mkdir -p /build_locales
+COPY packages/core/plugins/i18next/locales /build_locales
+
+FROM public.ecr.aws/docker/library/node:20.11.1-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/apps/public_api/dist /app
+COPY --from=builder /app/node_modules /app/node_modules
+
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/apps/public_api/package*.json ./apps/public_api
+
+COPY --from=builder /build_locales /app/packages/core/plugins/i18next/locales
+
+EXPOSE 3001
+
+WORKDIR /app/apps/public_api/src
+
+CMD ["node", "index.js"]
