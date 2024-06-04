@@ -1,4 +1,4 @@
-# Mania de APP
+# Tocalivros
 
 Bem-vindo ao repositório do projeto Toca Livros, um monorepo gerenciado pelo TurboRepo que hospeda as APIs `public` e `manager`. Este projeto foi configurado para facilitar o desenvolvimento, build e colaboração em múltiplas APIs sob uma única base de código.
 
